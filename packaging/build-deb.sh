@@ -44,6 +44,19 @@ mv "$PKG/opt/linwas/python" "$RUNTIME"
 echo "==> PySide6 ve Linwas gömülü Python'a kuruluyor"
 "$RUNTIME/bin/python3" -m pip install --no-cache-dir --disable-pip-version-check "$PYSIDE_SPEC"
 "$RUNTIME/bin/python3" -m pip install --no-cache-dir --disable-pip-version-check --no-deps "$ROOT"
+# Hangi PySide6 sürümü ve platform etiketi (glibc gereksinimi) kuruldu? CI'da not olarak yaz.
+PYSIDE_INFO=$("$RUNTIME/bin/python3" - <<'PY'
+import importlib.metadata as m
+dist = m.distribution("PySide6_Essentials")
+tags = [line.split(": ", 1)[1] for line in dist.read_text("WHEEL").splitlines()
+        if line.startswith("Tag: ")]
+print(f"PySide6-Essentials {dist.version} tags={','.join(tags)}")
+PY
+)
+echo "$PYSIDE_INFO"
+if [ -n "${GITHUB_ACTIONS:-}" ]; then
+    echo "::notice title=Gomulu PySide6::$PYSIDE_INFO"
+fi
 # pip'in kendi önbellek ve derleme artıkları pakette gereksiz.
 find "$RUNTIME" -type d -name "__pycache__" -prune -exec rm -rf {} +
 

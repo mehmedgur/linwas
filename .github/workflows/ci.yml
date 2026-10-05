@@ -43,6 +43,12 @@ jobs:
           path: build/*.deb
           if-no-files-found: error
           retention-days: 14
+      # Kurulum testi kapsayıcılarında git yok; test betiği ayrı artifact olarak taşınır.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ci-scripts
+          path: packaging/ci-install-test.sh
+          retention-days: 1
 
   install-test:
     name: Kurulum testi (${{ matrix.image }})
@@ -58,12 +64,8 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: linwas-deb
+      - uses: actions/download-artifact@v4
+        with:
+          name: ci-scripts
       - name: Paketi kur ve kendi kendini denetle
-        env:
-          DEBIAN_FRONTEND: noninteractive
-        run: |
-          apt-get update
-          apt-get install -y ./linwas_*.deb
-          linwas --version
-          linwas --self-check
-          LINWAS_LANG=en linwas --self-check
+        run: bash ci-install-test.sh
