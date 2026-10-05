@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=Linwas
+GenericName=Linux Assistant
+GenericName[tr]=Linux Yardımcısı
+Comment=Manage Linux without the terminal — made for people coming from Windows
+Comment[tr]=Terminal kullanmadan Linux'u yönetin — Windows'tan gelenler için
+Exec=linwas
+Icon=linwas
+Terminal=false
+Categories=System;Settings;
+Keywords=windows;settings;update;driver;install;
+Keywords[tr]=windows;ayarlar;güncelleme;sürücü;kurulum;program;
+StartupWMClass=linwas

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Linwas uygulama simgesi: mavi zemin üzerinde dört bölmeli pencere ve onay işareti -->
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#0067c0"/>
+  <rect x="14" y="14" width="16" height="16" rx="2.5" fill="#ffffff"/>
+  <rect x="34" y="14" width="16" height="16" rx="2.5" fill="#ffffff" fill-opacity="0.75"/>
+  <rect x="14" y="34" width="16" height="16" rx="2.5" fill="#ffffff" fill-opacity="0.75"/>
+  <circle cx="42" cy="42" r="9" fill="#ffffff"/>
+  <path d="M37.5 42.2l3.2 3.2 5.8-6.4" fill="none" stroke="#0067c0" stroke-width="2.6"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

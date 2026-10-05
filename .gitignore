@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# Derleme çıktıları
+build/
+dist/
+*.deb
+
+# Derlenmiş çeviri dosyaları (CI ve geliştirici betiği üretir)
+linwas/i18n/*.qm
+
+# Editör
+.vscode/
+.idea/
+*.swp

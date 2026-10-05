@@ -1,0 +1,68 @@
+#!/bin/bash
+# Linwas .deb paketini gömülü Python + PySide6 ile derler.
+# Kullanım: packaging/build-deb.sh <paket-sürümü>     ör. 2.0.0~dev12
+# Gereken: internet erişimi, curl, sha256sum, dpkg-deb. Çeviriler önceden derlenmiş olmalı
+# (scripts/compile-translations.sh).
+set -euo pipefail
+
+ROOT=$(cd "$(dirname "$0")/.." && pwd)
+VERSION=${1:?Kullanım: packaging/build-deb.sh <paket-sürümü>}
+ARCH=amd64
+
+# Gömülü Python: python-build-standalone (astral-sh) — sürüm ve sağlama toplamı sabitlenmiştir.
+PBS_TAG=20261003
+PY_VERSION=3.12.15
+PY_ASSET="cpython-${PY_VERSION}+${PBS_TAG}-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz"
+PY_SHA256=731af898886c5f821890dc901eca3c651cca8e51fa7308c159d12a1194aeac91
+PY_URL="https://github.com/astral-sh/python-build-standalone/releases/download/${PBS_TAG}/${PY_ASSET//+/%2B}"
+
+PYSIDE_SPEC="PySide6-Essentials>=6.8,<7"
+
+BUILD="$ROOT/build"
+PKG="$BUILD/pkg"
+DL="$BUILD/download"
+RUNTIME="$PKG/opt/linwas/runtime"
+
+if ! ls "$ROOT"/linwas/i18n/*.qm >/dev/null 2>&1; then
+    echo "HATA: Derlenmiş çeviri (.qm) yok. Önce scripts/compile-translations.sh çalıştırın." >&2
+    exit 1
+fi
+
+rm -rf "$PKG"
+mkdir -p "$PKG" "$DL"
+
+echo "==> Gömülü Python indiriliyor: $PY_ASSET"
+if [ ! -f "$DL/$PY_ASSET" ]; then
+    curl -fsSL --retry 3 -o "$DL/$PY_ASSET" "$PY_URL"
+fi
+echo "$PY_SHA256  $DL/$PY_ASSET" | sha256sum -c -
+
+mkdir -p "$PKG/opt/linwas"
+tar -xzf "$DL/$PY_ASSET" -C "$PKG/opt/linwas"
+mv "$PKG/opt/linwas/python" "$RUNTIME"
+
+echo "==> PySide6 ve Linwas gömülü Python'a kuruluyor"
+"$RUNTIME/bin/python3" -m pip install --no-cache-dir --disable-pip-version-check "$PYSIDE_SPEC"
+"$RUNTIME/bin/python3" -m pip install --no-cache-dir --disable-pip-version-check --no-deps "$ROOT"
+# pip'in kendi önbellek ve derleme artıkları pakette gereksiz.
+find "$RUNTIME" -type d -name "__pycache__" -prune -exec rm -rf {} +
+
+echo "==> Başlatıcı, masaüstü girişi ve simge"
+install -D -m 0755 "$ROOT/packaging/linwas-launcher.sh" "$PKG/usr/bin/linwas"
+install -D -m 0644 "$ROOT/packaging/linwas.desktop" "$PKG/usr/share/applications/linwas.desktop"
+install -D -m 0644 "$ROOT/linwas/resources/linwas.svg" \
+    "$PKG/usr/share/icons/hicolor/scalable/apps/linwas.svg"
+
+echo "==> Paket bilgileri"
+INSTALLED_SIZE=$(du -sk --exclude=DEBIAN "$PKG" | cut -f1)
+mkdir -p "$PKG/DEBIAN"
+sed -e "s/@VERSION@/${VERSION}/" -e "s/@ARCH@/${ARCH}/" -e "s/@INSTALLED_SIZE@/${INSTALLED_SIZE}/" \
+    "$ROOT/packaging/debian/control.in" > "$PKG/DEBIAN/control"
+
+# İzinler: klasörler 755, dosyalar 644; çalıştırılabilir dosyalar korunur, kimse dışarıdan yazamaz.
+chmod -R u+rwX,go+rX,go-w "$PKG"
+
+OUT="$BUILD/linwas_${VERSION}_${ARCH}.deb"
+# xz sıkıştırma: Debian 11 / Ubuntu 20.04'ün dpkg'si zstd ile sıkıştırılmış paketleri açamaz.
+dpkg-deb --root-owner-group -Zxz --build "$PKG" "$OUT"
+echo "==> Hazır: $OUT ($(du -h "$OUT" | cut -f1))"
