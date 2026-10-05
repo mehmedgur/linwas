@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from linwas.backend import distro as distro_module
 from linwas.backend.distro import (
     DistroInfo,
     SupportStatus,
@@ -56,14 +57,14 @@ def test_display_name_without_pretty_name():
     ("distro_id", "version", "expected"),
     [
         ("ubuntu", "18.04", SupportStatus.UNSUPPORTED),
-        ("ubuntu", "20.04", SupportStatus.END_OF_LIFE),
+        ("ubuntu", "20.04", SupportStatus.UNSUPPORTED),
         ("ubuntu", "22.04", SupportStatus.SUPPORTED),
         ("ubuntu", "24.04", SupportStatus.SUPPORTED),
-        ("debian", "10", SupportStatus.UNSUPPORTED),
-        ("debian", "11", SupportStatus.END_OF_LIFE),
+        ("debian", "11", SupportStatus.UNSUPPORTED),
         ("debian", "12", SupportStatus.SUPPORTED),
         ("debian", "13", SupportStatus.SUPPORTED),
-        ("linuxmint", "20.3", SupportStatus.END_OF_LIFE),
+        ("linuxmint", "20.3", SupportStatus.UNSUPPORTED),
+        ("linuxmint", "21", SupportStatus.SUPPORTED),
         ("linuxmint", "21.3", SupportStatus.SUPPORTED),
         ("linuxmint", "22", SupportStatus.SUPPORTED),
         ("pardus", "21.5", SupportStatus.UNSUPPORTED),
@@ -73,6 +74,20 @@ def test_display_name_without_pretty_name():
 )
 def test_evaluate_support_known(distro_id, version, expected):
     assert evaluate_support(DistroInfo(id=distro_id, version_id=version)) is expected
+
+
+def test_end_of_life_mechanism(monkeypatch):
+    # Bir sürümün güvenlik desteği bittiğinde tabloya eklenir; mekanizma çalışmalı.
+    monkeypatch.setitem(distro_module._END_OF_LIFE_MAX, "ubuntu", (22, 4))
+    assert evaluate_support(DistroInfo(id="ubuntu", version_id="22.04")) is (
+        SupportStatus.END_OF_LIFE
+    )
+    assert evaluate_support(DistroInfo(id="ubuntu", version_id="24.04")) is (
+        SupportStatus.SUPPORTED
+    )
+    assert evaluate_support(DistroInfo(id="ubuntu", version_id="20.04")) is (
+        SupportStatus.UNSUPPORTED
+    )
 
 
 def test_lmde_is_untested_family():

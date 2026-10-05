@@ -96,20 +96,19 @@ def _version_tuple(version: str) -> tuple[int, ...]:
     return tuple(parts) if parts else (0,)
 
 
-# Desteklenen en düşük sürümler ve güvenlik güncellemesi biten sürümler.
-# Pardus 23 ve 25 karar belgesinde açıkça destek listesinde.
+# Desteklenen en düşük sürümler. Gömülü PySide6 glibc >= 2.34 istediği için Ubuntu 20.04,
+# Debian 11 ve Mint 20 (glibc 2.31) desteklenmiyor (karar: seçenek A).
+# Mint 21 Ubuntu 22.04, Pardus 23 Debian 12 tabanlıdır.
 _MIN_VERSION: dict[str, tuple[int, ...]] = {
-    "ubuntu": (20, 4),
-    "debian": (11,),
-    "linuxmint": (20,),
+    "ubuntu": (22, 4),
+    "debian": (12,),
+    "linuxmint": (21,),
     "pardus": (23,),
 }
 # Bu sürümler (ve altı) destekleniyor ama artık güvenlik güncellemesi almıyor.
-_END_OF_LIFE_MAX: dict[str, tuple[int, ...]] = {
-    "ubuntu": (20, 4),
-    "debian": (11,),
-    "linuxmint": (20, 99),
-}
+# Şu an desteklenen sürümlerin hepsi güvenlik desteği alıyor; bir sürümün desteği bittiğinde
+# buraya eklenir (ör. Ubuntu 22.04 için "ubuntu": (22, 4)).
+_END_OF_LIFE_MAX: dict[str, tuple[int, ...]] = {}
 
 
 def evaluate_support(info: DistroInfo) -> SupportStatus:
