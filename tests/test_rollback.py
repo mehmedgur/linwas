@@ -107,3 +107,43 @@ class TestUndoOps:
     def test_empty_record_no_ops(self):
         r = make_record()
         assert undo_ops(r) == []
+
+
+class TestAppRemovalRollback:
+    def test_flatpak_and_snap_undo(self):
+        rec = make_record(
+            flatpaks_removed=["org.videolan.VLC"],
+            snaps_removed=["code", "firefox"],
+            snaps_classic=["code"],
+        )
+        assert undo_ops(rec) == [
+            ("flatpak.install", {"app_id": "org.videolan.VLC"}),
+            ("snap.install_classic", {"name": "code"}),
+            ("snap.install", {"name": "firefox"}),
+        ]
+
+    def test_old_record_without_new_fields(self):
+        import json
+
+        d = json.loads(make_record().to_json())
+        for key in ("flatpaks_removed", "snaps_removed", "snaps_classic"):
+            d.pop(key)
+        rec = RollbackRecord.from_json(json.dumps(d))
+        assert rec.flatpaks_removed == [] and rec.snaps_removed == []
+
+    def test_unknown_fields_ignored(self):
+        import json
+
+        d = json.loads(make_record().to_json())
+        d["future_field"] = 1
+        assert RollbackRecord.from_json(json.dumps(d)).task_label == "Test görevi"
+
+    def test_records_since(self, rollback_dir):
+        from linwas.core.rollback import records_since
+
+        old = make_record(timestamp="2026-01-01T00:00:00+00:00")
+        new = make_record(timestamp="2026-10-06T10:00:00+00:00")
+        save_record(old, rollback_dir)
+        save_record(new, rollback_dir)
+        found = records_since("2026-10-06T09:59:00+00:00", rollback_dir)
+        assert [r.id for r in found] == [new.id]

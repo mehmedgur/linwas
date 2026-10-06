@@ -13,10 +13,16 @@ Kurallar:
 from __future__ import annotations
 
 import json
+import os
+import pwd
+import shutil
 import subprocess
 import sys
+from pathlib import Path
 from typing import Any
 
+from linwas.core import package_guard
+from linwas.core.rollback import RollbackRecord, save_record
 from linwas.core.whitelist import ValidationError, validate
 
 
@@ -35,7 +41,7 @@ def _error(seq: int, message: str) -> None:
 # --- Uygulayıcılar ---
 
 
-def _run(cmd: list[str], seq: int) -> bool:
+def _run(cmd: list[str], seq: int, env: dict[str, str] | None = None) -> bool:
     """Komutu çalıştırır; çıktıyı satır satır ilerleme olarak gönderir."""
     try:
         proc = subprocess.Popen(
@@ -44,6 +50,7 @@ def _run(cmd: list[str], seq: int) -> bool:
             stderr=subprocess.STDOUT,
             text=True,
             shell=False,
+            env={**os.environ, **env} if env else None,
         )
         assert proc.stdout is not None
         for line in proc.stdout:
@@ -219,6 +226,180 @@ def _exec_deb_install(seq: int, params: dict[str, str]) -> bool:
     return True
 
 
+# --- Program kaldırma ve güncelleme ---
+
+_APT_ENV = {"DEBIAN_FRONTEND": "noninteractive"}
+
+
+def _blocked_message(blocked: list[package_guard.BlockedPackage]) -> str:
+    names = ", ".join(f"{b.name} ({b.category})" for b in blocked)
+    return f"Kritik sistem paketleri kaldırılacağı için işlem engellendi: {names}"
+
+
+def _save_rollback(record: RollbackRecord, seq: int) -> None:
+    """Geri alma kaydını yazar; yazılamazsa kaldırma başarılı sayılır, uyarı verilir."""
+    try:
+        save_record(record)
+    except OSError as exc:
+        _send({"seq": seq, "status": "ok", "message": f"Geri alma kaydı yazılamadı: {exc}"})
+
+
+def _remove_apt(seq: int, name: str, purge: bool) -> bool:
+    # Arayüzün planına güvenilmez: plan burada, root olarak yeniden hesaplanır
+    plan = package_guard.plan_apt_removal(name)
+    if plan.error:
+        _error(seq, f"Kaldırma planı hesaplanamadı: {plan.error}")
+        return False
+    if plan.blocked:
+        _error(seq, _blocked_message(plan.blocked))
+        return False
+    action = "purge" if purge else "remove"
+    if not _run(["apt-get", action, "-y", "--autoremove", "--", name], seq, _APT_ENV):
+        return False
+    # Geri almada hedef ve ona bağımlı olduğu için kaldırılanlar yeniden kurulur;
+    # artık gerekmeyen bağımlılıklar bunlarla birlikte kendiliğinden gelir.
+    _save_rollback(RollbackRecord(task_label=name, packages_to_remove=plan.removed), seq)
+    return True
+
+
+def _exec_app_remove_apt(seq: int, params: dict[str, str]) -> bool:
+    return _remove_apt(seq, params["name"], purge=False)
+
+
+def _exec_app_remove_apt_purge(seq: int, params: dict[str, str]) -> bool:
+    return _remove_apt(seq, params["name"], purge=True)
+
+
+def _invoking_user_home() -> Path | None:
+    """pkexec'i çağıran kullanıcının ev klasörü (PKEXEC_UID, bkz. pkexec(1))."""
+    try:
+        uid = int(os.environ["PKEXEC_UID"])
+        return Path(pwd.getpwuid(uid).pw_dir)
+    except (KeyError, ValueError):
+        return None
+
+
+def _delete_flatpak_user_data(seq: int, app_id: str) -> None:
+    """~/.var/app/<app_id> klasörünü siler (flatpak --delete-data'nın karşılığı).
+
+    Helper root olarak çalıştığı için `flatpak --delete-data` root'un ev klasörüne
+    bakar; bu yüzden çağıran kullanıcının klasörü burada silinir.
+    """
+    home = _invoking_user_home()
+    if home is None:
+        _send({"seq": seq, "status": "ok", "message": "Kullanıcı ayarları bulunamadı"})
+        return
+    var_dir = home / ".var"
+    app_root = var_dir / "app"
+    target = app_root / app_id
+    # Sembolik bağlantı izlenmez: yol bileşenlerinden biri bağlantıysa silinmez
+    for part in (var_dir, app_root, target):
+        if part.is_symlink():
+            _send({"seq": seq, "status": "ok", "message": f"Atlandı (bağlantı): {part}"})
+            return
+    if not target.is_dir():
+        return
+    try:
+        shutil.rmtree(target)
+        _send({"seq": seq, "status": "ok", "message": f"Silindi: {target}"})
+    except OSError as exc:
+        _send({"seq": seq, "status": "ok", "message": f"Ayarlar silinemedi: {exc}"})
+
+
+def _remove_flatpak(seq: int, app_id: str, delete_data: bool) -> bool:
+    if not _run(["flatpak", "uninstall", "-y", "--noninteractive", "--system", app_id], seq):
+        return False
+    # Artık hiçbir uygulamanın kullanmadığı çalışma ortamları; başarısızlık önemsiz
+    _run(["flatpak", "uninstall", "-y", "--noninteractive", "--system", "--unused"], seq)
+    if delete_data:
+        _delete_flatpak_user_data(seq, app_id)
+    _save_rollback(RollbackRecord(task_label=app_id, flatpaks_removed=[app_id]), seq)
+    return True
+
+
+def _exec_app_remove_flatpak(seq: int, params: dict[str, str]) -> bool:
+    return _remove_flatpak(seq, params["app_id"], delete_data=False)
+
+
+def _exec_app_remove_flatpak_data(seq: int, params: dict[str, str]) -> bool:
+    return _remove_flatpak(seq, params["app_id"], delete_data=True)
+
+
+def _snap_notes(name: str) -> str | None:
+    """`snap list <ad>` çıktısındaki Notes sütunu; snap kurulu değilse None."""
+    try:
+        r = subprocess.run(
+            ["snap", "list", name],
+            capture_output=True,
+            text=True,
+            timeout=30,
+            shell=False,
+            env={**os.environ, "LANG": "C", "LC_ALL": "C"},
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return None
+    for line in r.stdout.splitlines()[1:]:
+        parts = line.split()
+        if parts and parts[0] == name:
+            return parts[-1]
+    return None
+
+
+def _remove_snap(seq: int, name: str, purge: bool) -> bool:
+    notes = _snap_notes(name)
+    if notes is None:
+        _error(seq, f"Snap kurulu değil: {name}")
+        return False
+    blocked = package_guard.snap_blocked(name, notes)
+    if blocked:
+        _error(seq, _blocked_message(blocked))
+        return False
+    cmd = ["snap", "remove"]
+    if purge:
+        cmd.append("--purge")
+    if not _run([*cmd, name], seq):
+        return False
+    classic = [name] if "classic" in notes.split(",") else []
+    record = RollbackRecord(task_label=name, snaps_removed=[name], snaps_classic=classic)
+    _save_rollback(record, seq)
+    return True
+
+
+def _exec_app_remove_snap(seq: int, params: dict[str, str]) -> bool:
+    return _remove_snap(seq, params["name"], purge=False)
+
+
+def _exec_app_remove_snap_purge(seq: int, params: dict[str, str]) -> bool:
+    return _remove_snap(seq, params["name"], purge=True)
+
+
+def _exec_package_upgrade_one(seq: int, params: dict[str, str]) -> bool:
+    cmd = ["apt-get", "install", "--only-upgrade", "-y", "--", params["name"]]
+    return _run(cmd, seq, _APT_ENV)
+
+
+def _exec_flatpak_update(seq: int, params: dict[str, str]) -> bool:
+    cmd = ["flatpak", "update", "-y", "--noninteractive", "--system", params["app_id"]]
+    return _run(cmd, seq)
+
+
+def _exec_flatpak_install(seq: int, params: dict[str, str]) -> bool:
+    cmd = ["flatpak", "install", "-y", "--noninteractive", "--system", "flathub"]
+    return _run([*cmd, params["app_id"]], seq)
+
+
+def _exec_snap_refresh(seq: int, params: dict[str, str]) -> bool:
+    return _run(["snap", "refresh", params["name"]], seq)
+
+
+def _exec_snap_install(seq: int, params: dict[str, str]) -> bool:
+    return _run(["snap", "install", params["name"]], seq)
+
+
+def _exec_snap_install_classic(seq: int, params: dict[str, str]) -> bool:
+    return _run(["snap", "install", "--classic", params["name"]], seq)
+
+
 def _exec_not_implemented(seq: int, params: dict[str, str]) -> bool:
     _error(seq, "Bu işlem henüz uygulanmadı")
     return False
@@ -227,6 +408,18 @@ def _exec_not_implemented(seq: int, params: dict[str, str]) -> bool:
 _EXECUTORS: dict[str, Any] = {
     "package.install": _exec_package_install,
     "package.remove": _exec_package_remove,
+    "app.remove_apt": _exec_app_remove_apt,
+    "app.remove_apt_purge": _exec_app_remove_apt_purge,
+    "app.remove_flatpak": _exec_app_remove_flatpak,
+    "app.remove_flatpak_data": _exec_app_remove_flatpak_data,
+    "app.remove_snap": _exec_app_remove_snap,
+    "app.remove_snap_purge": _exec_app_remove_snap_purge,
+    "package.upgrade_one": _exec_package_upgrade_one,
+    "flatpak.update": _exec_flatpak_update,
+    "flatpak.install": _exec_flatpak_install,
+    "snap.refresh": _exec_snap_refresh,
+    "snap.install": _exec_snap_install,
+    "snap.install_classic": _exec_snap_install_classic,
     "package.update_index": _exec_package_update_index,
     "package.update_all": _exec_package_update_all,
     "service.enable": _exec_service_enable,

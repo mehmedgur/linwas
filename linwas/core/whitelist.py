@@ -34,6 +34,10 @@ class ParamKind(Enum):
     ALLOWED_SYSTEM_PATH = "allowed_system_path"
     # Serbest metin (sistem dosyasına yazılacak içerik vb.)
     TEXT = "text"
+    # Flatpak uygulama kimliği (ör. org.videolan.VLC)
+    FLATPAK_ID = "flatpak_id"
+    # Snap adı (ör. firefox)
+    SNAP_NAME = "snap_name"
 
 
 @dataclass(frozen=True)
@@ -75,6 +79,12 @@ _RE_APT_SOURCE = re.compile(
 # Keyring yolu: /usr/share/keyrings/linwas-*.gpg veya .asc
 _KEYRING_DIR = Path("/usr/share/keyrings")
 _RE_KEYRING_NAME = re.compile(r"^linwas-[a-z0-9\-]+\.(gpg|asc)$")
+
+# Flatpak kimliği: en az üç noktalı bileşen; harfle başlar (tire ile başlayamaz)
+_RE_FLATPAK_ID = re.compile(r"^[A-Za-z][A-Za-z0-9_\-]*(\.[A-Za-z0-9_\-]+){2,}$")
+
+# Snap adı: küçük harf, rakam, tek tire; harf/rakamla başlar ve biter, en fazla 40 karakter
+_RE_SNAP_NAME = re.compile(r"^[a-z0-9](?:-?[a-z0-9])*$")
 
 # Yazılabilir sistem yolu önekleri
 _ALLOWED_WRITE_PREFIXES = (
@@ -155,6 +165,18 @@ def _validate_allowed_system_path(value: str) -> str:
     return value
 
 
+def _validate_flatpak_id(value: str) -> str:
+    if len(value) > 255 or not _RE_FLATPAK_ID.match(value):
+        raise ValidationError(f"Geçersiz Flatpak kimliği: {value!r}")
+    return value
+
+
+def _validate_snap_name(value: str) -> str:
+    if len(value) > 40 or not _RE_SNAP_NAME.match(value):
+        raise ValidationError(f"Geçersiz snap adı: {value!r}")
+    return value
+
+
 def _validate_text(value: str) -> str:
     # Serbest metin; boş olabilir, NUL byte yok
     if "\x00" in value:
@@ -172,6 +194,8 @@ _VALIDATORS: dict[ParamKind, object] = {
     ParamKind.DEB_PATH: _validate_deb_path,
     ParamKind.ALLOWED_SYSTEM_PATH: _validate_allowed_system_path,
     ParamKind.TEXT: _validate_text,
+    ParamKind.FLATPAK_ID: _validate_flatpak_id,
+    ParamKind.SNAP_NAME: _validate_snap_name,
 }
 
 
@@ -201,6 +225,70 @@ OPERATIONS: dict[str, OperationSpec] = {
         ("name", ParamKind.PACKAGE_NAME),
         risk=RiskLevel.MEDIUM,
         label="Remove package",
+    ),
+    # Program kaldırma: bağımlı paketler ve artık gerekmeyen bağımlılıklar da kaldırılır.
+    # Helper çalıştırmadan önce planı yeniden hesaplar ve kritik paketleri engeller.
+    "app.remove_apt": _op(
+        ("name", ParamKind.PACKAGE_NAME),
+        risk=RiskLevel.MEDIUM,
+        label="Remove program",
+    ),
+    "app.remove_apt_purge": _op(
+        ("name", ParamKind.PACKAGE_NAME),
+        risk=RiskLevel.MEDIUM,
+        label="Remove program and its settings",
+    ),
+    "app.remove_flatpak": _op(
+        ("app_id", ParamKind.FLATPAK_ID),
+        risk=RiskLevel.MEDIUM,
+        label="Remove program",
+    ),
+    "app.remove_flatpak_data": _op(
+        ("app_id", ParamKind.FLATPAK_ID),
+        risk=RiskLevel.MEDIUM,
+        label="Remove program and its settings",
+    ),
+    "app.remove_snap": _op(
+        ("name", ParamKind.SNAP_NAME),
+        risk=RiskLevel.MEDIUM,
+        label="Remove program",
+    ),
+    "app.remove_snap_purge": _op(
+        ("name", ParamKind.SNAP_NAME),
+        risk=RiskLevel.MEDIUM,
+        label="Remove program and its settings",
+    ),
+    # Tek programı güncelleme
+    "package.upgrade_one": _op(
+        ("name", ParamKind.PACKAGE_NAME),
+        risk=RiskLevel.LOW,
+        label="Update program",
+    ),
+    "flatpak.update": _op(
+        ("app_id", ParamKind.FLATPAK_ID),
+        risk=RiskLevel.LOW,
+        label="Update program",
+    ),
+    "snap.refresh": _op(
+        ("name", ParamKind.SNAP_NAME),
+        risk=RiskLevel.LOW,
+        label="Update program",
+    ),
+    # Geri alma ve Flatpak kurulumu
+    "flatpak.install": _op(
+        ("app_id", ParamKind.FLATPAK_ID),
+        risk=RiskLevel.LOW,
+        label="Install program (Flatpak)",
+    ),
+    "snap.install": _op(
+        ("name", ParamKind.SNAP_NAME),
+        risk=RiskLevel.LOW,
+        label="Install program (Snap)",
+    ),
+    "snap.install_classic": _op(
+        ("name", ParamKind.SNAP_NAME),
+        risk=RiskLevel.MEDIUM,
+        label="Install program (Snap, classic)",
     ),
     "package.update_all": OperationSpec(
         params=[],

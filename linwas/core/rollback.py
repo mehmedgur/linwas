@@ -38,6 +38,11 @@ class RollbackRecord:
     packages_to_install: list[str] = field(default_factory=list)
     # Kaldırılacak paketler (geri almada yeniden kurulur)
     packages_to_remove: list[str] = field(default_factory=list)
+    # Kaldırılan Flatpak uygulamaları ve snap'ler (geri almada yeniden kurulur)
+    flatpaks_removed: list[str] = field(default_factory=list)
+    snaps_removed: list[str] = field(default_factory=list)
+    # snaps_removed içinden classic kipte kurulması gerekenler
+    snaps_classic: list[str] = field(default_factory=list)
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
@@ -49,7 +54,9 @@ class RollbackRecord:
     def from_json(cls, text: str) -> RollbackRecord:
         d = json.loads(text)
         backups = [FileBackup(**b) for b in d.pop("file_backups", [])]
-        record = cls(**{k: v for k, v in d.items() if k != "file_backups"})
+        # Bilinmeyen alanlar (ör. daha yeni sürümün kaydı) yok sayılır
+        known = set(cls.__dataclass_fields__) - {"file_backups"}
+        record = cls(**{k: v for k, v in d.items() if k in known})
         record.file_backups = backups
         return record
 
@@ -74,6 +81,16 @@ def load_record(record_id: str, base_dir: Path = ROLLBACK_DIR) -> RollbackRecord
     """Kaydı diskten okur. Kayıt yoksa FileNotFoundError fırlatır."""
     path = base_dir / record_id / "record.json"
     return RollbackRecord.from_json(path.read_text(encoding="utf-8"))
+
+
+def records_since(timestamp: str, base_dir: Path = ROLLBACK_DIR) -> list[RollbackRecord]:
+    """Verilen ISO zamandan (dahil) sonra oluşturulan kayıtları döner."""
+    return [r for r in list_records(base_dir) if r.timestamp >= timestamp]
+
+
+def now_iso() -> str:
+    """Kayıt zaman damgasıyla karşılaştırılabilir şimdiki zaman."""
+    return datetime.now(timezone.utc).isoformat()
 
 
 def list_records(base_dir: Path = ROLLBACK_DIR) -> list[RollbackRecord]:
@@ -111,5 +128,12 @@ def undo_ops(record: RollbackRecord) -> list[tuple[str, dict[str, str]]]:
     # Kaldırılmış paketleri yeniden kur
     for pkg in record.packages_to_remove:
         ops.append(("package.install", {"name": pkg}))
+
+    for app_id in record.flatpaks_removed:
+        ops.append(("flatpak.install", {"app_id": app_id}))
+
+    for snap in record.snaps_removed:
+        op = "snap.install_classic" if snap in record.snaps_classic else "snap.install"
+        ops.append((op, {"name": snap}))
 
     return ops

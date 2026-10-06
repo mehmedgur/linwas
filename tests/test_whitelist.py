@@ -232,3 +232,29 @@ class TestMissingRequiredParam:
 class TestNoParams:
     def test_update_all_no_params(self):
         assert validate("package.update_all", {}) == {}
+
+
+class TestRemovalParams:
+    @pytest.mark.parametrize("app_id", ["org.videolan.VLC", "com.github.tchx84.Flatseal"])
+    def test_valid_flatpak_id(self, app_id):
+        assert validate("app.remove_flatpak", {"app_id": app_id}) == {"app_id": app_id}
+
+    @pytest.mark.parametrize(
+        "app_id", ["vlc", "org.vlc", "-org.a.b", "org.a.b;rm", "../x.y.z", "org.a b.c"]
+    )
+    def test_invalid_flatpak_id(self, app_id):
+        with pytest.raises(ValidationError):
+            validate("app.remove_flatpak_data", {"app_id": app_id})
+
+    @pytest.mark.parametrize("name", ["firefox", "core22", "gnome-3-28-1804"])
+    def test_valid_snap_name(self, name):
+        assert validate("app.remove_snap", {"name": name}) == {"name": name}
+
+    @pytest.mark.parametrize("name", ["-x", "Firefox", "a--b", "x-", "a" * 41, "a b"])
+    def test_invalid_snap_name(self, name):
+        with pytest.raises(ValidationError):
+            validate("snap.install_classic", {"name": name})
+
+    def test_apt_removal_param(self):
+        with pytest.raises(ValidationError):
+            validate("app.remove_apt_purge", {"name": "--force"})
