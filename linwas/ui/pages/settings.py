@@ -224,9 +224,12 @@ class SettingsPage(BasePage):
     def _load_plugins(self) -> None:
         from linwas.core.plugins.loader import PluginLoader
 
-        loader = PluginLoader()
-        with contextlib.suppress(Exception):
-            loader.discover()
+        # Ana pencerenin yüklediği eklentiler (yerleşikler dahil)
+        loader = getattr(self.window(), "plugin_loader", None)
+        if loader is None:
+            loader = PluginLoader()
+            with contextlib.suppress(Exception):
+                loader.discover()
         lines = []
         for plugin in loader.plugins():
             info = getattr(plugin, "meta", None)

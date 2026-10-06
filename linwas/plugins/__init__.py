@@ -1,1 +1,1 @@
-"""Yerleşik eklentiler (aşama 4)."""
+"""Yerleşik eklentiler (karar belgesi › Eklenti mimarisi)."""

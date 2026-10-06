@@ -103,6 +103,10 @@ class PluginLoader:
         """(eklenti adı, hata) çiftlerini döner."""
         return list(self._errors)
 
+    def add_error(self, name: str, message: str) -> None:
+        """Yükleme sonrası (ör. sayfa oluşturulurken) oluşan hatayı kaydeder."""
+        self._errors.append((name, message))
+
     def load_class(self, cls: type[PluginBase]) -> PluginBase | None:
         """Doğrudan sınıf vererek eklenti yükler (testler ve yerleşik eklentiler için)."""
         try:

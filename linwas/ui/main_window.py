@@ -17,7 +17,6 @@ from PySide6.QtWidgets import (
 
 from linwas.backend.desktop import Desktop
 from linwas.backend.distro import SupportStatus, detect_distro, evaluate_support
-from linwas.backend.power import is_laptop
 from linwas.core import app_settings
 from linwas.core.history import HistoryDB, HistoryEntry
 from linwas.core.rollback import RollbackRecord, now_iso, records_since, undo_ops
@@ -30,20 +29,14 @@ from linwas.ui.pages.ai_chat import AIChatPage
 from linwas.ui.pages.all_settings import AllSettingsPage
 from linwas.ui.pages.backups import BackupsPage
 from linwas.ui.pages.base import BasePage
-from linwas.ui.pages.cleanup import CleanupPage
 from linwas.ui.pages.drivers import DriversPage
 from linwas.ui.pages.guide import GuidePage
-from linwas.ui.pages.hardware import HardwarePage
 from linwas.ui.pages.interface import DisplayPage, FontsPage, ThemePage, WindowsAppearancePage
-from linwas.ui.pages.migrate import MigratePage
 from linwas.ui.pages.network import NetworkPage
 from linwas.ui.pages.overview import OverviewPage
-from linwas.ui.pages.personal_backup import PersonalBackupPage
-from linwas.ui.pages.power import PowerPage
 from linwas.ui.pages.settings import SettingsPage
 from linwas.ui.pages.software import SoftwarePage
 from linwas.ui.pages.stub import StubPage
-from linwas.ui.pages.taskmgr import TaskMgrPage
 from linwas.ui.pages.troubleshoot import TroubleshootPage
 from linwas.ui.pages.updates import UpdatesPage
 from linwas.ui.sidebar import Sidebar
@@ -307,9 +300,6 @@ class MainWindow(QMainWindow):
         self._add_page("updates", UpdatesPage(self._stack))
         self._add_page("drivers", DriversPage(self._stack))
         self._add_page("software", SoftwarePage(self._stack))
-        self._add_page("migrate", MigratePage(self._stack))
-        self._add_page("taskmgr", TaskMgrPage(self._stack))
-        self._add_page("cleanup", CleanupPage(self._stack))
         self._add_page("backups", BackupsPage(self._stack))
         self._add_page("network", NetworkPage(self._stack))
         self._add_page("all_settings", AllSettingsPage(self._stack))
@@ -333,13 +323,8 @@ class MainWindow(QMainWindow):
         self._ai_page = AIChatPage(self._stack)
         self._ai_page._panel.settings_changed.connect(self._on_ai_settings_changed)
         self._add_page("ai_chat", self._ai_page)
-        self._add_page("hardware", HardwarePage(self._stack))
-        self._add_page("personal_backup", PersonalBackupPage(self._stack))
-        # Güç ve pil yalnızca dizüstünde (karar belgesi)
-        if is_laptop():
-            self._add_page("power", PowerPage(self._stack))
-        else:
-            self._sidebar.hide_item("power")
+        # Eklenti sayfaları: yerleşik özellikler + kurulu resmi eklentiler
+        self._load_plugins()
 
         for page_id, label in _STUB_PAGES.items():
             if page_id in self._pages:
@@ -392,6 +377,40 @@ class MainWindow(QMainWindow):
         self._run_started = now_iso()
         self._running_tasks = temp.all_tasks
         self._start_progress(temp)
+
+    def _load_plugins(self) -> None:
+        """Yerleşik ve kurulu eklentileri yükler, sayfalarını ekler.
+
+        Bir eklentinin sayfası açılamazsa uygulama çalışmaya devam eder; hata
+        Ayarlar › Eklentiler'de görünür.
+        """
+        from linwas.core.plugins.loader import PluginLoader
+        from linwas.plugins.builtin import BUILTIN_PLUGINS
+
+        loader = PluginLoader()
+        for cls in BUILTIN_PLUGINS:
+            loader.load_class(cls)
+        loader.discover()
+        self.plugin_loader = loader
+
+        offered = set()
+        for plugin in loader.plugins():
+            for spec in plugin.pages():
+                try:
+                    page = plugin.create_page(spec.id, self._stack)
+                except Exception as exc:  # bozuk eklenti uygulamayı düşürmesin
+                    loader.add_error(plugin.meta.id, str(exc))
+                    page = None
+                if page is None or spec.id in self._pages:
+                    continue
+                self._add_page(spec.id, page)
+                offered.add(spec.id)
+                if not self._sidebar.has_item(spec.id):
+                    self._sidebar.add_item(spec.id, spec.label)
+        # Yerleşik eklentisi bu sistemde sayfa sunmayan menü öğeleri gizlenir (ör. Güç ve Pil)
+        for cls in BUILTIN_PLUGINS:
+            if cls.page.id not in offered:
+                self._sidebar.hide_item(cls.page.id)
 
     def _open_guide(self, text: str) -> None:
         if text:

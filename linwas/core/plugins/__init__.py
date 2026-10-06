@@ -107,6 +107,14 @@ class PluginBase(ABC):
         """Menüye eklencek sayfaları döner."""
         return []
 
+    def create_page(self, page_id: str, parent: object) -> object | None:
+        """pages() içindeki sayfanın arayüz nesnesini oluşturur (arayüz katmanı çağırır).
+
+        Çekirdek Qt'ye bağımlı olmadığı için dönüş türü genel tutulur; eklenti Qt
+        modülünü yalnızca bu işlev çağrıldığında içe aktarmalıdır.
+        """
+        return None
+
     def task_types(self) -> list[TaskTypeSpec]:
         """Kuyruğa eklenebilecek görev türlerini döner."""
         return []

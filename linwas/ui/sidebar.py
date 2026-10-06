@@ -227,6 +227,16 @@ class Sidebar(QWidget):
             if btn.item_id in self._hidden:
                 btn.setVisible(False)
 
+    def has_item(self, item_id: str) -> bool:
+        return any(btn.item_id == item_id for btn in self._buttons)
+
+    def add_item(self, item_id: str, label: str) -> None:
+        """Eklenti sayfası için menüye öğe ekler (menünün sonuna, ayırıcıdan önce)."""
+        btn = _NavButton(MenuItem(item_id, label))
+        btn.clicked.connect(self._on_click)
+        self._menu_layout.insertWidget(self._menu_layout.count() - 1, btn)
+        self._buttons.append(btn)
+
     def hide_item(self, item_id: str) -> None:
         """Öğeyi menüden gizler (ör. masaüstü bilgisayarda Güç ve pil)."""
         self._hidden.add(item_id)
