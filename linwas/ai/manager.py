@@ -7,7 +7,7 @@ sohbet gönderme, kullanım kaydetme ve geçmiş yönetimini koordine eder.
 from __future__ import annotations
 
 from linwas.ai.base import AIError, AIProvider, AIResponse, Message
-from linwas.ai.chat_history import ChatHistoryDB, Conversation
+from linwas.ai.chat_history import CONTEXT_MARKER, ChatHistoryDB, Conversation
 from linwas.ai.context import build_context, build_system_prompt
 from linwas.ai.gemini import GEMINI
 from linwas.ai.keystore import get_key
@@ -48,6 +48,38 @@ class AISession:
         system_msg = Message(role="system", content=build_system_prompt())
         self._conversation.messages.append(system_msg)
 
+    @classmethod
+    def resume(
+        cls,
+        conversation: Conversation,
+        provider: AIProvider,
+        model: str,
+        usage_db: UsageDB | None = None,
+        history_db: ChatHistoryDB | None = None,
+    ) -> AISession:
+        """Kayıtlı bir sohbeti sürdürür; sonraki yanıtlar verilen modelden gelir."""
+        session = cls(provider, model, usage_db, history_db)
+        if conversation.messages and conversation.messages[0].role == "system":
+            # Kayıtlı sistem istemi yerine güncel olanı kullan
+            conversation.messages[0] = session._conversation.messages[0]
+        else:
+            conversation.messages.insert(0, session._conversation.messages[0])
+        session._conversation = conversation
+        session.switch(provider, model)
+        return session
+
+    def switch(self, provider: AIProvider, model: str) -> None:
+        """Sohbet geçmişini koruyarak sağlayıcı/model değiştirir."""
+        self._provider = provider
+        self._model = model
+        self._conversation.provider = provider.provider_id
+        self._conversation.model = model
+
+    @property
+    def messages(self) -> list[Message]:
+        """Sistem istemi hariç mesajlar."""
+        return [m for m in self._conversation.messages if m.role != "system"]
+
     @property
     def provider(self) -> AIProvider:
         return self._provider
@@ -84,7 +116,7 @@ class AISession:
         content = text
         if include_system_context:
             context = build_context()
-            content = f"{text}\n\n--- Sistem bilgim ---\n{context}"
+            content = f"{text}{CONTEXT_MARKER}{context}"
 
         user_msg = Message(
             role="user",
@@ -99,7 +131,9 @@ class AISession:
             api_key,
         )
 
-        assistant_msg = Message(role="assistant", content=response.text)
+        assistant_msg = Message(
+            role="assistant", content=response.text, model=response.model or self._model
+        )
         self._conversation.messages.append(assistant_msg)
 
         # Kullanım kaydet

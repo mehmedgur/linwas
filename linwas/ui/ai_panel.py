@@ -10,13 +10,9 @@ from PySide6.QtCore import QCoreApplication, Qt, QThread, Signal
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
-    QDialog,
-    QDialogButtonBox,
-    QFormLayout,
     QFrame,
     QHBoxLayout,
     QLabel,
-    QLineEdit,
     QPushButton,
     QScrollArea,
     QSizePolicy,
@@ -25,10 +21,13 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from linwas.ai.base import AIResponse, TaskSuggestion
-from linwas.ai.keystore import delete_key, get_key, keyring_available, set_key
-from linwas.ai.manager import ALL_PROVIDERS, AISession, available_providers, get_provider
+from linwas.ai import prefs as ai_prefs
+from linwas.ai.base import AIResponse, Message, TaskSuggestion
+from linwas.ai.chat_history import ChatHistoryDB, display_text
+from linwas.ai.keystore import get_key
+from linwas.ai.manager import AISession, available_providers, get_provider
 from linwas.ai.usage import UsageDB
+from linwas.ui.dialogs.ai_settings import AISettingsDialog
 
 
 def tr(text: str) -> str:
@@ -67,13 +66,18 @@ class _ChatWorker(QThread):
 
 
 class _MessageBubble(QFrame):
-    def __init__(self, text: str, is_user: bool, parent: QWidget | None = None) -> None:
+    def __init__(
+        self, text: str, is_user: bool, parent: QWidget | None = None, model: str = ""
+    ) -> None:
         super().__init__(parent)
         self.setObjectName("Card")
         layout = QVBoxLayout(self)
         layout.setContentsMargins(10, 8, 10, 8)
 
-        role_lbl = QLabel(tr("You") if is_user else tr("AI"), self)
+        role = tr("You") if is_user else tr("AI")
+        if model and not is_user:
+            role += f" · {model}"
+        role_lbl = QLabel(role, self)
         role_lbl.setObjectName("Secondary")
         layout.addWidget(role_lbl)
 
@@ -85,6 +89,7 @@ class _MessageBubble(QFrame):
         if is_user:
             self.setStyleSheet(
                 "QFrame#Card { background-color: #dce6f5; border: none; border-radius: 8px; }"
+                " QLabel { background-color: transparent; }"
             )
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
@@ -99,7 +104,7 @@ class _TaskSuggestionCard(QFrame):
         self.setObjectName("Card")
         self.setStyleSheet(
             "QFrame#Card { background-color: #e8f5e9; border: 1px solid #81c784;"
-            " border-radius: 8px; }"
+            " border-radius: 8px; } QLabel { background-color: transparent; }"
         )
         layout = QVBoxLayout(self)
         layout.setContentsMargins(10, 8, 10, 8)
@@ -116,64 +121,6 @@ class _TaskSuggestionCard(QFrame):
         add_btn.setProperty("primary", True)
         add_btn.clicked.connect(lambda: self.add_to_queue.emit(suggestion.op_id, suggestion.params))
         layout.addWidget(add_btn)
-
-
-# --- Anahtar yapılandırma diyaloğu ---
-
-
-class _KeyDialog(QDialog):
-    def __init__(self, parent: QWidget | None = None) -> None:
-        super().__init__(parent)
-        self.setWindowTitle(tr("AI Provider Settings"))
-        self.setMinimumWidth(440)
-
-        layout = QVBoxLayout(self)
-
-        info = QLabel(
-            tr("Enter API keys for AI providers. Keys are stored in the system keyring."), self
-        )
-        info.setWordWrap(True)
-        layout.addWidget(info)
-
-        if not keyring_available():
-            warn = QLabel(
-                tr(
-                    "⚠ System keyring not available. Keys will be remembered for this session only."
-                ),
-                self,
-            )
-            warn.setWordWrap(True)
-            warn.setStyleSheet("color: #9d5d00;")
-            layout.addWidget(warn)
-
-        form = QFormLayout()
-        self._fields: dict[str, QLineEdit] = {}
-        for provider in ALL_PROVIDERS:
-            field = QLineEdit(self)
-            field.setEchoMode(QLineEdit.EchoMode.Password)
-            field.setPlaceholderText(tr("Paste API key here"))
-            existing = get_key(provider.provider_id)
-            if existing:
-                field.setText(existing)
-            self._fields[provider.provider_id] = field
-            form.addRow(provider.display_name + ":", field)
-        layout.addLayout(form)
-
-        buttons = QDialogButtonBox(
-            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel, self
-        )
-        buttons.accepted.connect(self._save)
-        buttons.rejected.connect(self.reject)
-        layout.addWidget(buttons)
-
-    def _save(self) -> None:
-        for pid, field in self._fields.items():
-            key = field.text().strip()
-            if key:
-                set_key(pid, key)
-            else:
-                delete_key(pid)
-        self.accept()
 
 
 # --- Ana panel ---
@@ -204,6 +151,8 @@ class AIPanel(QWidget):
     """AI yardımcı paneli (sağ kenar)."""
 
     task_add_requested = Signal(str, dict)  # (op_id, params) → main_window kuyruğa ekler
+    conversation_saved = Signal()  # yanıt geldi, geçmiş güncellendi
+    settings_changed = Signal()  # anahtarlar/sınırlar değişti
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -211,6 +160,11 @@ class AIPanel(QWidget):
 
         self._session: AISession | None = None
         self._worker: _ChatWorker | None = None
+        # Sağlayıcı başına model listesi ve son seçilen model (ağ isteğini azaltır)
+        self._models: dict[str, list[str]] = {}
+        # Son seçimler uygulama yeniden açılınca da hatırlanır
+        self._prefs = ai_prefs.load()
+        self._chosen_model: dict[str, str] = dict(self._prefs.models)
 
         outer = QVBoxLayout(self)
         outer.setContentsMargins(0, 0, 0, 0)
@@ -218,6 +172,7 @@ class AIPanel(QWidget):
 
         # Başlık çubuğu
         header = QWidget(self)
+        self._header = header
         header.setObjectName("StatusBar")
         header_layout = QHBoxLayout(header)
         header_layout.setContentsMargins(10, 6, 10, 6)
@@ -247,6 +202,10 @@ class AIPanel(QWidget):
 
         self._model_combo = QComboBox(self)
         self._model_combo.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self._model_combo.setToolTip(
+            tr("You can switch models during a chat; the conversation continues.")
+        )
+        self._model_combo.currentIndexChanged.connect(self._on_model_changed)
         selector_layout.addWidget(self._model_combo)
         outer.addWidget(selector_widget)
 
@@ -309,55 +268,135 @@ class AIPanel(QWidget):
 
     # --- Sağlayıcı/model yönetimi ---
 
+    def set_header_visible(self, visible: bool) -> None:
+        """AI sayfasında başlık çubuğu gereksizdir (sayfanın kendi başlığı ve ayar düğmesi var)."""
+        self._header.setVisible(visible)
+
     def _refresh_providers(self) -> None:
+        current = self._provider_combo.currentData() or self._prefs.last_provider
         providers = available_providers()
         self._provider_combo.blockSignals(True)
         self._provider_combo.clear()
         for p in providers:
             self._provider_combo.addItem(p.display_name, p.provider_id)
+        index = self._provider_combo.findData(current)
+        self._provider_combo.setCurrentIndex(max(index, 0))
         self._provider_combo.blockSignals(False)
 
         if providers:
-            self._on_provider_changed(0)
+            self._on_provider_changed(self._provider_combo.currentIndex())
             self._send_btn.setEnabled(True)
         else:
             self._model_combo.clear()
+            self._session = None
             self._send_btn.setEnabled(False)
+
+    def _load_models(self, provider_id: str) -> list[str]:
+        if provider_id in self._models:
+            return self._models[provider_id]
+        provider = get_provider(provider_id)
+        api_key = get_key(provider_id)
+        if not provider or not api_key:
+            return []
+        try:
+            models = provider.list_models(api_key)
+        except Exception:
+            return []
+        self._models[provider_id] = models
+        return models
 
     def _on_provider_changed(self, _index: int) -> None:
         provider_id = self._provider_combo.currentData()
         if not provider_id:
             return
-        provider = get_provider(provider_id)
-        if not provider:
-            return
-
-        api_key = get_key(provider_id)
-        if not api_key:
-            return
-
+        models = self._load_models(provider_id)
+        self._model_combo.blockSignals(True)
         self._model_combo.clear()
-        try:
-            models = provider.list_models(api_key)
-            for m in models:
-                self._model_combo.addItem(m)
-        except Exception:
-            self._model_combo.addItem("(model listesi alınamadı)")
-
-        self._reset_session()
+        if models:
+            self._model_combo.addItems(models)
+            chosen = self._chosen_model.get(provider_id)
+            if chosen in models:
+                self._model_combo.setCurrentText(chosen)
+        else:
+            self._model_combo.addItem(tr("(model list unavailable)"), "")
+        self._model_combo.blockSignals(False)
+        self._apply_selection()
         self._update_usage()
 
-    def _reset_session(self) -> None:
-        provider_id = self._provider_combo.currentData()
+    def _on_model_changed(self, _index: int) -> None:
+        self._apply_selection()
+
+    def _selected(self) -> tuple[object, str] | None:
+        provider = get_provider(self._provider_combo.currentData() or "")
         model = self._model_combo.currentText()
-        if not provider_id or not model:
-            self._session = None
+        if not provider or not model or self._model_combo.currentData() == "":
+            return None
+        return provider, model
+
+    def _apply_selection(self) -> None:
+        """Seçilen sağlayıcı/modeli oturuma uygular; sohbet geçmişi korunur."""
+        selected = self._selected()
+        if selected is None:
             return
-        provider = get_provider(provider_id)
-        if not provider:
+        provider, model = selected
+        pid = provider.provider_id  # type: ignore[attr-defined]
+        self._chosen_model[pid] = model
+        if self._prefs.last_provider != pid or self._prefs.models.get(pid) != model:
+            self._prefs.last_provider = pid
+            self._prefs.models[pid] = model
+            ai_prefs.save(self._prefs)
+        if self._session is None:
+            self._session = AISession(provider, model)  # type: ignore[arg-type]
+        else:
+            self._session.switch(provider, model)  # type: ignore[arg-type]
+
+    def _reset_session(self) -> None:
+        self._session = None
+        self._apply_selection()
+
+    # --- Sohbet yönetimi ---
+
+    def _clear_chat(self) -> None:
+        while self._chat_layout.count() > 1:
+            item = self._chat_layout.takeAt(0)
+            if item.widget():
+                item.widget().hide()
+                item.widget().deleteLater()
+
+    def new_chat(self) -> None:
+        """Boş yeni sohbet başlatır (seçili model korunur)."""
+        self._clear_chat()
+        self._reset_session()
+
+    @property
+    def conversation_id(self) -> str:
+        return self._session.conversation_id if self._session else ""
+
+    def load_conversation(self, conv_id: str) -> bool:
+        """Kayıtlı sohbeti açar; sonraki sorular seçili modele gider."""
+        conv = ChatHistoryDB().load(conv_id)
+        selected = self._selected()
+        if conv is None:
+            return False
+        self._clear_chat()
+        if selected is not None:
+            provider, model = selected
+            self._session = AISession.resume(conv, provider, model)  # type: ignore[arg-type]
+            messages = self._session.messages
+        else:
+            # Anahtar yoksa yalnızca okunur gösterim
             self._session = None
-            return
-        self._session = AISession(provider, model)
+            messages = [m for m in conv.messages if m.role != "system"]
+        for msg in messages:
+            self._show_message(msg)
+        return True
+
+    def _show_message(self, msg: Message) -> None:
+        is_user = msg.role == "user"
+        text = display_text(msg.content) if is_user else msg.content
+        bubble = _MessageBubble(text, is_user, self._chat_content, model=msg.model)
+        self._chat_layout.insertWidget(self._chat_layout.count() - 1, bubble)
+        self._scroll_to_bottom()
 
     def _update_usage(self) -> None:
         provider_id = self._provider_combo.currentData()
@@ -373,10 +412,13 @@ class AIPanel(QWidget):
         else:
             self._usage_lbl.setText(tr("{used:,} tokens this month").format(used=usage.total))
 
-    def _open_settings(self) -> None:
-        dlg = _KeyDialog(self)
-        dlg.exec()
-        self._refresh_providers()
+    def open_settings(self) -> None:
+        if AISettingsDialog(self).exec():
+            self._models.clear()  # anahtar değişmiş olabilir
+            self._refresh_providers()
+            self.settings_changed.emit()
+
+    _open_settings = open_settings
 
     # --- Mesaj gönderme ---
 
@@ -407,7 +449,14 @@ class AIPanel(QWidget):
         worker.start()
 
     def _on_response(self, resp: AIResponse) -> None:
-        self._add_bubble(resp.text, is_user=False)
+        bubble = _MessageBubble(
+            resp.text,
+            False,
+            self._chat_content,
+            model=resp.model or self._model_combo.currentText(),
+        )
+        self._chat_layout.insertWidget(self._chat_layout.count() - 1, bubble)
+        self.conversation_saved.emit()
         if resp.task_suggestion:
             card = _TaskSuggestionCard(resp.task_suggestion, self._chat_content)
             card.add_to_queue.connect(self.task_add_requested)
@@ -450,4 +499,5 @@ class AIPanel(QWidget):
 
     def refresh(self) -> None:
         """Anahtarlar değiştikten sonra paneli günceller."""
+        self._models.clear()
         self._refresh_providers()

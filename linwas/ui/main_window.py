@@ -143,6 +143,7 @@ class MainWindow(QMainWindow):
         # AI yardımcı paneli (sağda, sağlayıcı yoksa gizli)
         self._ai_panel = AIPanel(central)
         self._ai_panel.task_add_requested.connect(self._on_ai_task_requested)
+        self._ai_panel.settings_changed.connect(self._on_ai_settings_changed)
         self._ai_panel.setVisible(False)  # _check_ai_panel() görünürlüğü ayarlar
         content_row.addWidget(self._ai_panel)
 
@@ -198,7 +199,9 @@ class MainWindow(QMainWindow):
         self._add_page("cleanup", CleanupPage(self._stack))
         self._add_page("backups", BackupsPage(self._stack))
         self._add_page("network", NetworkPage(self._stack))
-        self._add_page("ai_chat", AIChatPage(self._stack))
+        self._ai_page = AIChatPage(self._stack)
+        self._ai_page._panel.settings_changed.connect(self._on_ai_settings_changed)
+        self._add_page("ai_chat", self._ai_page)
         self._add_page("hardware", HardwarePage(self._stack))
         self._add_page("personal_backup", PersonalBackupPage(self._stack))
         # Güç ve pil yalnızca dizüstünde (karar belgesi)
@@ -219,6 +222,9 @@ class MainWindow(QMainWindow):
         if page:
             self._stack.setCurrentWidget(page)
             self._sidebar.set_active(page_id)
+
+        # AI sayfasında yan panel gereksiz
+        self._check_ai_panel()
 
     def _check_support(self) -> None:
         distro = detect_distro()
@@ -319,7 +325,14 @@ class MainWindow(QMainWindow):
     def _check_ai_panel(self) -> None:
         from linwas.ai.manager import available_providers
 
-        self._ai_panel.setVisible(bool(available_providers()))
+        on_ai_page = self._stack.currentWidget() is self._pages.get("ai_chat")
+        self._ai_panel.setVisible(bool(available_providers()) and not on_ai_page)
+
+    def _on_ai_settings_changed(self) -> None:
+        """Anahtarlar bir panelde değişince diğerini de günceller."""
+        self._ai_panel.refresh()
+        self._ai_page._panel.refresh()
+        self._check_ai_panel()
 
     def _on_ai_task_requested(self, op_id: str, params: dict) -> None:
         """AI panelinden gelen görev önerisini kuyruğa ekler."""

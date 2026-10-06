@@ -340,18 +340,6 @@
         <translation>Kuyruğa Ekle</translation>
     </message>
     <message>
-        <source>Enter API keys for AI providers. Keys are stored in the system keyring.</source>
-        <translation>Yapay zeka sağlayıcıları için API anahtarlarını girin. Anahtarlar sistem anahtar kasasında saklanır.</translation>
-    </message>
-    <message>
-        <source>⚠ System keyring not available. Keys will be remembered for this session only.</source>
-        <translation>⚠ Sistem anahtar kasası kullanılamıyor. Anahtarlar yalnızca bu oturum için hatırlanacak.</translation>
-    </message>
-    <message>
-        <source>Paste API key here</source>
-        <translation>API anahtarını buraya yapıştırın</translation>
-    </message>
-    <message>
         <source>{used:,} / {limit:,} tokens this month</source>
         <translation>Bu ay {used:,} / {limit:,} token</translation>
     </message>
@@ -386,6 +374,14 @@
     <message>
         <source>Your account with this provider has run out of balance. Top up your balance on the provider's website, or choose another provider.</source>
         <translation>Bu sağlayıcıdaki hesabınızın bakiyesi bitmiş. Sağlayıcının web sitesinden bakiye yükleyin ya da başka bir sağlayıcı seçin.</translation>
+    </message>
+    <message>
+        <source>(model list unavailable)</source>
+        <translation>(model listesi alınamadı)</translation>
+    </message>
+    <message>
+        <source>You can switch models during a chat; the conversation continues.</source>
+        <translation>Sohbet sırasında model değiştirebilirsiniz; sohbet kaldığı yerden devam eder.</translation>
     </message>
 </context>
 <context>
@@ -1252,6 +1248,46 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <source>Ask anything about your computer. Suggested actions are only added to the queue; nothing runs until you press Apply.</source>
         <translation>Bilgisayarınızla ilgili her şeyi sorun. Önerilen işlemler yalnızca kuyruğa eklenir; siz Uygula'ya basmadan hiçbir şey çalışmaz.</translation>
     </message>
+    <message>
+        <source>(empty chat)</source>
+        <translation>(boş sohbet)</translation>
+    </message>
+    <message>
+        <source>+ New chat</source>
+        <translation>+ Yeni sohbet</translation>
+    </message>
+    <message>
+        <source>AI settings</source>
+        <translation>AI ayarları</translation>
+    </message>
+    <message>
+        <source>API keys and monthly token limits</source>
+        <translation>API anahtarları ve aylık token sınırları</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Sil</translation>
+    </message>
+    <message>
+        <source>Delete all</source>
+        <translation>Tümünü sil</translation>
+    </message>
+    <message>
+        <source>Delete all chats? This cannot be undone.</source>
+        <translation>Bütün sohbetler silinsin mi? Bu işlem geri alınamaz.</translation>
+    </message>
+    <message>
+        <source>Delete this chat?</source>
+        <translation>Bu sohbet silinsin mi?</translation>
+    </message>
+    <message>
+        <source>Previous chats</source>
+        <translation>Önceki sohbetler</translation>
+    </message>
 </context>
 <context>
     <name>HardwarePage</name>
@@ -1576,6 +1612,85 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>worn</source>
         <translation>yıpranmış</translation>
+    </message>
+</context>
+<context>
+    <name>AISettingsDialog</name>
+    <message>
+        <source>AI Settings</source>
+        <translation>AI ayarları</translation>
+    </message>
+    <message>
+        <source>API key:</source>
+        <translation>API anahtarı:</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Sil</translation>
+    </message>
+    <message>
+        <source>Enter a key first.</source>
+        <translation>Önce bir anahtar girin.</translation>
+    </message>
+    <message>
+        <source>Keys are stored in the system keyring and never written to disk as plain text. “Test” only lists models and uses no tokens.</source>
+        <translation>Anahtarlar sistemin anahtar kasasında saklanır, diske asla düz metin olarak yazılmaz. “Test et” yalnızca model listesini çeker, token harcamaz.</translation>
+    </message>
+    <message>
+        <source>Monthly limit:</source>
+        <translation>Aylık sınır:</translation>
+    </message>
+    <message>
+        <source>No limit</source>
+        <translation>Sınır yok</translation>
+    </message>
+    <message>
+        <source>Paste API key here</source>
+        <translation>API anahtarını buraya yapıştırın</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Kaydet</translation>
+    </message>
+    <message>
+        <source>Show</source>
+        <translation>Göster</translation>
+    </message>
+    <message>
+        <source>Test</source>
+        <translation>Test et</translation>
+    </message>
+    <message>
+        <source>Testing…</source>
+        <translation>Deneniyor…</translation>
+    </message>
+    <message>
+        <source>Used this month: {n} tokens</source>
+        <translation>Bu ay kullanılan: {n} token</translation>
+    </message>
+    <message>
+        <source>tokens</source>
+        <translation>token</translation>
+    </message>
+    <message>
+        <source>{name} API key</source>
+        <translation>{name} API anahtarı</translation>
+    </message>
+    <message>
+        <source>⚠ System keyring not available. Keys will be remembered for this session only.</source>
+        <translation>⚠ Sistem anahtar kasası kullanılamıyor. Anahtarlar yalnızca bu oturum için hatırlanacak.</translation>
+    </message>
+    <message>
+        <source>✓ Key works ({n} models available).</source>
+        <translation>✓ Anahtar çalışıyor ({n} model kullanılabilir).</translation>
+    </message>
+    <message>
+        <source>✗ Key doesn't work: {error}</source>
+        <translation>✗ Anahtar çalışmıyor: {error}</translation>
     </message>
 </context>
 </TS>

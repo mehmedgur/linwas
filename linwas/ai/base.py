@@ -18,6 +18,7 @@ class Message:
     role: str  # "system" | "user" | "assistant"
     content: str
     images: list[bytes] = field(default_factory=list)  # görsel ekleri (JPEG/PNG bayt)
+    model: str = ""  # yanıtı veren model (yalnızca assistant mesajlarında)
 
 
 @dataclass
