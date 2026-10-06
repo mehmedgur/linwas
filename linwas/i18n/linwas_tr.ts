@@ -359,6 +359,34 @@
         <source>{used:,} tokens this month</source>
         <translation>Bu ay {used:,} token</translation>
     </message>
+    <message>
+        <source>The API key is wrong or has been deleted. Check it with ⚙.</source>
+        <translation>API anahtarı yanlış ya da silinmiş. ⚙ ile kontrol edin.</translation>
+    </message>
+    <message>
+        <source>The provider has a server problem. Try again in a few minutes.</source>
+        <translation>Sağlayıcının sunucusunda sorun var. Birkaç dakika sonra tekrar deneyin.</translation>
+    </message>
+    <message>
+        <source>The provider is overloaded right now. Try again in a few minutes.</source>
+        <translation>Sağlayıcı şu anda çok yoğun. Birkaç dakika sonra tekrar deneyin.</translation>
+    </message>
+    <message>
+        <source>The request was not accepted by the provider.</source>
+        <translation>İstek sağlayıcı tarafından kabul edilmedi.</translation>
+    </message>
+    <message>
+        <source>This API key isn't allowed to use this model or service.</source>
+        <translation>Bu API anahtarının bu modeli veya hizmeti kullanma izni yok.</translation>
+    </message>
+    <message>
+        <source>Too many requests or your quota is used up. Wait a bit or choose another provider.</source>
+        <translation>Çok fazla istek gönderildi ya da kotanız doldu. Biraz bekleyin veya başka bir sağlayıcı seçin.</translation>
+    </message>
+    <message>
+        <source>Your account with this provider has run out of balance. Top up your balance on the provider's website, or choose another provider.</source>
+        <translation>Bu sağlayıcıdaki hesabınızın bakiyesi bitmiş. Sağlayıcının web sitesinden bakiye yükleyin ya da başka bir sağlayıcı seçin.</translation>
+    </message>
 </context>
 <context>
     <name>UpdatesPage</name>

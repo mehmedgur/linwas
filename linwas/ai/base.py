@@ -45,7 +45,14 @@ class AIResponse:
 
 
 class AIError(Exception):
-    """AI sağlayıcısı hatası (ağ, kimlik doğrulama, limit vb.)."""
+    """AI sağlayıcısı hatası (ağ, kimlik doğrulama, limit vb.).
+
+    `status`: HTTP durum kodu (varsa); arayüz bunu sade dille açıklar.
+    """
+
+    def __init__(self, message: str, status: int | None = None) -> None:
+        super().__init__(message)
+        self.status = status
 
 
 # Yanıt metnindeki görev önerisi etiketi kalıbı:

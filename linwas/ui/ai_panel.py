@@ -40,7 +40,7 @@ def tr(text: str) -> str:
 
 class _ChatWorker(QThread):
     response_ready = Signal(AIResponse)
-    error = Signal(str)
+    error = Signal(str, int)  # (mesaj, HTTP durum kodu; yoksa 0)
 
     def __init__(
         self,
@@ -60,7 +60,7 @@ class _ChatWorker(QThread):
             resp = self._session.send(self._text, self._images, self._include_context)
             self.response_ready.emit(resp)
         except Exception as exc:
-            self.error.emit(str(exc))
+            self.error.emit(str(exc), getattr(exc, "status", None) or 0)
 
 
 # --- Mesaj balonu ---
@@ -177,6 +177,27 @@ class _KeyDialog(QDialog):
 
 
 # --- Ana panel ---
+
+
+def _http_error_text(status: int) -> str:
+    """Sağlayıcıların ortak HTTP hata kodlarının sade açıklaması.
+
+    Kodlar: DeepSeek hata kodları belgesi (402 = bakiye bitti) ve genel HTTP anlamları.
+    """
+    return {
+        400: tr("The request was not accepted by the provider."),
+        401: tr("The API key is wrong or has been deleted. Check it with ⚙."),
+        402: tr(
+            "Your account with this provider has run out of balance. Top up your "
+            "balance on the provider's website, or choose another provider."
+        ),
+        403: tr("This API key isn't allowed to use this model or service."),
+        429: tr(
+            "Too many requests or your quota is used up. Wait a bit or choose another provider."
+        ),
+        500: tr("The provider has a server problem. Try again in a few minutes."),
+        503: tr("The provider is overloaded right now. Try again in a few minutes."),
+    }.get(status, "")
 
 
 class AIPanel(QWidget):
@@ -394,8 +415,10 @@ class AIPanel(QWidget):
         self._update_usage()
         self._scroll_to_bottom()
 
-    def _on_error(self, msg: str) -> None:
-        err_lbl = QLabel(f"⚠ {msg}", self._chat_content)
+    def _on_error(self, msg: str, status: int = 0) -> None:
+        friendly = _http_error_text(status)
+        text = f"⚠ {friendly}\n\n{msg}" if friendly else f"⚠ {msg}"
+        err_lbl = QLabel(text, self._chat_content)
         err_lbl.setStyleSheet("color: #c42b1c; padding: 6px;")
         err_lbl.setWordWrap(True)
         self._chat_layout.insertWidget(self._chat_layout.count() - 1, err_lbl)

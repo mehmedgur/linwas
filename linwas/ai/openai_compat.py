@@ -33,7 +33,7 @@ def _post(url: str, payload: dict[str, Any], api_key: str) -> dict[str, Any]:
     except urllib.error.HTTPError as exc:
         body = exc.read().decode(errors="replace")
         safe_body = sanitize(body)
-        raise AIError(f"HTTP {exc.code}: {safe_body[:300]}") from exc
+        raise AIError(f"HTTP {exc.code}: {safe_body[:300]}", status=exc.code) from exc
     except urllib.error.URLError as exc:
         raise AIError(f"Bağlantı hatası: {exc.reason}") from exc
 
@@ -49,7 +49,7 @@ def _get(url: str, api_key: str) -> dict[str, Any]:
             return json.loads(resp.read().decode())
     except urllib.error.HTTPError as exc:
         body = exc.read().decode(errors="replace")
-        raise AIError(f"HTTP {exc.code}: {sanitize(body[:300])}") from exc
+        raise AIError(f"HTTP {exc.code}: {sanitize(body[:300])}", status=exc.code) from exc
     except urllib.error.URLError as exc:
         raise AIError(f"Bağlantı hatası: {exc.reason}") from exc
 
