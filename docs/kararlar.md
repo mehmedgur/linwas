@@ -177,6 +177,12 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - Anahtar: adım adım rehber + anahtar testi (model listesi çekilerek, token harcamadan).
 - **Anahtar saklama:** sistem anahtar kasası (keyring). Kasa yoksa Linwas bunu sade dille söyler ve kurulumunu kuyruğa önerir; kurulmazsa anahtar yalnızca o oturum için hatırlanır. Anahtarlar asla düz metin olarak kaydedilmez; loglarda ve hata raporlarında maskelenir.
 - Model seçimi: tam liste, sağlayıcının model listeleme servisinden canlı çekilir; model adları koda sabit yazılmaz.
+  - **Değişiklik (6 Ekim 2026):** Gemini'de yalnızca seçilmiş modeller gösterilir (`data/ai_models.json`):
+    3.8 Flash (ana), 3.7 Flash (hızlı/ucuz), 3.1 Pro (zor problemler, ücretli) + ücretsiz katmandaki
+    1M bağlamlı modeller. Her açılışta canlı listeyle karşılaştırılır; canlı listede olmayan gösterilmez,
+    hiçbiri yoksa tam liste gösterilir. Diğer sağlayıcılarda tam liste.
+  - Sohbet sırasında sağlayıcı/model değiştirilebilir; geçmiş korunur. AI sayfasında sohbet geçmişi
+    ve AI ayarları (anahtar, test, aylık sınır). Yan panel sürüklenerek genişletilir, şeride daraltılır.
 - Doğrulanan uç noktalar (bkz. `dogrulama-raporu.md`):
   - ChatGPT: `GET https://api.openai.com/v1/models`, `Authorization: Bearer`
   - Gemini: `GET https://generativelanguage.googleapis.com/v1beta/models`, anahtar `?key=` parametresi (URL'ler loglanırken anahtar maskelenmeli)

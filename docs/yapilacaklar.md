@@ -26,6 +26,16 @@ Son güncelleme: 6 Ekim 2026
 - **Aşama 1 — Altyapı:** kuyruk, izin listesi ve parametre doğrulama, root helper, pkexec/polkit,
   yedek/geri alma kaydı, maskeleme, işlem geçmişi, eklenti yükleyici ve kapılar.
 
+## Aşama 4'ün en sonunda yapılacaklar (kullanıcı kararı, 6 Ekim 2026)
+- [ ] **Oyun sekmesi** (Program › Oyun): Steam + Proton, Lutris / Heroic, GameMode, uyumluluk
+  kontrolü (AI + ProtonDB).
+- [ ] **EXE ve Wine:** .exe risk analizi, Linux alternatifi önerisi, yoksa Wine ile açma.
+
+## Aşama 5 sonuna ertelenenler (token tasarrufu, 6 Ekim 2026)
+- [ ] Yeni yazılan modüllerin birim testleri (ör. settings_launcher, appearance, troubleshoot,
+  error_report, app_settings, onboarding akışı, geri yükleme, dosya yedeği/geri alma) ve
+  sayfaların görsel kontrolü. Commit öncesi mevcut `ruff` + `pytest` çalışmaya devam ediyor.
+
 ## Bekleyen fikirler (sonraki sürümler)
 - [ ] **"Linwas Hazırlık" Windows aracı:** Geçişten önce Windows'ta çalışan küçük bir araç.
   Chrome/Edge şifrelerini, Wi-Fi şifrelerini ve Outlook verisini güvenli bir pakete aktarır; Linwas
