@@ -87,7 +87,7 @@ class TestUndoOps:
     def test_undo_installed_packages(self):
         r = make_record(packages_to_install=["vlc", "ffmpeg"])
         ops = undo_ops(r)
-        remove_ops = [(op, p) for op, p in ops if op == "package.remove"]
+        remove_ops = [(op, p) for op, p in ops if op == "app.remove_apt"]
         names = {p["name"] for _, p in remove_ops}
         assert names == {"vlc", "ffmpeg"}
 

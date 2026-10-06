@@ -46,6 +46,9 @@ class RollbackRecord:
     snaps_removed: list[str] = field(default_factory=list)
     # snaps_removed içinden classic kipte kurulması gerekenler
     snaps_classic: list[str] = field(default_factory=list)
+    # Kurulan Flatpak uygulamaları ve snap'ler (geri almada kaldırılır)
+    flatpaks_installed: list[str] = field(default_factory=list)
+    snaps_installed: list[str] = field(default_factory=list)
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
@@ -123,9 +126,13 @@ def undo_ops(record: RollbackRecord) -> list[tuple[str, dict[str, str]]]:
     if record.file_backups:
         ops.append(("rollback.restore_files", {"record_id": record.id}))
 
-    # Kurulmuş paketleri kaldır
+    # Kurulmuş programları kaldır (kritik paket korumalı, artık gerekmeyenlerle birlikte)
     for pkg in record.packages_to_install:
-        ops.append(("package.remove", {"name": pkg}))
+        ops.append(("app.remove_apt", {"name": pkg}))
+    for app_id in record.flatpaks_installed:
+        ops.append(("app.remove_flatpak", {"app_id": app_id}))
+    for snap in record.snaps_installed:
+        ops.append(("app.remove_snap", {"name": snap}))
 
     # Kaldırılmış paketleri yeniden kur
     for pkg in record.packages_to_remove:

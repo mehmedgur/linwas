@@ -65,30 +65,29 @@ def _run(cmd: list[str], seq: int, env: dict[str, str] | None = None) -> bool:
     return True
 
 
-def _exec_package_install(seq: int, params: dict[str, str]) -> bool:
-    env = {"DEBIAN_FRONTEND": "noninteractive"}
-    import os
-
-    full_env = {**os.environ, **env}
+def _apt_installed(name: str) -> bool:
     try:
-        proc = subprocess.Popen(
-            ["apt-get", "install", "-y", "--", params["name"]],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
+        r = subprocess.run(
+            ["dpkg-query", "-W", "-f=${Status}", "--", name],
+            capture_output=True,
             text=True,
+            timeout=15,
             shell=False,
-            env=full_env,
         )
-        assert proc.stdout is not None
-        for line in proc.stdout:
-            _send({"seq": seq, "status": "ok", "message": line.rstrip(), "progress": 0.5})
-        proc.wait()
-        if proc.returncode != 0:
-            _error(seq, f"Paket kurulamadı: {params['name']!r}")
-            return False
-    except FileNotFoundError:
-        _error(seq, "apt-get bulunamadı")
+    except (FileNotFoundError, subprocess.TimeoutExpired):
         return False
+    return r.stdout.strip().endswith(" installed")
+
+
+def _exec_package_install(seq: int, params: dict[str, str]) -> bool:
+    name = params["name"]
+    was_installed = _apt_installed(name)
+    cmd = ["apt-get", "install", "-y", "--", name]
+    if not _run(cmd, seq, {"DEBIAN_FRONTEND": "noninteractive"}):
+        return False
+    # Yeni kurulumsa geri alınabilir (güncellemede kayıt yazılmaz)
+    if not was_installed:
+        _save_rollback(RollbackRecord(task_label=name, packages_to_install=[name]), seq)
     return True
 
 
@@ -392,8 +391,20 @@ def _exec_flatpak_update(seq: int, params: dict[str, str]) -> bool:
 
 
 def _exec_flatpak_install(seq: int, params: dict[str, str]) -> bool:
-    cmd = ["flatpak", "install", "-y", "--noninteractive", "--system", "flathub"]
-    return _run([*cmd, params["app_id"]], seq)
+    app_id = params["app_id"]
+    try:
+        info = subprocess.run(
+            ["flatpak", "info", "--system", app_id], capture_output=True, timeout=30, shell=False
+        )
+        was_installed = info.returncode == 0
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        was_installed = False
+    cmd = ["flatpak", "install", "-y", "--noninteractive", "--system", "flathub", app_id]
+    if not _run(cmd, seq):
+        return False
+    if not was_installed:
+        _save_rollback(RollbackRecord(task_label=app_id, flatpaks_installed=[app_id]), seq)
+    return True
 
 
 def _exec_snap_refresh(seq: int, params: dict[str, str]) -> bool:
@@ -408,12 +419,22 @@ def _exec_snap_refresh_all(seq: int, params: dict[str, str]) -> bool:
     return _run(["snap", "refresh"], seq)
 
 
+def _snap_install(seq: int, name: str, classic: bool) -> bool:
+    was_installed = _snap_notes(name) is not None
+    cmd = ["snap", "install", *(["--classic"] if classic else []), name]
+    if not _run(cmd, seq):
+        return False
+    if not was_installed:
+        _save_rollback(RollbackRecord(task_label=name, snaps_installed=[name]), seq)
+    return True
+
+
 def _exec_snap_install(seq: int, params: dict[str, str]) -> bool:
-    return _run(["snap", "install", params["name"]], seq)
+    return _snap_install(seq, params["name"], classic=False)
 
 
 def _exec_snap_install_classic(seq: int, params: dict[str, str]) -> bool:
-    return _run(["snap", "install", "--classic", params["name"]], seq)
+    return _snap_install(seq, params["name"], classic=True)
 
 
 # --- Güç ve pil ---
