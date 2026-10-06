@@ -1,0 +1,244 @@
+# Linwas 2.0 — Karar Belgesi
+
+(Önceki çalışma adı: v1.1. Kod sıfırdan yazıldığı için sürüm adı **Linwas 2.0** oldu.)
+
+Son güncelleme: 6 Ekim 2026
+Depo (2.0): github.com/mehmedgur/linwas2 (geliştirme süresince private; kod düz dosyalar halinde)
+Eski depo (v1.0, yalnızca referans): github.com/mehmedgur/linwas
+Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyruk senaryosu)
+İlgili belgeler: [yapilacaklar.md](yapilacaklar.md), [dogrulama-raporu.md](dogrulama-raporu.md)
+
+## Çalışma kuralları
+- Kullanıcıya Türkçe ve kısa cevap; detay istenirse verilir.
+- Görev alınca "Anladım" denir, "kodlamaya geçelim" komutu beklenir.
+- **Her kodlama aşamasına geçmeden önce `docs/yapilacaklar.md` okunur ve bekleyen fikirler kullanıcıya hatırlatılır.**
+- Doğrulanmamış API/komut/paket adı önerilmez. Her dış servis resmi belgeden doğrulanır.
+- Yeni karar alındığında aynı değişiklikte bu belge güncellenir.
+
+## Geliştirme
+- Kod linwas2'de sıfırdan yazılır; v1.0 koduna bakılmaz.
+- Git: aşama 0 (iskelet) doğrudan ana dala; sonraki her aşama ayrı dalda, küçük ve tek konulu PR'lar. Her PR'da "Pardus'ta / Ubuntu'da şunları dene" test listesi.
+- Kod İngilizce (değişken/fonksiyon adları), yorumlar Türkçe.
+- **Arayüz metinleri kodda İngilizce** (`QCoreApplication.translate`), **Türkçe çeviri dosyası ilk günden** birlikte yazılır; uygulama varsayılan Türkçe görünür. Çevirisi eksik metin kalırsa test başarısız olur.
+- Araçlar: ruff, tip ipuçları, pytest. Arayüz dışı her parçanın birim testi yazılır.
+- **Derleme: GitHub Actions.** Her push/PR'da: lint + test → gömülü Python + PySide6 ile .deb → Ubuntu 22.04/24.04 ve Debian 12/13 kapsayıcılarında kurulum ve `--self-check` testi.
+- **Geliştirme sırasında çalıştırma: ikisi de.**
+  - Geliştirme .deb'i: her çalıştırmada Actions › Artifacts › linwas-deb.
+  - Kaynak koddan: `scripts/dev-setup.sh` (bir kerelik) + `scripts/run-dev.sh`.
+- **Kodlama ortamı:** kullanıcının Pardus 23 bilgisayarında **Claude Code** (uygulamayı gerçekten çalıştırabildiği için). claude.ai sohbeti kararlar ve tasarım tuvali için kullanılabilir.
+  - Claude Code `sudo`/`pkexec` gerektiren komutları kendi başına çalıştırmaz; kullanıcıya ne çalışacağını söyleyip onayını alır.
+  - claude.ai bulut ortamında PyPI engelli (PySide6 kurulamaz); orada yalnızca arayüz dışı testler çalışır. Claude oradan Actions sonuçlarını ve hata notlarını (annotation) okuyabilir, ham günlükleri okuyamaz — bu yüzden CI betikleri hataları not olarak yazar.
+- Root helper geliştirme modu: kaynak koddan çalışırken Linwas'a özel polkit kuralı kurulu olmadığı için şifre penceresi genel mesaj gösterir; kurulu pakette Linwas'a özel mesaj.
+- Test ortamları: kullanıcının bilgisayarı (Pardus 23, **GNOME oturumu**) + sanal makine (Ubuntu 22.04) + CI kapsayıcıları. İlk yayından önce Mint ve Pardus 25 için de sanal makine testi.
+
+## Güvenlik ilkesi (komut çalıştırma)
+- AI, eklentiler ve arayüz **ham komut göndermez**; yalnızca tanımlı işlem adı + parametre gönderir (ör. `package.install` + `vlc`).
+- Komutu root helper kendisi kurar; her parametreyi doğrular (ör. paket adı biçimi). Kabuk (shell) hiç kullanılmaz → komut enjeksiyonu baştan kapalı.
+- Helper, işlem planındaki her adımı izin listesine karşı yeniden doğrular, çalıştırır ve ilerlemeyi satır satır bildirir.
+
+## Yayın öncesi yapılacaklar
+- Depo geliştirme süresince private. İlk yayından önce: ya depo herkese açılır ya da herkese açık ayrı bir "linwas-releases" deposu açılır (APT deposu + GitHub Issues orada).
+- Lisans kararı (GPL-3.0 önerildi).
+- Tüm hedef dağıtımlarda sanal makine testleri.
+- Paketteki Maintainer bilgisinin gözden geçirilmesi.
+
+## Eklenti mimarisi
+- Linwas = sabit çekirdek + eklentiler. Kullanıcı için tek uygulama; eklenti kurulunca menüye/sayfalara kendi parçasını ekler.
+- Eklenti kapıları:
+  - Sayfa ekleme (menüye sayfa veya mevcut sayfaya kart)
+  - Görev türü (kuyruğa kendi işleri; onay/ilerleme/sonuç ekranları otomatik)
+  - İzin listesi önerisi (son karar root helper'da; eklenti root ile doğrudan bir şey çalıştıramaz)
+  - Sistem taraması kontrolleri
+  - Sorun Giderme belirti kartları ve çözüm reçeteleri
+  - Rehber/arama girdileri ve ayar eşleşmeleri
+  - AI bağlamı ve AI'ın önerebileceği görevler
+  - İlk açılış sihirbazı adımı
+- **Yerleşik özellikler de eklenti olarak yazılır** (Oyun, Yazıcı, Yedekleme, Windows'tan taşıma, Görev Yöneticisi, Disk temizliği, Güç ve pil, Wine vb.).
+- **Sürümlü arayüz:** eklenti desteklediği arayüz sürümünü bildirir; uyumsuz eklenti kapatılır ve kullanıcıya söylenir.
+- **Şimdilik yalnızca resmi eklentiler.** Resmi eklentiler imzalı APT deposundan .deb olarak gelir; ayrı bir eklenti imza sistemi şimdilik yazılmaz (APT imzası yeterli). Üçüncü taraf eklentiler gündeme gelirse kendi imza sistemi ve izin ekranı eklenir.
+- Gelecekte olası eklentiler: bkz. `yapilacaklar.md`.
+
+## Hedef kullanıcı ve genel UX
+- Tamamen yeni Linux kullanıcısı. Sade dil, teknik terim olursa yanında açıklama.
+- Terminal hiç kullanılmaz; kurulum dahil her şey GUI.
+- Komutlar varsayılan gizli, "Detay" ile görülür.
+- İlk açılış: kısa tanıtım turu → kurulum sihirbazı (sistem taraması, Windows'tan taşıma, Timeshift önerisi ve ilk tam yedek, isteğe bağlı AI anahtarı).
+- Tema: Windows benzeri tasarım; Açık / Koyu / Sistem (Ayarlar'dan).
+- Dil: Türkçe + İngilizce (Qt Linguist altyapısı).
+- Pencere kapatma: Ayarlar'dan seçilir. Varsayılan: sistem tepsisi destekleniyorsa tepsiye küçülür; desteklenmiyorsa (ör. Debian/Pardus GNOME) uygulama kapanır, arka planda iş varsa bildirimle devam eder.
+- Erişilebilirlik: yazı boyutu, yüksek kontrast, tam klavye kullanımı, ekran okuyucu (Orca) uyumu.
+- Telemetri yok.
+
+## Arayüz tasarımı ve teknolojisi
+- Teknoloji: **Qt Widgets + QSS** (PySide6). QML seçilmedi: animasyon yok, erişilebilirlik Widgets'ta daha güçlü.
+- Tasarım değerleri (renk, yazı, boşluk, köşe) tek dosyada: `ui/theme/tokens.py`. Açık / Koyu / Yüksek kontrast setleri; QSS bu değerlerden üretilir.
+- Ortak bileşen kütüphanesi (kart, menü öğesi, rozet, ana buton, durum çubuğu, görev kartı); sayfalar bunlardan kurulur.
+- Simgeler: kendi SVG simge setimiz (Windows benzeri çizgi stil), HiDPI uyumlu.
+- Animasyon: yok.
+- Erişilebilirlik her bileşene baştan eklenir.
+- Tasarım akışı: sayfa sayfa — tuvalde taslak → onay → Qt'ye aktarım → sıradaki sayfa.
+- Onaylı taslaklar: ana pencere (Sistem › Genel bakış) ve kuyruk senaryosu (Kuyruk → Onay → Çalışıyor → Sonuç).
+  - Ana pencere: üstte başlık çubuğu; solda daraltılabilir menü (arama kutusu, rozetler, açılır alt menüler, altta sistem durumu kartı, Yardımcı paneli düğmesi, Ayarlar); ortada içerik (Genel bakış: Timeshift rozeti, 4 hızlı işlem kutusu, Güncellemeler/Sürücüler/Wi-Fi/Bluetooth kartları); sağda AI yardımcı paneli (sağlayıcı seçimi, sohbet, önerilen görev kartı + "Kuyruğa ekle", ekran görüntüsü/log ekleme, "Sistem bilgimi ekle", token çubuğu); altta durum çubuğu (kuyruk sayısı, ilerleme, Detay, "Uygula (tek onay)").
+  - Vurgu rengi `#0067c0`, yazı tipi Noto Sans, açık tema zemin `#f3f3f3`, kartlar beyaz, kenarlık `#e0e3e7`, köşe 8 px.
+
+## Menü yapısı
+- **AI Soru** (geniş sohbet ekranı; ayrıca her sayfada yardımcı panel)
+- **Sistem:** Genel bakış, Güncellemeler, Sürücüler, Wi-Fi ve Bluetooth, **Yedekler ve geri alma**, Donanım ve yazıcı, Görev Yöneticisi, Disk temizliği, Yedekleme (kişisel dosyalar), Güç ve pil (yalnızca dizüstü), Windows'tan taşıma, Tüm ayarlar (Denetim Masası)
+- **Arayüz:** Windows görünümü, tema/duvar kağıdı, yazı tipleri, ekran/ölçekleme
+- **Program:** Üstte arama, altta "Windows'ta ne kullanıyordun?" bölümü; **Kurulu programlar** sekmesi; Oyun sekmesi
+- **Sorun Giderme:** Üstte tek tıkla tam tarama, altta belirti kartları
+- **Ayarlar:** Linwas'ın kendi ayarları (işlem geçmişi ve eklenti listesi burada)
+- Menü özellikleri: daraltma, arama kutusu (Windows terimlerini de arar), açılır alt menüler, bildirim rozetleri, sistem durumu kartı, yardımcı paneli düğmesi.
+- Genel bakışta hızlı işlemler: Görev Yöneticisi, Disk temizliği, Dosyalarımı yedekle, Windows'tan taşı.
+
+## Yedekler ve geri alma
+- Riskli işlemden önce kullanıcıya **iki seçenek** sunulur (onay penceresinde):
+  1. **Tam yedek (Timeshift):** tüm sistemin anlık görüntüsü; uzun sürebilir ve yer kaplar, en güvenli yol.
+  2. **Hızlı geri alma (değişiklik yedeği):** Linwas, değiştireceği dosyaların işlem öncesi kopyasını ve kurulan/kaldırılan paketlerin listesini kaydeder. İşlem sonrası **"Değişiklikleri geri al"** butonu.
+- Hızlı geri almanın sınırı kullanıcıya sade dille söylenir: ayar dosyaları ve kurulan/kaldırılan paketler geri alınabilir; sistem güncellemeleriyle yükseltilen paketlerin eski sürümüne dönüş her zaman mümkün değildir — bunun için tam yedek gerekir.
+- Önerilen seçenek işlem türüne göre önceden seçili gelir (ör. sürücü/çekirdek → tam yedek; ayar değişikliği → hızlı geri alma).
+- Son tam yedek 24 saatten yeniyse bu bilgi gösterilir, yeni tam yedek almadan devam edilebilir.
+- Disk alanı yetersizse tam yedek öncesi uyarı.
+- İlk tam yedek, ilk açılış sihirbazında (kullanıcı beklemeye hazırken) önerilir.
+- Timeshift yoksa: sihirbazda kurulum önerisi; riskli işlemde uyarı + hızlı geri alma seçeneği.
+- **"Yedekler ve geri alma" sayfası (Sistem altında):** Timeshift anlık görüntüleri ve Linwas değişiklik yedekleri tek listede; tarih, hangi işlem için alındığı, kapladığı alan. Kullanıcı her yedeği görebilir, geri yükleyebilir ve silebilir; toplam yedek boyutu gösterilir.
+- Değişiklik yedekleri root'a ait güvenli bir sistem klasöründe tutulur; geri yükleme ve silme kuyruk + toplu onay üzerinden yapılır.
+
+## Sistem ayarlarına yönlendirme
+- Linwas'ın yaptığı işler Linwas içinde kalır (**Linwas öncelikli**); aynı ayarı sistem de yapabiliyorsa sistem ayarı ikincil link olarak verilir.
+- Linwas'ın yapmadığı ayarlar için **"Sistem ayarlarında aç"** butonu: masaüstüne göre doğru ayar uygulaması, mümkünse doğru bölümde açılır (GNOME: Ayarlar bölüm adıyla; Cinnamon: Sistem Ayarları modül adıyla; XFCE: ilgili ayrı ayar uygulaması).
+- Butonun yerleri: ilgili Linwas sayfaları, arama sonuçları ("Linux'ta burada: Ayarlar › Fare"), "Tüm ayarlar (Denetim Masası)" sayfası, AI cevapları.
+- "Tüm ayarlar (Denetim Masası)": Windows'taki gibi kategoriler.
+- Yardım: yan panelde adım adım rehber; önce metin, en sık 10–15 ayar için ekran görüntüsü.
+- Eşleşmeler `data/settings_map.json` içinde, masaüstü ve sürüme göre; Pardus 23 ve Ubuntu 22.04'te tek tek doğrulanır. Bölüm bulunamazsa ayar uygulamasının ana ekranı açılır.
+- Güvenlik: kullanıcı yetkisiyle açılır, şifre istemez, kuyruğa girmez; yalnızca bilinen ayar uygulamaları açılabilir.
+
+## İzinler ve görevler
+- İşlemler kuyruğa girer; "Uygula" ile tek polkit onayı (toplu onay).
+- Riskli işlem kuyruktaysa Linwas başa yedek adımı ekler (bkz. Yedekler ve geri alma).
+- Onay penceresi: adımlar, yedek seçeneği, tahmini süre, yeniden başlatma gereği, "yalnızca izin listesindeki işlemler" notu, "Çalışacak komutları göster".
+- Root helper her komutu whitelist'e karşı yeniden doğrular (bkz. Güvenlik ilkesi).
+- Görev ilerlemesi alt durum çubuğunda; pencere arka plana alınabilir.
+- Sonuç ekranı: başarılı/başarısız adımlar, "Yeniden dene" + "Yardımcıya sor", "Değişiklikleri geri al" (hızlı geri alma seçildiyse), gerekirse "Yeniden başlatma gerekli" kartı.
+- İşlem geçmişi tutulur ve görüntülenebilir.
+
+## Hata akışı
+- Hata çıktısı maskelenip otomatik AI paneline gider.
+- AI kapalıysa Sorun Giderme'deki hazır adımlara düşer.
+- İlk seferde "hata kayıtlarını AI'a göndereyim mi?" onayı.
+- "Sorun bildir": maskeli rapor hazırlar; "GitHub'da aç" (doldurulmuş issue sayfası) + "Raporu kopyala / kaydet" (GitHub hesabı olmayanlar için).
+
+## Program kurulumu ve kaldırma
+- **Arama:** Program sayfasının üstündeki arama kutusuyla kullanıcı istediği uygulamayı arayıp "Kur" ile kuyruğa ekler.
+  - Yalnızca kullanıcıya yönelik masaüstü uygulamaları listelenir (AppStream kataloğu); Türkçe ad, simge, açıklama, ekran görüntüsü. Kütüphane/teknik paketler gösterilmez.
+  - Windows adıyla arama: "Photoshop" → GIMP, Krita önerisi (rehber üzerinden).
+- **Kaynaklar:**
+  - APT ve Flatpak (Flathub). Aynı uygulama ikisinde de varsa her zaman sorulur, farklar sade dille açıklanır.
+  - **Seçilmiş üçüncü taraf listesi:** depolarda bulunmayan popüler uygulamalar (ör. Chrome, Zoom) için üreticilerin resmi depoları. Depo ekleme kuyrukta ayrı bir adım olarak gösterilir. Liste resmi eklenti mantığıyla güncellenir; depo adresleri ve imza anahtarları üreticinin resmi belgesinden doğrulanır.
+  - **Herhangi bir .deb dosyası:** kullanıcı indirdiği .deb'i Linwas ile açar; Linwas risk analizini (kaynak, imza, bağımlılıklar, ne değiştireceği) gösterir, onayla kuyruğa ekler.
+- Ubuntu'da Flatpak gerekirse Linwas onu da kurar (kuyruk üzerinden).
+- **Snap:** Snap ile kurulu uygulamalar listede gösterilir ve güncellenebilir; yeni kurulum kaynağı olarak sunulmaz. Mint'te gösterilmez.
+- Güncellemeler: bildirilir, kullanıcı başlatır.
+- Sürücüler: önerilen tek tıkla + "Diğer seçenekler".
+- EXE: risk analizi; Linux alternatifi varsa önerilir, yoksa Wine ile açılır.
+- **Program kaldırma** (6 Ekim 2026 kararı):
+  - **İki yerden:** Program › **Kurulu programlar** sekmesi (Windows'taki "Programlar ve Özellikler" gibi) ve arama sonuçları (kurulu programda "Kur" yerine "Kaldır" butonu).
+  - **Kurulu programlar listesi:** yalnızca kullanıcıya yönelik uygulamalar (AppStream); arama ve sıralama. Sütunlar: ad + simge, **kapladığı alan**, **kaynak rozeti** (APT / Flatpak / Snap / üçüncü taraf), **güncelleme var mı** (programa özel "Güncelle" butonu), **kurulma tarihi**.
+  - **Ayarlar:** onay penceresinde "Ayarlarımı da sil" kutucuğu, **varsayılan: işaretsiz (ayarlar saklanır)** — program yeniden kurulursa ayarlar geri gelir. Kutucuğun neyi sileceği kaynağa göre sade dille yazılır (Flatpak'te kişisel veriler dahil; APT'de sistem ayar dosyaları — ev klasöründeki kişisel ayarların her zaman güvenilir şekilde bulunamayacağı söylenir).
+  - **Gereksiz bağımlılıklar:** aynı işlemde temizlenir; onay penceresinde "bunlar da kaldırılacak" diye ayrı listelenir.
+  - **Güvenlik:** kaldırma kuyruk + toplu onay üzerinden. Onaydan önce paket yöneticisinin kaldıracağı **tüm paketler** gösterilir. Bu liste masaüstü ortamını, oturum açma ekranını, ağ yöneticisini, ses sistemini, Linwas'ın kendisini ya da sistemin temel paketlerini içeriyorsa işlem **engellenir** ve nedeni sade dille açıklanır. Sistemle gelen ön kurulu uygulamalar (ör. tarayıcı) kaldırılabilir ama ek uyarı gösterilir.
+  - **Geri alma:** kaldırma "hızlı geri alma" kapsamındadır (kaldırılan paket listesi kaydedilir; "Değişiklikleri geri al" yeniden kurar). Ayarlar da silindiyse bunların geri gelmeyeceği onay penceresinde söylenir.
+  - Snap uygulamaları da listede gösterilir ve kaldırılabilir.
+
+## Arayüz sayfası
+- Desteklenen masaüstleri: Cinnamon, GNOME, XFCE (eklenti yapısında; KDE sonraki sürüme). Desteklenmeyen ortamda yalnızca ortak ayarlar.
+- GNOME'da Windows tarzı görev çubuğu için eklenti GUI'den kurulur. (Not: Pardus 25 GNOME'un kendi "Win 11 Style" düzen seçicisi var; Pardus'ta önce onun kullanımı değerlendirilecek.)
+- Fontlar: varsayılan Carlito, Caladea, Liberation (tek tık). İsteğe bağlı orijinal Microsoft fontları; lisans onayı Linwas penceresinde, gerekli depo Linwas tarafından açılır.
+
+## Yeni özellikler (hepsi 2.0'da, yerleşik eklenti olarak)
+1. **Windows'tan taşıma**
+   - Kaynak: aynı bilgisayardaki Windows bölümü (çift açılış) veya Windows kullanıcı klasörünün kopyalandığı harici disk/USB. Hızlı Başlangıç / BitLocker durumları sade dille anlatılır.
+   - **Otomatik taşınanlar:** kişisel klasörler; Chrome/Edge yer imleri ve geçmişi; Firefox profilinin tamamı (yer imleri, kayıtlı şifreler, geçmiş, eklentiler — ana parola yoksa); Thunderbird profili; program listesi → Linux karşılık önerisi; sistem tercihleri (klavye düzeni Q/F, dil ve bölge, saat dilimi, açık/koyu tema, sol el fare, ekran ölçeği); kullanıcının kendi kurduğu fontlar (Windows sistem fontları hariç); yazıcı listesi.
+   - Yer imleri/profiller otomatik aktarılır. Hedef tarayıcı açıksa uyarı ve "Tarayıcıyı kapat" butonu. Kapatılmazsa aktarım beklemeye alınır.
+   - **Sadece rehberle:** Chrome/Edge kayıtlı şifreleri (Windows'ta CSV dışa aktar → Linwas aktarır), Wi-Fi şifreleri, Outlook (.pst) e-postaları.
+   - **Taşınmaz:** Windows programlarının kendisi, duvar kağıdı, oyunlar.
+2. **Görev Yöneticisi:** "Kapat" doğrudan zorla kapatır; masaüstü ve sistem süreçleri kapatılamaz. CPU/RAM, başlangıç programları.
+3. **Disk temizliği:** yalnızca elle; kazanılacak alan önceden gösterilir.
+4. **Yazıcı ve tarayıcı:** otomatik bulma; bulunamazsa AI çözüm üretir, görevleri kuyruğa hazır koyar, kullanıcı tek onayla uygular.
+5. **Oyun:** Steam + Proton, Lutris / Heroic, GameMode, uyumluluk kontrolü (AI değerlendirmesi + "tahmindir" uyarısı + ProtonDB linki; AI kapalıysa ProtonDB araması tarayıcıda açılır).
+6. **Kişisel dosya yedeği:** harici disk / USB.
+7. **"Windows'ta nasıl?" rehberi:** ayarlar + programlar + klavye kısayolları + kavramlar (`data/windows_map.json`); sistem ayarı karşılıkları `data/settings_map.json` ile bağlantılı.
+8. **Güç ve pil:** enerji modu, pil sağlığı, kapak kapanınca davranışı, pil koruma (%80, destekleyen cihazlarda).
+
+## AI
+- Sağlayıcılar: Gemini, ChatGPT, DeepSeek. AI isteğe bağlı; anahtar yoksa gizlenir.
+- AI yalnızca görev önerir (tanımlı işlem adı + parametre); "Kuyruğa ekle"ye kullanıcı basar.
+- AI cevaplarında Linwas sayfa kısayolu yok; ancak sistem ayarlarını açan butonlar önerebilir.
+- Anahtar: adım adım rehber + anahtar testi (model listesi çekilerek, token harcamadan).
+- **Anahtar saklama:** sistem anahtar kasası (keyring). Kasa yoksa Linwas bunu sade dille söyler ve kurulumunu kuyruğa önerir; kurulmazsa anahtar yalnızca o oturum için hatırlanır. Anahtarlar asla düz metin olarak kaydedilmez; loglarda ve hata raporlarında maskelenir.
+- Model seçimi: tam liste, sağlayıcının model listeleme servisinden canlı çekilir; model adları koda sabit yazılmaz.
+- Doğrulanan uç noktalar (bkz. `dogrulama-raporu.md`):
+  - ChatGPT: `GET https://api.openai.com/v1/models`, `Authorization: Bearer`
+  - Gemini: `GET https://generativelanguage.googleapis.com/v1beta/models`, anahtar `?key=` parametresi (URL'ler loglanırken anahtar maskelenmeli)
+  - DeepSeek: `GET https://api.deepseek.com/models`; OpenAI uyumlu → ChatGPT ile ortak istemci
+- Görsel desteği: DeepSeek'te `input_modalities` alanından; ChatGPT ve Gemini'de gönderilir, reddedilirse sade uyarı.
+- Sistem bilgisi: her seferinde "Sistem bilgimi ekle" onayı; maskelenir.
+- Sohbet geçmişi: yerel SQLite; "Tüm geçmişi sil".
+- Sağlayıcı hata/limit: uyarı, kullanıcı başka sağlayıcı seçer.
+- Token limiti: sağlayıcı başına aylık, kullanıcı belirler; kullanım gösterilir.
+- Üslup: detaylı ve öğretici; cevap dili uygulama diliyle aynı.
+- Ekler: ekran görüntüsü (önizleme + "kişisel bilgi içerebilir" uyarısı) ve maskeli log dosyası.
+- Proaktif: yalnızca sistem taramasını yorumlar.
+
+## Dağıtımlar ve paketleme
+- **Desteklenen: Ubuntu 22.04+, Debian 12+, Linux Mint 21+, Pardus 23 ve Pardus 25.**
+- **Desteklenmeyen: Ubuntu 20.04, Debian 11, Linux Mint 20** (karar: seçenek A). Gerekçe: gömülü PySide6 6.11 (manylinux_2_34) glibc ≥ 2.34 ve libstdc++ ≥ 11 istiyor; bu sistemlerde glibc 2.31 var ve güvenlik destekleri bitmiş. Eski Qt gömmek güvenlik ve bakım açısından kabul edilmedi.
+  - .deb bu sistemlerde kurulumda açık bir bağımlılık hatası verir (`libc6 (>= 2.34)`, `libstdc++6 (>= 11)`).
+  - Yükseltme notu uygulama içinde değil, README'de ve ileride yayın sayfasında.
+- Linwas içindeki "güvenlik desteği bitti" uyarı mekanizması korunur (ör. Ubuntu 22.04'ün desteği bittiğinde kullanılmak üzere).
+- **Çalışma ortamı: gömülü.** .deb paketi kendi Python 3.12'sini (python-build-standalone, sürüm ve SHA256 sabitlenmiş) ve PySide6-Essentials 6.x'i içerir (paket ~77 MB). Gömülü bileşenlerin güvenlik güncellemeleri Linwas güncellemesiyle gelir.
+- Paket xz ile sıkıştırılır (eski dpkg'ler zstd açamıyor).
+- Derleme GitHub Actions'ta (bkz. Geliştirme).
+- Dağıtım: .deb paketi; çift tıkla kurulum, postinst kendi APT deposunu ve imza anahtarını ekler. Güncellemeler sistem güncellemesiyle gelir. Resmi eklentiler aynı depodan ayrı .deb paketleri olarak.
+- Çift tıklama davranışı her dağıtımda test edilecek.
+
+## Test
+- Birim testleri: dağıtım/masaüstü algılama, çeviri eksiksizliği, whitelist ve parametre doğrulama, maskeleme, kuyruk, yedek/geri alma kaydı, ayar eşleşmeleri, eklenti yükleyici ve sürüm uyumu, .deb risk analizi.
+- CI kurulum testi: desteklenen dağıtım kapsayıcılarında `linwas --self-check` (Türkçe ve İngilizce).
+
+## Açık konular
+- Lisans (GPL-3.0 önerildi; yayından önce karar).
+- Herkese açık yayın yeri (depoyu açmak mı, ayrı "linwas-releases" mı; yayından önce karar).
+- Üçüncü taraf eklentiler (şimdilik yok).
+
+## Dosya şeması
+```
+linwas2/
+├── pyproject.toml, README.md, CLAUDE.md
+├── docs/                      # kararlar, yapılacaklar, doğrulama raporu (tek doğru kaynak)
+├── .github/workflows/ci.yml   # lint+test → .deb → kapsayıcılarda kurulum testi
+├── scripts/                   # dev-setup.sh, run-dev.sh, compile-translations.sh
+├── packaging/                 # build-deb.sh, ci-install-test.sh, linwas-launcher.sh, linwas.desktop,
+│   └── debian/control.in      # (ileride: postinst, polkit policy, APT deposu)
+├── tests/
+└── linwas/                    # Python paketi
+    ├── __main__.py, app.py, translations.py
+    ├── i18n/                  # linwas_tr.ts (.qm derlenir)
+    ├── resources/             # linwas.svg
+    ├── backend/               # distro, desktop (+ ileride packages, deb_inspect, third_party_repos,
+    │                          #   drivers, network, snapshot, settings_launcher)
+    ├── core/                  # (aşama 1) tasks, privilege, helper, whitelist, error_router,
+    │                          #   sanitizer, history, rollback, plugins/
+    ├── ai/                    # (aşama 3) base, gemini, openai_compat, keystore, usage, chat_history, context
+    ├── plugins/               # (aşama 4) migrate, taskmgr, cleanup, printers, gaming, backup, power, wine
+    ├── data/                  # (ileride) windows_map.json, settings_map.json, third_party_apps.json
+    └── ui/                    # main_window (+ ileride pages, widgets, onboarding, theme, icons, tray)
+```
+
+## Kodlama sırası
+0. ✅ İskelet: klasör yapısı, pyproject.toml, README, karşılama penceresi, Türkçe çeviri altyapısı, geliştirici betikleri, GitHub Actions ile geliştirme .deb'i ve kurulum testi.
+1. Altyapı: kuyruk, izin listesi ve parametre doğrulama, root helper, pkexec/polkit, yedek/geri alma kaydı, maskeleme, işlem geçmişi, eklenti yükleyici ve kapılar.
+2. Arayüz temeli: tema değerleri, ortak bileşenler, ana pencere, menü, durum çubuğu, kuyruk/onay/çalışıyor/sonuç pencereleri.
+3. AI: üç sağlayıcı, anahtar kasası, kullanım sayacı, yardımcı paneli.
+4. Sayfalar ve yerleşik eklentiler, sırayla.
+5. Son paketleme: APT deposu, imza anahtarı, postinst, Linwas'a özel polkit kuralı.
