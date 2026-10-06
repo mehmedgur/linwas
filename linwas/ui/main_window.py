@@ -20,7 +20,7 @@ from linwas.backend.distro import SupportStatus, detect_distro, evaluate_support
 from linwas.backend.power import is_laptop
 from linwas.core.rollback import RollbackRecord, now_iso, records_since, undo_ops
 from linwas.core.tasks import Task, TaskQueue, TaskStep
-from linwas.ui.ai_panel import AIPanel
+from linwas.ui.ai_dock import AIDock, make_content_splitter
 from linwas.ui.dialogs.confirm import BackupChoice, ConfirmDialog
 from linwas.ui.dialogs.progress import ProgressDialog
 from linwas.ui.dialogs.result import ResultDialog
@@ -136,16 +136,22 @@ class MainWindow(QMainWindow):
         self._sidebar.page_requested.connect(self._show_page)
         content_row.addWidget(self._sidebar)
 
-        # Sayfa yığını
-        self._stack = QStackedWidget(central)
-        content_row.addWidget(self._stack, 1)
+        # Sayfa yığını ve sağda AI yardımcısı; aradaki ayırıcı sürüklenerek
+        # panel genişletilip daraltılabilir
+        splitter = make_content_splitter(central)
+        self._stack = QStackedWidget(splitter)
+        splitter.addWidget(self._stack)
+        self._ai_dock = AIDock(splitter, splitter)
+        splitter.addWidget(self._ai_dock)
+        splitter.setStretchFactor(0, 1)
+        splitter.setStretchFactor(1, 0)
+        content_row.addWidget(splitter, 1)
 
-        # AI yardımcı paneli (sağda, sağlayıcı yoksa gizli)
-        self._ai_panel = AIPanel(central)
+        # AI yardımcı paneli (sağlayıcı yoksa gizli)
+        self._ai_panel = self._ai_dock.panel
         self._ai_panel.task_add_requested.connect(self._on_ai_task_requested)
         self._ai_panel.settings_changed.connect(self._on_ai_settings_changed)
-        self._ai_panel.setVisible(False)  # _check_ai_panel() görünürlüğü ayarlar
-        content_row.addWidget(self._ai_panel)
+        self._ai_dock.setVisible(False)  # _check_ai_panel() görünürlüğü ayarlar
 
         main_layout.addLayout(content_row, 1)
 
@@ -326,7 +332,7 @@ class MainWindow(QMainWindow):
         from linwas.ai.manager import available_providers
 
         on_ai_page = self._stack.currentWidget() is self._pages.get("ai_chat")
-        self._ai_panel.setVisible(bool(available_providers()) and not on_ai_page)
+        self._ai_dock.setVisible(bool(available_providers()) and not on_ai_page)
 
     def _on_ai_settings_changed(self) -> None:
         """Anahtarlar bir panelde değişince diğerini de günceller."""

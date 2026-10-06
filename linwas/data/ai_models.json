@@ -1,0 +1,8 @@
+{
+  "_note": "Sağlayıcı başına gösterilecek seçilmiş modeller (sıra = öncelik). Kimlikler 6 Ekim 2026'da Gemini model listesi (GET /v1beta/models) ile doğrulandı. Listede olup sağlayıcının canlı listesinde olmayan model gösterilmez; hiçbiri yoksa tam liste gösterilir.",
+  "gemini": [
+    {"id": "gemini-3.8-flash", "label": "Gemini 3.8 Flash", "role": "main"},
+    {"id": "gemini-3.7-flash", "label": "Gemini 3.7 Flash", "role": "fast"},
+    {"id": "gemini-3.1-pro-preview", "label": "Gemini 3.1 Pro", "role": "hard"}
+  ]
+}

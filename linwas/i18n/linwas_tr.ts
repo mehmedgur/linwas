@@ -383,6 +383,22 @@
         <source>You can switch models during a chat; the conversation continues.</source>
         <translation>Sohbet sırasında model değiştirebilirsiniz; sohbet kaldığı yerden devam eder.</translation>
     </message>
+    <message>
+        <source>Collapse the assistant</source>
+        <translation>Yardımcıyı daralt</translation>
+    </message>
+    <message>
+        <source>Main model — code, error analysis, agents, long context</source>
+        <translation>Ana model — kod, hata analizi, ajan, uzun bağlam</translation>
+    </message>
+    <message>
+        <source>Quick and cheap tasks — coding, tool use, 1M context</source>
+        <translation>Hızlı ve ucuz işler — kodlama, araç kullanımı, 1M bağlam</translation>
+    </message>
+    <message>
+        <source>Very hard problems — deep reasoning, complex code</source>
+        <translation>Çok zor problemler — derin akıl yürütme, karmaşık kod</translation>
+    </message>
 </context>
 <context>
     <name>UpdatesPage</name>
@@ -1691,6 +1707,13 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>✗ Key doesn't work: {error}</source>
         <translation>✗ Anahtar çalışmıyor: {error}</translation>
+    </message>
+</context>
+<context>
+    <name>AIDock</name>
+    <message>
+        <source>Open the assistant</source>
+        <translation>Yardımcıyı aç</translation>
     </message>
 </context>
 </TS>

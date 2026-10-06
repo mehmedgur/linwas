@@ -26,6 +26,7 @@ from linwas.ai.base import AIResponse, Message, TaskSuggestion
 from linwas.ai.chat_history import ChatHistoryDB, display_text
 from linwas.ai.keystore import get_key
 from linwas.ai.manager import AISession, available_providers, get_provider
+from linwas.ai.model_catalog import available_curated
 from linwas.ai.usage import UsageDB
 from linwas.ui.dialogs.ai_settings import AISettingsDialog
 
@@ -126,6 +127,17 @@ class _TaskSuggestionCard(QFrame):
 # --- Ana panel ---
 
 
+_MEDALS = ("🥇", "🥈", "🥉")
+
+
+def _role_text(role: str) -> str:
+    return {
+        "main": tr("Main model — code, error analysis, agents, long context"),
+        "fast": tr("Quick and cheap tasks — coding, tool use, 1M context"),
+        "hard": tr("Very hard problems — deep reasoning, complex code"),
+    }.get(role, "")
+
+
 def _http_error_text(status: int) -> str:
     """Sağlayıcıların ortak HTTP hata kodlarının sade açıklaması.
 
@@ -152,11 +164,13 @@ class AIPanel(QWidget):
 
     task_add_requested = Signal(str, dict)  # (op_id, params) → main_window kuyruğa ekler
     conversation_saved = Signal()  # yanıt geldi, geçmiş güncellendi
+    collapse_requested = Signal()  # başlıktaki "»" düğmesi
     settings_changed = Signal()  # anahtarlar/sınırlar değişti
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self.setFixedWidth(320)
+        # Genişliği yan panelde ayırıcı (splitter), AI sayfasında sayfa belirler
+        self.setMinimumWidth(260)
 
         self._session: AISession | None = None
         self._worker: _ChatWorker | None = None
@@ -182,8 +196,17 @@ class AIPanel(QWidget):
         header_layout.addWidget(title_lbl)
         header_layout.addStretch(1)
 
+        self._collapse_btn = QPushButton("»", header)
+        self._collapse_btn.setFixedSize(28, 28)
+        self._collapse_btn.setStyleSheet("padding: 0px; font-size: 15px;")
+        self._collapse_btn.setToolTip(tr("Collapse the assistant"))
+        self._collapse_btn.setAccessibleName(tr("Collapse the assistant"))
+        self._collapse_btn.clicked.connect(self.collapse_requested)
+        header_layout.addWidget(self._collapse_btn)
+
         self._settings_btn = QPushButton("⚙", header)
         self._settings_btn.setFixedSize(28, 28)
+        self._settings_btn.setStyleSheet("padding: 0px; font-size: 15px;")
         self._settings_btn.setToolTip(tr("AI Provider Settings"))
         self._settings_btn.clicked.connect(self._open_settings)
         header_layout.addWidget(self._settings_btn)
@@ -312,11 +335,22 @@ class AIPanel(QWidget):
         models = self._load_models(provider_id)
         self._model_combo.blockSignals(True)
         self._model_combo.clear()
+        # Seçilmiş liste varsa (ör. Gemini) yalnızca o modeller gösterilir
+        curated = available_curated(provider_id, models)
+        if curated:
+            for i, m in enumerate(curated):
+                medal = _MEDALS[i] + " " if i < len(_MEDALS) else ""
+                role = _role_text(m.role)
+                self._model_combo.addItem(f"{medal}{m.label}", m.id)
+                self._model_combo.setItemData(
+                    i, f"{m.id}\n{role}" if role else m.id, Qt.ItemDataRole.ToolTipRole
+                )
+        else:
+            for m in models:
+                self._model_combo.addItem(m, m)
         if models:
-            self._model_combo.addItems(models)
-            chosen = self._chosen_model.get(provider_id)
-            if chosen in models:
-                self._model_combo.setCurrentText(chosen)
+            index = self._model_combo.findData(self._chosen_model.get(provider_id))
+            self._model_combo.setCurrentIndex(max(index, 0))
         else:
             self._model_combo.addItem(tr("(model list unavailable)"), "")
         self._model_combo.blockSignals(False)
@@ -328,8 +362,8 @@ class AIPanel(QWidget):
 
     def _selected(self) -> tuple[object, str] | None:
         provider = get_provider(self._provider_combo.currentData() or "")
-        model = self._model_combo.currentText()
-        if not provider or not model or self._model_combo.currentData() == "":
+        model = self._model_combo.currentData()
+        if not provider or not model:
             return None
         return provider, model
 
@@ -344,7 +378,7 @@ class AIPanel(QWidget):
         if self._prefs.last_provider != pid or self._prefs.models.get(pid) != model:
             self._prefs.last_provider = pid
             self._prefs.models[pid] = model
-            ai_prefs.save(self._prefs)
+            ai_prefs.update(last_provider=pid, models=dict(self._prefs.models))
         if self._session is None:
             self._session = AISession(provider, model)  # type: ignore[arg-type]
         else:
@@ -453,7 +487,7 @@ class AIPanel(QWidget):
             resp.text,
             False,
             self._chat_content,
-            model=resp.model or self._model_combo.currentText(),
+            model=resp.model or self._model_combo.currentData(),
         )
         self._chat_layout.insertWidget(self._chat_layout.count() - 1, bubble)
         self.conversation_saved.emit()
