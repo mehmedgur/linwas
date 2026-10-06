@@ -17,7 +17,8 @@ from PySide6.QtWidgets import (
 
 from linwas.backend.desktop import Desktop
 from linwas.backend.distro import SupportStatus, detect_distro, evaluate_support
-from linwas.core.tasks import Task, TaskQueue
+from linwas.core.rollback import RollbackRecord, now_iso, records_since, undo_ops
+from linwas.core.tasks import Task, TaskQueue, TaskStep
 from linwas.ui.ai_panel import AIPanel
 from linwas.ui.dialogs.confirm import BackupChoice, ConfirmDialog
 from linwas.ui.dialogs.progress import ProgressDialog
@@ -231,8 +232,6 @@ class MainWindow(QMainWindow):
 
         backup_choice = confirm.backup_choice
         if backup_choice == BackupChoice.TIMESHIFT:
-            from linwas.core.tasks import TaskStep
-
             snap = Task(
                 label=tr("Full system backup (Timeshift)"),
                 steps=[TaskStep(op_id="snapshot.timeshift_create", params={})],
@@ -240,6 +239,7 @@ class MainWindow(QMainWindow):
             temp._tasks.insert(0, snap)
 
         self._status_bar.set_running(True)
+        self._run_started = now_iso()
         progress_dlg = ProgressDialog(temp, self)
         progress_dlg.done.connect(self._on_tasks_done)
         progress_dlg.exec()
@@ -262,8 +262,6 @@ class MainWindow(QMainWindow):
 
         # Timeshift yedek görevi kuyruğa başa ekle
         if backup_choice == BackupChoice.TIMESHIFT:
-            from linwas.core.tasks import TaskStep
-
             snapshot_task = Task(
                 label=tr("Full system backup (Timeshift)"),
                 steps=[TaskStep(op_id="snapshot.timeshift_create", params={})],
@@ -271,6 +269,7 @@ class MainWindow(QMainWindow):
             self._queue._tasks.insert(0, snapshot_task)
 
         self._status_bar.set_running(True)
+        self._run_started = now_iso()
         progress_dlg = ProgressDialog(self._queue, self)
         progress_dlg.done.connect(self._on_tasks_done)
         progress_dlg.exec()
@@ -279,14 +278,28 @@ class MainWindow(QMainWindow):
         self._status_bar.set_running(False)
         self._status_bar.update_queue(len(self._queue.pending))
 
-        has_rollback = True  # TODO: Aşama 1 rollback kaydı entegre edilecek
+        # Bu çalıştırmada helper'ın yazdığı geri alma kayıtları
+        started = getattr(self, "_run_started", None)
+        self._last_records: list[RollbackRecord] = records_since(started) if started else []
+        has_rollback = any(undo_ops(r) for r in self._last_records)
         result = ResultDialog(success, error, has_rollback=has_rollback, parent=self)
         result.undo_requested.connect(self._on_undo_requested)
+
+        for page in self._pages.values():
+            if isinstance(page, BasePage):
+                page.on_tasks_finished()
+
         result.exec()
 
     def _on_undo_requested(self) -> None:
-        # TODO: rollback kaydından geri alma görevleri oluştur
-        pass
+        steps = [
+            TaskStep(op_id=op_id, params=params)
+            for record in self._last_records
+            for op_id, params in undo_ops(record)
+        ]
+        if not steps:
+            return
+        self._run_task_now(Task(label=tr("Undo changes"), steps=steps))
 
     def _check_ai_panel(self) -> None:
         from linwas.ai.manager import available_providers
@@ -295,7 +308,6 @@ class MainWindow(QMainWindow):
 
     def _on_ai_task_requested(self, op_id: str, params: dict) -> None:
         """AI panelinden gelen görev önerisini kuyruğa ekler."""
-        from linwas.core.tasks import Task, TaskStep
         from linwas.core.whitelist import ValidationError
 
         try:

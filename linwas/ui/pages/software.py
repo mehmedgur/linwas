@@ -1,4 +1,5 @@
-"""Programlar sayfası: APT ve Flatpak arama, Windows alternatifleri, üçüncü taraf."""
+"""Programlar sayfası: arama (APT, Flatpak, Windows alternatifleri, üçüncü taraf)
+ve Kurulu programlar sekmesi."""
 
 from __future__ import annotations
 
@@ -16,6 +17,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QScrollArea,
     QSizePolicy,
+    QTabWidget,
     QVBoxLayout,
     QWidget,
 )
@@ -24,7 +26,9 @@ from linwas.backend.apt_search import AptPackage, search_apt
 from linwas.backend.flatpak import FlatpakPackage, search_flatpak
 from linwas.backend.flatpak import is_available as flatpak_ok
 from linwas.core.tasks import Task, TaskStep
+from linwas.ui.dialogs.remove_app import RemovalFlow, RemovalRequest
 from linwas.ui.pages.base import BasePage
+from linwas.ui.pages.installed_apps import InstalledAppsView
 from linwas.ui.widgets.card import Card
 
 _DATA = Path(__file__).resolve().parent.parent.parent / "data"
@@ -97,6 +101,7 @@ class _ResultRow(QWidget):
     install_apt = Signal(str)  # package name
     install_flatpak = Signal(str)  # app_id
     install_third_party = Signal(str)  # third_party id
+    remove_clicked = Signal(str, str, str)  # (kaynak, kimlik, görünen ad)
 
     def __init__(
         self,
@@ -146,11 +151,17 @@ class _ResultRow(QWidget):
             ver_lbl.setObjectName("Secondary")
             row.addWidget(ver_lbl)
 
-        # Buton
+        # Buton: kurulu programda "Kur" yerine "Kaldır"
         if installed:
             lbl = QLabel("✓ " + tr("Installed"), self)
             lbl.setStyleSheet("color:#0e7a0e; font-weight:bold;")
             row.addWidget(lbl)
+            if source in ("apt", "flatpak"):
+                remove = QPushButton(tr("Remove"), self)
+                remove.setAccessibleName(tr("Remove {name}").format(name=name))
+                remove.setFixedWidth(80)
+                remove.clicked.connect(lambda: self.remove_clicked.emit(source, pkg_id, name))
+                row.addWidget(remove)
         else:
             btn = QPushButton(tr("Install"), self)
             btn.setProperty("primary", True)
@@ -207,6 +218,8 @@ class SoftwarePage(BasePage):
         super().__init__(parent)
         self._worker: _SearchWorker | None = None
         self._third_party = _load_third_party()
+        self._removal = RemovalFlow(self)
+        self._removal.task_ready.connect(self.task_run_now)
 
         # Debounce timer
         self._debounce = QTimer(self)
@@ -220,13 +233,8 @@ class SoftwarePage(BasePage):
 
         content = QWidget()
         outer = QVBoxLayout(content)
-        outer.setContentsMargins(24, 20, 24, 20)
+        outer.setContentsMargins(0, 8, 0, 0)
         outer.setSpacing(12)
-
-        # Başlık
-        title = QLabel(tr("Software"), content)
-        title.setObjectName("H1")
-        outer.addWidget(title)
 
         # Arama kutusu
         self._search = QLineEdit(content)
@@ -259,9 +267,29 @@ class SoftwarePage(BasePage):
         outer.addStretch(1)
         scroll.setWidget(content)
 
+        self._installed = InstalledAppsView(self)
+        self._installed.task_run_now.connect(self.task_run_now)
+
+        self._tabs = QTabWidget(self)
+        self._tabs.addTab(scroll, tr("Search"))
+        self._tabs.addTab(self._installed, tr("Installed programs"))
+
         page_layout = QVBoxLayout(self)
-        page_layout.setContentsMargins(0, 0, 0, 0)
-        page_layout.addWidget(scroll)
+        page_layout.setContentsMargins(24, 20, 24, 20)
+        page_layout.setSpacing(8)
+        title = QLabel(tr("Software"), self)
+        title.setObjectName("H1")
+        page_layout.addWidget(title)
+        page_layout.addWidget(self._tabs, 1)
+
+    def on_tasks_finished(self) -> None:
+        # Kurulum/kaldırma sonrası kurulu bilgisi değişmiş olabilir
+        if self._installed.isVisible():
+            self._installed.reload()
+        else:
+            self._installed.mark_stale()
+        if len(self._search.text().strip()) >= 2:
+            self._do_search()
 
     def _on_text_changed(self, text: str) -> None:
         if len(text.strip()) < 2:
@@ -319,6 +347,7 @@ class SoftwarePage(BasePage):
                     parent=self._results_widget,
                 )
                 row.install_apt.connect(self._queue_apt)
+                row.remove_clicked.connect(self._on_remove)
                 self._results_layout.addWidget(row)
                 self._add_separator()
 
@@ -337,6 +366,7 @@ class SoftwarePage(BasePage):
                     parent=self._results_widget,
                 )
                 row.install_flatpak.connect(self._queue_flatpak)
+                row.remove_clicked.connect(self._on_remove)
                 self._results_layout.addWidget(row)
                 self._add_separator()
 
@@ -378,16 +408,14 @@ class SoftwarePage(BasePage):
         self.task_run_now.emit(task)
 
     def _queue_flatpak(self, app_id: str) -> None:
-        # Flatpak kurulumu whitelist'te tanımlı değil — service.enable ile değil
-        # Flatpak'ı doğrudan çalıştıracak ayrı bir işlem türü gerekir (Aşama 4b sonrası).
-        # Şimdilik bilgilendirme mesajı göster.
-        from PySide6.QtWidgets import QMessageBox
-
-        QMessageBox.information(
-            self,
-            "Flatpak",
-            tr("Flatpak install via terminal:") + f"\n\nflatpak install flathub {app_id}",
+        task = Task(
+            label=tr("Install {pkg}").format(pkg=app_id),
+            steps=[TaskStep(op_id="flatpak.install", params={"app_id": app_id})],
         )
+        self.task_run_now.emit(task)
+
+    def _on_remove(self, source: str, pkg_id: str, name: str) -> None:
+        self._removal.start(RemovalRequest(id=pkg_id, name=name, source=source))
 
     def _queue_third_party(self, app_id: str) -> None:
         app = next((a for a in self._third_party if a.id == app_id), None)

@@ -35,6 +35,10 @@
         <source>Full system backup (Timeshift)</source>
         <translation>Tam sistem yedeği (Timeshift)</translation>
     </message>
+    <message>
+        <source>Undo changes</source>
+        <translation>Değişiklikleri geri al</translation>
+    </message>
 </context>
 <context>
     <name>Sidebar</name>
@@ -569,10 +573,6 @@
         <translation>{pkg} kur</translation>
     </message>
     <message>
-        <source>Flatpak install via terminal:</source>
-        <translation>Flatpak terminal kurulumu:</translation>
-    </message>
-    <message>
         <source>Install {name} (third-party repository)</source>
         <translation>{name} kur (üçüncü taraf depo)</translation>
     </message>
@@ -591,6 +591,22 @@
     <message>
         <source>Looking for {win}? Try these Linux alternatives:</source>
         <translation>{win} mi arıyorsunuz? Bu Linux alternatiflerini deneyin:</translation>
+    </message>
+    <message>
+        <source>Installed programs</source>
+        <translation>Kurulu programlar</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Kaldır</translation>
+    </message>
+    <message>
+        <source>Remove {name}</source>
+        <translation>{name} programını kaldır</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>Arama</translation>
     </message>
 </context>
 <context>
@@ -974,6 +990,200 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>Wi-Fi is off</source>
         <translation>Wi-Fi kapalı</translation>
+    </message>
+</context>
+<context>
+    <name>InstalledAppsView</name>
+    <message>
+        <source>3rd party</source>
+        <translation>Üçüncü taraf</translation>
+    </message>
+    <message>
+        <source>Checking what will be removed…</source>
+        <translation>Nelerin kaldırılacağı denetleniyor…</translation>
+    </message>
+    <message>
+        <source>Install date</source>
+        <translation>Kurulma tarihi</translation>
+    </message>
+    <message>
+        <source>Install date unknown</source>
+        <translation>Kurulma tarihi bilinmiyor</translation>
+    </message>
+    <message>
+        <source>Installed on {date}</source>
+        <translation>Kurulma: {date}</translation>
+    </message>
+    <message>
+        <source>Installed only for your user account; Linwas can't remove it yet.</source>
+        <translation>Yalnızca sizin kullanıcı hesabınıza kurulmuş; Linwas bunu henüz kaldıramıyor.</translation>
+    </message>
+    <message>
+        <source>Loading installed programs…</source>
+        <translation>Kurulu programlar yükleniyor…</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Ad</translation>
+    </message>
+    <message>
+        <source>No installed programs found.</source>
+        <translation>Kurulu program bulunamadı.</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>Yenile</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Kaldır</translation>
+    </message>
+    <message>
+        <source>Remove {name}</source>
+        <translation>{name} programını kaldır</translation>
+    </message>
+    <message>
+        <source>Search installed programs…</source>
+        <translation>Kurulu programlarda ara…</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Boyut</translation>
+    </message>
+    <message>
+        <source>Sort by:</source>
+        <translation>Sırala:</translation>
+    </message>
+    <message>
+        <source>Space used</source>
+        <translation>Kapladığı alan</translation>
+    </message>
+    <message>
+        <source>Update</source>
+        <translation>Güncelle</translation>
+    </message>
+    <message>
+        <source>Update {name}</source>
+        <translation>{name} programını güncelle</translation>
+    </message>
+    <message>
+        <source>{n} program(s)</source>
+        <translation>{n} program</translation>
+    </message>
+    <message>
+        <source>{n} update(s) available</source>
+        <translation>{n} güncelleme var</translation>
+    </message>
+</context>
+<context>
+    <name>RemoveAppDialog</name>
+    <message>
+        <source>Close</source>
+        <translation>Kapat</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Also delete my settings</source>
+        <translation>Ayarlarımı da sil</translation>
+    </message>
+    <message>
+        <source>Deletes the program's system-wide settings files. Personal settings in your home folder can't always be found reliably and stay where they are.</source>
+        <translation>Programın sistem genelindeki ayar dosyalarını siler. Ev klasörünüzdeki kişisel ayarlar her zaman güvenilir şekilde bulunamadığı için yerinde kalır.</translation>
+    </message>
+    <message>
+        <source>Deletes this program's data and settings in your home folder (~/.var/app). Your own documents are not touched.</source>
+        <translation>Programın ev klasörünüzdeki verilerini ve ayarlarını (~/.var/app) siler. Kendi belgelerinize dokunulmaz.</translation>
+    </message>
+    <message>
+        <source>Linwas couldn't work out what would be removed.</source>
+        <translation>Linwas nelerin kaldırılacağını hesaplayamadı.</translation>
+    </message>
+    <message>
+        <source>Linwas itself</source>
+        <translation>Linwas'ın kendisi</translation>
+    </message>
+    <message>
+        <source>No longer needed — these will also be removed:</source>
+        <translation>Artık gerekmeyenler — bunlar da kaldırılacak:</translation>
+    </message>
+    <message>
+        <source>Protected packages that would be removed:</source>
+        <translation>Kaldırılacak korumalı paketler:</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Kaldır</translation>
+    </message>
+    <message>
+        <source>Remove {name}</source>
+        <translation>{name} programını kaldır</translation>
+    </message>
+    <message>
+        <source>Remove {name}?</source>
+        <translation>{name} kaldırılsın mı?</translation>
+    </message>
+    <message>
+        <source>Removing {name} would break your system</source>
+        <translation>{name} kaldırılırsa sisteminiz bozulur</translation>
+    </message>
+    <message>
+        <source>Runtimes that no other program uses will also be removed.</source>
+        <translation>Başka hiçbir programın kullanmadığı çalışma ortamları (runtime) da kaldırılacak.</translation>
+    </message>
+    <message>
+        <source>The package manager would also remove programs that {parts} need. Linwas stopped this so your computer keeps working.</source>
+        <translation>Paket yöneticisi şunlar için gereken programları da kaldıracaktı: {parts}. Bilgisayarınız çalışmaya devam etsin diye Linwas bu işlemi durdurdu.</translation>
+    </message>
+    <message>
+        <source>The program's data is always removed. Normally a copy is kept so it can be restored later; with this option no copy is kept.</source>
+        <translation>Programın verileri her durumda silinir. Normalde sonradan geri yüklenebilmesi için bir kopyası saklanır; bu seçenekle kopya saklanmaz.</translation>
+    </message>
+    <message>
+        <source>These packages will be removed:</source>
+        <translation>Şu paketler kaldırılacak:</translation>
+    </message>
+    <message>
+        <source>This program came with your system. You can remove it, but other parts of the system may expect it to be there.</source>
+        <translation>Bu program sisteminizle birlikte gelmiş. Kaldırabilirsiniz, ancak sistemin başka parçaları onun kurulu olmasını bekleyebilir.</translation>
+    </message>
+    <message>
+        <source>Update {name}</source>
+        <translation>{name} programını güncelle</translation>
+    </message>
+    <message>
+        <source>You can reinstall it with “Undo changes” afterwards.</source>
+        <translation>Sonradan “Değişiklikleri geri al” ile yeniden kurabilirsiniz.</translation>
+    </message>
+    <message>
+        <source>core parts of the operating system</source>
+        <translation>işletim sisteminin temel parçaları</translation>
+    </message>
+    <message>
+        <source>internet and network connections</source>
+        <translation>internet ve ağ bağlantıları</translation>
+    </message>
+    <message>
+        <source>sound</source>
+        <translation>ses</translation>
+    </message>
+    <message>
+        <source>the desktop (the screen with your windows and menus)</source>
+        <translation>masaüstü (pencerelerin ve menülerin bulunduğu ekran)</translation>
+    </message>
+    <message>
+        <source>the login screen</source>
+        <translation>oturum açma ekranı</translation>
+    </message>
+    <message>
+        <source>{name} can't be removed right now</source>
+        <translation>{name} şu anda kaldırılamıyor</translation>
+    </message>
+    <message>
+        <source>“Undo changes” reinstalls the program, but deleted settings don't come back.</source>
+        <translation>“Değişiklikleri geri al” programı yeniden kurar, ancak silinen ayarlar geri gelmez.</translation>
     </message>
 </context>
 </TS>

@@ -207,6 +207,10 @@ def _preinstalled_packages() -> set[str]:
     return _installer_packages() | auto
 
 
+def is_preinstalled(package: str) -> bool:
+    return package in _preinstalled_packages()
+
+
 def _third_party_packages() -> set[str]:
     try:
         data = json.loads(_THIRD_PARTY_FILE.read_text(encoding="utf-8"))
