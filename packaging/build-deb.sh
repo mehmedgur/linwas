@@ -66,11 +66,28 @@ install -D -m 0644 "$ROOT/packaging/linwas.desktop" "$PKG/usr/share/applications
 install -D -m 0644 "$ROOT/linwas/resources/linwas.svg" \
     "$PKG/usr/share/icons/hicolor/scalable/apps/linwas.svg"
 
+echo "==> Root helper ve polkit eylemi"
+install -D -m 0755 "$ROOT/packaging/linwas-helper.sh" "$PKG/usr/lib/linwas/linwas-helper"
+install -D -m 0644 "$ROOT/packaging/org.linwas.helper.policy" \
+    "$PKG/usr/share/polkit-1/actions/org.linwas.helper.policy"
+
+# APT deposu (yayın yeri kararlaştırılınca): LINWAS_APT_URL ve imza anahtarı verilirse
+APT_URL=${LINWAS_APT_URL:-}
+if [ -n "$APT_URL" ] && [ -f "$ROOT/packaging/linwas-archive-keyring.gpg" ]; then
+    install -D -m 0644 "$ROOT/packaging/linwas-archive-keyring.gpg" \
+        "$PKG/usr/share/keyrings/linwas-archive-keyring.gpg"
+else
+    APT_URL=""
+fi
+
 echo "==> Paket bilgileri"
 INSTALLED_SIZE=$(du -sk --exclude=DEBIAN "$PKG" | cut -f1)
 mkdir -p "$PKG/DEBIAN"
 sed -e "s/@VERSION@/${VERSION}/" -e "s/@ARCH@/${ARCH}/" -e "s/@INSTALLED_SIZE@/${INSTALLED_SIZE}/" \
     "$ROOT/packaging/debian/control.in" > "$PKG/DEBIAN/control"
+sed -e "s|@APT_URL@|${APT_URL}|" "$ROOT/packaging/debian/postinst.in" > "$PKG/DEBIAN/postinst"
+install -m 0755 "$ROOT/packaging/debian/postrm" "$PKG/DEBIAN/postrm"
+chmod 0755 "$PKG/DEBIAN/postinst"
 
 # İzinler: klasörler 755, dosyalar 644; çalıştırılabilir dosyalar korunur, kimse dışarıdan yazamaz.
 chmod -R u+rwX,go+rX,go-w "$PKG"

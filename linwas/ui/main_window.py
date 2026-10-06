@@ -412,6 +412,11 @@ class MainWindow(QMainWindow):
             if cls.page.id not in offered:
                 self._sidebar.hide_item(cls.page.id)
 
+    def open_deb(self, path: str) -> None:
+        """Programlar sayfasında .deb risk analizini başlatır."""
+        self._show_page("software")
+        self._pages["software"].open_deb(path)
+
     def _open_guide(self, text: str) -> None:
         if text:
             self._pages["guide"].set_query(text)

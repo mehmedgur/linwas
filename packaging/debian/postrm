@@ -1,0 +1,11 @@
+#!/bin/sh
+# Linwas kaldırma sonrası betiği.
+set -e
+
+if [ "$1" = "purge" ]; then
+    # Linwas'ın eklediği depo ve root'a ait geri alma kayıtları
+    rm -f /etc/apt/sources.list.d/linwas.sources
+    rm -rf /var/lib/linwas
+fi
+
+exit 0

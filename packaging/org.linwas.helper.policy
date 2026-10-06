@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<!-- Linwas root helper eylemi. pkexec, exec.path ile bu eylemi seçer (pkexec(1)).
+     Şifre her "Uygula"da bir kez sorulur; bir uygulamadaki bütün adımlar tek
+     helper sürecinde çalıştığı için şifreyi hatırlatmaya (auth_admin_keep) gerek yok. -->
+<policyconfig>
+  <vendor>Linwas</vendor>
+  <vendor_url>https://github.com/mehmedgur/linwas2</vendor_url>
+  <icon_name>linwas</icon_name>
+  <action id="org.linwas.helper.run">
+    <description>Apply system changes with Linwas</description>
+    <description xml:lang="tr">Linwas ile sistem değişikliklerini uygula</description>
+    <message>Linwas needs your password to apply the changes you approved.</message>
+    <message xml:lang="tr">Linwas, onayladığınız değişiklikleri uygulamak için şifrenizi istiyor.</message>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/lib/linwas/linwas-helper</annotate>
+  </action>
+</policyconfig>

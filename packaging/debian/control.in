@@ -5,7 +5,9 @@ Priority: optional
 Architecture: @ARCH@
 Installed-Size: @INSTALLED_SIZE@
 Maintainer: mehmedgur <mehmedgrbz11@gmail.com>
-Depends: libc6 (>= 2.34), libstdc++6 (>= 11), libegl1, libgl1, libfontconfig1, libxkbcommon0, libxkbcommon-x11-0, libdbus-1-3, libglib2.0-0t64 | libglib2.0-0, libxcb-cursor0, libxcb-icccm4, libxcb-image0, libxcb-keysyms1, libxcb-randr0, libxcb-render-util0, libxcb-shape0, libxcb-xkb1
+Depends: libc6 (>= 2.34), libstdc++6 (>= 11), libegl1, libgl1, libfontconfig1, libxkbcommon0, libxkbcommon-x11-0, libdbus-1-3, libglib2.0-0t64 | libglib2.0-0, libxcb-cursor0, libxcb-icccm4, libxcb-image0, libxcb-keysyms1, libxcb-randr0, libxcb-render-util0, libxcb-shape0, libxcb-xkb1, pkexec | policykit-1
+Recommends: network-manager, rsync, libhivex-bin
+Suggests: timeshift, flatpak
 Homepage: https://github.com/mehmedgur/linwas2
 Description: Linux assistant for people coming from Windows
  Linwas helps people who switch from Windows to manage a Debian/Ubuntu based

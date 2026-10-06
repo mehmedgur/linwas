@@ -66,6 +66,10 @@ def main(argv: list[str] | None = None) -> int:
 
     window = MainWindow()
     window.show()
+    # "Linwas ile aç": .deb dosyası verildiyse risk analizi penceresi açılır
+    deb = next((a for a in argv[1:] if a.endswith(".deb") and os.path.isfile(a)), None)
+    if deb:
+        window.open_deb(os.path.abspath(deb))
     return app.exec()
 
 
