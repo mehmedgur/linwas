@@ -608,6 +608,18 @@
         <source>Search</source>
         <translation>Arama</translation>
     </message>
+    <message>
+        <source>Already installed</source>
+        <translation>Zaten kurulu</translation>
+    </message>
+    <message>
+        <source>Already installed programs</source>
+        <translation>Zaten kurulu programlar</translation>
+    </message>
+    <message>
+        <source>Another version of this program is already installed: {name}</source>
+        <translation>Bu programın başka bir sürümü zaten kurulu: {name}</translation>
+    </message>
 </context>
 <context>
     <name>MigratePage</name>
@@ -713,10 +725,6 @@ Windows sürücünüzün bağlı olduğundan emin olun.</translation>
         <translation>Zorla kapat</translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation>Ad</translation>
-    </message>
-    <message>
         <source>Memory (MB)</source>
         <translation>Bellek (MB)</translation>
     </message>
@@ -755,6 +763,10 @@ Windows sürücünüzün bağlı olduğundan emin olun.</translation>
     <message>
         <source>Disabled</source>
         <translation>Devre dışı</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Ad</translation>
     </message>
 </context>
 <context>
@@ -1003,10 +1015,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Nelerin kaldırılacağı denetleniyor…</translation>
     </message>
     <message>
-        <source>Install date</source>
-        <translation>Kurulma tarihi</translation>
-    </message>
-    <message>
         <source>Install date unknown</source>
         <translation>Kurulma tarihi bilinmiyor</translation>
     </message>
@@ -1021,10 +1029,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>Loading installed programs…</source>
         <translation>Kurulu programlar yükleniyor…</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Ad</translation>
     </message>
     <message>
         <source>No installed programs found.</source>
@@ -1045,10 +1049,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>Search installed programs…</source>
         <translation>Kurulu programlarda ara…</translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation>Boyut</translation>
     </message>
     <message>
         <source>Sort by:</source>
@@ -1073,6 +1073,34 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>{n} update(s) available</source>
         <translation>{n} güncelleme var</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>Tümü</translation>
+    </message>
+    <message>
+        <source>Install date (newest first)</source>
+        <translation>Kurulma tarihi (en yeni üstte)</translation>
+    </message>
+    <message>
+        <source>Install date (oldest first)</source>
+        <translation>Kurulma tarihi (en eski üstte)</translation>
+    </message>
+    <message>
+        <source>Name (A–Z)</source>
+        <translation>Ad (A–Z)</translation>
+    </message>
+    <message>
+        <source>Size (largest first)</source>
+        <translation>Boyut (büyükten küçüğe)</translation>
+    </message>
+    <message>
+        <source>Source (APT, Flatpak, Snap…)</source>
+        <translation>Kaynak (APT, Flatpak, Snap…)</translation>
+    </message>
+    <message>
+        <source>Source:</source>
+        <translation>Kaynak:</translation>
     </message>
 </context>
 <context>

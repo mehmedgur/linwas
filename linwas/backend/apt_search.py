@@ -86,7 +86,8 @@ def search_apt(query: str, max_results: int = 40) -> list[AptPackage]:
             if " - " not in line:
                 continue
             name = line.split(" - ", 1)[0].strip()
-            if name and not _SKIP_SECTIONS.match(name):
+            # Dil paketleri (ör. firefox-esr-l10n-tr) program değildir
+            if name and not _SKIP_SECTIONS.match(name) and "-l10n-" not in name:
                 names.append(name)
         names = names[:max_results]
         if not names:

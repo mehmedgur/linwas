@@ -3,12 +3,13 @@ ve Kurulu programlar sekmesi."""
 
 from __future__ import annotations
 
+import html
 import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from PySide6.QtCore import QCoreApplication, QThread, QTimer, Signal
+from PySide6.QtCore import QCoreApplication, Qt, QThread, QTimer, Signal
 from PySide6.QtWidgets import (
     QFrame,
     QHBoxLayout,
@@ -25,10 +26,11 @@ from PySide6.QtWidgets import (
 from linwas.backend.apt_search import AptPackage, search_apt
 from linwas.backend.flatpak import FlatpakPackage, search_flatpak
 from linwas.backend.flatpak import is_available as flatpak_ok
+from linwas.backend.installed_apps import InstalledApp, is_other_version, match_installed
 from linwas.core.tasks import Task, TaskStep
 from linwas.ui.dialogs.remove_app import RemovalFlow, RemovalRequest
 from linwas.ui.pages.base import BasePage
-from linwas.ui.pages.installed_apps import InstalledAppsView
+from linwas.ui.pages.installed_apps import InstalledAppsView, source_badge_text
 from linwas.ui.widgets.card import Card
 
 _DATA = Path(__file__).resolve().parent.parent.parent / "data"
@@ -112,6 +114,7 @@ class _ResultRow(QWidget):
         installed: bool,
         pkg_id: str,  # apt name veya flatpak app_id
         parent: QWidget | None = None,
+        other_version: str = "",  # kurulu başka sürümün görünen adı
     ) -> None:
         super().__init__(parent)
         row = QHBoxLayout(self)
@@ -128,6 +131,16 @@ class _ResultRow(QWidget):
             desc_lbl.setObjectName("Secondary")
             desc_lbl.setWordWrap(True)
             info.addWidget(desc_lbl)
+        if other_version:
+            note = QLabel(
+                tr("Another version of this program is already installed: {name}").format(
+                    name=other_version
+                ),
+                self,
+            )
+            note.setStyleSheet("color:#9d5d00;")
+            note.setWordWrap(True)
+            info.addWidget(note)
         row.addLayout(info, 1)
 
         # Kaynak rozeti
@@ -183,7 +196,11 @@ class _AltBanner(Card):
     install_flatpak = Signal(str)
 
     def __init__(
-        self, windows_name: str, alt: dict[str, Any], parent: QWidget | None = None
+        self,
+        windows_name: str,
+        alt: dict[str, Any],
+        parent: QWidget | None = None,
+        installed: set[str] | None = None,
     ) -> None:
         super().__init__(parent)
         self.layout.addWidget(
@@ -195,13 +212,23 @@ class _AltBanner(Card):
             )
         )
         btn_row = QHBoxLayout()
+        installed = installed or set()
         for pkg in alt.get("apt", []):
             b = QPushButton(f"APT: {pkg}", self)
+            if pkg in installed:
+                # Zaten kurulu: kurma düğmesi yerine bilgi
+                b.setText(f"✓ APT: {pkg}")
+                b.setEnabled(False)
+                b.setToolTip(tr("Installed"))
             b.clicked.connect(lambda _=None, p=pkg: self.install_apt.emit(p))
             btn_row.addWidget(b)
         for app_id in alt.get("flatpak", []):
             short = app_id.split(".")[-1]
             b = QPushButton(f"Flatpak: {short}", self)
+            if app_id in installed:
+                b.setText(f"✓ Flatpak: {short}")
+                b.setEnabled(False)
+                b.setToolTip(tr("Installed"))
             b.clicked.connect(lambda _=None, a=app_id: self.install_flatpak.emit(a))
             btn_row.addWidget(b)
         btn_row.addStretch(1)
@@ -217,6 +244,7 @@ class SoftwarePage(BasePage):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._worker: _SearchWorker | None = None
+        self._last_result: _SearchResult | None = None
         self._third_party = _load_third_party()
         self._removal = RemovalFlow(self)
         self._removal.task_ready.connect(self.task_run_now)
@@ -269,6 +297,8 @@ class SoftwarePage(BasePage):
 
         self._installed = InstalledAppsView(self)
         self._installed.task_run_now.connect(self.task_run_now)
+        # Kurulu liste geç gelirse son arama "zaten kurulu" bilgisiyle yeniden çizilir
+        self._installed.apps_loaded.connect(self._rerender_results)
 
         self._tabs = QTabWidget(self)
         self._tabs.addTab(scroll, tr("Search"))
@@ -306,6 +336,10 @@ class SoftwarePage(BasePage):
         if self._worker and self._worker.isRunning():
             self._worker.terminate()
 
+        # "Zaten kurulu" denetimi için kurulu programlar arka planda bir kez yüklenir
+        if not self._installed.is_loaded:
+            self._installed.reload()
+
         self._worker = _SearchWorker(query)
         self._worker.done.connect(self._on_results)
         self._worker.start()
@@ -314,16 +348,32 @@ class SoftwarePage(BasePage):
         while self._results_layout.count():
             item = self._results_layout.takeAt(0)
             if item.widget():
+                item.widget().hide()
                 item.widget().deleteLater()
 
+    def _rerender_results(self) -> None:
+        if self._last_result is not None and len(self._search.text().strip()) >= 2:
+            self._on_results(self._last_result)
+
     def _on_results(self, result: _SearchResult) -> None:
+        self._last_result = result
         self._clear_results()
         query = self._search.text().strip()
+        installed_apps = self._installed.apps
+
+        # Aranan program zaten kurulu mu?
+        matches = match_installed(query, installed_apps)
+        if matches:
+            banner = _InstalledBanner(matches[:5], self._results_widget)
+            banner.remove_clicked.connect(self._on_remove_installed)
+            self._results_layout.addWidget(banner)
+            self._results_layout.addSpacing(8)
 
         # Windows alternatif banner
         alt = _windows_alts(query)
         if alt:
-            banner = _AltBanner(query, alt, self._results_widget)
+            installed_ids = {a.id for a in installed_apps}
+            banner = _AltBanner(query, alt, self._results_widget, installed_ids)
             banner.install_apt.connect(self._queue_apt)
             banner.install_flatpak.connect(self._queue_flatpak)
             self._results_layout.addWidget(banner)
@@ -345,6 +395,7 @@ class SoftwarePage(BasePage):
                     installed=pkg.installed,
                     pkg_id=pkg.name,
                     parent=self._results_widget,
+                    other_version=self._other_version_name(pkg, installed_apps),
                 )
                 row.install_apt.connect(self._queue_apt)
                 row.remove_clicked.connect(self._on_remove)
@@ -414,6 +465,20 @@ class SoftwarePage(BasePage):
         )
         self.task_run_now.emit(task)
 
+    @staticmethod
+    def _other_version_name(pkg: AptPackage, installed_apps: list[InstalledApp]) -> str:
+        if pkg.installed:
+            return ""
+        other = is_other_version(pkg.name, installed_apps)
+        return f"{other.name} ({other.id})" if other else ""
+
+    def _on_remove_installed(self, app: InstalledApp) -> None:
+        self._removal.start(
+            RemovalRequest(
+                id=app.id, name=app.name, source=app.source, preinstalled=app.preinstalled
+            )
+        )
+
     def _on_remove(self, source: str, pkg_id: str, name: str) -> None:
         self._removal.start(RemovalRequest(id=pkg_id, name=name, source=source))
 
@@ -447,6 +512,33 @@ class SoftwarePage(BasePage):
             ],
         )
         self.task_run_now.emit(task)
+
+
+class _InstalledBanner(Card):
+    """Aranan program zaten kuruluysa en üstte gösterilir."""
+
+    remove_clicked = Signal(object)  # InstalledApp
+
+    def __init__(self, apps: list[InstalledApp], parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        title = QLabel(
+            tr("Already installed") if len(apps) == 1 else tr("Already installed programs"),
+            self,
+        )
+        title.setObjectName("H2")
+        self.layout.addWidget(title)
+        for app in apps:
+            row = QHBoxLayout()
+            name = QLabel(f"✓ <b>{html.escape(app.name)}</b> ({html.escape(app.id)})", self)
+            name.setTextFormat(Qt.TextFormat.RichText)
+            row.addWidget(name, 1)
+            row.addWidget(QLabel(source_badge_text(app.source), self))
+            remove = QPushButton(tr("Remove"), self)
+            remove.setAccessibleName(tr("Remove {name}").format(name=app.name))
+            remove.setEnabled(not app.user_install)
+            remove.clicked.connect(lambda _=None, a=app: self.remove_clicked.emit(a))
+            row.addWidget(remove)
+            self.layout.addLayout(row)
 
 
 class _SectionSep(QWidget):

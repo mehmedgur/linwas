@@ -20,7 +20,13 @@ from PySide6.QtWidgets import (
 )
 
 from linwas.backend.distro import detect_distro
-from linwas.backend.installed_apps import InstalledApp, list_installed_apps
+from linwas.backend.installed_apps import (
+    SOURCE_ORDER,
+    InstalledApp,
+    filter_apps,
+    list_installed_apps,
+    sort_apps,
+)
 from linwas.core.tasks import Task
 from linwas.ui.dialogs.remove_app import RemovalFlow, RemovalRequest, build_update_task
 
@@ -146,6 +152,7 @@ class InstalledAppsView(QWidget):
     """Kurulu programlar: arama, sıralama, güncelle ve kaldır."""
 
     task_run_now = Signal(Task)
+    apps_loaded = Signal()
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -167,12 +174,22 @@ class InstalledAppsView(QWidget):
         self._filter.textChanged.connect(self._render)
         tools.addWidget(self._filter, 1)
 
+        source_lbl = QLabel(tr("Source:"), self)
+        tools.addWidget(source_lbl)
+        self._source = QComboBox(self)
+        self._source.addItem(tr("All"), "")
+        self._source.currentIndexChanged.connect(self._render)
+        source_lbl.setBuddy(self._source)
+        tools.addWidget(self._source)
+
         sort_lbl = QLabel(tr("Sort by:"), self)
         tools.addWidget(sort_lbl)
         self._sort = QComboBox(self)
-        self._sort.addItem(tr("Name"), "name")
-        self._sort.addItem(tr("Size"), "size")
-        self._sort.addItem(tr("Install date"), "date")
+        self._sort.addItem(tr("Name (A–Z)"), "name")
+        self._sort.addItem(tr("Source (APT, Flatpak, Snap…)"), "source")
+        self._sort.addItem(tr("Size (largest first)"), "size")
+        self._sort.addItem(tr("Install date (newest first)"), "newest")
+        self._sort.addItem(tr("Install date (oldest first)"), "oldest")
         self._sort.currentIndexChanged.connect(self._render)
         sort_lbl.setBuddy(self._sort)
         tools.addWidget(self._sort)
@@ -221,26 +238,44 @@ class InstalledAppsView(QWidget):
     def _on_loaded(self, apps: list[InstalledApp]) -> None:
         self._apps = apps
         self._refresh_btn.setEnabled(True)
+        self._fill_sources()
         self._render()
+        self.apps_loaded.emit()
 
     # --- Görüntüleme ---
 
-    def _sorted_filtered(self) -> list[InstalledApp]:
-        q = self._filter.text().strip().casefold()
-        apps = [a for a in self._apps if not q or q in a.name.casefold() or q in a.id.casefold()]
-        key = self._sort.currentData()
-        if key == "size":
-            apps.sort(key=lambda a: a.size_bytes or 0, reverse=True)
-        elif key == "date":
-            apps.sort(key=lambda a: a.installed_on or date.min, reverse=True)
-        return apps
+    @property
+    def apps(self) -> list[InstalledApp]:
+        return list(self._apps)
 
-    def _update_status(self, shown: int) -> None:
+    @property
+    def is_loaded(self) -> bool:
+        return self._loaded and not (self._worker and self._worker.isRunning())
+
+    def _sorted_filtered(self) -> list[InstalledApp]:
+        apps = filter_apps(self._apps, self._source.currentData() or "", self._filter.text())
+        return sort_apps(apps, self._sort.currentData() or "name")
+
+    def _fill_sources(self) -> None:
+        """Kaynak filtresine yalnızca listede bulunan kaynakları koyar."""
+        current = self._source.currentData()
+        present = {a.source for a in self._apps}
+        self._source.blockSignals(True)
+        self._source.clear()
+        self._source.addItem(tr("All"), "")
+        for src in SOURCE_ORDER:
+            if src in present:
+                self._source.addItem(source_badge_text(src), src)
+        index = self._source.findData(current)
+        self._source.setCurrentIndex(max(index, 0))
+        self._source.blockSignals(False)
+
+    def _update_status(self, shown: list[InstalledApp]) -> None:
         if not self._apps:
             self._status.setText(tr("No installed programs found."))
             return
-        text = tr("{n} program(s)").format(n=shown)
-        updates = sum(1 for a in self._apps if a.update_available)
+        text = tr("{n} program(s)").format(n=len(shown))
+        updates = sum(1 for a in shown if a.update_available)
         if updates:
             text += " · " + tr("{n} update(s) available").format(n=updates)
         self._status.setText(text)
@@ -249,6 +284,7 @@ class InstalledAppsView(QWidget):
         while self._list_layout.count() > 1:
             item = self._list_layout.takeAt(0)
             if item.widget():
+                item.widget().hide()
                 item.widget().deleteLater()
 
     def _render(self) -> None:
@@ -256,7 +292,7 @@ class InstalledAppsView(QWidget):
             return
         self._clear()
         apps = self._sorted_filtered()
-        self._update_status(len(apps))
+        self._update_status(apps)
 
         pos = 0
         for app in apps:
@@ -286,4 +322,4 @@ class InstalledAppsView(QWidget):
         if busy:
             self._status.setText(tr("Checking what will be removed…"))
         else:
-            self._update_status(len(self._sorted_filtered()))
+            self._update_status(self._sorted_filtered())

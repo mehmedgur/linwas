@@ -367,3 +367,63 @@ def list_installed_apps(include_snap: bool = True) -> list[InstalledApp]:
         apps += list_snap_apps()
     apps.sort(key=lambda a: a.name.casefold())
     return apps
+
+
+# --- Filtreleme, sıralama ve arama eşleştirme ---
+
+# Kaynağa göre sıralamada grup sırası
+SOURCE_ORDER = ("apt", "flatpak", "snap", "third-party")
+
+SORT_KEYS = ("name", "source", "size", "newest", "oldest")
+
+
+def filter_apps(apps: list[InstalledApp], source: str = "", query: str = "") -> list[InstalledApp]:
+    """Kaynağa (boşsa hepsi) ve ad/kimlikte geçen metne göre süzer."""
+    q = query.strip().casefold()
+    return [
+        a
+        for a in apps
+        if (not source or a.source == source)
+        and (not q or q in a.name.casefold() or q in a.id.casefold())
+    ]
+
+
+def sort_apps(apps: list[InstalledApp], key: str = "name") -> list[InstalledApp]:
+    """Yeni sıralı liste döner. Tarihi bilinmeyenler iki tarih sıralamasında da en altta."""
+    by_name = sorted(apps, key=lambda a: a.name.casefold())
+    if key == "source":
+        order = {s: i for i, s in enumerate(SOURCE_ORDER)}
+        return sorted(by_name, key=lambda a: order.get(a.source, len(order)))
+    if key == "size":
+        return sorted(by_name, key=lambda a: a.size_bytes or 0, reverse=True)
+    if key in ("newest", "oldest"):
+        known = [a for a in by_name if a.installed_on]
+        unknown = [a for a in by_name if not a.installed_on]
+        known.sort(key=lambda a: a.installed_on, reverse=key == "newest")  # type: ignore[arg-type, return-value]
+        return known + unknown
+    return by_name
+
+
+def match_installed(query: str, apps: list[InstalledApp]) -> list[InstalledApp]:
+    """Aranan metin kurulu bir programın adında veya kimliğinde geçiyorsa onları döner."""
+    if len(query.strip()) < 2:
+        return []
+    return filter_apps(apps, query=query)
+
+
+def is_other_version(package: str, installed: list[InstalledApp]) -> InstalledApp | None:
+    """Kurulu olmayan `package`, kurulu bir programın başka sürümü mü?
+
+    Örnek: `firefox` aranırken `firefox-esr` kurulu. Ad öneki tek başına yetmez
+    (`gnome` ile `gnome-2048`), bu yüzden kurulu programın görünen adı da
+    paketin ilk sözcüğüyle başlamalı ("Firefox ESR").
+    """
+    for app in installed:
+        if app.id == package or app.source not in ("apt", "third-party"):
+            continue
+        # Yalnızca kurulu paket, aranan paketin bir türeviyse (firefox → firefox-esr).
+        # Ters yön (firefox-esr → firefox-esr-mobile-config) eklenti/parçadır, sürüm değil.
+        base = package.split("-")[0]
+        if app.id.startswith(package + "-") and app.name.casefold().startswith(base.casefold()):
+            return app
+    return None
