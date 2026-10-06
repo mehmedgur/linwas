@@ -22,7 +22,10 @@ ROLLBACK_DIR = Path("/var/lib/linwas/rollback")
 
 @dataclass
 class FileBackup:
-    """Tek bir dosya yedeği."""
+    """Tek bir dosya yedeği.
+
+    backup_path boşsa dosya işlemden önce yoktu; geri almada silinir.
+    """
 
     original_path: str
     backup_path: str
@@ -116,10 +119,9 @@ def undo_ops(record: RollbackRecord) -> list[tuple[str, dict[str, str]]]:
     """
     ops: list[tuple[str, dict[str, str]]] = []
 
-    # Dosya yedeklerini eski yerine geri yaz
-    for backup in record.file_backups:
-        content = f"__restore_from_backup__{backup.backup_path}"
-        ops.append(("file.write_text", {"path": backup.original_path, "content": content}))
+    # Dosyaları işlem öncesi hâline döndür (helper kaydı kendi dizininden okur)
+    if record.file_backups:
+        ops.append(("rollback.restore_files", {"record_id": record.id}))
 
     # Kurulmuş paketleri kaldır
     for pkg in record.packages_to_install:

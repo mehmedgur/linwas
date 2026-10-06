@@ -195,3 +195,70 @@ def run_backup(
         if on_progress:
             on_progress(i, len(sources), 100)
     return True, target, ""
+
+
+# --- Geri yükleme ---
+
+RESTORE_DIR_NAME = "Linwas-Geri-Yukleme"
+
+
+def restore_targets(backup: BackupSet, mode: str) -> list[tuple[Path, Path]]:
+    """(kaynak klasör, hedef üst klasör) çiftleri.
+
+    mode="separate": ~/Linwas-Geri-Yukleme/<yedek-adı>/ altına (hiçbir şeye dokunmaz)
+    mode="original": aynı adlı kullanıcı klasörüne (ör. Belgeler); hiç eşleşmezse ev klasörü
+    """
+    home = Path.home()
+    if mode == "separate":
+        parent = home / RESTORE_DIR_NAME / backup.path.name
+        return [(backup.path / name, parent) for name in backup.folders]
+    by_name = {f.path.name: f.path.parent for f in user_folders()}
+    return [(backup.path / name, by_name.get(name, home)) for name in backup.folders]
+
+
+def run_restore(
+    backup: BackupSet,
+    mode: str,
+    on_progress: Callable[[int, int, int], None] | None = None,
+) -> tuple[bool, Path, str]:
+    """Yedeği bilgisayara kopyalar. Var olan dosyaların üzerine yazılmaz (--ignore-existing).
+
+    Döner: (başarılı, açılacak klasör, hata)
+    """
+    pairs = restore_targets(backup, mode)
+    shown = pairs[0][1] if pairs else Path.home()
+    for i, (src, parent) in enumerate(pairs):
+        try:
+            parent.mkdir(parents=True, exist_ok=True)
+        except OSError as exc:
+            return False, shown, str(exc)
+        cmd = [
+            "rsync",
+            "-rt",
+            "--ignore-existing",
+            "--info=progress2",
+            "--",
+            str(src),
+            f"{parent}/",
+        ]
+        try:
+            proc = subprocess.Popen(
+                cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=False
+            )
+        except FileNotFoundError:
+            return False, shown, "rsync bulunamadı"
+        assert proc.stdout is not None
+        buf = ""
+        while ch := proc.stdout.read(1):
+            if ch in "\r\n":
+                pct = parse_progress(buf)
+                if pct is not None and on_progress:
+                    on_progress(i, len(pairs), pct)
+                buf = ""
+            else:
+                buf += ch
+        proc.wait()
+        if proc.returncode != 0:
+            err = proc.stderr.read().strip() if proc.stderr else ""
+            return False, shown, err or f"rsync kodu {proc.returncode}"
+    return True, shown, ""

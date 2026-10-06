@@ -100,9 +100,8 @@ class TestUndoOps:
     def test_undo_file_backups(self):
         backup = FileBackup("/etc/linwas/config.conf", "/var/lib/linwas/rollback/x/config.conf")
         r = make_record(file_backups=[backup])
-        ops = undo_ops(r)
-        file_ops = [(op, p) for op, p in ops if op == "file.write_text"]
-        assert any(p["path"] == "/etc/linwas/config.conf" for _, p in file_ops)
+        # Dosyalar tek adımda, helper'ın kayıt dizininden geri yüklenir
+        assert undo_ops(r) == [("rollback.restore_files", {"record_id": r.id})]
 
     def test_empty_record_no_ops(self):
         r = make_record()

@@ -22,7 +22,7 @@ from pathlib import Path
 from typing import Any
 
 from linwas.core import package_guard
-from linwas.core.rollback import RollbackRecord, save_record
+from linwas.core.rollback import ROLLBACK_DIR, FileBackup, RollbackRecord, load_record, save_record
 from linwas.core.whitelist import ValidationError, validate
 
 
@@ -400,6 +400,14 @@ def _exec_snap_refresh(seq: int, params: dict[str, str]) -> bool:
     return _run(["snap", "refresh", params["name"]], seq)
 
 
+def _exec_flatpak_update_all(seq: int, params: dict[str, str]) -> bool:
+    return _run(["flatpak", "update", "-y", "--noninteractive", "--system"], seq)
+
+
+def _exec_snap_refresh_all(seq: int, params: dict[str, str]) -> bool:
+    return _run(["snap", "refresh"], seq)
+
+
 def _exec_snap_install(seq: int, params: dict[str, str]) -> bool:
     return _run(["snap", "install", params["name"]], seq)
 
@@ -456,6 +464,91 @@ def _exec_battery_set_charge_limit(seq: int, params: dict[str, str]) -> bool:
     return True
 
 
+# --- Dosya yedeği ve geri yükleme ---
+
+# Helper'ın yedekleyip geri yükleyebileceği yollar (yazdığı dosyalarla sınırlı)
+_RESTORABLE_PREFIXES = (
+    "/etc/apt/sources.list.d/linwas-",
+    "/usr/share/keyrings/linwas-",
+    "/etc/systemd/logind.conf.d/90-linwas",
+    "/etc/linwas/",
+    "/usr/local/share/linwas/",
+    "/usr/share/linwas/",
+)
+
+
+def _restorable(path: Path) -> bool:
+    text = str(path)
+    return ".." not in path.parts and any(text.startswith(p) for p in _RESTORABLE_PREFIXES)
+
+
+def _with_file_backup(seq: int, label: str, paths: list[Path], write: Any) -> bool:
+    """Dosyaları yedekler, `write()` çalıştırır, başarılıysa geri alma kaydını yazar."""
+    record = RollbackRecord(task_label=label)
+    files_dir = ROLLBACK_DIR / record.id / "files"
+    for i, path in enumerate(paths):
+        backup = ""
+        if path.is_file() and not path.is_symlink():
+            try:
+                files_dir.mkdir(parents=True, exist_ok=True)
+                dest = files_dir / str(i)
+                shutil.copy2(path, dest)
+                backup = str(dest)
+            except OSError as exc:
+                _error(seq, f"Yedek alınamadı: {exc}")
+                return False
+        record.file_backups.append(FileBackup(str(path), backup))
+    if not write():
+        shutil.rmtree(ROLLBACK_DIR / record.id, ignore_errors=True)
+        return False
+    _save_rollback(record, seq)
+    return True
+
+
+def _exec_rollback_restore_files(seq: int, params: dict[str, str]) -> bool:
+    try:
+        record = load_record(params["record_id"])
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        _error(seq, f"Geri alma kaydı okunamadı: {exc}")
+        return False
+    record_dir = (ROLLBACK_DIR / record.id).resolve()
+    for fb in record.file_backups:
+        original = Path(fb.original_path)
+        if not _restorable(original):
+            _error(seq, f"Bu dosya geri yüklenemez: {original}")
+            return False
+        try:
+            if fb.backup_path:
+                backup = Path(fb.backup_path).resolve()
+                if record_dir not in backup.parents:
+                    _error(seq, f"Yedek kayıt dizini dışında: {backup}")
+                    return False
+                shutil.copy2(backup, original)
+            else:
+                original.unlink(missing_ok=True)
+        except OSError as exc:
+            _error(seq, f"Geri yüklenemedi ({original}): {exc}")
+            return False
+        _send({"seq": seq, "status": "ok", "message": f"Geri yüklendi: {original}"})
+    return True
+
+
+def _exec_file_write_text(seq: int, params: dict[str, str]) -> bool:
+    path = Path(params["path"])
+
+    def write() -> bool:
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(params["content"], encoding="utf-8")
+            path.chmod(0o644)
+        except OSError as exc:
+            _error(seq, f"Dosya yazılamadı: {exc}")
+            return False
+        return True
+
+    return _with_file_backup(seq, str(path), [path], write)
+
+
 def _exec_not_implemented(seq: int, params: dict[str, str]) -> bool:
     _error(seq, "Bu işlem henüz uygulanmadı")
     return False
@@ -474,9 +567,13 @@ _EXECUTORS: dict[str, Any] = {
     "flatpak.update": _exec_flatpak_update,
     "flatpak.install": _exec_flatpak_install,
     "snap.refresh": _exec_snap_refresh,
+    "flatpak.update_all": _exec_flatpak_update_all,
+    "snap.refresh_all": _exec_snap_refresh_all,
     "snap.install": _exec_snap_install,
     "snap.install_classic": _exec_snap_install_classic,
-    "power.set_lid_action": _exec_power_set_lid_action,
+    "power.set_lid_action": lambda seq, p: _with_file_backup(
+        seq, "lid", [_LID_DROPIN], lambda: _exec_power_set_lid_action(seq, p)
+    ),
     "battery.set_charge_limit": _exec_battery_set_charge_limit,
     "package.update_index": _exec_package_update_index,
     "package.fix_broken": _exec_package_fix_broken,
@@ -484,10 +581,19 @@ _EXECUTORS: dict[str, Any] = {
     "service.enable": _exec_service_enable,
     "service.disable": _exec_service_disable,
     "service.restart": _exec_service_restart,
-    "apt.add_key": _exec_apt_add_key,
-    "apt.add_source": _exec_apt_add_source,
+    # Dosya yazan işlemler önce yedek alır (hızlı geri alma)
+    "apt.add_key": lambda seq, p: _with_file_backup(
+        seq, p["keyring_path"], [Path(p["keyring_path"])], lambda: _exec_apt_add_key(seq, p)
+    ),
+    "apt.add_source": lambda seq, p: _with_file_backup(
+        seq,
+        p["list_name"],
+        [Path("/etc/apt/sources.list.d") / p["list_name"]],
+        lambda: _exec_apt_add_source(seq, p),
+    ),
     "deb.install": _exec_deb_install,
-    "file.write_text": _exec_not_implemented,
+    "file.write_text": _exec_file_write_text,
+    "rollback.restore_files": _exec_rollback_restore_files,
     "snapshot.timeshift_create": _exec_snapshot_timeshift_create,
     "snapshot.timeshift_restore": _exec_snapshot_timeshift_restore,
     "snapshot.timeshift_delete": _exec_snapshot_timeshift_delete,

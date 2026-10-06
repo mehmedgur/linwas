@@ -537,6 +537,14 @@ class AIPanel(QWidget):
             return True
         return super().eventFilter(obj, event)
 
+    def ask(self, text: str) -> bool:
+        """Hazır bir soruyu gönderir (ör. hata çıktısı). Sağlayıcı yoksa False."""
+        if not self._send_btn.isEnabled():
+            return False
+        self._input.setPlainText(text)
+        self._send()
+        return True
+
     def refresh(self) -> None:
         """Anahtarlar değiştikten sonra paneli günceller."""
         self._models.clear()

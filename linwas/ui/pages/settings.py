@@ -41,6 +41,8 @@ def _when(iso: str) -> str:
 class SettingsPage(BasePage):
     theme_changed = Signal(str)  # app_settings.THEMES değerlerinden biri
     close_action_changed = Signal(str)
+    consent_changed = Signal(str)
+    onboarding_requested = Signal()
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -92,11 +94,21 @@ class SettingsPage(BasePage):
         )
         self._lang.currentIndexChanged.connect(self._on_lang)
         form.addRow(tr("Language:"), self._lang)
+        self._consent = self._combo(
+            card,
+            [("ask", tr("Ask every time")), ("yes", tr("Yes")), ("no", tr("No"))],
+            self._settings.send_errors_to_ai,
+        )
+        self._consent.currentIndexChanged.connect(self._on_consent)
+        form.addRow(tr("Send error details to the assistant:"), self._consent)
         card.layout.addLayout(form)
         self._lang_note = QLabel(tr("The language changes the next time Linwas starts."), card)
         self._lang_note.setObjectName("Secondary")
         self._lang_note.hide()
         card.layout.addWidget(self._lang_note)
+        tour = QPushButton(tr("Show the welcome tour again"), card)
+        tour.clicked.connect(self.onboarding_requested)
+        card.layout.addWidget(tour)
         outer.addWidget(card)
 
         # İşlem geçmişi
@@ -163,6 +175,11 @@ class SettingsPage(BasePage):
         self._settings.close_action = self._close.currentData()
         self._save()
         self.close_action_changed.emit(self._settings.close_action)
+
+    def _on_consent(self) -> None:
+        self._settings.send_errors_to_ai = self._consent.currentData()
+        self._save()
+        self.consent_changed.emit(self._settings.send_errors_to_ai)
 
     def _on_lang(self) -> None:
         self._settings.language = self._lang.currentData()

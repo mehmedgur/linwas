@@ -427,3 +427,29 @@ def is_other_version(package: str, installed: list[InstalledApp]) -> InstalledAp
         if app.id.startswith(package + "-") and app.name.casefold().startswith(base.casefold()):
             return app
     return None
+
+
+# --- Güncellemeler sayfası için ---
+
+
+@dataclass
+class AppUpdate:
+    source: str  # "flatpak" | "snap"
+    id: str
+    name: str
+
+
+def pending_app_updates(include_snap: bool = True) -> list[AppUpdate]:
+    """Güncellemesi bekleyen Flatpak uygulamaları ve snap'ler (masaüstü taraması yapmadan)."""
+    updates: list[AppUpdate] = []
+    out = _run(["flatpak", "remote-ls", "--updates", "--app", "--columns=application,name"])
+    for line in out.splitlines():
+        parts = [p.strip() for p in line.split("\t")]
+        if parts and parts[0] and parts[0] != "Application ID":
+            updates.append(AppUpdate("flatpak", parts[0], parts[1] if len(parts) > 1 else parts[0]))
+    if include_snap:
+        for name in sorted(
+            parse_snap_refresh_list(_run(["snap", "refresh", "--list"], timeout=60))
+        ):
+            updates.append(AppUpdate("snap", name, name))
+    return updates

@@ -10,11 +10,14 @@ from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
+    QDialog,
+    QDialogButtonBox,
     QFrame,
     QHBoxLayout,
     QLabel,
     QProgressBar,
     QPushButton,
+    QRadioButton,
     QScrollArea,
     QVBoxLayout,
     QWidget,
@@ -57,6 +60,55 @@ class _BackupWorker(QThread):
             self._sources, self._destination, lambda i, n, p: self.progress.emit(i, n, p)
         )
         self.finished_ok.emit(ok, str(target), err)
+
+
+class _RestoreWorker(QThread):
+    progress = Signal(int, int, int)
+    finished_ok = Signal(bool, str, str)
+
+    def __init__(self, backup: pb.BackupSet, mode: str) -> None:
+        super().__init__()
+        self._backup = backup
+        self._mode = mode
+
+    def run(self) -> None:
+        ok, target, err = pb.run_restore(
+            self._backup, self._mode, lambda i, n, p: self.progress.emit(i, n, p)
+        )
+        self.finished_ok.emit(ok, str(target), err)
+
+
+class _RestoreDialog(QDialog):
+    """Geri yükleme yeri seçimi."""
+
+    def __init__(self, backup: pb.BackupSet, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.setWindowTitle(tr("Restore to this computer"))
+        layout = QVBoxLayout(self)
+        layout.addWidget(
+            QLabel(tr("Folders: {names}").format(names=", ".join(backup.folders)), self)
+        )
+        self._separate = QRadioButton(
+            tr("Into a new folder (Linwas-Geri-Yukleme in your home folder) — safest"), self
+        )
+        self._separate.setChecked(True)
+        self._original = QRadioButton(
+            tr("Back to the original folders — files you already have are not overwritten"),
+            self,
+        )
+        layout.addWidget(self._separate)
+        layout.addWidget(self._original)
+        buttons = QDialogButtonBox(self)
+        ok = buttons.addButton(tr("Restore"), QDialogButtonBox.ButtonRole.AcceptRole)
+        ok.setProperty("primary", True)
+        buttons.addButton(tr("Cancel"), QDialogButtonBox.ButtonRole.RejectRole)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        layout.addWidget(buttons)
+
+    @property
+    def mode(self) -> str:
+        return "original" if self._original.isChecked() else "separate"
 
 
 class PersonalBackupPage(BasePage):
@@ -243,6 +295,9 @@ class PersonalBackupPage(BasePage):
             created = QDateTime.fromSecsSinceEpoch(int(s.created.timestamp()))
             when = locale.toString(created, QLocale.FormatType.ShortFormat)
             lay.addWidget(QLabel(f"<b>{when}</b> — {html.escape(', '.join(s.folders))}", row), 1)
+            restore_btn = QPushButton(tr("Restore to this computer"), row)
+            restore_btn.clicked.connect(lambda _=None, b=s: self._restore(b))
+            lay.addWidget(restore_btn)
             open_btn = QPushButton(tr("Open"), row)
             open_btn.clicked.connect(
                 lambda _=None, p=s.path: QDesktopServices.openUrl(QUrl.fromLocalFile(str(p)))
@@ -267,13 +322,44 @@ class PersonalBackupPage(BasePage):
         self._backup.finished_ok.connect(self._on_finished)
         self._backup.start()
 
+    def _restore(self, backup: pb.BackupSet) -> None:
+        if self._backup and self._backup.isRunning():
+            return
+        dialog = _RestoreDialog(backup, self)
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return
+        self._running = [backup.path / name for name in backup.folders]
+        self._start_btn.setEnabled(False)
+        self._progress.setValue(0)
+        self._progress.show()
+        self._result_lbl.setStyleSheet("")
+        self._result_lbl.setText(tr("Restoring…"))
+        self._backup = _RestoreWorker(backup, dialog.mode)  # type: ignore[assignment]
+        self._backup.progress.connect(self._on_progress)
+        self._backup.finished_ok.connect(self._on_restored)
+        self._backup.start()
+
+    def _on_restored(self, ok: bool, target: str, error: str) -> None:
+        self._progress.hide()
+        if ok:
+            self._result_lbl.setStyleSheet("color:#0e7a0e;")
+            self._result_lbl.setText(tr("✓ Restored to: {path}").format(path=target))
+            QDesktopServices.openUrl(QUrl.fromLocalFile(target))
+        else:
+            self._result_lbl.setStyleSheet("color:#c42b1c;")
+            self._result_lbl.setText(tr("Restore failed: {error}").format(error=error))
+        self._update_state()
+
     def _on_progress(self, index: int, count: int, percent: int) -> None:
         # Her klasör toplam ilerlemenin eşit bir payı
         self._progress.setValue(int((index + percent / 100) * 100 / max(count, 1)))
         name = self._running[index].name if index < len(self._running) else ""
-        self._result_lbl.setText(
-            tr("Backing up {name} ({i} of {n})…").format(name=name, i=index + 1, n=count)
+        text = (
+            tr("Restoring {name} ({i} of {n})…")
+            if isinstance(self._backup, _RestoreWorker)
+            else tr("Backing up {name} ({i} of {n})…")
         )
+        self._result_lbl.setText(text.format(name=name, i=index + 1, n=count))
 
     def _on_finished(self, ok: bool, target: str, error: str) -> None:
         self._progress.hide()

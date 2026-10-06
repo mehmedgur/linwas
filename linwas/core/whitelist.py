@@ -44,6 +44,8 @@ class ParamKind(Enum):
     BATTERY_NAME = "battery_name"
     # Pil şarj sınırı yüzdesi
     CHARGE_LIMIT = "charge_limit"
+    # Geri alma kaydı kimliği (uuid4)
+    RECORD_ID = "record_id"
 
 
 @dataclass(frozen=True)
@@ -207,6 +209,15 @@ def _validate_charge_limit(value: str) -> str:
     return value
 
 
+_RE_UUID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+
+def _validate_record_id(value: str) -> str:
+    if not _RE_UUID.match(value):
+        raise ValidationError(f"Geçersiz kayıt kimliği: {value!r}")
+    return value
+
+
 def _validate_text(value: str) -> str:
     # Serbest metin; boş olabilir, NUL byte yok
     if "\x00" in value:
@@ -229,6 +240,7 @@ _VALIDATORS: dict[ParamKind, object] = {
     ParamKind.LID_ACTION: _validate_lid_action,
     ParamKind.BATTERY_NAME: _validate_battery_name,
     ParamKind.CHARGE_LIMIT: _validate_charge_limit,
+    ParamKind.RECORD_ID: _validate_record_id,
 }
 
 
@@ -308,6 +320,10 @@ OPERATIONS: dict[str, OperationSpec] = {
         label="Update program",
     ),
     # Geri alma ve Flatpak kurulumu
+    "flatpak.update_all": OperationSpec(
+        params=[], risk=RiskLevel.LOW, label="Update all Flatpak apps"
+    ),
+    "snap.refresh_all": OperationSpec(params=[], risk=RiskLevel.LOW, label="Update all snaps"),
     "flatpak.install": _op(
         ("app_id", ParamKind.FLATPAK_ID),
         risk=RiskLevel.LOW,
@@ -334,6 +350,11 @@ OPERATIONS: dict[str, OperationSpec] = {
         ("percent", ParamKind.CHARGE_LIMIT),
         risk=RiskLevel.LOW,
         label="Set battery charge limit",
+    ),
+    "rollback.restore_files": _op(
+        ("record_id", ParamKind.RECORD_ID),
+        risk=RiskLevel.MEDIUM,
+        label="Restore files to how they were before",
     ),
     "package.update_all": OperationSpec(
         params=[],

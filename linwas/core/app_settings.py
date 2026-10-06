@@ -13,6 +13,7 @@ from pathlib import Path
 THEMES = ("system", "light", "dark", "high_contrast")
 CLOSE_ACTIONS = ("auto", "tray", "quit")  # auto: tepsi varsa tepsiye, yoksa kapat
 LANGUAGES = ("tr", "en")
+ERROR_CONSENT = ("ask", "yes", "no")  # hata kayıtlarını yardımcıya gönderme izni
 
 
 def default_path() -> Path:
@@ -25,6 +26,8 @@ class AppSettings:
     theme: str = "system"
     close_action: str = "auto"
     language: str = "tr"
+    send_errors_to_ai: str = "ask"
+    onboarding_done: bool = False
 
 
 def load(path: Path | None = None) -> AppSettings:
@@ -39,6 +42,9 @@ def load(path: Path | None = None) -> AppSettings:
         s.close_action = data["close_action"]
     if data.get("language") in LANGUAGES:
         s.language = data["language"]
+    s.onboarding_done = data.get("onboarding_done") is True
+    if data.get("send_errors_to_ai") in ERROR_CONSENT:
+        s.send_errors_to_ai = data["send_errors_to_ai"]
     return s
 
 

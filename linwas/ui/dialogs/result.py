@@ -26,6 +26,9 @@ class ResultDialog(QDialog):
     """Görev tamamlandıktan sonra gösterilen sonuç penceresi."""
 
     undo_requested = Signal()
+    retry_requested = Signal()
+    help_requested = Signal()
+    report_requested = Signal()
 
     def __init__(
         self,
@@ -64,7 +67,10 @@ class ResultDialog(QDialog):
             sep.setFrameShape(QFrame.Shape.HLine)
             layout.addWidget(sep)
 
-            err_lbl = QLabel(error, self)
+            from linwas.core.sanitizer import sanitize
+
+            err_lbl = QLabel(sanitize(error), self)
+            err_lbl.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
             err_lbl.setObjectName("Secondary")
             err_lbl.setWordWrap(True)
             layout.addWidget(err_lbl)
@@ -77,9 +83,15 @@ class ResultDialog(QDialog):
             buttons.addButton(undo_btn, QDialogButtonBox.ButtonRole.ActionRole)
 
         if not success:
-            ask_btn = QPushButton(tr("Ask AI for help"), self)
-            ask_btn.setEnabled(False)  # AI Aşama 3'te
-            buttons.addButton(ask_btn, QDialogButtonBox.ButtonRole.HelpRole)
+            for text, signal in (
+                (tr("Try again"), self.retry_requested),
+                (tr("Ask the assistant"), self.help_requested),
+                (tr("Report a problem"), self.report_requested),
+            ):
+                btn = QPushButton(text, self)
+                btn.clicked.connect(signal)
+                btn.clicked.connect(self.accept)
+                buttons.addButton(btn, QDialogButtonBox.ButtonRole.ActionRole)
 
         close_btn = buttons.addButton(QDialogButtonBox.StandardButton.Close)
         close_btn.setProperty("primary", True)

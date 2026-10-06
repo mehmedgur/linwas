@@ -14,6 +14,8 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from linwas.backend.distro import detect_distro
+from linwas.backend.installed_apps import AppUpdate, pending_app_updates
 from linwas.backend.packages import UpgradablePackage, apt_cache_age_hours, list_upgradable
 from linwas.core.tasks import Task, TaskStep
 from linwas.ui.pages.base import BasePage
@@ -33,6 +35,17 @@ class _CheckWorker(QThread):
             self.done.emit(list_upgradable())
         except Exception as exc:
             self.error.emit(str(exc))
+
+
+class _AppWorker(QThread):
+    done = Signal(list)  # list[AppUpdate]
+
+    def run(self) -> None:
+        try:
+            # Linux Mint'te Snap gösterilmez (karar belgesi)
+            self.done.emit(pending_app_updates(detect_distro().id != "linuxmint"))
+        except Exception:
+            self.done.emit([])
 
 
 class _PackageRow(QWidget):
@@ -65,6 +78,8 @@ class UpdatesPage(BasePage):
         super().__init__(parent)
         self._packages: list[UpgradablePackage] = []
         self._worker: _CheckWorker | None = None
+        self._app_worker: _AppWorker | None = None
+        self._app_updates: list[AppUpdate] = []
 
         scroll = QScrollArea(self)
         scroll.setWidgetResizable(True)
@@ -137,6 +152,21 @@ class UpdatesPage(BasePage):
         self._list_card.setVisible(False)
         outer.addWidget(self._list_card)
 
+        # Flatpak ve Snap uygulamaları
+        self._apps_card = Card(content)
+        h = QLabel(tr("App updates (Flatpak and Snap)"), self._apps_card)
+        h.setObjectName("H2")
+        self._apps_card.layout.addWidget(h)
+        self._apps_lbl = QLabel(tr("Checking…"), self._apps_card)
+        self._apps_lbl.setWordWrap(True)
+        self._apps_card.layout.addWidget(self._apps_lbl)
+        self._apps_btn = QPushButton(tr("Update apps"), self._apps_card)
+        self._apps_btn.setProperty("primary", True)
+        self._apps_btn.setEnabled(False)
+        self._apps_btn.clicked.connect(self._queue_app_updates)
+        self._apps_card.layout.addWidget(self._apps_btn)
+        outer.addWidget(self._apps_card)
+
         outer.addStretch(1)
         scroll.setWidget(content)
 
@@ -173,6 +203,7 @@ class UpdatesPage(BasePage):
         self._worker.error.connect(self._on_error)
         self._worker.finished.connect(lambda: self._check_btn.setEnabled(True))
         self._worker.start()
+        self._check_apps()
 
     def _on_error(self, msg: str) -> None:
         self._summary_lbl.setText(tr("Check failed: {error}").format(error=msg))
@@ -211,6 +242,38 @@ class UpdatesPage(BasePage):
             sep = QFrame(self._pkg_container)
             sep.setFrameShape(QFrame.Shape.HLine)
             self._pkg_layout.addWidget(sep)
+
+    def _check_apps(self) -> None:
+        if self._app_worker and self._app_worker.isRunning():
+            return
+        self._apps_lbl.setText(tr("Checking…"))
+        self._apps_btn.setEnabled(False)
+        self._app_worker = _AppWorker()
+        self._app_worker.done.connect(self._on_apps)
+        self._app_worker.start()
+
+    def _on_apps(self, updates: list) -> None:
+        self._app_updates = updates
+        if not updates:
+            self._apps_lbl.setText(tr("All apps are up to date."))
+            return
+        names = ", ".join(
+            f"{u.name} ({'Flatpak' if u.source == 'flatpak' else 'Snap'})" for u in updates
+        )
+        self._apps_lbl.setText(tr("{n} app update(s): {names}").format(n=len(updates), names=names))
+        self._apps_btn.setEnabled(True)
+
+    def _queue_app_updates(self) -> None:
+        steps = []
+        if any(u.source == "flatpak" for u in self._app_updates):
+            steps.append(TaskStep(op_id="flatpak.update_all", params={}))
+        if any(u.source == "snap" for u in self._app_updates):
+            steps.append(TaskStep(op_id="snap.refresh_all", params={}))
+        if steps:
+            self.task_requested.emit(Task(label=tr("Update apps"), steps=steps))
+
+    def on_tasks_finished(self) -> None:
+        self._check_apps()
 
     def _queue_update(self) -> None:
         task = Task(

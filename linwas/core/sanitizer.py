@@ -46,8 +46,39 @@ _RULES: list[tuple[re.Pattern[str], str]] = [
 ]
 
 
+# Kişisel bilgiler (hata raporu ve AI'a giden metinler için)
+_RULES += [
+    # Ev klasörü yolundaki kullanıcı adı
+    (re.compile(r"(/home/|/run/media/|/media/)[^/\s'\"]+"), r"\1[USER]"),
+    # E-posta adresi
+    (re.compile(r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}"), "[EMAIL]"),
+    # MAC adresi
+    (re.compile(r"\b(?:[0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}\b"), "[MAC]"),
+    # IPv4 adresi (127.0.0.1 hariç)
+    (re.compile(r"\b(?!127\.0\.0\.1\b)(?:\d{1,3}\.){3}\d{1,3}\b"), "[IP]"),
+]
+
+
+def _identity_words() -> list[str]:
+    """O anki kullanıcı adı ve bilgisayar adı (kısa, sık kelimeye benzeyenler hariç)."""
+    import getpass
+    import socket
+
+    words = []
+    for get in (getpass.getuser, socket.gethostname):
+        try:
+            value = get()
+        except Exception:
+            continue
+        if value and len(value) >= 3 and value.lower() not in ("root", "localhost", "user"):
+            words.append(value)
+    return words
+
+
 def sanitize(text: str) -> str:
     """Metindeki hassas verileri maskeler ve temizlenmiş metni döner."""
     for pattern, replacement in _RULES:
         text = pattern.sub(replacement, text)
+    for word in _identity_words():
+        text = re.sub(rf"\b{re.escape(word)}\b", "[USER]", text)
     return text

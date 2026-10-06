@@ -136,6 +136,28 @@ class MainWindow(QMainWindow):
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
 
+        # Uyarı bandı (desteklenmeyen / güvenlik desteği biten sistem)
+        from PySide6.QtWidgets import QFrame, QLabel, QPushButton
+
+        self._banner = QFrame(central)
+        self._banner.setStyleSheet(
+            "QFrame { background-color: #fff3cc; border-bottom: 1px solid #e0c060; }"
+            " QLabel { color: #5c4300; background: transparent; }"
+        )
+        banner_row = QHBoxLayout(self._banner)
+        banner_row.setContentsMargins(12, 6, 8, 6)
+        self._banner_lbl = QLabel("", self._banner)
+        self._banner_lbl.setWordWrap(True)
+        banner_row.addWidget(self._banner_lbl, 1)
+        banner_close = QPushButton("✕", self._banner)
+        banner_close.setFixedSize(28, 28)
+        banner_close.setStyleSheet("padding: 0px;")
+        banner_close.setAccessibleName(tr("Close"))
+        banner_close.clicked.connect(self._banner.hide)
+        banner_row.addWidget(banner_close)
+        self._banner.hide()
+        main_layout.addWidget(self._banner)
+
         # İçerik alanı (sidebar + sayfalar)
         content_row = QHBoxLayout()
         content_row.setContentsMargins(0, 0, 0, 0)
@@ -168,6 +190,7 @@ class MainWindow(QMainWindow):
         # Alt durum çubuğu
         self._status_bar = StatusBar(central)
         self._status_bar.apply_clicked.connect(self._on_apply)
+        self._status_bar.detail_clicked.connect(self._show_progress)
         main_layout.addWidget(self._status_bar)
 
         self.setCentralWidget(central)
@@ -178,6 +201,12 @@ class MainWindow(QMainWindow):
 
         # Başlangıç sayfası
         self._show_page("overview")
+
+        # İlk açılış sihirbazı (pencere göründükten sonra)
+        if not self._settings.onboarding_done:
+            from PySide6.QtCore import QTimer
+
+            QTimer.singleShot(300, self.run_onboarding)
 
         # Sistem uyarısı (EOL veya desteklenmiyor)
         self._check_support()
@@ -291,6 +320,10 @@ class MainWindow(QMainWindow):
         settings_page = SettingsPage(self._stack)
         settings_page.theme_changed.connect(self.apply_theme)
         settings_page.close_action_changed.connect(self._on_close_action_changed)
+        settings_page.onboarding_requested.connect(self.run_onboarding)
+        settings_page.consent_changed.connect(
+            lambda v: setattr(self._settings, "send_errors_to_ai", v)
+        )
         self._add_page("settings", settings_page)
         self._ai_page = AIChatPage(self._stack)
         self._ai_page._panel.settings_changed.connect(self._on_ai_settings_changed)
@@ -323,10 +356,8 @@ class MainWindow(QMainWindow):
         distro = detect_distro()
         status = evaluate_support(distro)
         if status in (SupportStatus.UNSUPPORTED, SupportStatus.END_OF_LIFE):
-            msg = support_message(status)
-            self._status_bar.update_queue(0)
-            # TODO: Aşama 4'te bildirim banner'ı eklenecek
-            _ = msg
+            self._banner_lbl.setText("⚠ " + support_message(status))
+            self._banner.show()
 
     # --- Kuyruk akışı ---
 
@@ -355,9 +386,39 @@ class MainWindow(QMainWindow):
         self._status_bar.set_running(True)
         self._run_started = now_iso()
         self._running_tasks = temp.all_tasks
-        progress_dlg = ProgressDialog(temp, self)
-        progress_dlg.done.connect(self._on_tasks_done)
-        progress_dlg.exec()
+        self._start_progress(temp)
+
+    def run_onboarding(self) -> None:
+        from linwas.ui.dialogs.onboarding import OnboardingWizard
+
+        wizard = OnboardingWizard(self)
+        finished = wizard.exec() == OnboardingWizard.DialogCode.Accepted
+        # Atlansa da bir daha kendiliğinden açılmaz (Ayarlar'dan yeniden açılabilir)
+        self._settings.onboarding_done = True
+        app_settings.save(self._settings)
+        self._on_ai_settings_changed()
+        if not finished:
+            return
+        if wizard.open_page:
+            self._show_page(wizard.open_page)
+        for task in wizard.tasks:
+            self.add_task(task)
+        if wizard.tasks:
+            self._on_apply()
+
+    def _start_progress(self, queue: TaskQueue) -> None:
+        dlg = ProgressDialog(queue, self)
+        dlg.done.connect(self._on_tasks_done)
+        dlg.step_progress.connect(self._status_bar.set_progress)
+        self._progress_dlg = dlg
+        dlg.exec()
+        self._progress_dlg = None
+
+    def _show_progress(self) -> None:
+        dlg = getattr(self, "_progress_dlg", None)
+        if dlg is not None:
+            dlg.show()
+            dlg.raise_()
 
     def add_task(self, task: Task) -> None:
         """Kuyruğa görev ekler ve durum çubuğunu günceller."""
@@ -386,9 +447,7 @@ class MainWindow(QMainWindow):
         self._status_bar.set_running(True)
         self._run_started = now_iso()
         self._running_tasks = list(self._queue.pending)
-        progress_dlg = ProgressDialog(self._queue, self)
-        progress_dlg.done.connect(self._on_tasks_done)
-        progress_dlg.exec()
+        self._start_progress(self._queue)
 
     def _on_tasks_done(self, success: bool, error: str) -> None:
         self._status_bar.set_running(False)
@@ -398,15 +457,111 @@ class MainWindow(QMainWindow):
         started = getattr(self, "_run_started", None)
         self._last_records: list[RollbackRecord] = records_since(started) if started else []
         has_rollback = any(undo_ops(r) for r in self._last_records)
+        self._last_tasks = list(self._running_tasks)
+        self._last_error = error
         self._record_history()
         result = ResultDialog(success, error, has_rollback=has_rollback, parent=self)
         result.undo_requested.connect(self._on_undo_requested)
+        result.retry_requested.connect(self._retry_failed)
+        result.help_requested.connect(self._ask_ai_about_error)
+        result.report_requested.connect(self._report_error)
 
         for page in self._pages.values():
             if isinstance(page, BasePage):
                 page.on_tasks_finished()
 
         result.exec()
+
+    # --- Hata akışı ---
+
+    def _failed_tasks(self) -> list[Task]:
+        return [t for t in getattr(self, "_last_tasks", []) if t.status != TaskStatus.DONE]
+
+    def _retry_failed(self) -> None:
+        failed = self._failed_tasks()
+        if not failed:
+            return
+        # Yeni kimlikli kopyalar (aynı adımlar)
+        copies = [
+            Task(
+                label=t.label,
+                steps=[
+                    TaskStep(op_id=s.op_id, params=dict(s.params), label=s.label) for s in t.steps
+                ],
+            )
+            for t in failed
+        ]
+        if len(copies) == 1:
+            self._run_task_now(copies[0])
+            return
+        for task in copies:
+            self.add_task(task)
+        self._on_apply()
+
+    def _error_context(self) -> tuple[str, list[str]]:
+        labels = [t.label for t in self._failed_tasks()] or [
+            t.label for t in getattr(self, "_last_tasks", [])
+        ]
+        return getattr(self, "_last_error", ""), labels
+
+    def _ask_ai_about_error(self) -> None:
+        from PySide6.QtWidgets import QCheckBox, QMessageBox
+
+        from linwas.ai.manager import available_providers
+        from linwas.core.sanitizer import sanitize
+
+        # AI kapalıysa Sorun Giderme'deki hazır adımlara düşülür
+        if not available_providers():
+            self._show_page("troubleshoot")
+            return
+        if self._settings.send_errors_to_ai == "no":
+            self._show_page("troubleshoot")
+            return
+        if self._settings.send_errors_to_ai == "ask":
+            box = QMessageBox(
+                QMessageBox.Icon.Question,
+                tr("Send error details?"),
+                tr(
+                    "Send the error details to the assistant? Personal information such as "
+                    "user names and addresses is hidden first."
+                ),
+                parent=self,
+            )
+            yes = box.addButton(tr("Send"), QMessageBox.ButtonRole.AcceptRole)
+            box.addButton(tr("Don't send"), QMessageBox.ButtonRole.RejectRole)
+            remember = QCheckBox(tr("Remember my choice"), box)
+            box.setCheckBox(remember)
+            box.exec()
+            allowed = box.clickedButton() is yes
+            if remember.isChecked():
+                self._settings.send_errors_to_ai = "yes" if allowed else "no"
+                app_settings.save(self._settings)
+            if not allowed:
+                self._show_page("troubleshoot")
+                return
+
+        error, labels = self._error_context()
+        question = tr(
+            "This Linwas task failed: {tasks}\n\nError output:\n{error}\n\n"
+            "What went wrong and how can I fix it?"
+        ).format(tasks=", ".join(labels), error=sanitize(error)[-3000:])
+        self._ai_dock.expand()
+        if not self._ai_dock.isVisible():
+            self._check_ai_panel()
+        if not self._ai_panel.ask(question):
+            self._show_page("troubleshoot")
+
+    def _report_error(self) -> None:
+        from linwas import __version__
+        from linwas.backend.desktop import detect_desktop, detect_session_type
+        from linwas.core.error_report import build_report
+        from linwas.ui.dialogs.report import ReportDialog
+
+        error, labels = self._error_context()
+        desktop = f"{detect_desktop(os.environ).value} ({detect_session_type(os.environ)})"
+        report = build_report(error, labels, __version__, detect_distro().display_name, desktop)
+        title = "Linwas: " + (labels[0] if labels else "error")
+        ReportDialog(title, report, self).exec()
 
     def _record_history(self) -> None:
         """Çalışan görevleri işlem geçmişine yazar (Ayarlar › İşlem geçmişi)."""

@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
     QDialog,
     QLabel,
     QProgressBar,
+    QPushButton,
     QVBoxLayout,
     QWidget,
 )
@@ -57,6 +58,7 @@ class ProgressDialog(QDialog):
     """Görev çalışırken gösterilen ilerleme penceresi."""
 
     done = Signal(bool, str)  # (başarılı, hata)
+    step_progress = Signal(int, int, str)  # durum çubuğu için (adım, toplam, etiket)
 
     def __init__(self, queue: TaskQueue, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -86,6 +88,11 @@ class ProgressDialog(QDialog):
         self._detail_lbl.setWordWrap(True)
         layout.addWidget(self._detail_lbl)
 
+        # Pencere gizlenir, işlem sürer; durum çubuğundaki "Detay" geri açar
+        bg_btn = QPushButton(tr("Continue in background"), self)
+        bg_btn.clicked.connect(self.hide)
+        layout.addWidget(bg_btn, 0, Qt.AlignmentFlag.AlignRight)
+
         self._worker = _TaskWorker(queue)
         self._worker.progress.connect(self._on_progress)
         self._worker.finished.connect(self._on_finished)
@@ -105,6 +112,7 @@ class ProgressDialog(QDialog):
             self._progress.setValue(prog.step_index + 1)
         if prog.error:
             self._detail_lbl.setText(prog.error)
+        self.step_progress.emit(prog.step_index + 1, prog.step_total, prog.step_label)
 
     def _on_finished(self, success: bool, error: str) -> None:
         self.setWindowFlag(Qt.WindowType.WindowCloseButtonHint, True)

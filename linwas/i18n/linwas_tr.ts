@@ -47,6 +47,44 @@
         <source>Quit</source>
         <translation>Çıkış</translation>
     </message>
+    <message>
+        <source>Close</source>
+        <translation>Kapat</translation>
+    </message>
+    <message>
+        <source>Don't send</source>
+        <translation>Gönderme</translation>
+    </message>
+    <message>
+        <source>Remember my choice</source>
+        <translation>Seçimimi hatırla</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Gönder</translation>
+    </message>
+    <message>
+        <source>Send error details?</source>
+        <translation>Hata ayrıntıları gönderilsin mi?</translation>
+    </message>
+    <message>
+        <source>Send the error details to the assistant? Personal information such as user names and addresses is hidden first.</source>
+        <translation>Hata ayrıntıları yardımcıya gönderilsin mi? Kullanıcı adı ve adres gibi kişisel bilgiler önce gizlenir.</translation>
+    </message>
+    <message>
+        <source>This Linwas task failed: {tasks}
+
+Error output:
+{error}
+
+What went wrong and how can I fix it?</source>
+        <translation>Şu Linwas işlemi başarısız oldu: {tasks}
+
+Hata çıktısı:
+{error}
+
+Ne ters gitti ve nasıl düzeltebilirim?</translation>
+    </message>
 </context>
 <context>
     <name>Sidebar</name>
@@ -285,6 +323,10 @@
         <source>Step {current} of {total}: {label}</source>
         <translation>Adım {current}/{total}: {label}</translation>
     </message>
+    <message>
+        <source>Continue in background</source>
+        <translation>Arka planda devam et</translation>
+    </message>
 </context>
 <context>
     <name>ResultDialog</name>
@@ -309,8 +351,16 @@
         <translation>Değişiklikleri geri al</translation>
     </message>
     <message>
-        <source>Ask AI for help</source>
-        <translation>Yapay Zekadan yardım iste</translation>
+        <source>Ask the assistant</source>
+        <translation>Yardımcıya sor</translation>
+    </message>
+    <message>
+        <source>Report a problem</source>
+        <translation>Sorun bildir</translation>
+    </message>
+    <message>
+        <source>Try again</source>
+        <translation>Yeniden dene</translation>
     </message>
 </context>
 <context>
@@ -489,6 +539,26 @@
     <message>
         <source>Check failed: {error}</source>
         <translation>Kontrol başarısız: {error}</translation>
+    </message>
+    <message>
+        <source>All apps are up to date.</source>
+        <translation>Bütün uygulamalar güncel.</translation>
+    </message>
+    <message>
+        <source>App updates (Flatpak and Snap)</source>
+        <translation>Uygulama güncellemeleri (Flatpak ve Snap)</translation>
+    </message>
+    <message>
+        <source>Checking…</source>
+        <translation>Denetleniyor…</translation>
+    </message>
+    <message>
+        <source>Update apps</source>
+        <translation>Uygulamaları güncelle</translation>
+    </message>
+    <message>
+        <source>{n} app update(s): {names}</source>
+        <translation>{n} uygulama güncellemesi: {names}</translation>
     </message>
 </context>
 <context>
@@ -1502,6 +1572,46 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <source>✓ Backup finished: {path}</source>
         <translation>✓ Yedekleme tamamlandı: {path}</translation>
     </message>
+    <message>
+        <source>Back to the original folders — files you already have are not overwritten</source>
+        <translation>Asıl klasörlerine — bilgisayarda zaten olan dosyaların üzerine yazılmaz</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Folders: {names}</source>
+        <translation>Klasörler: {names}</translation>
+    </message>
+    <message>
+        <source>Into a new folder (Linwas-Geri-Yukleme in your home folder) — safest</source>
+        <translation>Yeni bir klasöre (ev klasörünüzde Linwas-Geri-Yukleme) — en güvenlisi</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Geri yükle</translation>
+    </message>
+    <message>
+        <source>Restore failed: {error}</source>
+        <translation>Geri yükleme başarısız: {error}</translation>
+    </message>
+    <message>
+        <source>Restore to this computer</source>
+        <translation>Bilgisayara geri yükle</translation>
+    </message>
+    <message>
+        <source>Restoring {name} ({i} of {n})…</source>
+        <translation>{name} geri yükleniyor ({i}/{n})…</translation>
+    </message>
+    <message>
+        <source>Restoring…</source>
+        <translation>Geri yükleniyor…</translation>
+    </message>
+    <message>
+        <source>✓ Restored to: {path}</source>
+        <translation>✓ Geri yüklendi: {path}</translation>
+    </message>
 </context>
 <context>
     <name>PowerPage</name>
@@ -2132,6 +2242,26 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <source>When I close the window:</source>
         <translation>Pencereyi kapattığımda:</translation>
     </message>
+    <message>
+        <source>Ask every time</source>
+        <translation>Her seferinde sor</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>Hayır</translation>
+    </message>
+    <message>
+        <source>Send error details to the assistant:</source>
+        <translation>Hata ayrıntılarını yardımcıya gönder:</translation>
+    </message>
+    <message>
+        <source>Show the welcome tour again</source>
+        <translation>Tanıtım turunu yeniden göster</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>Evet</translation>
+    </message>
 </context>
 <context>
     <name>TroubleshootPage</name>
@@ -2326,6 +2456,164 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>{n} problem(s) found.</source>
         <translation>{n} sorun bulundu.</translation>
+    </message>
+</context>
+<context>
+    <name>OnboardingWizard</name>
+    <message>
+        <source>A full backup (Timeshift snapshot) lets you return the whole system to today's state if something goes wrong. It can take a few minutes.</source>
+        <translation>Tam yedek (Timeshift anlık görüntüsü), bir sorun çıkarsa bütün sistemi bugünkü hâline döndürmenizi sağlar. Birkaç dakika sürebilir.</translation>
+    </message>
+    <message>
+        <source>AI assistant (optional)</source>
+        <translation>Yapay zekâ yardımcısı (isteğe bağlı)</translation>
+    </message>
+    <message>
+        <source>Add an API key now</source>
+        <translation>Şimdi API anahtarı ekle</translation>
+    </message>
+    <message>
+        <source>Back</source>
+        <translation>Geri</translation>
+    </message>
+    <message>
+        <source>Checking…</source>
+        <translation>Denetleniyor…</translation>
+    </message>
+    <message>
+        <source>Coming from Windows?</source>
+        <translation>Windows'tan mı geliyorsunuz?</translation>
+    </message>
+    <message>
+        <source>Finish</source>
+        <translation>Bitir</translation>
+    </message>
+    <message>
+        <source>First full backup (Timeshift)</source>
+        <translation>İlk tam yedek (Timeshift)</translation>
+    </message>
+    <message>
+        <source>Full system backup</source>
+        <translation>Tam sistem yedeği</translation>
+    </message>
+    <message>
+        <source>Install Timeshift</source>
+        <translation>Timeshift'i kur</translation>
+    </message>
+    <message>
+        <source>Linwas can bring your documents, bookmarks and settings from a Windows partition or an external disk.</source>
+        <translation>Linwas belgelerinizi, yer imlerinizi ve ayarlarınızı Windows bölümünden ya da harici diskten getirebilir.</translation>
+    </message>
+    <message>
+        <source>Linwas checks your computer for common problems.</source>
+        <translation>Linwas bilgisayarınızı sık görülen sorunlara karşı denetler.</translation>
+    </message>
+    <message>
+        <source>Linwas helps you use Linux without the terminal.
+
+• System: updates, drivers, Wi-Fi, backups and more
+• Interface: make the desktop look like Windows
+• Software: install and remove programs
+• Troubleshooting: find and fix common problems
+• AI Question: ask anything (optional)
+
+Changes are collected in a queue at the bottom. Nothing runs until you press Apply and enter your password once.</source>
+        <translation>Linwas, Linux'u terminal kullanmadan kullanmanıza yardım eder.
+
+• Sistem: güncellemeler, sürücüler, Wi-Fi, yedekler ve daha fazlası
+• Arayüz: masaüstünü Windows'a benzetin
+• Programlar: program kurun ve kaldırın
+• Sorun Giderme: sık görülen sorunları bulun ve düzeltin
+• Yapay Zeka Sorusu: her şeyi sorun (isteğe bağlı)
+
+Değişiklikler alttaki kuyrukta toplanır. Uygula'ya basıp şifrenizi bir kez girmeden hiçbir şey çalışmaz.</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation>İleri</translation>
+    </message>
+    <message>
+        <source>Open “Import from Windows” after this</source>
+        <translation>Bundan sonra “Windows'tan Taşı” sayfasını aç</translation>
+    </message>
+    <message>
+        <source>Quick system check</source>
+        <translation>Hızlı sistem denetimi</translation>
+    </message>
+    <message>
+        <source>Skip</source>
+        <translation>Atla</translation>
+    </message>
+    <message>
+        <source>Take the first full backup</source>
+        <translation>İlk tam yedeği al</translation>
+    </message>
+    <message>
+        <source>Timeshift makes full system backups so you can undo big changes. It is not installed yet.</source>
+        <translation>Timeshift tam sistem yedeği alır; böylece büyük değişiklikleri geri alabilirsiniz. Henüz kurulu değil.</translation>
+    </message>
+    <message>
+        <source>Welcome to Linwas</source>
+        <translation>Linwas'a hoş geldiniz</translation>
+    </message>
+    <message>
+        <source>Welcome!</source>
+        <translation>Hoş geldiniz!</translation>
+    </message>
+    <message>
+        <source>With a free Gemini key (or ChatGPT / DeepSeek) you can ask questions and get help with errors. You can also do this later in AI Question › AI settings.</source>
+        <translation>Ücretsiz bir Gemini anahtarıyla (ya da ChatGPT / DeepSeek) soru sorabilir ve hatalarda yardım alabilirsiniz. Bunu daha sonra Yapay Zeka Sorusu › AI ayarları'ndan da yapabilirsiniz.</translation>
+    </message>
+    <message>
+        <source>⚠ {n} problem(s) found. You'll find the fixes in Troubleshooting.</source>
+        <translation>⚠ {n} sorun bulundu. Çözümleri Sorun Giderme sayfasında bulabilirsiniz.</translation>
+    </message>
+    <message>
+        <source>✓ No problems found.</source>
+        <translation>✓ Sorun bulunamadı.</translation>
+    </message>
+</context>
+<context>
+    <name>ReportDialog</name>
+    <message>
+        <source>Close</source>
+        <translation>Kapat</translation>
+    </message>
+    <message>
+        <source>Copied.</source>
+        <translation>Kopyalandı.</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Kopyala</translation>
+    </message>
+    <message>
+        <source>Open on GitHub</source>
+        <translation>GitHub'da aç</translation>
+    </message>
+    <message>
+        <source>Personal information (user names, addresses, keys) has been hidden. Check the report, then open it on GitHub. No GitHub account? Copy or save it and send it another way.</source>
+        <translation>Kişisel bilgiler (kullanıcı adları, adresler, anahtarlar) gizlendi. Raporu kontrol edin, sonra GitHub'da açın. GitHub hesabınız yoksa kopyalayın ya da kaydedip başka bir yolla gönderin.</translation>
+    </message>
+    <message>
+        <source>Report</source>
+        <translation>Rapor</translation>
+    </message>
+    <message>
+        <source>Report a problem</source>
+        <translation>Sorun bildir</translation>
+    </message>
+    <message>
+        <source>Save report</source>
+        <translation>Raporu kaydet</translation>
+    </message>
+    <message>
+        <source>Saved: {path}</source>
+        <translation>Kaydedildi: {path}</translation>
+    </message>
+    <message>
+        <source>Save…</source>
+        <translation>Kaydet…</translation>
     </message>
 </context>
 </TS>
