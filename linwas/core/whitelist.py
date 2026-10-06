@@ -356,6 +356,11 @@ OPERATIONS: dict[str, OperationSpec] = {
         risk=RiskLevel.MEDIUM,
         label="Restore files to how they were before",
     ),
+    "wine.setup": OperationSpec(
+        params=[],
+        risk=RiskLevel.MEDIUM,
+        label="Install Wine (with 32-bit support)",
+    ),
     "fonts.install_microsoft": OperationSpec(
         params=[],
         risk=RiskLevel.MEDIUM,

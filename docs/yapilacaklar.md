@@ -23,12 +23,12 @@ Son güncelleme: 6 Ekim 2026
 - [ ] **PR #2 — Proje belgelerinin depoya taşınması** (bu klasör) + program kaldırma kararı.
 
 ## Sıradaki aşama
-- Aşama 5 sonuna ertelenen birim testleri; ardından Oyun sekmesi ve EXE/Wine.
+- Oyun sekmesi. (Testler kullanıcı yeni emir verene kadar yazılmıyor.)
 
 ## Aşama 4'ün en sonunda yapılacaklar (kullanıcı kararı, 6 Ekim 2026)
 - [ ] **Oyun sekmesi** (Program › Oyun): Steam + Proton, Lutris / Heroic, GameMode, uyumluluk
   kontrolü (AI + ProtonDB).
-- [ ] **EXE ve Wine:** .exe risk analizi, Linux alternatifi önerisi, yoksa Wine ile açma.
+- [x] **EXE ve Wine:** kodlandı (feat/asama-5-paketleme), kullanıcının denemesi bekleniyor.
 
 ## Aşama 5 sonuna ertelenenler (token tasarrufu, 6 Ekim 2026)
 - [ ] Yeni yazılan modüllerin birim testleri (ör. settings_launcher, appearance, troubleshoot,

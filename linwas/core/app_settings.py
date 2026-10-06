@@ -28,6 +28,7 @@ class AppSettings:
     language: str = "tr"
     send_errors_to_ai: str = "ask"
     onboarding_done: bool = False
+    exe_handler_set: bool = False  # .exe/.msi varsayılan uygulaması bir kez Linwas yapıldı
 
 
 def load(path: Path | None = None) -> AppSettings:
@@ -43,6 +44,7 @@ def load(path: Path | None = None) -> AppSettings:
     if data.get("language") in LANGUAGES:
         s.language = data["language"]
     s.onboarding_done = data.get("onboarding_done") is True
+    s.exe_handler_set = data.get("exe_handler_set") is True
     if data.get("send_errors_to_ai") in ERROR_CONSENT:
         s.send_errors_to_ai = data["send_errors_to_ai"]
     return s

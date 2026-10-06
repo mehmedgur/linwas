@@ -537,6 +537,34 @@ def _exec_fonts_install_microsoft(seq: int, params: dict[str, str]) -> bool:
     return _run(cmd, seq, {"DEBIAN_FRONTEND": "noninteractive"})
 
 
+def _exec_wine_setup(seq: int, params: dict[str, str]) -> bool:
+    """Wine'ı dağıtım deposundan kurar. 32 bit Windows programları için i386 mimarisi
+    etkinleştirilir (dpkg --add-architecture) ve wine32:i386 kurulur."""
+    try:
+        r = subprocess.run(
+            ["dpkg", "--print-foreign-architectures"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+            shell=False,
+        )
+        foreign = r.stdout.split()
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        foreign = []
+    if "i386" not in foreign:
+        if not _run(["dpkg", "--add-architecture", "i386"], seq, _APT_ENV):
+            return False
+        if not _run(["apt-get", "update"], seq, _APT_ENV):
+            return False
+    new = [name for name in ("wine", "wine64") if not _apt_installed(name)]
+    cmd = ["apt-get", "install", "-y", "--", "wine", "wine64", "wine32:i386"]
+    if not _run(cmd, seq, _APT_ENV):
+        return False
+    if new:
+        _save_rollback(RollbackRecord(task_label="Wine", packages_to_install=new), seq)
+    return True
+
+
 # --- Dosya yedeği ve geri yükleme ---
 
 # Helper'ın yedekleyip geri yükleyebileceği yollar (yazdığı dosyalarla sınırlı)
@@ -672,6 +700,7 @@ _EXECUTORS: dict[str, Any] = {
     "file.write_text": _exec_file_write_text,
     "rollback.restore_files": _exec_rollback_restore_files,
     "snapshot.timeshift_create": _exec_snapshot_timeshift_create,
+    "wine.setup": _exec_wine_setup,
     "snapshot.timeshift_restore": _exec_snapshot_timeshift_restore,
     "snapshot.timeshift_delete": _exec_snapshot_timeshift_delete,
     "firmware.fwupd_update": _exec_firmware_fwupd_update,

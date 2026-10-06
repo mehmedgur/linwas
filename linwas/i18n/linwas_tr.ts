@@ -667,6 +667,30 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
 <context>
     <name>SoftwarePage</name>
     <message>
+        <source>Choose a Windows program</source>
+        <translation>Windows programı seçin</translation>
+    </message>
+    <message>
+        <source>Install Wine</source>
+        <translation>Wine'ı kur</translation>
+    </message>
+    <message>
+        <source>Linwas checks the file, suggests a Linux alternative or opens it with Wine.</source>
+        <translation>Linwas dosyayı denetler, Linux alternatifi önerir ya da Wine ile açar.</translation>
+    </message>
+    <message>
+        <source>Open a Windows program (.exe)…</source>
+        <translation>Windows programı aç (.exe)…</translation>
+    </message>
+    <message>
+        <source>Windows programs</source>
+        <translation>Windows programları</translation>
+    </message>
+    <message>
+        <source>Windows programs (*.exe *.msi)</source>
+        <translation>Windows programları (*.exe *.msi)</translation>
+    </message>
+    <message>
         <source>Software</source>
         <translation>Programlar</translation>
     </message>
@@ -3017,6 +3041,239 @@ Linux'ta:
     <message>
         <source>e.g. Control Panel, Word, Ctrl+Alt+Del</source>
         <translation>ör. Denetim Masası, Word, Ctrl+Alt+Del</translation>
+    </message>
+</context>
+<context>
+    <name>ExeOpenDialog</name>
+    <message>
+        <source>.NET program: Wine may need extra parts and it may not work well.</source>
+        <translation>.NET programı: Wine'a ek bileşenler gerekebilir, iyi çalışmayabilir.</translation>
+    </message>
+    <message>
+        <source>32-bit</source>
+        <translation>32 bit</translation>
+    </message>
+    <message>
+        <source>64-bit</source>
+        <translation>64 bit</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>İptal</translation>
+    </message>
+    <message>
+        <source>Check on VirusTotal</source>
+        <translation>VirusTotal'da denetle</translation>
+    </message>
+    <message>
+        <source>Downloaded from: {site}</source>
+        <translation>İndirildiği yer: {site}</translation>
+    </message>
+    <message>
+        <source>High risk</source>
+        <translation>Yüksek risk</translation>
+    </message>
+    <message>
+        <source>Install Wine</source>
+        <translation>Wine'ı kur</translation>
+    </message>
+    <message>
+        <source>It has a digital signature (Linux can't check if it is valid).</source>
+        <translation>Dijital imzası var (Linux imzanın geçerli olup olmadığını denetleyemez).</translation>
+    </message>
+    <message>
+        <source>It has no digital signature, so its maker can't be confirmed.</source>
+        <translation>Dijital imzası yok; yapımcısı doğrulanamıyor.</translation>
+    </message>
+    <message>
+        <source>Low risk</source>
+        <translation>Düşük risk</translation>
+    </message>
+    <message>
+        <source>Made by: {who}</source>
+        <translation>Yapımcı: {who}</translation>
+    </message>
+    <message>
+        <source>Made for ARM processors; it will not work on this computer.</source>
+        <translation>ARM işlemciler için yapılmış; bu bilgisayarda çalışmaz.</translation>
+    </message>
+    <message>
+        <source>Medium risk — open only if you trust where it came from</source>
+        <translation>Orta risk — yalnızca kaynağına güveniyorsanız açın</translation>
+    </message>
+    <message>
+        <source>Normally all Windows programs share one environment (like one C: drive). A separate one keeps this program apart and is removed completely with it.</source>
+        <translation>Normalde tüm Windows programları tek bir ortamı paylaşır (tek bir C: sürücüsü gibi). Ayrı ortam bu programı diğerlerinden ayırır ve program kaldırılınca tamamen silinir.</translation>
+    </message>
+    <message>
+        <source>Open a Windows program</source>
+        <translation>Windows programı aç</translation>
+    </message>
+    <message>
+        <source>Open in a separate environment</source>
+        <translation>Ayrı bir ortamda aç</translation>
+    </message>
+    <message>
+        <source>Open with Wine</source>
+        <translation>Wine ile aç</translation>
+    </message>
+    <message>
+        <source>Opens VirusTotal in your browser. Only the file's fingerprint is sent.</source>
+        <translation>VirusTotal'ı tarayıcıda açar. Yalnızca dosyanın parmak izi (özeti) gönderilir.</translation>
+    </message>
+    <message>
+        <source>Program</source>
+        <translation>Program</translation>
+    </message>
+    <message>
+        <source>Risky files always open in a separate environment, so they can't affect your other Windows programs.</source>
+        <translation>Riskli dosyalar her zaman ayrı bir ortamda açılır; böylece diğer Windows programlarınızı etkileyemez.</translation>
+    </message>
+    <message>
+        <source>Run setup with Wine</source>
+        <translation>Kurulumu Wine ile başlat</translation>
+    </message>
+    <message>
+        <source>Setup program ({kind})</source>
+        <translation>Kurulum programı ({kind})</translation>
+    </message>
+    <message>
+        <source>Show Linux alternatives</source>
+        <translation>Linux alternatiflerini göster</translation>
+    </message>
+    <message>
+        <source>The file name hides its real type (for example document.pdf.exe). Harmful files often use this trick.</source>
+        <translation>Dosya adı gerçek türünü gizliyor (ör. belge.pdf.exe). Zararlı dosyalar sık sık bu hileyi kullanır.</translation>
+    </message>
+    <message>
+        <source>The maker's name is not written in the file.</source>
+        <translation>Yapımcının adı dosyada yazmıyor.</translation>
+    </message>
+    <message>
+        <source>This file can't be read: {error}</source>
+        <translation>Bu dosya okunamadı: {error}</translation>
+    </message>
+    <message>
+        <source>This is not a valid Windows program. Don't open it.</source>
+        <translation>Bu geçerli bir Windows programı değil. Açmayın.</translation>
+    </message>
+    <message>
+        <source>Windows programs open with Wine, which is not installed yet. Linwas can install it from your system's software sources.</source>
+        <translation>Windows programları Wine ile açılır; Wine henüz kurulu değil. Linwas onu sisteminizin yazılım kaynaklarından kurabilir.</translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation>bilinmiyor</translation>
+    </message>
+    <message>
+        <source>{program} has Linux alternatives ({apps}). They work better than the Windows version under Wine and get updates automatically.</source>
+        <translation>{program} için Linux alternatifleri var ({apps}). Wine altındaki Windows sürümünden daha iyi çalışırlar ve otomatik güncellenirler.</translation>
+    </message>
+</context>
+<context>
+    <name>WindowsAppsView</name>
+    <message>
+        <source>Add or remove programs</source>
+        <translation>Program ekle veya kaldır</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Sil</translation>
+    </message>
+    <message>
+        <source>Delete environment</source>
+        <translation>Ortamı sil</translation>
+    </message>
+    <message>
+        <source>Delete the separate environment "{name}"? All programs and files in it will be removed. This can't be undone.</source>
+        <translation>"{name}" ayrı ortamı silinsin mi? İçindeki tüm programlar ve dosyalar silinir. Bu geri alınamaz.</translation>
+    </message>
+    <message>
+        <source>Environments</source>
+        <translation>Ortamlar</translation>
+    </message>
+    <message>
+        <source>Installed Windows programs</source>
+        <translation>Kurulu Windows programları</translation>
+    </message>
+    <message>
+        <source>It could not be deleted.</source>
+        <translation>Silinemedi.</translation>
+    </message>
+    <message>
+        <source>No Windows programs yet. Open a setup file (.exe or .msi) to install one.</source>
+        <translation>Henüz Windows programı yok. Kurmak için bir kurulum dosyası (.exe ya da .msi) açın.</translation>
+    </message>
+    <message>
+        <source>No environments yet.</source>
+        <translation>Henüz ortam yok.</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Aç</translation>
+    </message>
+    <message>
+        <source>Open a Windows program…</source>
+        <translation>Windows programı aç…</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Kaldır</translation>
+    </message>
+    <message>
+        <source>Remove {name}</source>
+        <translation>{name} kaldır</translation>
+    </message>
+    <message>
+        <source>Shared environment — {n} program(s)</source>
+        <translation>Ortak ortam — {n} program</translation>
+    </message>
+    <message>
+        <source>Windows programs run with Wine. Prefer a Linux alternative when there is one; it is faster and gets updates automatically.</source>
+        <translation>Windows programları Wine ile çalışır. Linux alternatifi varsa onu tercih edin; daha hızlıdır ve otomatik güncellenir.</translation>
+    </message>
+    <message>
+        <source>Wine is not installed.</source>
+        <translation>Wine kurulu değil.</translation>
+    </message>
+    <message>
+        <source>Wine's program list will open. Select {name} and click Remove.</source>
+        <translation>Wine'ın program listesi açılacak. {name} programını seçip Kaldır'a tıklayın.</translation>
+    </message>
+    <message>
+        <source>did not work in the shared environment</source>
+        <translation>ortak ortamda çalışmadı</translation>
+    </message>
+    <message>
+        <source>risky file</source>
+        <translation>riskli dosya</translation>
+    </message>
+    <message>
+        <source>shared environment</source>
+        <translation>ortak ortam</translation>
+    </message>
+    <message>
+        <source>your choice</source>
+        <translation>sizin seçiminiz</translation>
+    </message>
+    <message>
+        <source>{name} — separate ({why})</source>
+        <translation>{name} — ayrı ortam ({why})</translation>
+    </message>
+</context>
+<context>
+    <name>WineRunner</name>
+    <message>
+        <source>Windows program</source>
+        <translation>Windows programı</translation>
+    </message>
+    <message>
+        <source>Wine could not be started. Is Wine installed?</source>
+        <translation>Wine başlatılamadı. Wine kurulu mu?</translation>
+    </message>
+    <message>
+        <source>{name} closed unexpectedly. Some programs only work in their own environment. Try again in a separate environment?</source>
+        <translation>{name} beklenmedik şekilde kapandı. Bazı programlar yalnızca kendi ortamlarında çalışır. Ayrı bir ortamda yeniden denensin mi?</translation>
     </message>
 </context>
 </TS>

@@ -32,7 +32,9 @@ from linwas.core.tasks import Task, TaskStep
 from linwas.ui.dialogs.remove_app import RemovalFlow, RemovalRequest
 from linwas.ui.pages.base import BasePage
 from linwas.ui.pages.installed_apps import InstalledAppsView, source_badge_text
+from linwas.ui.pages.windows_apps import WindowsAppsView
 from linwas.ui.widgets.card import Card
+from linwas.ui.wine_runner import WineRunner
 
 _DATA = Path(__file__).resolve().parent.parent.parent / "data"
 
@@ -96,6 +98,20 @@ class _DebWorker(QThread):
         from linwas.backend.deb_inspect import inspect
 
         self.done.emit(inspect(self._path))
+
+
+class _ExeWorker(QThread):
+    done = Signal(object, object)  # ExeInfo, (anahtar, alternatif)
+
+    def __init__(self, path: str) -> None:
+        super().__init__()
+        self._path = path
+
+    def run(self) -> None:
+        from linwas.backend.exe_inspect import find_alternative, inspect
+
+        info = inspect(self._path)
+        self.done.emit(info, find_alternative(info) if not info.error else ("", {}))
 
 
 class _SearchWorker(QThread):
@@ -309,6 +325,12 @@ class SoftwarePage(BasePage):
         deb_btn.setToolTip(tr("Linwas checks the file before installing it."))
         deb_btn.clicked.connect(self._pick_deb)
         deb_row.addWidget(deb_btn)
+        exe_btn = QPushButton(tr("Open a Windows program (.exe)…"), content)
+        exe_btn.setToolTip(
+            tr("Linwas checks the file, suggests a Linux alternative or opens it with Wine.")
+        )
+        exe_btn.clicked.connect(self._pick_exe)
+        deb_row.addWidget(exe_btn)
         outer.addLayout(deb_row)
 
         # Flatpak yok uyarısı
@@ -340,6 +362,10 @@ class SoftwarePage(BasePage):
         self._tabs = QTabWidget(self)
         self._tabs.addTab(scroll, tr("Search"))
         self._tabs.addTab(self._installed, tr("Installed programs"))
+        self._wine_runner = WineRunner(self)
+        self._windows_apps = WindowsAppsView(self._wine_runner, self)
+        self._windows_apps.open_exe_requested.connect(self._pick_exe)
+        self._tabs.addTab(self._windows_apps, tr("Windows programs"))
 
         page_layout = QVBoxLayout(self)
         page_layout.setContentsMargins(24, 20, 24, 20)
@@ -568,6 +594,51 @@ class SoftwarePage(BasePage):
             if choice is None:
                 return
         self._queue_flatpak(app_id)
+
+    # --- .exe / .msi (Wine) ---
+
+    def _pick_exe(self) -> None:
+        from PySide6.QtCore import QStandardPaths
+        from PySide6.QtWidgets import QFileDialog
+
+        start = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DownloadLocation)
+        path, _ = QFileDialog.getOpenFileName(
+            self, tr("Choose a Windows program"), start, tr("Windows programs (*.exe *.msi)")
+        )
+        if path:
+            self.open_exe(path)
+
+    def open_exe(self, path: str) -> None:
+        """Dosyayı arka planda inceler, sonucu pencerede gösterir."""
+        self._status_lbl.setText(tr("Checking the file…"))
+        worker = _ExeWorker(path)
+        worker.done.connect(self._on_exe_inspected)
+        self._exe_worker = worker
+        worker.start()
+
+    def _on_exe_inspected(self, info: object, alternative: object) -> None:
+        from linwas.backend import wine
+        from linwas.ui.dialogs.exe_open import ExeOpenDialog
+
+        self._status_lbl.setText("")
+        dialog = ExeOpenDialog(info, alternative, wine.wine_available(), self)  # type: ignore[arg-type]
+        if dialog.exec() != ExeOpenDialog.DialogCode.Accepted:
+            return
+        if dialog.action == "alternative":
+            self._tabs.setCurrentIndex(0)
+            self._search.setText(alternative[0])  # type: ignore[index]
+        elif dialog.action == "install_wine":
+            self.task_run_now.emit(
+                Task(label=tr("Install Wine"), steps=[TaskStep(op_id="wine.setup", params={})])
+            )
+        elif dialog.action == "run":
+            name = info.display_name  # type: ignore[attr-defined]
+            high = info.risk == "high"  # type: ignore[attr-defined]
+            env = wine.ensure_env(
+                name, separate=dialog.separate or high, reason="risk" if high else "user"
+            )
+            self._wine_runner.run_file(info.path, env, name)  # type: ignore[attr-defined]
+            self._tabs.setCurrentWidget(self._windows_apps)
 
     # --- .deb ---
 

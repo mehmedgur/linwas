@@ -204,6 +204,14 @@ class MainWindow(QMainWindow):
 
             QTimer.singleShot(300, self.run_onboarding)
 
+        # .exe/.msi çift tıklanınca Linwas açılsın (kurulu pakette, bir kez)
+        if not self._settings.exe_handler_set:
+            from linwas.backend.wine import set_default_exe_handler
+
+            if set_default_exe_handler():
+                self._settings.exe_handler_set = True
+                app_settings.save(self._settings)
+
         # Sistem uyarısı (EOL veya desteklenmiyor)
         self._check_support()
         # AI panel görünürlüğü
@@ -419,6 +427,11 @@ class MainWindow(QMainWindow):
         """Programlar sayfasında .deb risk analizini başlatır."""
         self._show_page("software")
         self._pages["software"].open_deb(path)
+
+    def open_exe(self, path: str) -> None:
+        """Programlar sayfasında .exe/.msi analizini başlatır (Wine ile açma)."""
+        self._show_page("software")
+        self._pages["software"].open_exe(path)
 
     def _open_guide(self, text: str) -> None:
         if text:

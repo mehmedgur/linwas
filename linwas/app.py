@@ -70,6 +70,13 @@ def main(argv: list[str] | None = None) -> int:
     deb = next((a for a in argv[1:] if a.endswith(".deb") and os.path.isfile(a)), None)
     if deb:
         window.open_deb(os.path.abspath(deb))
+    # .exe/.msi: risk analizi, Linux alternatifi, Wine ile açma
+    exe = next(
+        (a for a in argv[1:] if a.lower().endswith((".exe", ".msi")) and os.path.isfile(a)),
+        None,
+    )
+    if exe:
+        window.open_exe(os.path.abspath(exe))
     return app.exec()
 
 
