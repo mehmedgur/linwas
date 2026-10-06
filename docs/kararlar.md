@@ -2,7 +2,7 @@
 
 (Önceki çalışma adı: v1.1. Kod sıfırdan yazıldığı için sürüm adı **Linwas 2.0** oldu.)
 
-Son güncelleme: 6 Ekim 2026
+Son güncelleme: 7 Ekim 2026
 Depo (2.0): github.com/mehmedgur/linwas2 (geliştirme süresince private; kod düz dosyalar halinde)
 Eski depo (v1.0, yalnızca referans): github.com/mehmedgur/linwas
 Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyruk senaryosu)
@@ -70,16 +70,28 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - Telemetri yok.
 
 ## Arayüz tasarımı ve teknolojisi
-- Teknoloji: **Qt Widgets + QSS** (PySide6). QML seçilmedi: animasyon yok, erişilebilirlik Widgets'ta daha güçlü.
-- Tasarım değerleri (renk, yazı, boşluk, köşe) tek dosyada: `ui/theme/tokens.py`. Açık / Koyu / Yüksek kontrast setleri; QSS bu değerlerden üretilir.
-- Ortak bileşen kütüphanesi (kart, menü öğesi, rozet, ana buton, durum çubuğu, görev kartı); sayfalar bunlardan kurulur.
-- Simgeler: kendi SVG simge setimiz (Windows benzeri çizgi stil), HiDPI uyumlu.
-- Animasyon: yok.
+- Teknoloji: **Qt Widgets + QSS** (PySide6). QML seçilmedi: erişilebilirlik Widgets'ta daha güçlü.
+- **Kural (7 Ekim 2026): Tasarımda Microsoft Windows tasarım rehberi ne diyorsa o uygulanır.** Kaynak: learn.microsoft.com/windows/apps/design (tipografi, geometri, boşluk, başlık çubuğu, gezinme, komutlar, simgeler, malzemeler, renk, hareket, iletişim kutuları). Rehberle çelişen önceki taslak kararları geçersizdir.
+- Windows 11 tasarım ilkeleri: Zahmetsiz, Sakin, Kişisel, Tanıdık, Bütün ve tutarlı.
+- Tasarım değerleri tek dosyada: `ui/theme/tokens.py` (Açık / Koyu / Yüksek kontrast); QSS bu değerlerden üretilir.
+- **Tasarım sistemi (rehberden):**
+  - Yazı ölçeği: Açıklama 12/16 · Gövde 14/20 · Gövde vurgulu 14/20 yarı kalın · Alt başlık 20/28 · Başlık 28/36. Yalnızca normal ve yarı kalın (Semibold) ağırlık; kalın/italik yok. Cümle düzeni büyük harf. Yazı tipi Segoe UI Variable; Linux'ta Noto Sans (Segoe pakete gömülemez).
+  - Köşe: kontroller ve sayfa içi öğeler 4 px; pencere, menü (flyout) ve iletişim kutusu 8 px; birbirine değen düz kenarlar ve büyütülmüş pencere 0 px.
+  - Boşluk (8 tabanlı): düğmeler arası 8 · başlık–kontrol 8 · etiket–kontrol 12 · içerik alanları arası 12 · yüzey iç boşluğu 16.
+  - Başlık çubuğu: standart 32 px; ortada arama kutusu olduğu için **48 px**. Geri düğmesi en solda, ardından 16 px uygulama simgesi, 16 px sonra 12 px başlık metni. Pencere düğmeleri 46×32.
+  - Gezinme: soldaki NavigationView (5'ten fazla öğe olduğu için). Pencere ≥1008 px'de açık, 641–1007'de yalnızca simge, ≤640'ta gizli. Ayarlar en altta. Sayfa başlığı alanı 52 px; iki seviyeden derin sayfalarda breadcrumb ("Sistem › Güncellemeler").
+  - Komutlar: menü çubuğu yok (uygulama karmaşık değil); sık kullanılan komutlar doğrudan ekranda (sayfa başlığının sağında). Menüler 8 px köşeli açılır menü (flyout).
+  - Simgeler: tek renk, 1 px çizgi, sade geometrik (Segoe Fluent Icons tarzında, kendi çizimimiz); 16 px, ayar kartlarında 20 px.
+  - Malzemeler: pencere zemini Mica (Linux'ta düz yedek renk: açık #F3F3F3, koyu #202020); menüler Acrylic (Linux'ta yarı saydam yedek yüzey); iletişim kutusu arkası Smoke (yarı saydam siyah). Qt bulanıklaştırma yapamadığı için gerçek Mica/Acrylic yok.
+  - Renk: WinUI tema değerleri. Vurgu (Windows varsayılanı) açık #005FB8, koyu #60CDFF; vurgu idareli ve yalnızca etkileşim/durum için. Durum renkleri: başarılı #0F7B0F, uyarı #9D5D00, hata #C42B1C (koyu temada #6CCB5F, #FCE100, #FF99A4).
+  - Hareket: renk/durum geçişleri 83 ms; konum ve giriş 167 ms, cubic-bezier(0,0,0,1). (Önceki "animasyon yok" kararının yerine geçer.) Sistemin "hareketi azalt" ayarına uyulur.
+  - Kontroller: düğme 32 px (yatay iç boşluk 11), vurgu düğmesi = varsayılan eylem; açma/kapama anahtarı 40×20; metin kutusu 32 px, odakta altta 2 px vurgu çizgisi; liste öğesi en az 40 px, seçili öğede 3×16 vurgu çubuğu; ayar kartı en az 68 px, kartlar arası 4 px; bilgi çubuğu (InfoBar) en az 48 px, 4 önem düzeyi.
+  - İletişim kutusu: genişlik 320–548 px, iç boşluk 24, başlık 20/28 yarı kalın; komut alanında düğmeler eşit genişlikte, **ana eylem solda, güvenli eylem (İptal) sağda**; düğme metinleri özel ("Yedek al ve başlat", "Evet/Hayır" değil); Esc = İptal. Satır içi hatalar iletişim kutusuyla değil sayfada gösterilir.
+  - Odak görseli: 2 px dış + 1 px iç halka (açık temada siyah/beyaz).
+- Ortak bileşen kütüphanesi; sayfalar bunlardan kurulur. Her yeni bileşen yukarıdaki değerleri kullanır, yeni ölçü icat edilmez.
 - Erişilebilirlik her bileşene baştan eklenir.
 - Tasarım akışı: sayfa sayfa — tuvalde taslak → onay → Qt'ye aktarım → sıradaki sayfa.
-- Onaylı taslaklar: ana pencere (Sistem › Genel bakış) ve kuyruk senaryosu (Kuyruk → Onay → Çalışıyor → Sonuç).
-  - Ana pencere: üstte başlık çubuğu; solda daraltılabilir menü (arama kutusu, rozetler, açılır alt menüler, altta sistem durumu kartı, Yardımcı paneli düğmesi, Ayarlar); ortada içerik (Genel bakış: Timeshift rozeti, 4 hızlı işlem kutusu, Güncellemeler/Sürücüler/Wi-Fi/Bluetooth kartları); sağda AI yardımcı paneli (sağlayıcı seçimi, sohbet, önerilen görev kartı + "Kuyruğa ekle", ekran görüntüsü/log ekleme, "Sistem bilgimi ekle", token çubuğu); altta durum çubuğu (kuyruk sayısı, ilerleme, Detay, "Uygula (tek onay)").
-  - Vurgu rengi `#0067c0`, yazı tipi Noto Sans, açık tema zemin `#f3f3f3`, kartlar beyaz, kenarlık `#e0e3e7`, köşe 8 px.
+- Geçerli taslak: tuvalde **v4** (ana pencere 1200×760, onay iletişim kutusu, bileşen durumları). v1–v3 yalnızca geçmiş için duruyor.
 
 ## Menü yapısı
 - **AI Soru** (geniş sohbet ekranı; ayrıca her sayfada yardımcı panel)
@@ -88,7 +100,7 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - **Program:** Üstte arama, altta "Windows'ta ne kullanıyordun?" bölümü; **Kurulu programlar** sekmesi; Oyun sekmesi
 - **Sorun Giderme:** Üstte tek tıkla tam tarama, altta belirti kartları
 - **Ayarlar:** Linwas'ın kendi ayarları (işlem geçmişi ve eklenti listesi burada)
-- Menü özellikleri: daraltma, arama kutusu (Windows terimlerini de arar), açılır alt menüler, bildirim rozetleri, sistem durumu kartı, yardımcı paneli düğmesi.
+- Menü özellikleri: rozetler; arama kutusu başlık çubuğunun ortasında (Windows terimlerini de arar); Yardımcı paneli düğmesi sayfa başlığının sağında. Sistem alt sayfaları Windows Ayarlar düzeninde kartlar + breadcrumb ile açılır.
 - Genel bakışta hızlı işlemler: Görev Yöneticisi, Disk temizliği, Dosyalarımı yedekle, Windows'tan taşı.
 
 ## Yedekler ve geri alma
