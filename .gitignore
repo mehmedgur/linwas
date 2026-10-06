@@ -19,3 +19,6 @@ linwas/i18n/*.qm
 .vscode/
 .idea/
 *.swp
+
+# Claude Code yerel ayarları
+.claude/settings.local.json

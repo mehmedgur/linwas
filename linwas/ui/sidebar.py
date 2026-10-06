@@ -1,0 +1,276 @@
+"""Sol gezinme menüsü.
+
+Genişleyebilir alt menüler, arama kutusu, sistem durumu kartı ve
+altta Ayarlar düğmesi içerir. Daraltılabilir (220 px ↔ 48 px).
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+
+from PySide6.QtCore import QCoreApplication, Qt, Signal
+from PySide6.QtWidgets import (
+    QFrame,
+    QLineEdit,
+    QPushButton,
+    QScrollArea,
+    QSizePolicy,
+    QVBoxLayout,
+    QWidget,
+)
+
+from linwas.ui.theme.tokens import SIDEBAR_WIDTH
+
+
+def tr(text: str) -> str:
+    return QCoreApplication.translate("Sidebar", text)
+
+
+@dataclass
+class MenuItem:
+    id: str
+    label: str
+    icon: str = ""
+    children: list[MenuItem] = field(default_factory=list)
+
+    @property
+    def is_group(self) -> bool:
+        return bool(self.children)
+
+
+MENU: list[MenuItem] = [
+    MenuItem("ai_chat", "AI Question"),
+    MenuItem(
+        "system",
+        "System",
+        children=[
+            MenuItem("overview", "Overview"),
+            MenuItem("updates", "Updates"),
+            MenuItem("drivers", "Drivers"),
+            MenuItem("network", "Wi-Fi & Bluetooth"),
+            MenuItem("backups", "Backups & Rollback"),
+            MenuItem("hardware", "Hardware & Printers"),
+            MenuItem("taskmgr", "Task Manager"),
+            MenuItem("cleanup", "Disk Cleanup"),
+            MenuItem("personal_backup", "Personal Backup"),
+            MenuItem("power", "Power & Battery"),
+            MenuItem("migrate", "Import from Windows"),
+            MenuItem("all_settings", "All Settings"),
+        ],
+    ),
+    MenuItem(
+        "interface",
+        "Interface",
+        children=[
+            MenuItem("appearance", "Windows Appearance"),
+            MenuItem("theme", "Theme & Wallpaper"),
+            MenuItem("fonts", "Fonts"),
+            MenuItem("display", "Display & Scaling"),
+        ],
+    ),
+    MenuItem("software", "Software"),
+    MenuItem("troubleshoot", "Troubleshooting"),
+]
+
+BOTTOM_ITEMS: list[MenuItem] = [
+    MenuItem("settings", "Settings"),
+]
+
+
+class _NavButton(QPushButton):
+    def __init__(self, item: MenuItem, indent: int = 0, parent: QWidget | None = None) -> None:
+        label = tr(item.label)
+        super().__init__(label, parent)
+        self.setObjectName("SidebarItem")
+        self.setProperty("active", False)
+        self._item = item
+        # İç girinti alt menü öğeleri için
+        margin_left = 12 + indent * 16
+        self.setStyleSheet(
+            self.styleSheet() + f" QPushButton#SidebarItem {{ padding-left: {margin_left}px; }}"
+        )
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.setCheckable(False)
+
+    @property
+    def item_id(self) -> str:
+        return self._item.id
+
+    def set_active(self, active: bool) -> None:
+        self.setProperty("active", active)
+        self.style().unpolish(self)
+        self.style().polish(self)
+
+
+class Sidebar(QWidget):
+    """Sol gezinme menüsü."""
+
+    page_requested = Signal(str)  # menü öğesi ID'si
+
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.setObjectName("Sidebar")
+        self.setFixedWidth(SIDEBAR_WIDTH)
+
+        outer = QVBoxLayout(self)
+        outer.setContentsMargins(8, 8, 8, 8)
+        outer.setSpacing(4)
+
+        # Arama kutusu
+        self._search = QLineEdit(self)
+        self._search.setPlaceholderText(tr("Search"))
+        self._search.setClearButtonEnabled(True)
+        self._search.textChanged.connect(self._filter)
+        outer.addWidget(self._search)
+
+        # Kaydırılabilir menü alanı
+        scroll = QScrollArea(self)
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+
+        scroll_content = QWidget()
+        self._menu_layout = QVBoxLayout(scroll_content)
+        self._menu_layout.setContentsMargins(0, 0, 0, 0)
+        self._menu_layout.setSpacing(2)
+        self._menu_layout.addStretch(1)
+        scroll.setWidget(scroll_content)
+        outer.addWidget(scroll, 1)
+
+        # Alt ayırıcı
+        sep = QFrame(self)
+        sep.setFrameShape(QFrame.Shape.HLine)
+        outer.addWidget(sep)
+
+        # Alt menü (Ayarlar)
+        self._bottom_layout = QVBoxLayout()
+        self._bottom_layout.setSpacing(2)
+        outer.addLayout(self._bottom_layout)
+
+        self._buttons: list[_NavButton] = []
+        self._expanded: set[str] = {"system"}  # Sistem varsayılan açık
+        self._active_id: str = "overview"
+
+        self._build_menu()
+
+    def _build_menu(self) -> None:
+        layout = self._menu_layout
+        # Stretch'in önüne ekle
+        stretch = layout.takeAt(layout.count() - 1)
+
+        for item in MENU:
+            btn = _NavButton(item)
+            btn.clicked.connect(self._on_click)
+            layout.addWidget(btn)
+            self._buttons.append(btn)
+
+            if item.is_group:
+                for child in item.children:
+                    child_btn = _NavButton(child, indent=1)
+                    child_btn.clicked.connect(self._on_click)
+                    child_btn.setVisible(item.id in self._expanded)
+                    layout.addWidget(child_btn)
+                    self._buttons.append(child_btn)
+
+        layout.addItem(stretch)
+
+        for item in BOTTOM_ITEMS:
+            btn = _NavButton(item)
+            btn.clicked.connect(self._on_click)
+            self._bottom_layout.addWidget(btn)
+            self._buttons.append(btn)
+
+        self._refresh_active()
+
+    def _on_click(self) -> None:
+        btn = self.sender()
+        if not isinstance(btn, _NavButton):
+            return
+        item_id = btn.item_id
+
+        # Grup tıklaması → aç/kapa
+        group = next((m for m in MENU if m.id == item_id and m.is_group), None)
+        if group:
+            if item_id in self._expanded:
+                self._expanded.discard(item_id)
+            else:
+                self._expanded.add(item_id)
+            self._update_visibility()
+            return
+
+        # Yaprak tıklaması → sayfa değiştir
+        self._active_id = item_id
+        self._refresh_active()
+        self.page_requested.emit(item_id)
+
+    def _update_visibility(self) -> None:
+        for btn in self._buttons:
+            # Alt menü öğesi mi? Üst grubunu bul
+            parent_group = next(
+                (m for m in MENU if any(c.id == btn.item_id for c in m.children)),
+                None,
+            )
+            if parent_group:
+                btn.setVisible(parent_group.id in self._expanded)
+
+    def _refresh_active(self) -> None:
+        for btn in self._buttons:
+            btn.set_active(btn.item_id == self._active_id)
+
+    def _filter(self, text: str) -> None:
+        text = text.strip().lower()
+        for btn in self._buttons:
+            if text:
+                btn.setVisible(text in btn.text().lower())
+            else:
+                # Filtre temizlendi → normal görünürlük
+                parent_group = next(
+                    (m for m in MENU if any(c.id == btn.item_id for c in m.children)),
+                    None,
+                )
+                if parent_group:
+                    btn.setVisible(parent_group.id in self._expanded)
+                else:
+                    btn.setVisible(True)
+
+    def set_active(self, page_id: str) -> None:
+        """Programatik olarak aktif sayfayı değiştirir."""
+        self._active_id = page_id
+        self._refresh_active()
+        # İlgili grubu otomatik aç
+        for m in MENU:
+            if any(c.id == page_id for c in m.children):
+                self._expanded.add(m.id)
+                self._update_visibility()
+                break
+
+
+def _translation_markers() -> None:
+    """Çeviri tarayıcısı için işaretleyiciler.
+
+    MENU etiketleri dinamik olarak tr(item.label) ile çevrilir;
+    AST tarayıcısı dinamik çağrıları göremez, bu yüzden
+    her etiket burada açıkça referans edilir. Bu işlev hiçbir zaman çağrılmaz.
+    """
+    tr("AI Question")
+    tr("System")
+    tr("Overview")
+    tr("Updates")
+    tr("Drivers")
+    tr("Wi-Fi & Bluetooth")
+    tr("Backups & Rollback")
+    tr("Hardware & Printers")
+    tr("Task Manager")
+    tr("Disk Cleanup")
+    tr("Personal Backup")
+    tr("Power & Battery")
+    tr("Import from Windows")
+    tr("All Settings")
+    tr("Interface")
+    tr("Windows Appearance")
+    tr("Theme & Wallpaper")
+    tr("Fonts")
+    tr("Display & Scaling")
+    tr("Software")
+    tr("Troubleshooting")
+    tr("Settings")

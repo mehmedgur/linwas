@@ -1,0 +1,182 @@
+{
+  "at-spi-dbus-bus": {
+    "description": "Accessibility infrastructure. Required for screen readers (Orca) and assistive technologies. Disable only if you never use accessibility features.",
+    "safe_to_disable": false,
+    "category": "Accessibility",
+    "impact": "Disabling may break screen readers and some accessibility tools."
+  },
+  "baloo_file": {
+    "description": "KDE file indexing service that enables fast file search in Dolphin and KRunner. Indexes file names and content in the background.",
+    "safe_to_disable": true,
+    "category": "Search",
+    "impact": "File search in KDE apps will no longer work instantly."
+  },
+  "blueman": {
+    "description": "Bluetooth manager that shows a tray icon for connecting Bluetooth devices. Safe to disable if you don't use Bluetooth.",
+    "safe_to_disable": true,
+    "category": "Hardware",
+    "impact": "Bluetooth tray icon disappears; you can still connect via system settings."
+  },
+  "geoclue-demo-agent": {
+    "description": "Location services agent. Allows apps to request your geographic location (e.g. weather, maps).",
+    "safe_to_disable": true,
+    "category": "Privacy",
+    "impact": "Location-aware apps will not work."
+  },
+  "gmenudbusmenuproxy": {
+    "description": "Exports application menus (File, Edit…) to the system panel in GNOME. Required for app menus to appear in the top bar.",
+    "safe_to_disable": false,
+    "category": "Desktop",
+    "impact": "Application menus may disappear from the GNOME top bar."
+  },
+  "gnome-keyring-pkcs11": {
+    "description": "GNOME Keyring PKCS#11 component. Stores passwords and certificates securely. Used by browsers, SSH, and system authentication.",
+    "safe_to_disable": false,
+    "category": "Security",
+    "impact": "Saved passwords and SSH keys may stop working."
+  },
+  "gnome-keyring-secrets": {
+    "description": "GNOME Keyring secrets service. Stores application passwords and tokens securely. Most apps depend on this.",
+    "safe_to_disable": false,
+    "category": "Security",
+    "impact": "Apps will be unable to save/retrieve passwords."
+  },
+  "gnome-keyring-ssh": {
+    "description": "GNOME Keyring SSH agent. Manages SSH keys so you don't re-enter your passphrase at every login.",
+    "safe_to_disable": true,
+    "category": "Security",
+    "impact": "SSH keys will not be loaded automatically; you will be prompted for passphrase every time."
+  },
+  "ibus": {
+    "description": "Intelligent Input Bus — input method framework for typing in East Asian and other languages. If you only type in Latin script, this is not needed.",
+    "safe_to_disable": true,
+    "category": "Input",
+    "impact": "Non-Latin input methods (Chinese, Japanese, Korean…) will stop working."
+  },
+  "nm-applet": {
+    "description": "Network Manager tray icon for managing Wi-Fi and wired connections. Safe to disable only if you manage networks another way.",
+    "safe_to_disable": false,
+    "category": "Network",
+    "impact": "Network tray icon disappears; you may lose easy access to Wi-Fi settings."
+  },
+  "polkit-gnome-authentication-agent-1": {
+    "description": "PolicyKit authentication agent. Shows the password dialog when an app needs administrator privileges (like installing software).",
+    "safe_to_disable": false,
+    "category": "Security",
+    "impact": "Administrator password dialogs will stop appearing; privileged operations will fail silently."
+  },
+  "print-applet": {
+    "description": "Printing status tray applet. Shows print job progress in the system tray.",
+    "safe_to_disable": true,
+    "category": "Hardware",
+    "impact": "No print status icon. Printing still works normally."
+  },
+  "spice-vdagent": {
+    "description": "SPICE display agent for virtual machines (KVM/QEMU). Enables clipboard sharing and screen resize in virtual machines.",
+    "safe_to_disable": true,
+    "category": "Virtualization",
+    "impact": "Only relevant inside a virtual machine. Safe to disable on physical hardware."
+  },
+  "ssh-add": {
+    "description": "Adds SSH keys to the authentication agent at login. Useful if you frequently use SSH without a passphrase.",
+    "safe_to_disable": true,
+    "category": "Network",
+    "impact": "SSH keys will not be pre-loaded; you will need to run ssh-add manually."
+  },
+  "tracker-miner-fs": {
+    "description": "GNOME file indexing service for fast search in Files (Nautilus) and GNOME Search. Indexes documents and metadata in the background.",
+    "safe_to_disable": true,
+    "category": "Search",
+    "impact": "GNOME file search will be slow or unavailable."
+  },
+  "tracker-miner-rss": {
+    "description": "GNOME Tracker RSS miner. Indexes RSS feeds for GNOME applications.",
+    "safe_to_disable": true,
+    "category": "Search",
+    "impact": "RSS feed data will not be indexed."
+  },
+  "update-notifier": {
+    "description": "Checks for software updates and shows a notification when updates are available.",
+    "safe_to_disable": true,
+    "category": "System",
+    "impact": "You will not receive automatic update notifications."
+  },
+  "xfce4-clipman-plugin-autostart": {
+    "description": "XFCE clipboard manager. Keeps a history of things you have copied so you can paste older items.",
+    "safe_to_disable": true,
+    "category": "Productivity",
+    "impact": "Clipboard history feature is disabled."
+  },
+  "xfce4-notifyd": {
+    "description": "XFCE desktop notification daemon. Shows pop-up notifications from apps (email, calendar reminders, etc.).",
+    "safe_to_disable": false,
+    "category": "Desktop",
+    "impact": "Desktop notifications from all apps will be suppressed."
+  },
+  "xscreensaver": {
+    "description": "Screen saver and screen locker. Locks the screen after inactivity to protect your session.",
+    "safe_to_disable": true,
+    "category": "Security",
+    "impact": "Screen will not lock automatically when left unattended."
+  },
+  "tr.org.pardus.update-autostart": {
+    "description": "Pardus update notifier. Checks for Pardus system updates and shows a notification when updates are ready.",
+    "safe_to_disable": true,
+    "category": "System",
+    "impact": "Pardus update notifications will not appear."
+  },
+  "picom": {
+    "description": "Compositor for X11. Adds visual effects like transparency and smooth window animations. Common in lightweight desktop environments.",
+    "safe_to_disable": true,
+    "category": "Desktop",
+    "impact": "Window transparency and some visual effects will be lost."
+  },
+  "redshift-gtk": {
+    "description": "Adjusts screen color temperature at night to reduce eye strain. Makes the screen warmer (more orange) after sunset.",
+    "safe_to_disable": true,
+    "category": "Display",
+    "impact": "Automatic blue light reduction at night will be disabled."
+  },
+  "dunst": {
+    "description": "Lightweight desktop notification daemon. Displays notifications from apps as small pop-ups.",
+    "safe_to_disable": false,
+    "category": "Desktop",
+    "impact": "App notifications will not be shown."
+  },
+  "ulauncher": {
+    "description": "Application launcher. Start apps quickly by pressing a keyboard shortcut.",
+    "safe_to_disable": true,
+    "category": "Productivity",
+    "impact": "Quick launch keyboard shortcut will not work."
+  },
+  "syncthing-gtk": {
+    "description": "Syncthing GUI — file synchronization between your devices. Runs in the background to keep folders in sync.",
+    "safe_to_disable": true,
+    "category": "Sync",
+    "impact": "File synchronization with Syncthing will stop until you manually start it."
+  },
+  "dropbox": {
+    "description": "Dropbox cloud storage client. Syncs your Dropbox folder to the cloud automatically.",
+    "safe_to_disable": true,
+    "category": "Sync",
+    "impact": "Files will not sync to Dropbox until you start Dropbox manually."
+  },
+  "nextcloud": {
+    "description": "Nextcloud desktop client. Syncs files with your Nextcloud server automatically.",
+    "safe_to_disable": true,
+    "category": "Sync",
+    "impact": "Files will not sync to Nextcloud until you start the client manually."
+  },
+  "steam": {
+    "description": "Steam gaming platform. Starts with the system to enable game library access and friend notifications.",
+    "safe_to_disable": true,
+    "category": "Gaming",
+    "impact": "Steam will not launch automatically; you can still start it manually."
+  },
+  "discord": {
+    "description": "Discord chat and voice client. Starts automatically to receive messages and calls.",
+    "safe_to_disable": true,
+    "category": "Communication",
+    "impact": "Discord will not start automatically; you will miss notifications until you open it."
+  }
+}
