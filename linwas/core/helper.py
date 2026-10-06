@@ -224,12 +224,30 @@ def _exec_apt_add_source(seq: int, params: dict[str, str]) -> bool:
 
 
 def _exec_deb_install(seq: int, params: dict[str, str]) -> bool:
-    """Yerel .deb dosyasını kurar."""
+    """Yerel .deb dosyasını kurar; eksik bağımlılıkları APT tamamlar."""
     path = params["path"]
-    ok = _run(["dpkg", "-i", "--", path], seq)
-    if not ok:
-        # Bağımlılıkları düzelt
-        _run(["apt-get", "-f", "install", "-y"], seq)
+    try:
+        r = subprocess.run(
+            ["dpkg-deb", "-f", "--", path, "Package"],
+            capture_output=True,
+            text=True,
+            timeout=60,
+            shell=False,
+        )
+        name = r.stdout.strip()
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        name = ""
+    was_installed = bool(name) and _apt_installed(name)
+    env = {"DEBIAN_FRONTEND": "noninteractive"}
+    # Bağımlılık eksikse dpkg yarıda kalır; apt-get -f tamamlar
+    dpkg_ok = _run(["dpkg", "-i", "--", path], seq, env)
+    if not dpkg_ok and not _run(["apt-get", "-f", "install", "-y"], seq, env):
+        return False
+    if name and not _apt_installed(name):
+        _error(seq, f"Paket kurulamadı: {name}")
+        return False
+    if name and not was_installed:
+        _save_rollback(RollbackRecord(task_label=name, packages_to_install=[name]), seq)
     return True
 
 

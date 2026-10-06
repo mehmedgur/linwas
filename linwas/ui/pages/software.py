@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QLineEdit,
+    QMessageBox,
     QPushButton,
     QScrollArea,
     QSizePolicy,
@@ -23,7 +24,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from linwas.backend.apt_search import AptPackage, search_apt
+from linwas.backend.apt_search import AptPackage, expand_query, search_apt
 from linwas.backend.flatpak import FlatpakPackage, search_flatpak
 from linwas.backend.flatpak import is_available as flatpak_ok
 from linwas.backend.installed_apps import InstalledApp, is_other_version, match_installed
@@ -81,6 +82,20 @@ def _windows_alts(query: str) -> dict[str, Any] | None:
 class _SearchResult:
     apt: list[AptPackage]
     flatpak: list[FlatpakPackage]
+    extra_terms: list[str]  # Türkçe sorgu için ayrıca aranan İngilizce terimler
+
+
+class _DebWorker(QThread):
+    done = Signal(object)  # DebInfo
+
+    def __init__(self, path: str) -> None:
+        super().__init__()
+        self._path = path
+
+    def run(self) -> None:
+        from linwas.backend.deb_inspect import inspect
+
+        self.done.emit(inspect(self._path))
 
 
 class _SearchWorker(QThread):
@@ -91,9 +106,21 @@ class _SearchWorker(QThread):
         self._query = query
 
     def run(self) -> None:
-        apt = search_apt(self._query)
-        flatpak = search_flatpak(self._query) if flatpak_ok() else []
-        self.done.emit(_SearchResult(apt=apt, flatpak=flatpak))
+        terms = expand_query(self._query)
+        apt: list[AptPackage] = []
+        flatpak: list[FlatpakPackage] = []
+        use_flatpak = flatpak_ok()
+        for q in [self._query, *terms]:
+            for pkg in search_apt(q):
+                if all(p.name != pkg.name for p in apt):
+                    apt.append(pkg)
+            if use_flatpak:
+                for fp in search_flatpak(q):
+                    if all(f.app_id != fp.app_id for f in flatpak):
+                        flatpak.append(fp)
+        # Masaüstü uygulamaları önce
+        apt.sort(key=lambda p: p.graphical is not True)
+        self.done.emit(_SearchResult(apt=apt[:40], flatpak=flatpak[:20], extra_terms=terms))
 
 
 # --- Paket satırı ---
@@ -274,6 +301,14 @@ class SoftwarePage(BasePage):
         self._search.setMinimumHeight(36)
         outer.addWidget(self._search)
 
+        deb_row = QHBoxLayout()
+        deb_row.addStretch(1)
+        deb_btn = QPushButton(tr("Install a .deb file…"), content)
+        deb_btn.setToolTip(tr("Linwas checks the file before installing it."))
+        deb_btn.clicked.connect(self._pick_deb)
+        deb_row.addWidget(deb_btn)
+        outer.addLayout(deb_row)
+
         # Flatpak yok uyarısı
         if not flatpak_ok():
             info = QLabel(tr("Flatpak is not installed. Only APT packages will be shown."), content)
@@ -374,8 +409,8 @@ class SoftwarePage(BasePage):
         if alt:
             installed_ids = {a.id for a in installed_apps}
             banner = _AltBanner(query, alt, self._results_widget, installed_ids)
-            banner.install_apt.connect(self._queue_apt)
-            banner.install_flatpak.connect(self._queue_flatpak)
+            banner.install_apt.connect(self._install_apt_clicked)
+            banner.install_flatpak.connect(self._install_flatpak_clicked)
             self._results_layout.addWidget(banner)
             self._results_layout.addSpacing(8)
 
@@ -397,7 +432,7 @@ class SoftwarePage(BasePage):
                     parent=self._results_widget,
                     other_version=self._other_version_name(pkg, installed_apps),
                 )
-                row.install_apt.connect(self._queue_apt)
+                row.install_apt.connect(self._install_apt_clicked)
                 row.remove_clicked.connect(self._on_remove)
                 self._results_layout.addWidget(row)
                 self._add_separator()
@@ -416,7 +451,7 @@ class SoftwarePage(BasePage):
                     pkg_id=pkg.app_id,
                     parent=self._results_widget,
                 )
-                row.install_flatpak.connect(self._queue_flatpak)
+                row.install_flatpak.connect(self._install_flatpak_clicked)
                 row.remove_clicked.connect(self._on_remove)
                 self._results_layout.addWidget(row)
                 self._add_separator()
@@ -440,9 +475,12 @@ class SoftwarePage(BasePage):
                 total += 1
 
         if total == 0 and not alt:
-            self._status_lbl.setText(tr('No results for "{q}"').format(q=query))
+            text = tr('No results for "{q}"').format(q=query)
         else:
-            self._status_lbl.setText(tr('{n} result(s) for "{q}"').format(n=total, q=query))
+            text = tr('{n} result(s) for "{q}"').format(n=total, q=query)
+        if result.extra_terms:
+            text += " · " + tr("also searched: {terms}").format(terms=", ".join(result.extra_terms))
+        self._status_lbl.setText(text)
 
     def _add_separator(self) -> None:
         sep = QFrame(self._results_widget)
@@ -450,6 +488,114 @@ class SoftwarePage(BasePage):
         self._results_layout.addWidget(sep)
 
     # --- Görev oluşturma ---
+
+    # --- APT / Flatpak seçimi ---
+
+    @staticmethod
+    def _norm(text: str) -> str:
+        return "".join(ch for ch in text.casefold() if ch.isalnum())
+
+    def _flatpak_twin(self, apt_name: str) -> FlatpakPackage | None:
+        if not self._last_result:
+            return None
+        key = self._norm(apt_name)
+        for fp in self._last_result.flatpak:
+            if key in (self._norm(fp.name), self._norm(fp.app_id.rsplit(".", 1)[-1])):
+                return fp
+        return None
+
+    def _apt_twin(self, app_id: str) -> AptPackage | None:
+        if not self._last_result:
+            return None
+        fp = next((f for f in self._last_result.flatpak if f.app_id == app_id), None)
+        keys = {self._norm(app_id.rsplit(".", 1)[-1])}
+        if fp:
+            keys.add(self._norm(fp.name))
+        return next((a for a in self._last_result.apt if self._norm(a.name) in keys), None)
+
+    def _choose_source(self, name: str, apt_version: str, flatpak_version: str) -> str | None:
+        """Aynı program iki kaynakta varsa sorar: "apt" | "flatpak" | None (vazgeç)."""
+        box = QMessageBox(self)
+        box.setWindowTitle(tr("Choose where to install from"))
+        box.setText(tr("{name} is available from two sources.").format(name=name))
+        box.setInformativeText(
+            tr(
+                "System packages (APT{apt}): updated together with your system, use less "
+                "space, well tested with your system.\n\n"
+                "Flatpak (Flathub{fp}): usually a newer version, runs isolated from the "
+                "system, uses more disk space."
+            ).format(
+                apt=f" {apt_version}" if apt_version else "",
+                fp=f" {flatpak_version}" if flatpak_version else "",
+            )
+        )
+        apt_btn = box.addButton(tr("System package (APT)"), QMessageBox.ButtonRole.AcceptRole)
+        fp_btn = box.addButton(tr("Flatpak"), QMessageBox.ButtonRole.AcceptRole)
+        box.addButton(tr("Cancel"), QMessageBox.ButtonRole.RejectRole)
+        box.exec()
+        if box.clickedButton() is apt_btn:
+            return "apt"
+        if box.clickedButton() is fp_btn:
+            return "flatpak"
+        return None
+
+    def _install_apt_clicked(self, name: str) -> None:
+        twin = self._flatpak_twin(name)
+        if twin and not twin.installed:
+            apt = next((a for a in self._last_result.apt if a.name == name), None)  # type: ignore[union-attr]
+            choice = self._choose_source(twin.name, apt.version if apt else "", twin.version)
+            if choice == "flatpak":
+                self._queue_flatpak(twin.app_id)
+                return
+            if choice is None:
+                return
+        self._queue_apt(name)
+
+    def _install_flatpak_clicked(self, app_id: str) -> None:
+        twin = self._apt_twin(app_id)
+        if twin and not twin.installed:
+            fp = next(f for f in self._last_result.flatpak if f.app_id == app_id)  # type: ignore[union-attr]
+            choice = self._choose_source(fp.name, twin.version, fp.version)
+            if choice == "apt":
+                self._queue_apt(twin.name)
+                return
+            if choice is None:
+                return
+        self._queue_flatpak(app_id)
+
+    # --- .deb ---
+
+    def _pick_deb(self) -> None:
+        from PySide6.QtCore import QStandardPaths
+        from PySide6.QtWidgets import QFileDialog
+
+        start = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DownloadLocation)
+        path, _ = QFileDialog.getOpenFileName(
+            self, tr("Choose a .deb file"), start, tr("Debian packages (*.deb)")
+        )
+        if path:
+            self.open_deb(path)
+
+    def open_deb(self, path: str) -> None:
+        """Dosyayı arka planda inceler, sonucu pencerede gösterir."""
+        self._status_lbl.setText(tr("Checking the file…"))
+        worker = _DebWorker(path)
+        worker.done.connect(self._on_deb_inspected)
+        self._deb_worker = worker
+        worker.start()
+
+    def _on_deb_inspected(self, info: object) -> None:
+        from linwas.ui.dialogs.deb_install import DebInstallDialog
+
+        self._status_lbl.setText("")
+        dialog = DebInstallDialog(info, self)  # type: ignore[arg-type]
+        if dialog.exec() == DebInstallDialog.DialogCode.Accepted:
+            self.task_run_now.emit(
+                Task(
+                    label=tr("Install {pkg}").format(pkg=info.package),  # type: ignore[attr-defined]
+                    steps=[TaskStep(op_id="deb.install", params={"path": info.path})],  # type: ignore[attr-defined]
+                )
+            )
 
     def _queue_apt(self, name: str) -> None:
         task = Task(

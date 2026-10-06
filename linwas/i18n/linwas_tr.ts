@@ -750,6 +750,58 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <source>Another version of this program is already installed: {name}</source>
         <translation>Bu programın başka bir sürümü zaten kurulu: {name}</translation>
     </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Checking the file…</source>
+        <translation>Dosya denetleniyor…</translation>
+    </message>
+    <message>
+        <source>Choose a .deb file</source>
+        <translation>.deb dosyası seçin</translation>
+    </message>
+    <message>
+        <source>Choose where to install from</source>
+        <translation>Nereden kurulacağını seçin</translation>
+    </message>
+    <message>
+        <source>Debian packages (*.deb)</source>
+        <translation>Debian paketleri (*.deb)</translation>
+    </message>
+    <message>
+        <source>Flatpak</source>
+        <translation>Flatpak</translation>
+    </message>
+    <message>
+        <source>Install a .deb file…</source>
+        <translation>.deb dosyası kur…</translation>
+    </message>
+    <message>
+        <source>Linwas checks the file before installing it.</source>
+        <translation>Linwas dosyayı kurmadan önce denetler.</translation>
+    </message>
+    <message>
+        <source>System package (APT)</source>
+        <translation>Sistem paketi (APT)</translation>
+    </message>
+    <message>
+        <source>System packages (APT{apt}): updated together with your system, use less space, well tested with your system.
+
+Flatpak (Flathub{fp}): usually a newer version, runs isolated from the system, uses more disk space.</source>
+        <translation>Sistem paketi (APT{apt}): sisteminizle birlikte güncellenir, daha az yer kaplar, sisteminizle iyi denenmiştir.
+
+Flatpak (Flathub{fp}): genellikle daha yeni sürümdür, sistemden yalıtılmış çalışır, daha çok disk alanı kaplar.</translation>
+    </message>
+    <message>
+        <source>also searched: {terms}</source>
+        <translation>ayrıca arandı: {terms}</translation>
+    </message>
+    <message>
+        <source>{name} is available from two sources.</source>
+        <translation>{name} iki farklı kaynakta var.</translation>
+    </message>
 </context>
 <context>
     <name>MigratePage</name>
@@ -2614,6 +2666,77 @@ Değişiklikler alttaki kuyrukta toplanır. Uygula'ya basıp şifrenizi bir kez 
     <message>
         <source>Save…</source>
         <translation>Kaydet…</translation>
+    </message>
+</context>
+<context>
+    <name>DebInstallDialog</name>
+    <message>
+        <source>Adds a software source or signing key to your system.</source>
+        <translation>Sisteminize bir yazılım kaynağı veya imza anahtarı ekler.</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Changes sensitive system areas (administrator rights, startup, kernel or home folders).</source>
+        <translation>Hassas sistem alanlarını değiştirir (yönetici yetkileri, başlangıç, çekirdek ya da ev klasörleri).</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Kapat</translation>
+    </message>
+    <message>
+        <source>High risk — install only if you trust the source</source>
+        <translation>Yüksek risk — yalnızca kaynağa güveniyorsanız kurun</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Kur</translation>
+    </message>
+    <message>
+        <source>Install a .deb file</source>
+        <translation>.deb dosyası kur</translation>
+    </message>
+    <message>
+        <source>Installed now: {version}</source>
+        <translation>Şu an kurulu: {version}</translation>
+    </message>
+    <message>
+        <source>Installs a background service that starts with the computer.</source>
+        <translation>Bilgisayarla birlikte başlayan bir arka plan servisi kurar.</translation>
+    </message>
+    <message>
+        <source>Low risk</source>
+        <translation>Düşük risk</translation>
+    </message>
+    <message>
+        <source>Made by: {who}</source>
+        <translation>Hazırlayan: {who}</translation>
+    </message>
+    <message>
+        <source>Made for a different processor type; it will probably not work.</source>
+        <translation>Farklı bir işlemci türü için hazırlanmış; büyük olasılıkla çalışmaz.</translation>
+    </message>
+    <message>
+        <source>Medium risk</source>
+        <translation>Orta risk</translation>
+    </message>
+    <message>
+        <source>Only copies program files; no scripts or system changes.</source>
+        <translation>Yalnızca program dosyalarını kopyalar; betik ya da sistem değişikliği yok.</translation>
+    </message>
+    <message>
+        <source>Runs its own setup scripts with administrator rights.</source>
+        <translation>Kendi kurulum betiklerini yönetici yetkisiyle çalıştırır.</translation>
+    </message>
+    <message>
+        <source>This file can't be read: {error}</source>
+        <translation>Bu dosya okunamıyor: {error}</translation>
+    </message>
+    <message>
+        <source>This program is also in your system's software sources (version {version}). Installing from there is safer and it updates automatically.</source>
+        <translation>Bu program sisteminizin yazılım kaynaklarında da var (sürüm {version}). Oradan kurmak daha güvenlidir ve kendiliğinden güncellenir.</translation>
     </message>
 </context>
 </TS>
