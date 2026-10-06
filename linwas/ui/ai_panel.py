@@ -135,6 +135,7 @@ def _role_text(role: str) -> str:
         "main": tr("Main model — code, error analysis, agents, long context"),
         "fast": tr("Quick and cheap tasks — coding, tool use, 1M context"),
         "hard": tr("Very hard problems — deep reasoning, complex code"),
+        "free": tr("Free tier, 1M token context"),
     }.get(role, "")
 
 
@@ -341,7 +342,12 @@ class AIPanel(QWidget):
             for i, m in enumerate(curated):
                 medal = _MEDALS[i] + " " if i < len(_MEDALS) else ""
                 role = _role_text(m.role)
-                self._model_combo.addItem(f"{medal}{m.label}", m.id)
+                cost = ""
+                if m.free is True:
+                    cost = " · " + tr("free")
+                elif m.free is False:
+                    cost = " · " + tr("paid")
+                self._model_combo.addItem(f"{medal}{m.label}{cost}", m.id)
                 self._model_combo.setItemData(
                     i, f"{m.id}\n{role}" if role else m.id, Qt.ItemDataRole.ToolTipRole
                 )

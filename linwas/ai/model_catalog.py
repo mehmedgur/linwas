@@ -13,7 +13,7 @@ from pathlib import Path
 _CATALOG_FILE = Path(__file__).resolve().parent.parent / "data" / "ai_models.json"
 
 # Rol anahtarları; arayüz bunları çevirir
-ROLES = ("main", "fast", "hard")
+ROLES = ("main", "fast", "hard", "free")
 
 
 @dataclass(frozen=True)
@@ -21,6 +21,7 @@ class CuratedModel:
     id: str
     label: str
     role: str  # ROLES'tan biri
+    free: bool | None = None  # ücretsiz katmanda mı; bilinmiyorsa None
 
 
 def load_curated(provider_id: str, path: Path = _CATALOG_FILE) -> list[CuratedModel]:
@@ -30,7 +31,12 @@ def load_curated(provider_id: str, path: Path = _CATALOG_FILE) -> list[CuratedMo
         return []
     entries = data.get(provider_id, [])
     return [
-        CuratedModel(str(e["id"]), str(e.get("label") or e["id"]), str(e.get("role", "")))
+        CuratedModel(
+            str(e["id"]),
+            str(e.get("label") or e["id"]),
+            str(e.get("role", "")),
+            e["free"] if isinstance(e.get("free"), bool) else None,
+        )
         for e in entries
         if isinstance(e, dict) and e.get("id")
     ]

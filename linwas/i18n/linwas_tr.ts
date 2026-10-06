@@ -399,6 +399,18 @@
         <source>Very hard problems — deep reasoning, complex code</source>
         <translation>Çok zor problemler — derin akıl yürütme, karmaşık kod</translation>
     </message>
+    <message>
+        <source>Free tier, 1M token context</source>
+        <translation>Ücretsiz katman, 1M token bağlam</translation>
+    </message>
+    <message>
+        <source>free</source>
+        <translation>ücretsiz</translation>
+    </message>
+    <message>
+        <source>paid</source>
+        <translation>ücretli</translation>
+    </message>
 </context>
 <context>
     <name>UpdatesPage</name>

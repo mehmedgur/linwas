@@ -9,6 +9,7 @@ from __future__ import annotations
 import base64
 import json
 import urllib.error
+import urllib.parse
 import urllib.request
 from typing import Any
 
@@ -20,7 +21,8 @@ _BASE = "https://generativelanguage.googleapis.com/v1beta"
 
 def _url(path: str, api_key: str) -> str:
     """API anahtarını URL parametresi olarak ekler."""
-    return f"{_BASE}/{path}?key={api_key}"
+    sep = "&" if "?" in path else "?"
+    return f"{_BASE}/{path}{sep}key={api_key}"
 
 
 def _get(path: str, api_key: str) -> dict[str, Any]:
@@ -67,8 +69,18 @@ class GeminiProvider(AIProvider):
         return "Gemini"
 
     def list_models(self, api_key: str) -> list[str]:
-        data = _get("models", api_key)
-        models = data.get("models", [])
+        # Liste sayfalı gelir (models.list: pageSize, pageToken, nextPageToken)
+        models: list[dict[str, Any]] = []
+        token = ""
+        for _ in range(20):  # sonsuz döngü koruması
+            path = "models?pageSize=1000"
+            if token:
+                path += "&pageToken=" + urllib.parse.quote(token, safe="")
+            data = _get(path, api_key)
+            models.extend(data.get("models", []))
+            token = data.get("nextPageToken", "")
+            if not token:
+                break
         # Yalnızca generateContent destekleyen modeller
         result = []
         for m in models:
