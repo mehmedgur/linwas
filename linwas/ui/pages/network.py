@@ -51,10 +51,16 @@ class _WifiWorker(QThread):
     status_ready = Signal(object)  # WifiStatus
     networks_ready = Signal(object)  # list[WifiNetwork]
 
+    def __init__(self, rescan: bool = False) -> None:
+        super().__init__()
+        self._rescan = rescan
+
     def run(self) -> None:
         try:
             self.status_ready.emit(wifi_status())
-            self.networks_ready.emit(wifi_list())
+            # Otomatik yenilemede tarama yapılmaz (NetworkManager'ın güncel listesi);
+            # Yenile düğmesi yeni tarama başlatır
+            self.networks_ready.emit(wifi_list(rescan=self._rescan))
         except Exception:
             self.status_ready.emit(None)
             self.networks_ready.emit([])
@@ -261,7 +267,7 @@ class _WifiTab(QWidget):
         list_header.addWidget(QLabel(tr("Available networks"), self))
         list_header.addStretch(1)
         self._refresh_btn = QPushButton(tr("Refresh"), self)
-        self._refresh_btn.clicked.connect(self._load)
+        self._refresh_btn.clicked.connect(lambda: self._load(rescan=True))
         list_header.addWidget(self._refresh_btn)
         layout.addLayout(list_header)
 
@@ -277,16 +283,22 @@ class _WifiTab(QWidget):
 
         # Otomatik yenile
         self._timer = QTimer(self)
-        self._timer.setInterval(10000)
-        self._timer.timeout.connect(self._load)
+        self._timer.setInterval(5000)
+        self._timer.timeout.connect(self._auto_refresh)
         self._timer.start()
         self._load()
 
-    def _load(self) -> None:
+    def _auto_refresh(self) -> None:
+        # Sayfa görünmüyorsa boşuna çalışma
+        if self.isVisible():
+            self._load()
+
+    def _load(self, rescan: bool = False) -> None:
         if self._worker and self._worker.isRunning():
             return
-        self._refresh_btn.setEnabled(False)
-        self._worker = _WifiWorker()
+        if rescan:
+            self._refresh_btn.setEnabled(False)
+        self._worker = _WifiWorker(rescan=rescan)
         self._worker.status_ready.connect(self._on_status)
         self._worker.networks_ready.connect(self._on_networks)
         self._worker.finished.connect(lambda: self._refresh_btn.setEnabled(True))
