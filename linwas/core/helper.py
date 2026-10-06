@@ -400,6 +400,54 @@ def _exec_snap_install_classic(seq: int, params: dict[str, str]) -> bool:
     return _run(["snap", "install", "--classic", params["name"]], seq)
 
 
+# --- Güç ve pil ---
+
+# backend.power ile aynı yollar (helper backend'e bağımlı olmasın diye burada da tanımlı)
+_LID_DROPIN = Path("/etc/systemd/logind.conf.d/90-linwas-lid.conf")
+_POWER_SUPPLY = Path("/sys/class/power_supply")
+
+
+def _exec_power_set_lid_action(seq: int, params: dict[str, str]) -> bool:
+    """logind ek ayar dosyası yazar; varsayılan (suspend) seçilince dosyayı siler.
+
+    systemd-logind yeniden yüklenemez (CanReload=no) ve yeniden başlatmak oturumu
+    etkileyebilir; ayar bir sonraki açılışta geçerli olur.
+    """
+    action = params["action"]
+    try:
+        if action == "suspend":
+            _LID_DROPIN.unlink(missing_ok=True)
+        else:
+            _LID_DROPIN.parent.mkdir(parents=True, exist_ok=True)
+            _LID_DROPIN.write_text(
+                "# Linwas tarafından yazıldı (Güç ve pil › Kapak kapanınca)\n"
+                "[Login]\n"
+                f"HandleLidSwitch={action}\n"
+                f"HandleLidSwitchExternalPower={action}\n",
+                encoding="utf-8",
+            )
+            _LID_DROPIN.chmod(0o644)
+    except OSError as exc:
+        _error(seq, f"Kapak ayarı yazılamadı: {exc}")
+        return False
+    return True
+
+
+def _exec_battery_set_charge_limit(seq: int, params: dict[str, str]) -> bool:
+    """Şarj sınırını yazar (sysfs; yeniden başlatınca cihaz varsayılanına döner)."""
+    base = _POWER_SUPPLY / params["battery"]
+    target = base / "charge_control_end_threshold"
+    try:
+        if (base / "type").read_text().strip() != "Battery" or not target.exists():
+            _error(seq, "Bu pil şarj sınırını desteklemiyor")
+            return False
+        target.write_text(params["percent"])
+    except OSError as exc:
+        _error(seq, f"Şarj sınırı yazılamadı: {exc}")
+        return False
+    return True
+
+
 def _exec_not_implemented(seq: int, params: dict[str, str]) -> bool:
     _error(seq, "Bu işlem henüz uygulanmadı")
     return False
@@ -420,6 +468,8 @@ _EXECUTORS: dict[str, Any] = {
     "snap.refresh": _exec_snap_refresh,
     "snap.install": _exec_snap_install,
     "snap.install_classic": _exec_snap_install_classic,
+    "power.set_lid_action": _exec_power_set_lid_action,
+    "battery.set_charge_limit": _exec_battery_set_charge_limit,
     "package.update_index": _exec_package_update_index,
     "package.update_all": _exec_package_update_all,
     "service.enable": _exec_service_enable,

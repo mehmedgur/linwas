@@ -17,18 +17,24 @@ from PySide6.QtWidgets import (
 
 from linwas.backend.desktop import Desktop
 from linwas.backend.distro import SupportStatus, detect_distro, evaluate_support
+from linwas.backend.power import is_laptop
 from linwas.core.rollback import RollbackRecord, now_iso, records_since, undo_ops
 from linwas.core.tasks import Task, TaskQueue, TaskStep
 from linwas.ui.ai_panel import AIPanel
 from linwas.ui.dialogs.confirm import BackupChoice, ConfirmDialog
 from linwas.ui.dialogs.progress import ProgressDialog
 from linwas.ui.dialogs.result import ResultDialog
+from linwas.ui.pages.ai_chat import AIChatPage
 from linwas.ui.pages.backups import BackupsPage
 from linwas.ui.pages.base import BasePage
 from linwas.ui.pages.cleanup import CleanupPage
 from linwas.ui.pages.drivers import DriversPage
+from linwas.ui.pages.hardware import HardwarePage
 from linwas.ui.pages.migrate import MigratePage
+from linwas.ui.pages.network import NetworkPage
 from linwas.ui.pages.overview import OverviewPage
+from linwas.ui.pages.personal_backup import PersonalBackupPage
+from linwas.ui.pages.power import PowerPage
 from linwas.ui.pages.software import SoftwarePage
 from linwas.ui.pages.stub import StubPage
 from linwas.ui.pages.taskmgr import TaskMgrPage
@@ -191,6 +197,15 @@ class MainWindow(QMainWindow):
         self._add_page("taskmgr", TaskMgrPage(self._stack))
         self._add_page("cleanup", CleanupPage(self._stack))
         self._add_page("backups", BackupsPage(self._stack))
+        self._add_page("network", NetworkPage(self._stack))
+        self._add_page("ai_chat", AIChatPage(self._stack))
+        self._add_page("hardware", HardwarePage(self._stack))
+        self._add_page("personal_backup", PersonalBackupPage(self._stack))
+        # Güç ve pil yalnızca dizüstünde (karar belgesi)
+        if is_laptop():
+            self._add_page("power", PowerPage(self._stack))
+        else:
+            self._sidebar.hide_item("power")
 
         for page_id, label in _STUB_PAGES.items():
             if page_id in self._pages:

@@ -1214,4 +1214,340 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>“Değişiklikleri geri al” programı yeniden kurar, ancak silinen ayarlar geri gelmez.</translation>
     </message>
 </context>
+<context>
+    <name>AIChatPage</name>
+    <message>
+        <source>AI Question</source>
+        <translation>Yapay Zeka Sorusu</translation>
+    </message>
+    <message>
+        <source>Ask anything about your computer. Suggested actions are only added to the queue; nothing runs until you press Apply.</source>
+        <translation>Bilgisayarınızla ilgili her şeyi sorun. Önerilen işlemler yalnızca kuyruğa eklenir; siz Uygula'ya basmadan hiçbir şey çalışmaz.</translation>
+    </message>
+</context>
+<context>
+    <name>HardwarePage</name>
+    <message>
+        <source>({n} threads)</source>
+        <translation>({n} iş parçacığı)</translation>
+    </message>
+    <message>
+        <source>Add or manage printers</source>
+        <translation>Yazıcı ekle veya yönet</translation>
+    </message>
+    <message>
+        <source>Connected but not set up: {name}. Press “Add or manage printers”.</source>
+        <translation>Takılı ama kurulmamış: {name}. “Yazıcı ekle veya yönet” düğmesine basın.</translation>
+    </message>
+    <message>
+        <source>Find scanners</source>
+        <translation>Tarayıcıları bul</translation>
+    </message>
+    <message>
+        <source>Graphics card</source>
+        <translation>Ekran kartı</translation>
+    </message>
+    <message>
+        <source>Hard disk</source>
+        <translation>Sabit disk</translation>
+    </message>
+    <message>
+        <source>Hardware &amp; Printers</source>
+        <translation>Donanım ve Yazıcılar</translation>
+    </message>
+    <message>
+        <source>Hardware information could not be read.</source>
+        <translation>Donanım bilgisi okunamadı.</translation>
+    </message>
+    <message>
+        <source>Install printer drivers</source>
+        <translation>Yazıcı sürücülerini kur</translation>
+    </message>
+    <message>
+        <source>Install scanner support</source>
+        <translation>Tarayıcı desteğini kur</translation>
+    </message>
+    <message>
+        <source>Installs drivers for most printer brands (HP, Canon, Epson…).</source>
+        <translation>Çoğu yazıcı markası (HP, Canon, Epson…) için sürücüleri kurar.</translation>
+    </message>
+    <message>
+        <source>Looking for printers…</source>
+        <translation>Yazıcılar aranıyor…</translation>
+    </message>
+    <message>
+        <source>Looking for scanners… this can take a few seconds.</source>
+        <translation>Tarayıcılar aranıyor… bu birkaç saniye sürebilir.</translation>
+    </message>
+    <message>
+        <source>Memory (RAM)</source>
+        <translation>Bellek (RAM)</translation>
+    </message>
+    <message>
+        <source>My computer</source>
+        <translation>Bilgisayarım</translation>
+    </message>
+    <message>
+        <source>No printers are set up yet.</source>
+        <translation>Henüz kurulu yazıcı yok.</translation>
+    </message>
+    <message>
+        <source>No scanner found. Make sure it is switched on and connected, then try “Install scanner support”.</source>
+        <translation>Tarayıcı bulunamadı. Açık ve bağlı olduğundan emin olun, sonra “Tarayıcı desteğini kur” düğmesini deneyin.</translation>
+    </message>
+    <message>
+        <source>Press “Find scanners” to look for connected scanners.</source>
+        <translation>Bağlı tarayıcıları aramak için “Tarayıcıları bul” düğmesine basın.</translation>
+    </message>
+    <message>
+        <source>Printers</source>
+        <translation>Yazıcılar</translation>
+    </message>
+    <message>
+        <source>Processor</source>
+        <translation>İşlemci</translation>
+    </message>
+    <message>
+        <source>Ready</source>
+        <translation>Hazır</translation>
+    </message>
+    <message>
+        <source>Restart printing service</source>
+        <translation>Yazdırma servisini yeniden başlat</translation>
+    </message>
+    <message>
+        <source>SSD</source>
+        <translation>SSD</translation>
+    </message>
+    <message>
+        <source>Scanners</source>
+        <translation>Tarayıcılar</translation>
+    </message>
+    <message>
+        <source>Stopped</source>
+        <translation>Durduruldu</translation>
+    </message>
+    <message>
+        <source>default</source>
+        <translation>varsayılan</translation>
+    </message>
+</context>
+<context>
+    <name>PersonalBackupPage</name>
+    <message>
+        <source>1. What to back up</source>
+        <translation>1. Neler yedeklensin</translation>
+    </message>
+    <message>
+        <source>2. Where to save it</source>
+        <translation>2. Nereye kaydedilsin</translation>
+    </message>
+    <message>
+        <source>Backing up {name} ({i} of {n})…</source>
+        <translation>{name} yedekleniyor ({i}/{n})…</translation>
+    </message>
+    <message>
+        <source>Backing up…</source>
+        <translation>Yedekleniyor…</translation>
+    </message>
+    <message>
+        <source>Backup failed: {error}</source>
+        <translation>Yedekleme başarısız: {error}</translation>
+    </message>
+    <message>
+        <source>Copy your personal folders to an external disk or USB stick. Your files are copied as they are; nothing is deleted from your computer.</source>
+        <translation>Kişisel klasörlerinizi harici diske veya USB belleğe kopyalayın. Dosyalarınız olduğu gibi kopyalanır; bilgisayarınızdan hiçbir şey silinmez.</translation>
+    </message>
+    <message>
+        <source>Looking for folders and disks…</source>
+        <translation>Klasörler ve diskler aranıyor…</translation>
+    </message>
+    <message>
+        <source>No backups yet.</source>
+        <translation>Henüz yedek yok.</translation>
+    </message>
+    <message>
+        <source>No external disk found. Plug in a USB stick or disk, then press Refresh.</source>
+        <translation>Harici disk bulunamadı. Bir USB bellek veya disk takın, sonra Yenile'ye basın.</translation>
+    </message>
+    <message>
+        <source>Not enough free space. Choose fewer folders or another disk.</source>
+        <translation>Yeterli boş alan yok. Daha az klasör ya da başka bir disk seçin.</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Aç</translation>
+    </message>
+    <message>
+        <source>Personal Backup</source>
+        <translation>Kişisel Yedekleme</translation>
+    </message>
+    <message>
+        <source>Previous backups on this disk</source>
+        <translation>Bu diskteki önceki yedekler</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>Yenile</translation>
+    </message>
+    <message>
+        <source>Selected: {total} · Free space on disk: {free}</source>
+        <translation>Seçilen: {total} · Diskteki boş alan: {free}</translation>
+    </message>
+    <message>
+        <source>Start backup</source>
+        <translation>Yedeklemeyi başlat</translation>
+    </message>
+    <message>
+        <source>✓ Backup finished: {path}</source>
+        <translation>✓ Yedekleme tamamlandı: {path}</translation>
+    </message>
+</context>
+<context>
+    <name>PowerPage</name>
+    <message>
+        <source>Apply</source>
+        <translation>Uygula</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Dengeli</translation>
+    </message>
+    <message>
+        <source>Battery</source>
+        <translation>Pil</translation>
+    </message>
+    <message>
+        <source>Battery charge limit: {n}%</source>
+        <translation>Pil şarj sınırı: %{n}</translation>
+    </message>
+    <message>
+        <source>Battery health: {n}% of its original capacity ({verdict})</source>
+        <translation>Pil sağlığı: ilk kapasitesinin %{n} kadarı ({verdict})</translation>
+    </message>
+    <message>
+        <source>Battery protection</source>
+        <translation>Pil koruma</translation>
+    </message>
+    <message>
+        <source>Charge cycles: {n}</source>
+        <translation>Şarj döngüsü: {n}</translation>
+    </message>
+    <message>
+        <source>Charging</source>
+        <translation>Şarj oluyor</translation>
+    </message>
+    <message>
+        <source>Do nothing</source>
+        <translation>Hiçbir şey yapma</translation>
+    </message>
+    <message>
+        <source>Fastest, uses more battery</source>
+        <translation>En hızlı, daha çok pil harcar</translation>
+    </message>
+    <message>
+        <source>Fully charged</source>
+        <translation>Tamamen dolu</translation>
+    </message>
+    <message>
+        <source>Lid close: {action}</source>
+        <translation>Kapak kapanınca: {action}</translation>
+    </message>
+    <message>
+        <source>Lock the screen only</source>
+        <translation>Yalnızca ekranı kilitle</translation>
+    </message>
+    <message>
+        <source>Longer battery life, slower computer</source>
+        <translation>Daha uzun pil ömrü, daha yavaş bilgisayar</translation>
+    </message>
+    <message>
+        <source>No battery found.</source>
+        <translation>Pil bulunamadı.</translation>
+    </message>
+    <message>
+        <source>No limit (100%)</source>
+        <translation>Sınır yok (%100)</translation>
+    </message>
+    <message>
+        <source>On battery</source>
+        <translation>Pil ile çalışıyor</translation>
+    </message>
+    <message>
+        <source>Performance</source>
+        <translation>Performans</translation>
+    </message>
+    <message>
+        <source>Plugged in, not charging</source>
+        <translation>Prize takılı, şarj olmuyor</translation>
+    </message>
+    <message>
+        <source>Power &amp; Battery</source>
+        <translation>Güç ve Pil</translation>
+    </message>
+    <message>
+        <source>Power mode</source>
+        <translation>Güç modu</translation>
+    </message>
+    <message>
+        <source>Power modes are not available on this computer.</source>
+        <translation>Bu bilgisayarda güç modları kullanılamıyor.</translation>
+    </message>
+    <message>
+        <source>Power saver</source>
+        <translation>Güç tasarrufu</translation>
+    </message>
+    <message>
+        <source>Reading battery information…</source>
+        <translation>Pil bilgisi okunuyor…</translation>
+    </message>
+    <message>
+        <source>Recommended for everyday use</source>
+        <translation>Günlük kullanım için önerilir</translation>
+    </message>
+    <message>
+        <source>Resets to the device default after a restart.</source>
+        <translation>Yeniden başlatınca cihazın varsayılanına döner.</translation>
+    </message>
+    <message>
+        <source>Shut down</source>
+        <translation>Bilgisayarı kapat</translation>
+    </message>
+    <message>
+        <source>Sleep (default)</source>
+        <translation>Uyku (varsayılan)</translation>
+    </message>
+    <message>
+        <source>Stop at {n}%</source>
+        <translation>%{n} olunca dur</translation>
+    </message>
+    <message>
+        <source>Stopping charging at 80% helps the battery last longer if the laptop is usually plugged in.</source>
+        <translation>Dizüstü genelde prize takılıysa şarjı %80'de durdurmak pilin ömrünü uzatır.</translation>
+    </message>
+    <message>
+        <source>The change takes effect after the next restart.</source>
+        <translation>Değişiklik bir sonraki yeniden başlatmada geçerli olur.</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Bilinmiyor</translation>
+    </message>
+    <message>
+        <source>When I close the lid</source>
+        <translation>Kapağı kapattığımda</translation>
+    </message>
+    <message>
+        <source>good</source>
+        <translation>iyi</translation>
+    </message>
+    <message>
+        <source>needs replacing soon</source>
+        <translation>yakında değiştirilmeli</translation>
+    </message>
+    <message>
+        <source>worn</source>
+        <translation>yıpranmış</translation>
+    </message>
+</context>
 </TS>

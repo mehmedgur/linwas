@@ -75,6 +75,10 @@ QPushButton[primary="true"]:hover {{
 QPushButton[primary="true"]:pressed {{
     background-color: {c.accent_pressed};
 }}
+QPushButton[primary="true"]:disabled {{
+    background-color: {c.border};
+    color: {c.text_disabled};
+}}
 
 /* === Sidebar === */
 QWidget#Sidebar {{
@@ -105,6 +109,12 @@ QFrame#Card {{
     background-color: {c.surface};
     border: 1px solid {c.border};
     border-radius: 8px;
+}}
+/* Kart içindeki metinler kartın zeminini kullansın (genel QWidget zemini yerine).
+   Saydam verilmez: seçim düğmesi/onay kutusu çerçevesi zeminle birlikte kaybolur. */
+QFrame#Card QLabel, QFrame#Card QCheckBox, QFrame#Card QRadioButton,
+QFrame#Card QWidget#CardRow {{
+    background-color: {c.surface};
 }}
 
 /* === Durum çubuğu === */

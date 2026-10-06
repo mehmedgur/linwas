@@ -38,6 +38,12 @@ class ParamKind(Enum):
     FLATPAK_ID = "flatpak_id"
     # Snap adı (ör. firefox)
     SNAP_NAME = "snap_name"
+    # Kapak kapanınca davranışı (logind HandleLidSwitch=)
+    LID_ACTION = "lid_action"
+    # Pil adı (/sys/class/power_supply altında, ör. BAT0)
+    BATTERY_NAME = "battery_name"
+    # Pil şarj sınırı yüzdesi
+    CHARGE_LIMIT = "charge_limit"
 
 
 @dataclass(frozen=True)
@@ -177,6 +183,30 @@ def _validate_snap_name(value: str) -> str:
     return value
 
 
+# Linwas'ın sunduğu kapak davranışları (backend.power.LID_ACTIONS ile aynı)
+_LID_ACTIONS = ("suspend", "lock", "ignore", "poweroff")
+_RE_BATTERY = re.compile(r"^BAT[0-9A-Za-z_]{0,8}$")
+_CHARGE_LIMITS = ("60", "80", "100")
+
+
+def _validate_lid_action(value: str) -> str:
+    if value not in _LID_ACTIONS:
+        raise ValidationError(f"Geçersiz kapak davranışı: {value!r}")
+    return value
+
+
+def _validate_battery_name(value: str) -> str:
+    if not _RE_BATTERY.match(value):
+        raise ValidationError(f"Geçersiz pil adı: {value!r}")
+    return value
+
+
+def _validate_charge_limit(value: str) -> str:
+    if value not in _CHARGE_LIMITS:
+        raise ValidationError(f"Geçersiz şarj sınırı: {value!r}")
+    return value
+
+
 def _validate_text(value: str) -> str:
     # Serbest metin; boş olabilir, NUL byte yok
     if "\x00" in value:
@@ -196,6 +226,9 @@ _VALIDATORS: dict[ParamKind, object] = {
     ParamKind.TEXT: _validate_text,
     ParamKind.FLATPAK_ID: _validate_flatpak_id,
     ParamKind.SNAP_NAME: _validate_snap_name,
+    ParamKind.LID_ACTION: _validate_lid_action,
+    ParamKind.BATTERY_NAME: _validate_battery_name,
+    ParamKind.CHARGE_LIMIT: _validate_charge_limit,
 }
 
 
@@ -289,6 +322,18 @@ OPERATIONS: dict[str, OperationSpec] = {
         ("name", ParamKind.SNAP_NAME),
         risk=RiskLevel.MEDIUM,
         label="Install program (Snap, classic)",
+    ),
+    # Güç ve pil
+    "power.set_lid_action": _op(
+        ("action", ParamKind.LID_ACTION),
+        risk=RiskLevel.LOW,
+        label="Change what happens when the lid is closed",
+    ),
+    "battery.set_charge_limit": _op(
+        ("battery", ParamKind.BATTERY_NAME),
+        ("percent", ParamKind.CHARGE_LIMIT),
+        risk=RiskLevel.LOW,
+        label="Set battery charge limit",
     ),
     "package.update_all": OperationSpec(
         params=[],

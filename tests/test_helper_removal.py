@@ -110,3 +110,24 @@ def test_every_operation_has_executor():
     from linwas.core.whitelist import OPERATIONS
 
     assert set(OPERATIONS) <= set(helper._EXECUTORS)
+
+
+def test_lid_action_writes_and_removes(monkeypatch, tmp_path):
+    target = tmp_path / "logind.conf.d" / "90-linwas-lid.conf"
+    monkeypatch.setattr(helper, "_LID_DROPIN", target)
+    assert helper._exec_power_set_lid_action(0, {"action": "lock"}) is True
+    assert "HandleLidSwitch=lock" in target.read_text()
+    assert helper._exec_power_set_lid_action(0, {"action": "suspend"}) is True
+    assert not target.exists()
+
+
+def test_charge_limit(monkeypatch, tmp_path):
+    bat = tmp_path / "BAT0"
+    bat.mkdir()
+    (bat / "type").write_text("Battery\n")
+    monkeypatch.setattr(helper, "_POWER_SUPPLY", tmp_path)
+    # Desteklenmiyor: dosya yok
+    assert helper._exec_battery_set_charge_limit(0, {"battery": "BAT0", "percent": "80"}) is False
+    (bat / "charge_control_end_threshold").write_text("100")
+    assert helper._exec_battery_set_charge_limit(0, {"battery": "BAT0", "percent": "80"}) is True
+    assert (bat / "charge_control_end_threshold").read_text() == "80"

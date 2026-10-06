@@ -149,6 +149,7 @@ class Sidebar(QWidget):
 
         self._buttons: list[_NavButton] = []
         self._expanded: set[str] = {"system"}  # Sistem varsayılan açık
+        self._hidden: set[str] = set()  # bu sistemde gösterilmeyen öğeler
         self._active_id: str = "overview"
 
         self._build_menu()
@@ -212,6 +213,17 @@ class Sidebar(QWidget):
             )
             if parent_group:
                 btn.setVisible(parent_group.id in self._expanded)
+        self._apply_hidden()
+
+    def _apply_hidden(self) -> None:
+        for btn in self._buttons:
+            if btn.item_id in self._hidden:
+                btn.setVisible(False)
+
+    def hide_item(self, item_id: str) -> None:
+        """Öğeyi menüden gizler (ör. masaüstü bilgisayarda Güç ve pil)."""
+        self._hidden.add(item_id)
+        self._apply_hidden()
 
     def _refresh_active(self) -> None:
         for btn in self._buttons:
@@ -232,6 +244,7 @@ class Sidebar(QWidget):
                     btn.setVisible(parent_group.id in self._expanded)
                 else:
                     btn.setVisible(True)
+        self._apply_hidden()
 
     def set_active(self, page_id: str) -> None:
         """Programatik olarak aktif sayfayı değiştirir."""
