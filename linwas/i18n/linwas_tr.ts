@@ -39,6 +39,14 @@
         <source>Undo changes</source>
         <translation>Değişiklikleri geri al</translation>
     </message>
+    <message>
+        <source>Open Linwas</source>
+        <translation>Linwas'ı aç</translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation>Çıkış</translation>
+    </message>
 </context>
 <context>
     <name>Sidebar</name>
@@ -1726,6 +1734,598 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>Open the assistant</source>
         <translation>Yardımcıyı aç</translation>
+    </message>
+</context>
+<context>
+    <name>AllSettingsPage</name>
+    <message>
+        <source>About this computer</source>
+        <translation>Bu bilgisayar hakkında</translation>
+    </message>
+    <message>
+        <source>Accessibility</source>
+        <translation>Erişilebilirlik</translation>
+    </message>
+    <message>
+        <source>All Settings</source>
+        <translation>Tüm Ayarlar</translation>
+    </message>
+    <message>
+        <source>Bluetooth</source>
+        <translation>Bluetooth</translation>
+    </message>
+    <message>
+        <source>Colors &amp; theme</source>
+        <translation>Renkler ve tema</translation>
+    </message>
+    <message>
+        <source>Date &amp; time</source>
+        <translation>Tarih ve saat</translation>
+    </message>
+    <message>
+        <source>Default apps</source>
+        <translation>Varsayılan uygulamalar</translation>
+    </message>
+    <message>
+        <source>Devices</source>
+        <translation>Aygıtlar</translation>
+    </message>
+    <message>
+        <source>Display</source>
+        <translation>Ekran</translation>
+    </message>
+    <message>
+        <source>Fonts</source>
+        <translation>Yazı Tipleri</translation>
+    </message>
+    <message>
+        <source>Keyboard</source>
+        <translation>Klavye</translation>
+    </message>
+    <message>
+        <source>Language &amp; region</source>
+        <translation>Dil ve bölge</translation>
+    </message>
+    <message>
+        <source>Like the Windows Control Panel. Where Linwas can do the job itself, its own page opens; everything else opens in your system settings.</source>
+        <translation>Windows'taki Denetim Masası gibi. Linwas'ın kendi yapabildiği ayarlarda Linwas sayfası açılır; diğerleri sistem ayarlarında açılır.</translation>
+    </message>
+    <message>
+        <source>Mouse &amp; touchpad</source>
+        <translation>Fare ve dokunmatik yüzey</translation>
+    </message>
+    <message>
+        <source>Network &amp; Internet</source>
+        <translation>Ağ ve İnternet</translation>
+    </message>
+    <message>
+        <source>Network connections</source>
+        <translation>Ağ bağlantıları</translation>
+    </message>
+    <message>
+        <source>Notifications</source>
+        <translation>Bildirimler</translation>
+    </message>
+    <message>
+        <source>Open system settings</source>
+        <translation>Sistem ayarlarını aç</translation>
+    </message>
+    <message>
+        <source>Open the same setting in your system settings</source>
+        <translation>Aynı ayarı sistem ayarlarında aç</translation>
+    </message>
+    <message>
+        <source>Opens in Linwas</source>
+        <translation>Linwas'ta açılır</translation>
+    </message>
+    <message>
+        <source>Opens in your system settings</source>
+        <translation>Sistem ayarlarında açılır</translation>
+    </message>
+    <message>
+        <source>Personalization</source>
+        <translation>Kişiselleştirme</translation>
+    </message>
+    <message>
+        <source>Power</source>
+        <translation>Güç</translation>
+    </message>
+    <message>
+        <source>Printers</source>
+        <translation>Yazıcılar</translation>
+    </message>
+    <message>
+        <source>Privacy</source>
+        <translation>Gizlilik</translation>
+    </message>
+    <message>
+        <source>Sound</source>
+        <translation>Ses</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>Sistem</translation>
+    </message>
+    <message>
+        <source>User accounts</source>
+        <translation>Kullanıcı hesapları</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>Duvar kâğıdı</translation>
+    </message>
+    <message>
+        <source>Wi-Fi</source>
+        <translation>Wi-Fi</translation>
+    </message>
+    <message>
+        <source>{name} in system settings</source>
+        <translation>Sistem ayarlarında {name}</translation>
+    </message>
+</context>
+<context>
+    <name>InterfacePages</name>
+    <message>
+        <source>Adds a Windows-style taskbar at the bottom of the screen with your open windows, pinned apps and the clock (Dash to Panel).</source>
+        <translation>Ekranın altına açık pencereleri, sabitlenmiş uygulamaları ve saati gösteren Windows tarzı bir görev çubuğu ekler (Dash to Panel).</translation>
+    </message>
+    <message>
+        <source>Arial, Times New Roman, Verdana and others need a separate licence. Support for installing them from Linwas is coming in a later version.</source>
+        <translation>Arial, Times New Roman, Verdana ve diğerleri ayrı bir lisans gerektirir. Bunları Linwas'tan kurma desteği sonraki bir sürümde gelecek.</translation>
+    </message>
+    <message>
+        <source>Carlito (same size as Calibri), Caladea (Cambria) and Liberation (Arial, Times New Roman, Courier New). Documents from Windows keep their layout.</source>
+        <translation>Carlito (Calibri ile aynı ölçüde), Caladea (Cambria) ve Liberation (Arial, Times New Roman, Courier New). Windows'tan gelen belgelerin sayfa düzeni bozulmaz.</translation>
+    </message>
+    <message>
+        <source>Checking…</source>
+        <translation>Denetleniyor…</translation>
+    </message>
+    <message>
+        <source>Choose a picture</source>
+        <translation>Resim seçin</translation>
+    </message>
+    <message>
+        <source>Choose a picture…</source>
+        <translation>Resim seç…</translation>
+    </message>
+    <message>
+        <source>Current: {name}</source>
+        <translation>Şu anki: {name}</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Koyu</translation>
+    </message>
+    <message>
+        <source>Display &amp; Scaling</source>
+        <translation>Ekran ve Ölçekleme</translation>
+    </message>
+    <message>
+        <source>Fonts</source>
+        <translation>Yazı Tipleri</translation>
+    </message>
+    <message>
+        <source>Fonts compatible with Microsoft Office</source>
+        <translation>Microsoft Office ile uyumlu yazı tipleri</translation>
+    </message>
+    <message>
+        <source>Images (*.png *.jpg *.jpeg *.webp *.svg)</source>
+        <translation>Resimler (*.png *.jpg *.jpeg *.webp *.svg)</translation>
+    </message>
+    <message>
+        <source>Install Office-compatible fonts</source>
+        <translation>Office uyumlu yazı tiplerini kur</translation>
+    </message>
+    <message>
+        <source>Install Windows-style taskbar</source>
+        <translation>Windows tarzı görev çubuğunu kur</translation>
+    </message>
+    <message>
+        <source>Install fonts</source>
+        <translation>Yazı tiplerini kur</translation>
+    </message>
+    <message>
+        <source>Install taskbar</source>
+        <translation>Görev çubuğunu kur</translation>
+    </message>
+    <message>
+        <source>Installed. Log out and back in once, then turn it on here.</source>
+        <translation>Kuruldu. Bir kez oturumu kapatıp yeniden açın, sonra buradan açın.</translation>
+    </message>
+    <message>
+        <source>It has a taskbar at the bottom, a start menu and minimize/maximize buttons. You can fine-tune it in the system settings.</source>
+        <translation>Altta görev çubuğu, başlat menüsü ve küçült/büyüt düğmeleri var. İnce ayarları sistem ayarlarından yapabilirsiniz.</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Açık</translation>
+    </message>
+    <message>
+        <source>Light or dark</source>
+        <translation>Açık veya koyu</translation>
+    </message>
+    <message>
+        <source>Linwas can change this on GNOME and Cinnamon. Use “Open in system settings” on this desktop.</source>
+        <translation>Linwas bunu GNOME ve Cinnamon'da değiştirebilir. Bu masaüstünde “Sistem ayarlarında aç” düğmesini kullanın.</translation>
+    </message>
+    <message>
+        <source>Make the desktop look and work more like Windows.</source>
+        <translation>Masaüstünü görünüş ve kullanım olarak Windows'a yaklaştırın.</translation>
+    </message>
+    <message>
+        <source>Makes text bigger or smaller everywhere, without blurring.</source>
+        <translation>Yazıları her yerde bulanıklaştırmadan büyütür veya küçültür.</translation>
+    </message>
+    <message>
+        <source>Not available on this desktop</source>
+        <translation>Bu masaüstünde kullanılamıyor</translation>
+    </message>
+    <message>
+        <source>Not installed: {names}</source>
+        <translation>Kurulu değil: {names}</translation>
+    </message>
+    <message>
+        <source>Only close button (GNOME default)</source>
+        <translation>Yalnızca kapat düğmesi (GNOME varsayılanı)</translation>
+    </message>
+    <message>
+        <source>Open in system settings</source>
+        <translation>Sistem ayarlarında aç</translation>
+    </message>
+    <message>
+        <source>Original Microsoft fonts</source>
+        <translation>Orijinal Microsoft yazı tipleri</translation>
+    </message>
+    <message>
+        <source>Screen resolution and multiple monitors are set in the system display settings.</source>
+        <translation>Ekran çözünürlüğü ve birden fazla monitör sistemin ekran ayarlarından yapılır.</translation>
+    </message>
+    <message>
+        <source>Show minimize and maximize</source>
+        <translation>Küçült ve büyüt düğmelerini göster</translation>
+    </message>
+    <message>
+        <source>Show minimize and maximize buttons on every window, like Windows.</source>
+        <translation>Windows'taki gibi her pencerede küçült ve büyüt düğmelerini göster.</translation>
+    </message>
+    <message>
+        <source>Taskbar</source>
+        <translation>Görev çubuğu</translation>
+    </message>
+    <message>
+        <source>Text size</source>
+        <translation>Yazı boyutu</translation>
+    </message>
+    <message>
+        <source>The taskbar is on.</source>
+        <translation>Görev çubuğu açık.</translation>
+    </message>
+    <message>
+        <source>Theme &amp; Wallpaper</source>
+        <translation>Tema ve Duvar Kâğıdı</translation>
+    </message>
+    <message>
+        <source>Turn off taskbar</source>
+        <translation>Görev çubuğunu kapat</translation>
+    </message>
+    <message>
+        <source>Turn on taskbar</source>
+        <translation>Görev çubuğunu aç</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>Duvar kâğıdı</translation>
+    </message>
+    <message>
+        <source>Window buttons</source>
+        <translation>Pencere düğmeleri</translation>
+    </message>
+    <message>
+        <source>Windows Appearance</source>
+        <translation>Windows Görünümü</translation>
+    </message>
+    <message>
+        <source>Your desktop already looks like Windows</source>
+        <translation>Masaüstünüz zaten Windows'a benziyor</translation>
+    </message>
+    <message>
+        <source>✓ Installed</source>
+        <translation>✓ Kurulu</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsPage</name>
+    <message>
+        <source>Activity history</source>
+        <translation>İşlem geçmişi</translation>
+    </message>
+    <message>
+        <source>Automatic (tray if available, otherwise quit)</source>
+        <translation>Otomatik (varsa sistem tepsisine, yoksa kapat)</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Clear history</source>
+        <translation>Geçmişi temizle</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Koyu</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Sil</translation>
+    </message>
+    <message>
+        <source>Delete the whole activity history?</source>
+        <translation>Tüm işlem geçmişi silinsin mi?</translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation>Tamamlandı</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Başarısız</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Genel</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>Yüksek karşıtlık</translation>
+    </message>
+    <message>
+        <source>Keep running in the system tray</source>
+        <translation>Sistem tepsisinde çalışmaya devam et</translation>
+    </message>
+    <message>
+        <source>Language:</source>
+        <translation>Dil:</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Açık</translation>
+    </message>
+    <message>
+        <source>Linwas theme:</source>
+        <translation>Linwas teması:</translation>
+    </message>
+    <message>
+        <source>No activity yet.</source>
+        <translation>Henüz işlem yok.</translation>
+    </message>
+    <message>
+        <source>No plugins installed. Built-in features are listed in the menu.</source>
+        <translation>Kurulu eklenti yok. Yerleşik özellikler menüde listelenir.</translation>
+    </message>
+    <message>
+        <source>Partly done</source>
+        <translation>Kısmen tamamlandı</translation>
+    </message>
+    <message>
+        <source>Plugins</source>
+        <translation>Eklentiler</translation>
+    </message>
+    <message>
+        <source>Quit Linwas</source>
+        <translation>Linwas'ı kapat</translation>
+    </message>
+    <message>
+        <source>Same as system</source>
+        <translation>Sistemle aynı</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>Ayarlar</translation>
+    </message>
+    <message>
+        <source>The language changes the next time Linwas starts.</source>
+        <translation>Dil, Linwas bir sonraki açılışında değişir.</translation>
+    </message>
+    <message>
+        <source>When I close the window:</source>
+        <translation>Pencereyi kapattığımda:</translation>
+    </message>
+</context>
+<context>
+    <name>TroubleshootPage</name>
+    <message>
+        <source>An installation was interrupted</source>
+        <translation>Bir kurulum yarıda kalmış</translation>
+    </message>
+    <message>
+        <source>Can't install programs</source>
+        <translation>Program kurulamıyor</translation>
+    </message>
+    <message>
+        <source>Checks internet, disk space, installations, services, sound and printing.</source>
+        <translation>İnternet, disk alanı, kurulumlar, servisler, ses ve yazdırmayı denetler.</translation>
+    </message>
+    <message>
+        <source>Computer is slow</source>
+        <translation>Bilgisayar yavaş</translation>
+    </message>
+    <message>
+        <source>Disk is almost full</source>
+        <translation>Disk dolmak üzere</translation>
+    </message>
+    <message>
+        <source>Display</source>
+        <translation>Ekran</translation>
+    </message>
+    <message>
+        <source>Documents stay in the queue or the printer isn't found.</source>
+        <translation>Belgeler kuyrukta bekliyor ya da yazıcı bulunamıyor.</translation>
+    </message>
+    <message>
+        <source>Drivers</source>
+        <translation>Sürücüler</translation>
+    </message>
+    <message>
+        <source>Enough free disk space</source>
+        <translation>Yeterli boş disk alanı var</translation>
+    </message>
+    <message>
+        <source>Free up space</source>
+        <translation>Yer aç</translation>
+    </message>
+    <message>
+        <source>Installing or updating stops with an error.</source>
+        <translation>Kurulum ya da güncelleme hatayla duruyor.</translation>
+    </message>
+    <message>
+        <source>Internet connection works</source>
+        <translation>İnternet bağlantısı çalışıyor</translation>
+    </message>
+    <message>
+        <source>No internet</source>
+        <translation>İnternet yok</translation>
+    </message>
+    <message>
+        <source>No internet connection</source>
+        <translation>İnternet bağlantısı yok</translation>
+    </message>
+    <message>
+        <source>No problems found.</source>
+        <translation>Sorun bulunamadı.</translation>
+    </message>
+    <message>
+        <source>No security updates waiting</source>
+        <translation>Bekleyen güvenlik güncellemesi yok</translation>
+    </message>
+    <message>
+        <source>No sound</source>
+        <translation>Ses yok</translation>
+    </message>
+    <message>
+        <source>Printer doesn't print</source>
+        <translation>Yazıcı yazdırmıyor</translation>
+    </message>
+    <message>
+        <source>Printers</source>
+        <translation>Yazıcılar</translation>
+    </message>
+    <message>
+        <source>Printing service is running</source>
+        <translation>Yazdırma servisi çalışıyor</translation>
+    </message>
+    <message>
+        <source>Printing service is stopped</source>
+        <translation>Yazdırma servisi durmuş</translation>
+    </message>
+    <message>
+        <source>Programs are installed correctly</source>
+        <translation>Programlar düzgün kurulu</translation>
+    </message>
+    <message>
+        <source>Programs open slowly or the fan is loud.</source>
+        <translation>Programlar geç açılıyor ya da fan çok ses yapıyor.</translation>
+    </message>
+    <message>
+        <source>Repair</source>
+        <translation>Onar</translation>
+    </message>
+    <message>
+        <source>Repair interrupted installations</source>
+        <translation>Yarım kalan kurulumları onar</translation>
+    </message>
+    <message>
+        <source>Restart network service</source>
+        <translation>Ağ servisini yeniden başlat</translation>
+    </message>
+    <message>
+        <source>Restart printing service</source>
+        <translation>Yazdırma servisini yeniden başlat</translation>
+    </message>
+    <message>
+        <source>Restart sound</source>
+        <translation>Sesi yeniden başlat</translation>
+    </message>
+    <message>
+        <source>Scan again</source>
+        <translation>Yeniden tara</translation>
+    </message>
+    <message>
+        <source>Scan my computer</source>
+        <translation>Bilgisayarımı tara</translation>
+    </message>
+    <message>
+        <source>Scanning…</source>
+        <translation>Taranıyor…</translation>
+    </message>
+    <message>
+        <source>Screen or graphics problem</source>
+        <translation>Ekran veya görüntü sorunu</translation>
+    </message>
+    <message>
+        <source>Security updates are waiting</source>
+        <translation>Bekleyen güvenlik güncellemeleri var</translation>
+    </message>
+    <message>
+        <source>Show updates</source>
+        <translation>Güncellemeleri göster</translation>
+    </message>
+    <message>
+        <source>Some system services failed</source>
+        <translation>Bazı sistem servisleri çalışmıyor</translation>
+    </message>
+    <message>
+        <source>Sound system could not be restarted</source>
+        <translation>Ses sistemi yeniden başlatılamadı</translation>
+    </message>
+    <message>
+        <source>Sound system is not responding</source>
+        <translation>Ses sistemi yanıt vermiyor</translation>
+    </message>
+    <message>
+        <source>Sound system is running</source>
+        <translation>Ses sistemi çalışıyor</translation>
+    </message>
+    <message>
+        <source>Sound system restarted</source>
+        <translation>Ses sistemi yeniden başlatıldı</translation>
+    </message>
+    <message>
+        <source>System services are running</source>
+        <translation>Sistem servisleri çalışıyor</translation>
+    </message>
+    <message>
+        <source>Task Manager</source>
+        <translation>Görev Yöneticisi</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Sorun Giderme</translation>
+    </message>
+    <message>
+        <source>Videos and music play silently.</source>
+        <translation>Video ve müzikler sessiz çalıyor.</translation>
+    </message>
+    <message>
+        <source>Web pages don't open or Wi-Fi keeps disconnecting.</source>
+        <translation>Web sayfaları açılmıyor ya da Wi-Fi sürekli kopuyor.</translation>
+    </message>
+    <message>
+        <source>What's the problem?</source>
+        <translation>Sorun nedir?</translation>
+    </message>
+    <message>
+        <source>Wi-Fi settings</source>
+        <translation>Wi-Fi ayarları</translation>
+    </message>
+    <message>
+        <source>Wrong resolution, flickering or games run badly.</source>
+        <translation>Yanlış çözünürlük, titreme ya da oyunlar kötü çalışıyor.</translation>
+    </message>
+    <message>
+        <source>{n} problem(s) found.</source>
+        <translation>{n} sorun bulundu.</translation>
     </message>
 </context>
 </TS>

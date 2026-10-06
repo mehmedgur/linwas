@@ -340,6 +340,12 @@ OPERATIONS: dict[str, OperationSpec] = {
         risk=RiskLevel.LOW,
         label="Update all packages",
     ),
+    # Yarım kalmış kurulumları tamamla ve kırık bağımlılıkları onar
+    "package.fix_broken": OperationSpec(
+        params=[],
+        risk=RiskLevel.MEDIUM,
+        label="Repair interrupted installations",
+    ),
     "package.update_index": OperationSpec(
         params=[],
         risk=RiskLevel.LOW,

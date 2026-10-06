@@ -58,7 +58,11 @@ def main(argv: list[str] | None = None) -> int:
     app.setApplicationName("Linwas")
     app.setApplicationVersion(__version__)
     app.setDesktopFileName("linwas")
-    install_translator(app, selected_language())
+    # LINWAS_LANG ortam değişkeni (geliştirme/test) ayarlardaki dili ezer
+    from linwas.core import app_settings
+
+    lang = selected_language() if "LINWAS_LANG" in os.environ else app_settings.load().language
+    install_translator(app, lang)
 
     window = MainWindow()
     window.show()

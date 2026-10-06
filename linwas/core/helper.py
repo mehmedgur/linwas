@@ -114,6 +114,14 @@ def _exec_package_remove(seq: int, params: dict[str, str]) -> bool:
     return True
 
 
+def _exec_package_fix_broken(seq: int, params: dict[str, str]) -> bool:
+    """dpkg --configure -a (yarım kalanlar) + apt-get -f install (bağımlılık onarımı)."""
+    env = {"DEBIAN_FRONTEND": "noninteractive"}
+    return _run(["dpkg", "--configure", "-a"], seq, env) and _run(
+        ["apt-get", "-f", "install", "-y"], seq, env
+    )
+
+
 def _exec_package_update_index(seq: int, params: dict[str, str]) -> bool:
     return _run(["apt-get", "update"], seq)
 
@@ -471,6 +479,7 @@ _EXECUTORS: dict[str, Any] = {
     "power.set_lid_action": _exec_power_set_lid_action,
     "battery.set_charge_limit": _exec_battery_set_charge_limit,
     "package.update_index": _exec_package_update_index,
+    "package.fix_broken": _exec_package_fix_broken,
     "package.update_all": _exec_package_update_all,
     "service.enable": _exec_service_enable,
     "service.disable": _exec_service_disable,
