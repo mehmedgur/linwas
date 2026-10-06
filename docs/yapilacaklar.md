@@ -60,6 +60,13 @@ Son güncelleme: 6 Ekim 2026
 - [ ] Paket içindeki Maintainer bilgisi (şu an kullanıcının e-postası) yayından önce gözden geçirilecek.
 
 ## Kodlama sırasında doğrulanacaklar
+- [ ] Windows NTUSER.DAT değer yolları (klavye Preload, AppsUseLightTheme, SwapMouseButtons,
+  LocaleName, LogPixels, Devices) gerçek bir Windows diskiyle denenmeli (`hivexsh` + `lsval`).
+- [ ] Ubuntu'da Microsoft font paketinin debconf sorusu (`msttcorefonts/accepted-mscorefonts-eula`)
+  — Debian/Pardus 3.8.1 paketinde bu soru yok; Ubuntu sanal makinesinde denenmeli.
+- [ ] `data/settings_map.json` GNOME panel adları Ubuntu 22.04'te; Cinnamon modülleri Mint'te.
+- [ ] Ubuntu'da AppStream (DEP-11) kataloğuyla aramanın iyileştirilmesi (Pardus depolarında katalog yok;
+  şimdilik apt-cache + debtags + Türkçe terim eşlemesi kullanılıyor).
 - [ ] Ayar uygulaması bölüm adları (GNOME / Cinnamon / XFCE), Pardus 23 ve Ubuntu 22.04'te.
 - [ ] En sık 10–15 ayar için rehber ekran görüntüleri.
 - [ ] Pardus 25 GNOME'un kendi "Win 11 Style" düzen seçicisinin Arayüz sayfasında kullanımı.
