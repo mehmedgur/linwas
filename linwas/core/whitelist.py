@@ -356,6 +356,11 @@ OPERATIONS: dict[str, OperationSpec] = {
         risk=RiskLevel.MEDIUM,
         label="Restore files to how they were before",
     ),
+    "fonts.install_microsoft": OperationSpec(
+        params=[],
+        risk=RiskLevel.MEDIUM,
+        label="Install Microsoft core fonts (licence accepted)",
+    ),
     "package.update_all": OperationSpec(
         params=[],
         risk=RiskLevel.LOW,

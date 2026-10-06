@@ -159,7 +159,7 @@ class PowerPage(BasePage):
         limit_btn.clicked.connect(self._apply_limit)
         row.addWidget(limit_btn)
         self._limit_card.layout.addLayout(row)
-        note = QLabel(tr("Resets to the device default after a restart."), self._limit_card)
+        note = QLabel(tr("The limit is kept after restarting."), self._limit_card)
         note.setObjectName("Secondary")
         self._limit_card.layout.addWidget(note)
         self._limit_card.hide()  # yalnızca destekleyen cihazlarda

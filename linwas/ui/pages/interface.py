@@ -12,6 +12,7 @@ from pathlib import Path
 from PySide6.QtCore import QCoreApplication, QStandardPaths, Qt, QThread, Signal
 from PySide6.QtWidgets import (
     QButtonGroup,
+    QCheckBox,
     QFileDialog,
     QFrame,
     QHBoxLayout,
@@ -321,10 +322,22 @@ class FontsPage(_InterfacePage):
         self.note(
             card,
             tr(
-                "Arial, Times New Roman, Verdana and others need a separate licence. Support "
-                "for installing them from Linwas is coming in a later version."
+                "Arial, Times New Roman, Verdana, Georgia and others. These fonts are not free "
+                "software: Microsoft's licence terms apply. Installing downloads them from "
+                "Microsoft; afterwards the terms are in "
+                "/usr/share/doc/ttf-mscorefonts-installer/READ_ME!.gz."
             ),
         )
+        self._eula = QCheckBox(tr("I accept Microsoft's licence terms for these fonts"), card)
+        card.layout.addWidget(self._eula)
+        row = QHBoxLayout()
+        self._ms_btn = QPushButton(tr("Install Microsoft fonts"), card)
+        self._ms_btn.setEnabled(False)
+        self._eula.toggled.connect(self._ms_btn.setEnabled)
+        self._ms_btn.clicked.connect(self._install_ms)
+        row.addWidget(self._ms_btn)
+        row.addStretch(1)
+        card.layout.addLayout(row)
         self.finish()
         self.on_tasks_finished()
 
@@ -343,6 +356,14 @@ class FontsPage(_InterfacePage):
             tr("Not installed: {names}").format(names=", ".join(missing))
             if missing
             else tr("✓ Installed")
+        )
+
+    def _install_ms(self) -> None:
+        self.task_run_now.emit(
+            Task(
+                label=tr("Install Microsoft fonts"),
+                steps=[TaskStep(op_id="fonts.install_microsoft", params={})],
+            )
         )
 
     def _install(self) -> None:

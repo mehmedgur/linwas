@@ -126,8 +126,13 @@ def test_charge_limit(monkeypatch, tmp_path):
     bat.mkdir()
     (bat / "type").write_text("Battery\n")
     monkeypatch.setattr(helper, "_POWER_SUPPLY", tmp_path)
+    rule = tmp_path / "rules" / "90-linwas-battery.rules"
+    monkeypatch.setattr(helper, "_BATTERY_RULE", rule)
     # Desteklenmiyor: dosya yok
     assert helper._exec_battery_set_charge_limit(0, {"battery": "BAT0", "percent": "80"}) is False
     (bat / "charge_control_end_threshold").write_text("100")
     assert helper._exec_battery_set_charge_limit(0, {"battery": "BAT0", "percent": "80"}) is True
     assert (bat / "charge_control_end_threshold").read_text() == "80"
+    assert 'KERNEL=="BAT0"' in rule.read_text()
+    assert helper._exec_battery_set_charge_limit(0, {"battery": "BAT0", "percent": "100"})
+    assert not rule.exists()

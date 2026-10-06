@@ -1836,10 +1836,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Günlük kullanım için önerilir</translation>
     </message>
     <message>
-        <source>Resets to the device default after a restart.</source>
-        <translation>Yeniden başlatınca cihazın varsayılanına döner.</translation>
-    </message>
-    <message>
         <source>Shut down</source>
         <translation>Bilgisayarı kapat</translation>
     </message>
@@ -1878,6 +1874,10 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>worn</source>
         <translation>yıpranmış</translation>
+    </message>
+    <message>
+        <source>The limit is kept after restarting.</source>
+        <translation>Sınır yeniden başlattıktan sonra da korunur.</translation>
     </message>
 </context>
 <context>
@@ -2100,10 +2100,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Ekranın altına açık pencereleri, sabitlenmiş uygulamaları ve saati gösteren Windows tarzı bir görev çubuğu ekler (Dash to Panel).</translation>
     </message>
     <message>
-        <source>Arial, Times New Roman, Verdana and others need a separate licence. Support for installing them from Linwas is coming in a later version.</source>
-        <translation>Arial, Times New Roman, Verdana ve diğerleri ayrı bir lisans gerektirir. Bunları Linwas'tan kurma desteği sonraki bir sürümde gelecek.</translation>
-    </message>
-    <message>
         <source>Carlito (same size as Calibri), Caladea (Cambria) and Liberation (Arial, Times New Roman, Courier New). Documents from Windows keep their layout.</source>
         <translation>Carlito (Calibri ile aynı ölçüde), Caladea (Cambria) ve Liberation (Arial, Times New Roman, Courier New). Windows'tan gelen belgelerin sayfa düzeni bozulmaz.</translation>
     </message>
@@ -2262,6 +2258,18 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>✓ Installed</source>
         <translation>✓ Kurulu</translation>
+    </message>
+    <message>
+        <source>Arial, Times New Roman, Verdana, Georgia and others. These fonts are not free software: Microsoft's licence terms apply. Installing downloads them from Microsoft; afterwards the terms are in /usr/share/doc/ttf-mscorefonts-installer/READ_ME!.gz.</source>
+        <translation>Arial, Times New Roman, Verdana, Georgia ve diğerleri. Bu yazı tipleri özgür yazılım değildir; Microsoft'un lisans koşulları geçerlidir. Kurulum onları Microsoft'tan indirir; ardından koşullar /usr/share/doc/ttf-mscorefonts-installer/READ_ME!.gz dosyasında bulunur.</translation>
+    </message>
+    <message>
+        <source>I accept Microsoft's licence terms for these fonts</source>
+        <translation>Bu yazı tipleri için Microsoft'un lisans koşullarını kabul ediyorum</translation>
+    </message>
+    <message>
+        <source>Install Microsoft fonts</source>
+        <translation>Microsoft yazı tiplerini kur</translation>
     </message>
 </context>
 <context>
