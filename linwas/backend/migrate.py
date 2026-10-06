@@ -6,6 +6,7 @@ NTFS bölüm erişimi: ntfs-3g veya kernel ntfs3 sürücüsü gerekir.
 
 from __future__ import annotations
 
+import re
 import shutil
 import subprocess
 from collections.abc import Callable
@@ -231,65 +232,110 @@ def scan_import_items(user: WindowsUser) -> list[ImportItem]:
 
 @dataclass
 class WindowsPrefs:
-    keyboard_layout: str  # "TR Q", "TR F", "US" vb.
-    timezone: str  # Windows timezone adı
+    keyboard_layout: str  # "TR Q", "TR F", "US" vb.; bilinmiyorsa ""
+    timezone: str  # (okunmuyor; Linux saat dilimini ağdan kendisi bulur)
     dark_mode: bool | None
     mouse_buttons_swapped: bool | None
     locale: str  # "tr-TR", "en-US" vb.
+    scale_percent: int | None = None  # Control Panel\Desktop LogPixels (96 = %100)
+    printers: list[str] = field(default_factory=list)
 
 
+# Windows klavye düzeni kimliği → (görünen ad, XKB düzeni)
 _LAYOUT_MAP = {
-    "0000041f": "TR Q",
-    "0001041f": "TR F",
-    "00000409": "US",
-    "00000407": "DE",
-    "0000040c": "FR",
-    "00000410": "IT",
-    "00000419": "RU",
+    "0000041f": ("TR Q", "tr"),
+    "0001041f": ("TR F", "tr+f"),
+    "00000409": ("US", "us"),
+    "00000809": ("UK", "gb"),
+    "00000407": ("DE", "de"),
+    "0000040c": ("FR", "fr"),
+    "00000410": ("IT", "it"),
+    "00000419": ("RU", "ru"),
 }
+XKB_FOR_LAYOUT = {name: xkb for name, xkb in _LAYOUT_MAP.values()}
+
+# NTUSER.DAT içindeki değerlerin yerleri (hivexsh yolu, ters eğik çizgiyle).
+# Gerçek bir NTUSER.DAT ile doğrulanacak (bkz. docs/yapilacaklar.md).
+_REG_KEYBOARD = "\\Keyboard Layout\\Preload"
+_REG_THEME = "\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"
+_REG_MOUSE = "\\Control Panel\\Mouse"
+_REG_INTL = "\\Control Panel\\International"
+_REG_DESKTOP = "\\Control Panel\\Desktop"
+_REG_PRINTERS = "\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Devices"
+
+_RE_LSVAL = re.compile(
+    r'^"(?P<name>[^"]*)"=(?:"(?P<str>[^"]*)"|dword:(?P<dword>[0-9a-fA-F]+)|(?P<raw>.*))$'
+)
 
 
-def detect_windows_prefs(user: WindowsUser) -> WindowsPrefs | None:
-    """NTUser.dat'tan klavye düzeni ve diğer tercihleri okur.
-
-    hivexsh veya reged kurulu değilse None döner.
-    """
-    ntuser = user.user_path / "NTUSER.DAT"
-    if not ntuser.exists():
-        return None
-
-    # hivexsh ile klavye düzenini oku
-    layout = _read_keyboard_layout(ntuser)
-    return WindowsPrefs(
-        keyboard_layout=layout or "Unknown",
-        timezone="",
-        dark_mode=None,
-        mouse_buttons_swapped=None,
-        locale="",
-    )
+def parse_lsval(output: str) -> dict[str, str | int]:
+    """hivexsh `lsval` çıktısı: "ad"="metin" veya "ad"=dword:0000001."""
+    values: dict[str, str | int] = {}
+    for line in output.splitlines():
+        m = _RE_LSVAL.match(line.strip())
+        if not m:
+            continue
+        if m.group("str") is not None:
+            values[m.group("name")] = m.group("str")
+        elif m.group("dword") is not None:
+            values[m.group("name")] = int(m.group("dword"), 16)
+        else:
+            values[m.group("name")] = (m.group("raw") or "").strip()
+    return values
 
 
-def _read_keyboard_layout(ntuser: Path) -> str | None:
-    """hivexsh kullanarak aktif klavye düzenini okur."""
-    script = "open " + str(ntuser) + "\ncd /Keyboard Layout/Preload\nls\n"
+def _hive_values(hive: Path, key: str) -> dict[str, str | int]:
+    script = f"cd {key}\nlsval\n"
     try:
         r = subprocess.run(
-            ["hivexsh"],
+            ["hivexsh", str(hive)],
             input=script,
             capture_output=True,
             text=True,
-            timeout=10,
+            timeout=15,
             shell=False,
         )
-        for line in r.stdout.splitlines():
-            # "1 = 00000409" formatı
-            if "=" in line:
-                val = line.split("=")[-1].strip().strip('"').lower()
-                if val in _LAYOUT_MAP:
-                    return _LAYOUT_MAP[val]
-    except FileNotFoundError:
-        pass
-    return None
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return {}
+    return parse_lsval(r.stdout) if r.returncode == 0 else {}
+
+
+def hivexsh_available() -> bool:
+    import shutil
+
+    return shutil.which("hivexsh") is not None
+
+
+def detect_windows_prefs(user: WindowsUser) -> WindowsPrefs | None:
+    """NTUSER.DAT'tan tercihleri okur. hivexsh (libhivex-bin) yoksa None döner."""
+    ntuser = user.user_path / "NTUSER.DAT"
+    if not ntuser.exists() or not hivexsh_available():
+        return None
+
+    preload = _hive_values(ntuser, _REG_KEYBOARD)
+    first = str(preload.get("1", "")).lower()
+    layout = _LAYOUT_MAP.get(first, ("", ""))[0]
+
+    theme = _hive_values(ntuser, _REG_THEME).get("AppsUseLightTheme")
+    swap = _hive_values(ntuser, _REG_MOUSE).get("SwapMouseButtons")
+    locale = str(_hive_values(ntuser, _REG_INTL).get("LocaleName", ""))
+    dpi = _hive_values(ntuser, _REG_DESKTOP).get("LogPixels")
+    printers = sorted(_hive_values(ntuser, _REG_PRINTERS))
+    return WindowsPrefs(
+        keyboard_layout=layout,
+        timezone="",
+        dark_mode=(theme == 0) if isinstance(theme, int) else None,
+        mouse_buttons_swapped=(str(swap) == "1") if swap is not None else None,
+        locale=locale,
+        scale_percent=round(dpi * 100 / 96) if isinstance(dpi, int) and dpi > 0 else None,
+        printers=printers,
+    )
+
+
+def linux_locale(windows_locale: str) -> str:
+    """ "tr-TR" → "tr_TR.UTF-8"; geçersizse ""."""
+    m = re.fullmatch(r"([a-z]{2,3})-([A-Z]{2})", windows_locale)
+    return f"{m.group(1)}_{m.group(2)}.UTF-8" if m else ""
 
 
 # --- Programlar listesi ---
@@ -437,3 +483,32 @@ def _import_fonts(item: ImportItem, cb: ProgressCallback | None) -> bool:
     if cb:
         cb("Fonts imported", 1.0)
     return True
+
+
+# --- Tercihleri uygulama (kullanıcı yetkisiyle, gsettings) ---
+
+
+def apply_prefs(prefs: WindowsPrefs, choices: set[str], desktop: str) -> dict[str, bool]:
+    """Seçilen tercihleri uygular: "keyboard", "region", "theme", "mouse", "scale".
+
+    Şimdilik GNOME; diğer masaüstlerinde False döner (sistem ayarlarından yapılır).
+    """
+    from linwas.backend import appearance
+
+    results: dict[str, bool] = {}
+    if desktop != "gnome":
+        return {c: False for c in choices}
+    if "keyboard" in choices and prefs.keyboard_layout in XKB_FOR_LAYOUT:
+        xkb = XKB_FOR_LAYOUT[prefs.keyboard_layout]
+        results["keyboard"] = appearance.set_value("gnome", "input_sources", f"[('xkb', '{xkb}')]")
+    if "region" in choices and linux_locale(prefs.locale):
+        results["region"] = appearance.set_value("gnome", "region", linux_locale(prefs.locale))
+    if "theme" in choices and prefs.dark_mode is not None:
+        results["theme"] = appearance.set_dark("gnome", prefs.dark_mode)
+    if "mouse" in choices and prefs.mouse_buttons_swapped is not None:
+        value = "true" if prefs.mouse_buttons_swapped else "false"
+        results["mouse"] = appearance.set_value("gnome", "left_handed", value)
+    if "scale" in choices and prefs.scale_percent and prefs.scale_percent > 100:
+        factor = min(prefs.scale_percent, 150) / 100
+        results["scale"] = appearance.set_value("gnome", "text_scale", factor)
+    return results

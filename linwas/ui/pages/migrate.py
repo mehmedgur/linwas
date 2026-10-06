@@ -198,6 +198,7 @@ class _SourceStep(QWidget):
 class _SelectStep(QWidget):
     back = Signal()
     start_import = Signal(list)  # list[ImportItem]
+    install_hivex = Signal()
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -231,6 +232,17 @@ class _SelectStep(QWidget):
         self._progs_card.layout.addWidget(self._progs_lbl)
         self._progs_card.setVisible(False)
         outer.addWidget(self._progs_card)
+
+        # Windows ayarları
+        self._prefs_card = Card(self)
+        h = QLabel(tr("Windows settings"), self._prefs_card)
+        h.setObjectName("H2")
+        self._prefs_card.layout.addWidget(h)
+        self._prefs_box = QVBoxLayout()
+        self._prefs_card.layout.addLayout(self._prefs_box)
+        outer.addWidget(self._prefs_card)
+        self._prefs = None
+        self._pref_checks: dict[str, QCheckBox] = {}
 
         # Alt butonlar
         btn_row = QHBoxLayout()
@@ -284,7 +296,85 @@ class _SelectStep(QWidget):
                 self._progs_lbl.setText(", ".join(alts[:20]))
                 self._progs_card.setVisible(True)
 
+        self._populate_prefs(user)
         self._update_btn()
+
+    def _populate_prefs(self, user: WindowsUser) -> None:
+        import os
+
+        from linwas.backend.desktop import detect_desktop
+        from linwas.backend.migrate import detect_windows_prefs, hivexsh_available
+
+        while self._prefs_box.count():
+            item = self._prefs_box.takeAt(0)
+            if item.widget():
+                item.widget().hide()
+                item.widget().deleteLater()
+        self._pref_checks = {}
+        if not hivexsh_available():
+            note = QLabel(
+                tr(
+                    "To read keyboard layout, theme, mouse and region settings from Windows, "
+                    "Linwas needs the “libhivex-bin” package."
+                ),
+                self,
+            )
+            note.setWordWrap(True)
+            self._prefs_box.addWidget(note)
+            btn = QPushButton(tr("Install it"), self)
+            btn.clicked.connect(self.install_hivex)
+            self._prefs_box.addWidget(btn)
+            return
+        prefs = detect_windows_prefs(user)
+        self._prefs = prefs
+        if prefs is None:
+            self._prefs_box.addWidget(QLabel(tr("Windows settings could not be read."), self))
+            return
+        options = []
+        if prefs.keyboard_layout:
+            options.append(("keyboard", tr("Keyboard layout: {v}").format(v=prefs.keyboard_layout)))
+        if prefs.locale:
+            options.append(("region", tr("Language & region formats: {v}").format(v=prefs.locale)))
+        if prefs.dark_mode is not None:
+            options.append(("theme", tr("Dark theme") if prefs.dark_mode else tr("Light theme")))
+        if prefs.mouse_buttons_swapped:
+            options.append(("mouse", tr("Left-handed mouse")))
+        if prefs.scale_percent and prefs.scale_percent > 100:
+            options.append(("scale", tr("Bigger text ({n}%)").format(n=prefs.scale_percent)))
+        gnome = detect_desktop(os.environ).value == "gnome"
+        for key, text in options:
+            cb = QCheckBox(text, self)
+            cb.setChecked(gnome)
+            cb.setEnabled(gnome)
+            self._prefs_box.addWidget(cb)
+            self._pref_checks[key] = cb
+        if options and not gnome:
+            self._prefs_box.addWidget(
+                QLabel(tr("On this desktop, set these in the system settings."), self)
+            )
+        if prefs.printers:
+            lbl = QLabel(
+                tr("Printers used on Windows: {names}. Add them in Hardware & Printers.").format(
+                    names=", ".join(prefs.printers[:8])
+                ),
+                self,
+            )
+            lbl.setWordWrap(True)
+            lbl.setObjectName("Secondary")
+            self._prefs_box.addWidget(lbl)
+        if not options and not prefs.printers:
+            self._prefs_box.addWidget(QLabel(tr("No settings found to bring over."), self))
+
+    def apply_prefs(self) -> None:
+        """Seçilen Windows ayarlarını uygular (içe aktarma başlarken)."""
+        import os
+
+        from linwas.backend.desktop import detect_desktop
+        from linwas.backend.migrate import apply_prefs
+
+        chosen = {k for k, cb in self._pref_checks.items() if cb.isChecked()}
+        if self._prefs is not None and chosen:
+            apply_prefs(self._prefs, chosen, detect_desktop(os.environ).value)
 
     def _update_btn(self) -> None:
         self._import_btn.setEnabled(any(cb.isChecked() for cb in self._checks.values()))
@@ -295,6 +385,7 @@ class _SelectStep(QWidget):
             for item in self._items
             if item.id in self._checks and self._checks[item.id].isChecked()
         ]
+        self.apply_prefs()
         self.start_import.emit(selected)
 
 
@@ -403,6 +494,14 @@ class MigratePage(BasePage):
         outer = QVBoxLayout(self)
         outer.setContentsMargins(24, 20, 24, 20)
 
+        # Diskten okunamayanlar için rehberler (şifreler, Wi-Fi, Outlook)
+        guide_row = QHBoxLayout()
+        guide_row.addStretch(1)
+        guides = QPushButton(tr("Passwords, Wi-Fi and Outlook guides…"), self)
+        guides.clicked.connect(self._open_guides)
+        guide_row.addWidget(guides)
+        outer.addLayout(guide_row)
+
         self._stack = QStackedWidget(self)
         outer.addWidget(self._stack)
 
@@ -416,10 +515,30 @@ class MigratePage(BasePage):
         self._step1.source_selected.connect(self._on_source_selected)
         self._step2.back.connect(lambda: self._stack.setCurrentWidget(self._step1))
         self._step2.start_import.connect(self._on_start_import)
+        self._step2.install_hivex.connect(self._install_hivex)
         self._step3.restart.connect(lambda: self._stack.setCurrentWidget(self._step1))
         self._step3.done.connect(lambda ok, tot: None)
 
         self._stack.setCurrentWidget(self._step1)
+
+    def _open_guides(self) -> None:
+        from linwas.ui.dialogs.migrate_guides import MigrateGuidesDialog
+
+        MigrateGuidesDialog(self).exec()
+
+    def _install_hivex(self) -> None:
+        from linwas.core.tasks import Task, TaskStep
+
+        self.task_run_now.emit(
+            Task(
+                label=tr("Install Windows registry reader"),
+                steps=[TaskStep(op_id="package.install", params={"name": "libhivex-bin"})],
+            )
+        )
+
+    def on_tasks_finished(self) -> None:
+        if self._user is not None and self._stack.currentWidget() is self._step2:
+            self._step2.populate(self._user)
 
     def _on_source_selected(self, user: WindowsUser) -> None:
         self._user = user

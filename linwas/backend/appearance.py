@@ -20,6 +20,9 @@ KEYS: dict[str, dict[str, tuple[str, str]]] = {
         "wallpaper": ("org.gnome.desktop.background", "picture-uri"),
         "wallpaper_dark": ("org.gnome.desktop.background", "picture-uri-dark"),
         "buttons": ("org.gnome.desktop.wm.preferences", "button-layout"),
+        "input_sources": ("org.gnome.desktop.input-sources", "sources"),
+        "region": ("org.gnome.system.locale", "region"),
+        "left_handed": ("org.gnome.desktop.peripherals.mouse", "left-handed"),
     },
     "cinnamon": {
         "gtk_theme": ("org.cinnamon.desktop.interface", "gtk-theme"),

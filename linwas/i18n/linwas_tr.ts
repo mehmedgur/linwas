@@ -887,6 +887,66 @@ Windows sürücünüzün bağlı olduğundan emin olun.</translation>
         <source>Import more</source>
         <translation>Daha fazla taşı</translation>
     </message>
+    <message>
+        <source>Bigger text ({n}%)</source>
+        <translation>Daha büyük yazı (%{n})</translation>
+    </message>
+    <message>
+        <source>Dark theme</source>
+        <translation>Koyu tema</translation>
+    </message>
+    <message>
+        <source>Install Windows registry reader</source>
+        <translation>Windows kayıt defteri okuyucusunu kur</translation>
+    </message>
+    <message>
+        <source>Install it</source>
+        <translation>Kur</translation>
+    </message>
+    <message>
+        <source>Keyboard layout: {v}</source>
+        <translation>Klavye düzeni: {v}</translation>
+    </message>
+    <message>
+        <source>Language &amp; region formats: {v}</source>
+        <translation>Dil ve bölge biçimleri: {v}</translation>
+    </message>
+    <message>
+        <source>Left-handed mouse</source>
+        <translation>Sol el fare</translation>
+    </message>
+    <message>
+        <source>Light theme</source>
+        <translation>Açık tema</translation>
+    </message>
+    <message>
+        <source>No settings found to bring over.</source>
+        <translation>Taşınacak ayar bulunamadı.</translation>
+    </message>
+    <message>
+        <source>On this desktop, set these in the system settings.</source>
+        <translation>Bu masaüstünde bunları sistem ayarlarından yapın.</translation>
+    </message>
+    <message>
+        <source>Passwords, Wi-Fi and Outlook guides…</source>
+        <translation>Şifre, Wi-Fi ve Outlook rehberleri…</translation>
+    </message>
+    <message>
+        <source>Printers used on Windows: {names}. Add them in Hardware &amp; Printers.</source>
+        <translation>Windows'ta kullanılan yazıcılar: {names}. Bunları Donanım ve Yazıcılar sayfasından ekleyin.</translation>
+    </message>
+    <message>
+        <source>To read keyboard layout, theme, mouse and region settings from Windows, Linwas needs the “libhivex-bin” package.</source>
+        <translation>Windows'tan klavye düzeni, tema, fare ve bölge ayarlarını okumak için Linwas'ın “libhivex-bin” paketine ihtiyacı var.</translation>
+    </message>
+    <message>
+        <source>Windows settings</source>
+        <translation>Windows ayarları</translation>
+    </message>
+    <message>
+        <source>Windows settings could not be read.</source>
+        <translation>Windows ayarları okunamadı.</translation>
+    </message>
 </context>
 <context>
     <name>TaskMgrPage</name>
@@ -2737,6 +2797,95 @@ Değişiklikler alttaki kuyrukta toplanır. Uygula'ya basıp şifrenizi bir kez 
     <message>
         <source>This program is also in your system's software sources (version {version}). Installing from there is safer and it updates automatically.</source>
         <translation>Bu program sisteminizin yazılım kaynaklarında da var (sürüm {version}). Oradan kurmak daha güvenlidir ve kendiliğinden güncellenir.</translation>
+    </message>
+</context>
+<context>
+    <name>MigrateGuides</name>
+    <message>
+        <source>Choose Wi-Fi XML files</source>
+        <translation>Wi-Fi XML dosyalarını seçin</translation>
+    </message>
+    <message>
+        <source>Choose Wi-Fi XML files…</source>
+        <translation>Wi-Fi XML dosyalarını seç…</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Kapat</translation>
+    </message>
+    <message>
+        <source>On Windows, open Command Prompt and run:
+
+    netsh wlan export profile key=clear folder=E:\
+
+(E: is your USB stick.) Then choose those XML files here; Linwas adds the networks with their passwords. Delete the XML files afterwards.</source>
+        <translation>Windows'ta Komut İstemi'ni açın ve şunu çalıştırın:
+
+    netsh wlan export profile key=clear folder=E:\
+
+(E: USB belleğinizdir.) Sonra bu XML dosyalarını burada seçin; Linwas ağları şifreleriyle birlikte ekler. İşiniz bitince XML dosyalarını silin.</translation>
+    </message>
+    <message>
+        <source>Outlook</source>
+        <translation>Outlook</translation>
+    </message>
+    <message>
+        <source>Outlook e-mails can be moved to Thunderbird.
+
+On Windows (Outlook): File › Open &amp; Export › Import/Export › Export to a file › Outlook Data File (.pst). Save it to a USB stick.
+
+On Linux: install Thunderbird (Software page), add the “ImportExportTools NG” add-on, then use Tools › ImportExportTools NG › Import PST/mbox.</source>
+        <translation>Outlook e-postaları Thunderbird'e taşınabilir.
+
+Windows'ta (Outlook): Dosya › Aç ve Dışarı Aktar › İçeri/Dışarı Aktar › Dosyaya aktar › Outlook Veri Dosyası (.pst). USB belleğe kaydedin.
+
+Linux'ta: Thunderbird'ü kurun (Programlar sayfası), “ImportExportTools NG” eklentisini ekleyin, sonra Araçlar › ImportExportTools NG › PST/mbox içe aktar'ı kullanın.</translation>
+    </message>
+    <message>
+        <source>Passwords</source>
+        <translation>Şifreler</translation>
+    </message>
+    <message>
+        <source>Saved passwords in Chrome or Edge can't be read from the Windows disk; they are encrypted for Windows.
+
+On Windows:
+1. Chrome: Settings › Passwords (Google Password Manager) › Settings › Export passwords. Edge: Settings › Passwords › … › Export passwords.
+2. Save the CSV file to a USB stick.
+
+On Linux:
+3. Firefox: about:logins › … › Import from a file.
+   Chrome: Settings › Passwords › Settings › Import passwords.
+4. Delete the CSV file afterwards — it contains your passwords as plain text.</source>
+        <translation>Chrome veya Edge'de kayıtlı şifreler Windows diskinden okunamaz; Windows'a özel şifrelenmiştir.
+
+Windows'ta:
+1. Chrome: Ayarlar › Şifreler (Google Şifre Yöneticisi) › Ayarlar › Şifreleri dışa aktar. Edge: Ayarlar › Parolalar › … › Parolaları dışarı aktar.
+2. CSV dosyasını USB belleğe kaydedin.
+
+Linux'ta:
+3. Firefox: about:logins › … › Dosyadan içe aktar.
+   Chrome: Ayarlar › Şifreler › Ayarlar › Şifreleri içe aktar.
+4. Ardından CSV dosyasını silin — şifreleriniz içinde düz metin olarak durur.</translation>
+    </message>
+    <message>
+        <source>Step-by-step guides</source>
+        <translation>Adım adım rehberler</translation>
+    </message>
+    <message>
+        <source>Wi-Fi</source>
+        <translation>Wi-Fi</translation>
+    </message>
+    <message>
+        <source>Wi-Fi profiles (*.xml)</source>
+        <translation>Wi-Fi profilleri (*.xml)</translation>
+    </message>
+    <message>
+        <source>{file}: not a Wi-Fi profile</source>
+        <translation>{file}: Wi-Fi profili değil</translation>
+    </message>
+    <message>
+        <source>{ssid}: password missing or network type not supported</source>
+        <translation>{ssid}: şifre eksik ya da ağ türü desteklenmiyor</translation>
     </message>
 </context>
 </TS>
