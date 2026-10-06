@@ -3,7 +3,7 @@
 > **Kural:** Her kodlama aşamasına geçmeden önce Claude bu listeyi okur ve bekleyen fikirleri
 > kullanıcıya hatırlatır.
 
-Son güncelleme: 5 Ekim 2026
+Son güncelleme: 6 Ekim 2026
 
 ## Notlar
 - Kullanıcının Pardus 23 bilgisayarında hem **GNOME** hem **KDE Plasma** oturumu var. Testler
@@ -20,7 +20,7 @@ Son güncelleme: 5 Ekim 2026
 ## İnceleme bekleyenler
 - [ ] **PR #1 — Eski sistem desteğinin kaldırılması:** CI yeşil, Pardus 23'te "Destekleniyor"
   doğrulandı. Birleştirilmesi bekleniyor.
-- [ ] **PR #2 — Proje belgelerinin depoya taşınması** (bu klasör).
+- [ ] **PR #2 — Proje belgelerinin depoya taşınması** (bu klasör) + program kaldırma kararı.
 
 ## Sıradaki aşama
 - **Aşama 1 — Altyapı:** kuyruk, izin listesi ve parametre doğrulama, root helper, pkexec/polkit,
@@ -56,6 +56,10 @@ Son güncelleme: 5 Ekim 2026
 - [ ] Seçilmiş üçüncü taraf uygulamalar (Chrome, Zoom vb.) için üreticilerin resmi depo adresleri ve
   imza anahtarları — her biri resmi belgeden.
 - [ ] Windows ayar kayıtlarından (klavye, bölge, tema, fare, ölçek) okunacak değerlerin yerleri.
+- [ ] Program kaldırma: APT, Flatpak ve Snap'te "ayarları da sil" ve "gereksiz bağımlılıkları
+  temizle" işlemlerinin tam karşılıkları; kurulma tarihi ve kapladığı alan bilgisinin her kaynakta
+  nereden okunacağı; kaldırılması engellenecek kritik paketlerin (masaüstü, oturum açma ekranı, ağ,
+  ses, Linwas) dağıtım bazında listesi — her biri resmi belgeden.
 
 ## Tamamlananlar
 - [x] Aşama 0: iskelet, çeviri altyapısı, geliştirici betikleri, Actions ile .deb + kapsayıcı

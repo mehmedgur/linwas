@@ -2,7 +2,7 @@
 
 (Önceki çalışma adı: v1.1. Kod sıfırdan yazıldığı için sürüm adı **Linwas 2.0** oldu.)
 
-Son güncelleme: 5 Ekim 2026
+Son güncelleme: 6 Ekim 2026
 Depo (2.0): github.com/mehmedgur/linwas2 (geliştirme süresince private; kod düz dosyalar halinde)
 Eski depo (v1.0, yalnızca referans): github.com/mehmedgur/linwas
 Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyruk senaryosu)
@@ -85,7 +85,7 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - **AI Soru** (geniş sohbet ekranı; ayrıca her sayfada yardımcı panel)
 - **Sistem:** Genel bakış, Güncellemeler, Sürücüler, Wi-Fi ve Bluetooth, **Yedekler ve geri alma**, Donanım ve yazıcı, Görev Yöneticisi, Disk temizliği, Yedekleme (kişisel dosyalar), Güç ve pil (yalnızca dizüstü), Windows'tan taşıma, Tüm ayarlar (Denetim Masası)
 - **Arayüz:** Windows görünümü, tema/duvar kağıdı, yazı tipleri, ekran/ölçekleme
-- **Program:** Üstte arama, altta "Windows'ta ne kullanıyordun?" bölümü; Oyun sekmesi
+- **Program:** Üstte arama, altta "Windows'ta ne kullanıyordun?" bölümü; **Kurulu programlar** sekmesi; Oyun sekmesi
 - **Sorun Giderme:** Üstte tek tıkla tam tarama, altta belirti kartları
 - **Ayarlar:** Linwas'ın kendi ayarları (işlem geçmişi ve eklenti listesi burada)
 - Menü özellikleri: daraltma, arama kutusu (Windows terimlerini de arar), açılır alt menüler, bildirim rozetleri, sistem durumu kartı, yardımcı paneli düğmesi.
@@ -128,7 +128,7 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - İlk seferde "hata kayıtlarını AI'a göndereyim mi?" onayı.
 - "Sorun bildir": maskeli rapor hazırlar; "GitHub'da aç" (doldurulmuş issue sayfası) + "Raporu kopyala / kaydet" (GitHub hesabı olmayanlar için).
 
-## Program kurulumu
+## Program kurulumu ve kaldırma
 - **Arama:** Program sayfasının üstündeki arama kutusuyla kullanıcı istediği uygulamayı arayıp "Kur" ile kuyruğa ekler.
   - Yalnızca kullanıcıya yönelik masaüstü uygulamaları listelenir (AppStream kataloğu); Türkçe ad, simge, açıklama, ekran görüntüsü. Kütüphane/teknik paketler gösterilmez.
   - Windows adıyla arama: "Photoshop" → GIMP, Krita önerisi (rehber üzerinden).
@@ -141,6 +141,14 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - Güncellemeler: bildirilir, kullanıcı başlatır.
 - Sürücüler: önerilen tek tıkla + "Diğer seçenekler".
 - EXE: risk analizi; Linux alternatifi varsa önerilir, yoksa Wine ile açılır.
+- **Program kaldırma** (6 Ekim 2026 kararı):
+  - **İki yerden:** Program › **Kurulu programlar** sekmesi (Windows'taki "Programlar ve Özellikler" gibi) ve arama sonuçları (kurulu programda "Kur" yerine "Kaldır" butonu).
+  - **Kurulu programlar listesi:** yalnızca kullanıcıya yönelik uygulamalar (AppStream); arama ve sıralama. Sütunlar: ad + simge, **kapladığı alan**, **kaynak rozeti** (APT / Flatpak / Snap / üçüncü taraf), **güncelleme var mı** (programa özel "Güncelle" butonu), **kurulma tarihi**.
+  - **Ayarlar:** onay penceresinde "Ayarlarımı da sil" kutucuğu, **varsayılan: işaretsiz (ayarlar saklanır)** — program yeniden kurulursa ayarlar geri gelir. Kutucuğun neyi sileceği kaynağa göre sade dille yazılır (Flatpak'te kişisel veriler dahil; APT'de sistem ayar dosyaları — ev klasöründeki kişisel ayarların her zaman güvenilir şekilde bulunamayacağı söylenir).
+  - **Gereksiz bağımlılıklar:** aynı işlemde temizlenir; onay penceresinde "bunlar da kaldırılacak" diye ayrı listelenir.
+  - **Güvenlik:** kaldırma kuyruk + toplu onay üzerinden. Onaydan önce paket yöneticisinin kaldıracağı **tüm paketler** gösterilir. Bu liste masaüstü ortamını, oturum açma ekranını, ağ yöneticisini, ses sistemini, Linwas'ın kendisini ya da sistemin temel paketlerini içeriyorsa işlem **engellenir** ve nedeni sade dille açıklanır. Sistemle gelen ön kurulu uygulamalar (ör. tarayıcı) kaldırılabilir ama ek uyarı gösterilir.
+  - **Geri alma:** kaldırma "hızlı geri alma" kapsamındadır (kaldırılan paket listesi kaydedilir; "Değişiklikleri geri al" yeniden kurar). Ayarlar da silindiyse bunların geri gelmeyeceği onay penceresinde söylenir.
+  - Snap uygulamaları da listede gösterilir ve kaldırılabilir.
 
 ## Arayüz sayfası
 - Desteklenen masaüstleri: Cinnamon, GNOME, XFCE (eklenti yapısında; KDE sonraki sürüme). Desteklenmeyen ortamda yalnızca ortak ayarlar.
