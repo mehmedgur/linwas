@@ -45,7 +45,7 @@ _RE_GVARIANT_STRING = re.compile(r"^'(.*)'$", re.DOTALL)
 
 
 def _run(cmd: list[str], timeout: int = 10) -> tuple[int, str]:
-    env = {**os.environ, "LANG": "C", "LC_ALL": "C"}
+    env = {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8"}
     try:
         r = subprocess.run(
             cmd, capture_output=True, text=True, timeout=timeout, shell=False, env=env

@@ -113,7 +113,7 @@ def parse_profiles(output: str) -> tuple[list[str], str]:
 
 
 def _run(cmd: list[str], timeout: int = 10) -> subprocess.CompletedProcess[str] | None:
-    env = {**os.environ, "LANG": "C", "LC_ALL": "C"}
+    env = {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8"}
     try:
         return subprocess.run(
             cmd, capture_output=True, text=True, timeout=timeout, shell=False, env=env

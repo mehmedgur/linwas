@@ -1,12 +1,14 @@
 """Ağ/Wi-Fi/Bluetooth yönetimi — NetworkManager (nmcli) ve bluetoothctl.
 
 Root gerekmez; NetworkManager ve bluetoothctl kendi yetki yönetimini yapar.
-nmcli dil bağımsız çalıştırılır (LANG=C).
+nmcli dil bağımsız ama UTF-8 çalıştırılır (C.UTF-8): mesajlar İngilizce,
+Türkçe karakterli ağ/cihaz adları bozulmaz (LANG=C'de "ş" → "?" olur).
 """
 
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 from dataclasses import dataclass
 
@@ -15,7 +17,7 @@ from dataclasses import dataclass
 
 def _run(cmd: list[str], timeout: int = 10) -> tuple[str, str]:
     """(stdout, stderr) döner; LANG=C ile dil bağımsız çıktı."""
-    env = {**os.environ, "LANG": "C", "LC_ALL": "C"}
+    env = {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8"}
     try:
         r = subprocess.run(
             cmd, capture_output=True, text=True, timeout=timeout, shell=False, env=env
@@ -23,6 +25,39 @@ def _run(cmd: list[str], timeout: int = 10) -> tuple[str, str]:
         return r.stdout, r.stderr
     except (FileNotFoundError, subprocess.TimeoutExpired):
         return "", ""
+
+
+def _run_rc(cmd: list[str], timeout: int = 30) -> tuple[int, str]:
+    """(dönüş kodu, stdout+stderr)."""
+    env = {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8"}
+    try:
+        r = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=timeout, shell=False, env=env
+        )
+        return r.returncode, (r.stdout + r.stderr).strip()
+    except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
+        return 1, str(exc)
+
+
+def split_terse(line: str) -> list[str]:
+    """`nmcli -t` satırını alanlara böler: ayırıcı ":", alan içindeki ":" ve "\\"
+    ters eğik çizgiyle kaçırılır (nmcli(1), --terse)."""
+    fields: list[str] = []
+    current: list[str] = []
+    escaped = False
+    for ch in line:
+        if escaped:
+            current.append(ch)
+            escaped = False
+        elif ch == "\\":
+            escaped = True
+        elif ch == ":":
+            fields.append("".join(current))
+            current = []
+        else:
+            current.append(ch)
+    fields.append("".join(current))
+    return fields
 
 
 def _nmcli(*args: str, timeout: int = 10) -> str:
@@ -41,6 +76,21 @@ class WifiNetwork:
     active: bool
     bssid: str
 
+    @property
+    def quality(self) -> str:
+        """ "excellent" | "good" | "fair" | "weak"."""
+        return signal_quality(self.signal)
+
+
+def signal_quality(signal: int) -> str:
+    if signal >= 75:
+        return "excellent"
+    if signal >= 50:
+        return "good"
+    if signal >= 30:
+        return "fair"
+    return "weak"
+
 
 @dataclass
 class WifiStatus:
@@ -48,6 +98,7 @@ class WifiStatus:
     connected: bool
     ssid: str  # bağlı ağ adı; bağlı değilse ""
     device: str  # ör. "wlan0"
+    signal: int = 0  # bağlı ağın sinyali (0-100)
 
 
 def wifi_status() -> WifiStatus:
@@ -62,10 +113,10 @@ def wifi_status() -> WifiStatus:
     ssid = ""
     connected = False
     for line in dev_out.splitlines():
-        parts = line.split(":")
+        parts = split_terse(line)
         if len(parts) < 4:
             continue
-        dev, typ, state, conn = parts[0], parts[1], parts[2], ":".join(parts[3:])
+        dev, typ, state, conn = parts[0], parts[1], parts[2], parts[3]
         if typ == "wifi":
             device = dev
             if state == "connected":
@@ -73,42 +124,49 @@ def wifi_status() -> WifiStatus:
                 ssid = conn
             break
 
-    return WifiStatus(enabled=enabled, connected=connected, ssid=ssid, device=device)
+    signal = 0
+    if connected:
+        active = next((n for n in wifi_list(rescan=False) if n.active), None)
+        signal = active.signal if active else 0
+    return WifiStatus(enabled=enabled, connected=connected, ssid=ssid, device=device, signal=signal)
 
 
-def wifi_list() -> list[WifiNetwork]:
-    """Görünen Wi-Fi ağlarını döner; sinyal gücüne göre azalan sırada."""
-    out = _nmcli("-t", "-f", "ACTIVE,BSSID,SSID,SIGNAL,SECURITY", "device", "wifi", "list")
-    networks: list[WifiNetwork] = []
-    seen_ssids: set[str] = set()
+def parse_wifi_list(out: str) -> list[WifiNetwork]:
+    """`nmcli -t -f ACTIVE,BSSID,SSID,SIGNAL,SECURITY device wifi list` çıktısı.
+
+    Aynı ad birden fazla erişim noktasında görünürse en güçlü (ya da bağlı olan) kalır.
+    """
+    best: dict[str, WifiNetwork] = {}
     for line in out.splitlines():
-        parts = line.split(":")
+        parts = split_terse(line)
         if len(parts) < 5:
             continue
-        active_str = parts[0].strip().lower()
-        bssid = parts[1].strip().replace("\\:", ":")
-        ssid = parts[2].strip()
-        signal_str = parts[3].strip()
-        security = ":".join(parts[4:]).strip()
-
-        if not ssid or ssid in seen_ssids:
+        active, bssid, ssid, signal_str, security = parts[:5]
+        if not ssid:
             continue
-        seen_ssids.add(ssid)
         try:
             signal = int(signal_str)
         except ValueError:
             signal = 0
-
-        networks.append(
-            WifiNetwork(
-                ssid=ssid,
-                signal=signal,
-                security=security,
-                active=active_str == "yes",
-                bssid=bssid,
-            )
+        net = WifiNetwork(
+            ssid=ssid,
+            signal=signal,
+            security=security.strip(),
+            active=active.strip().lower() == "yes",
+            bssid=bssid,
         )
-    return sorted(networks, key=lambda n: (not n.active, -n.signal))
+        old = best.get(ssid)
+        if old is None or (net.active, net.signal) > (old.active, old.signal):
+            best[ssid] = net
+    return sorted(best.values(), key=lambda n: (not n.active, -n.signal))
+
+
+def wifi_list(rescan: bool = True) -> list[WifiNetwork]:
+    """Görünen Wi-Fi ağlarını döner; bağlı olan önce, sonra sinyale göre."""
+    args = ["-t", "-f", "ACTIVE,BSSID,SSID,SIGNAL,SECURITY", "device", "wifi", "list"]
+    if not rescan:
+        args += ["--rescan", "no"]
+    return parse_wifi_list(_nmcli(*args, timeout=30))
 
 
 def wifi_connect(ssid: str, password: str = "") -> tuple[bool, str]:
@@ -116,12 +174,8 @@ def wifi_connect(ssid: str, password: str = "") -> tuple[bool, str]:
     cmd = ["nmcli", "device", "wifi", "connect", ssid]
     if password:
         cmd += ["password", password]
-    out, err = _run(cmd, timeout=30)
-    success = "successfully activated" in out.lower() or "device" in out.lower()
-    if not success:
-        msg = err.strip() or out.strip()
-        return False, msg
-    return True, ""
+    code, out = _run_rc(cmd, timeout=45)
+    return (True, "") if code == 0 else (False, out)
 
 
 def wifi_disconnect() -> bool:
@@ -140,13 +194,17 @@ def wifi_set_enabled(enabled: bool) -> bool:
 def wifi_saved_connections() -> list[str]:
     """Kayıtlı Wi-Fi bağlantılarını döner."""
     out = _nmcli("-t", "-f", "NAME,TYPE", "connection")
-    return [line.split(":")[0] for line in out.splitlines() if ":wifi" in line.lower()]
+    names = []
+    for line in out.splitlines():
+        parts = split_terse(line)
+        if len(parts) >= 2 and parts[1] == "802-11-wireless":
+            names.append(parts[0])
+    return names
 
 
 def wifi_forget(ssid: str) -> bool:
     """Kayıtlı bağlantıyı siler."""
-    out, _ = _run(["nmcli", "connection", "delete", ssid])
-    return "successfully deleted" in out.lower()
+    return _run_rc(["nmcli", "connection", "delete", "id", ssid])[0] == 0
 
 
 # --- Bluetooth ---
@@ -158,6 +216,21 @@ class BluetoothDevice:
     name: str
     paired: bool
     connected: bool
+    icon: str = ""  # "phone", "audio-headset", "input-mouse"... (BlueZ)
+    rssi: int | None = None  # dBm; yalnızca yakın zamanda taramada görüldüyse
+    battery: int | None = None  # yüzde (destekleyen cihazlarda)
+
+    @property
+    def quality(self) -> str | None:
+        """RSSI'den sinyal kalitesi; bilinmiyorsa None."""
+        if self.rssi is None:
+            return None
+        # Yaklaşık: -50 dBm ve üstü çok iyi, -90 dBm ve altı zayıf
+        percent = max(0, min(100, 2 * (self.rssi + 100)))
+        return signal_quality(percent)
+
+
+_RE_MAC = re.compile(r"^[0-9A-F]{2}(:[0-9A-F]{2}){5}$")
 
 
 def bluetooth_enabled() -> bool:
@@ -171,86 +244,86 @@ def bluetooth_set_enabled(enabled: bool) -> bool:
     return True
 
 
-def _bt_run(commands: list[str], timeout: int = 8) -> str:
-    """bluetoothctl'e komut satırları gönderir."""
-    script = "\n".join(commands) + "\n"
-    env = {**os.environ, "LANG": "C", "LC_ALL": "C"}
-    try:
-        r = subprocess.run(
-            ["bluetoothctl"],
-            input=script,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-            shell=False,
-            env=env,
-        )
-        return r.stdout
-    except (FileNotFoundError, subprocess.TimeoutExpired):
-        return ""
+def _btctl(*args: str, timeout: int = 15) -> tuple[int, str]:
+    """bluetoothctl'i komut kipinde çalıştırır (ör. `bluetoothctl info MAC`)."""
+    return _run_rc(["bluetoothctl", *args], timeout=timeout)
+
+
+def parse_devices(out: str) -> list[tuple[str, str]]:
+    """`bluetoothctl devices` → [(MAC, ad)]."""
+    found = []
+    for line in out.splitlines():
+        parts = line.strip().split(" ", 2)
+        if len(parts) >= 2 and parts[0] == "Device" and _RE_MAC.match(parts[1]):
+            found.append((parts[1], parts[2].strip() if len(parts) > 2 else parts[1]))
+    return found
+
+
+def parse_info(mac: str, name: str, out: str) -> BluetoothDevice:
+    """`bluetoothctl info MAC` çıktısı."""
+    fields: dict[str, str] = {}
+    for line in out.splitlines():
+        key, sep, value = line.strip().partition(": ")
+        if sep and key not in fields:
+            fields[key] = value.strip()
+    rssi = None
+    m = re.match(r"(-?\d+)", fields.get("RSSI", ""))
+    if m:
+        rssi = int(m.group(1))
+    battery = None
+    m = re.search(r"\((\d+)\)", fields.get("Battery Percentage", ""))
+    if m:
+        battery = int(m.group(1))
+    return BluetoothDevice(
+        mac=mac,
+        name=fields.get("Alias") or fields.get("Name") or name,
+        paired=fields.get("Paired") == "yes",
+        connected=fields.get("Connected") == "yes",
+        icon=fields.get("Icon", ""),
+        rssi=rssi,
+        battery=battery,
+    )
 
 
 def bluetooth_list_devices() -> list[BluetoothDevice]:
-    """Eşleştirilmiş ve bilinen Bluetooth cihazlarını döner."""
-    devices: list[BluetoothDevice] = []
-    out = _bt_run(["devices", "exit"])
-    paired_macs: set[str] = set()
-    connected_macs: set[str] = set()
+    """Bilinen cihazlar (eşleşmiş + taramada bulunan); bağlı ve eşleşmiş olanlar önce."""
+    devices = [
+        parse_info(mac, name, _btctl("info", mac)[1])
+        for mac, name in parse_devices(_btctl("devices")[1])
+    ]
+    return sorted(devices, key=lambda d: (not d.connected, not d.paired, -(d.rssi or -999)))
 
-    # Eşleşmiş cihazlar
-    out_paired = _bt_run(["devices Paired", "exit"])
-    for line in out_paired.splitlines():
-        if line.startswith("Device "):
-            parts = line.split(" ", 2)
-            if len(parts) >= 2:
-                paired_macs.add(parts[1])
 
-    # Bağlı cihazlar
-    out_connected = _bt_run(["devices Connected", "exit"])
-    for line in out_connected.splitlines():
-        if line.startswith("Device "):
-            parts = line.split(" ", 2)
-            if len(parts) >= 2:
-                connected_macs.add(parts[1])
-
-    for line in out.splitlines():
-        if not line.startswith("Device "):
-            continue
-        parts = line.split(" ", 2)
-        if len(parts) < 3:
-            continue
-        mac = parts[1]
-        name = parts[2].strip()
-        devices.append(
-            BluetoothDevice(
-                mac=mac,
-                name=name,
-                paired=mac in paired_macs or True,  # 'devices' zaten eşleşmişleri gösterir
-                connected=mac in connected_macs,
-            )
-        )
-    return devices
+def _valid_mac(mac: str) -> bool:
+    return bool(_RE_MAC.match(mac))
 
 
 def bluetooth_connect(mac: str) -> tuple[bool, str]:
-    out = _bt_run([f"connect {mac}", "exit"], timeout=15)
-    success = "successful" in out.lower() or "connected" in out.lower()
-    return success, out.strip()
+    if not _valid_mac(mac):
+        return False, "invalid address"
+    # Eşleşmemiş cihaz önce eşleştirilir ve güvenilir yapılır
+    info = parse_info(mac, mac, _btctl("info", mac)[1])
+    if not info.paired:
+        code, out = _btctl("pair", mac, timeout=30)
+        if code != 0:
+            return False, out
+        _btctl("trust", mac)
+    code, out = _btctl("connect", mac, timeout=30)
+    return code == 0, out
 
 
 def bluetooth_disconnect(mac: str) -> tuple[bool, str]:
-    out = _bt_run([f"disconnect {mac}", "exit"])
-    success = "successful" in out.lower()
-    return success, out.strip()
+    if not _valid_mac(mac):
+        return False, "invalid address"
+    code, out = _btctl("disconnect", mac)
+    return code == 0, out
 
 
 def bluetooth_forget(mac: str) -> bool:
-    out = _bt_run([f"remove {mac}", "exit"])
-    return "removed" in out.lower()
+    return _valid_mac(mac) and _btctl("remove", mac)[0] == 0
 
 
-def bluetooth_scan(timeout: int = 8) -> list[BluetoothDevice]:
-    """Yeni cihazları tarar ve bulduklarını döner."""
-    _bt_run(["scan on", "exit"], timeout=timeout)
-    # Tarama sonrası bilinen cihazları döndür
+def bluetooth_scan(timeout: int = 10) -> list[BluetoothDevice]:
+    """Yakındaki cihazları `timeout` saniye tarar, sonra listeyi döner."""
+    _btctl("--timeout", str(timeout), "scan", "on", timeout=timeout + 10)
     return bluetooth_list_devices()

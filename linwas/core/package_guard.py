@@ -72,7 +72,7 @@ def parse_simulation(output: str) -> list[str]:
 
 
 def _apt_env() -> dict[str, str]:
-    return {**os.environ, "LANG": "C", "LC_ALL": "C"}
+    return {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8"}
 
 
 def _simulate(name: str, autoremove: bool) -> tuple[list[str], str]:

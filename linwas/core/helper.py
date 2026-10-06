@@ -360,7 +360,7 @@ def _snap_notes(name: str) -> str | None:
             text=True,
             timeout=30,
             shell=False,
-            env={**os.environ, "LANG": "C", "LC_ALL": "C"},
+            env={**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8"},
         )
     except (FileNotFoundError, subprocess.TimeoutExpired):
         return None

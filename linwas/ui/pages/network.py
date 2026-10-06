@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import QCoreApplication, QThread, QTimer, Signal
+from PySide6.QtCore import QCoreApplication, Qt, QThread, QTimer, Signal
 from PySide6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
@@ -117,17 +117,68 @@ class _PasswordDialog(QDialog):
         return self._field.text()
 
 
-# --- Sinyal gücü çubuğu ---
+# --- Sinyal göstergesi ---
+
+_QUALITY_COLORS = {
+    "excellent": "#0e7a0e",
+    "good": "#0e7a0e",
+    "fair": "#9d5d00",
+    "weak": "#c42b1c",
+}
+_QUALITY_BARS = {"excellent": 4, "good": 3, "fair": 2, "weak": 1}
 
 
-def _signal_bars(signal: int) -> str:
-    if signal >= 80:
-        return "▂▄▆█"
-    if signal >= 55:
-        return "▂▄▆_"
-    if signal >= 30:
-        return "▂▄__"
-    return "▂___"
+def quality_text(quality: str) -> str:
+    return {
+        "excellent": tr("Excellent"),
+        "good": tr("Good"),
+        "fair": tr("Fair"),
+        "weak": tr("Weak"),
+    }.get(quality, "")
+
+
+class SignalBars(QWidget):
+    """Dört çubuklu sinyal göstergesi; dolu çubuk sayısı ve renk kaliteye göre."""
+
+    def __init__(self, quality: str | None, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self._quality = quality
+        self.setFixedSize(22, 16)
+        text = quality_text(quality) if quality else tr("Unknown")
+        self.setAccessibleName(tr("Signal: {quality}").format(quality=text))
+        self.setToolTip(text)
+
+    def paintEvent(self, _event: object) -> None:  # type: ignore[override]
+        from PySide6.QtGui import QColor, QPainter
+
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        filled = _QUALITY_BARS.get(self._quality or "", 0)
+        color = QColor(_QUALITY_COLORS.get(self._quality or "", "#9e9e9e"))
+        empty = QColor("#d0d4d8")
+        bar_w, gap = 4, 2
+        for i in range(4):
+            h = 4 + i * 4
+            x = i * (bar_w + gap)
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.setBrush(color if i < filled else empty)
+            painter.drawRoundedRect(x, self.height() - h, bar_w, h, 1, 1)
+        painter.end()
+
+
+def _signal_widget(parent: QWidget, quality: str | None, percent: int | None) -> QWidget:
+    box = QWidget(parent)
+    lay = QHBoxLayout(box)
+    lay.setContentsMargins(0, 0, 0, 0)
+    lay.setSpacing(6)
+    lay.addWidget(SignalBars(quality, box))
+    if quality:
+        text = quality_text(quality) if percent is None else f"%{percent} · {quality_text(quality)}"
+        lbl = QLabel(text, box)
+        lbl.setStyleSheet(f"color:{_QUALITY_COLORS[quality]};")
+        lbl.setMinimumWidth(110)
+        lay.addWidget(lbl)
+    return box
 
 
 # --- Wi-Fi ağ satırı ---
@@ -144,10 +195,8 @@ class _WifiRow(QWidget):
         row.setContentsMargins(4, 6, 4, 6)
         row.setSpacing(8)
 
-        # Sinyal göstergesi
-        bars_lbl = QLabel(_signal_bars(net.signal), self)
-        bars_lbl.setFixedWidth(32)
-        row.addWidget(bars_lbl)
+        # Sinyal göstergesi: çubuklar + yüzde + kalite
+        row.addWidget(_signal_widget(self, net.quality, net.signal))
 
         # SSID
         name_lbl = QLabel(net.ssid or tr("(Hidden network)"), self)
@@ -157,10 +206,10 @@ class _WifiRow(QWidget):
         row.addWidget(name_lbl)
 
         # Güvenlik rozeti
-        if net.security:
-            sec = QLabel(net.security.split()[0], self)
-            sec.setObjectName("Secondary")
-            row.addWidget(sec)
+        lock = QLabel("🔒 " + net.security.split()[0] if net.security else tr("Open"), self)
+        lock.setObjectName("Secondary")
+        lock.setToolTip(tr("Password protected") if net.security else tr("No password"))
+        row.addWidget(lock)
 
         if net.active:
             dis_btn = QPushButton(tr("Disconnect"), self)
@@ -249,7 +298,14 @@ class _WifiTab(QWidget):
         self._status = status
         if status.enabled:
             if status.connected:
-                self._status_lbl.setText(tr("Connected: {ssid}").format(ssid=status.ssid))
+                from linwas.backend.network import signal_quality
+
+                quality = quality_text(signal_quality(status.signal))
+                self._status_lbl.setText(
+                    tr("Connected: {ssid} · signal %{n} ({quality})").format(
+                        ssid=status.ssid, n=status.signal, quality=quality
+                    )
+                )
             else:
                 self._status_lbl.setText(tr("Wi-Fi enabled — not connected"))
             self._toggle_btn.setText(tr("Turn off"))
@@ -323,6 +379,19 @@ class _WifiTab(QWidget):
 # --- Bluetooth cihaz satırı ---
 
 
+_BT_ICONS = {
+    "phone": "📱",
+    "audio-headset": "🎧",
+    "audio-headphones": "🎧",
+    "audio-card": "🔊",
+    "input-mouse": "🖱",
+    "input-keyboard": "⌨",
+    "input-gaming": "🎮",
+    "computer": "💻",
+    "printer": "🖨",
+}
+
+
 class _BtRow(QWidget):
     connect_req = Signal(str)
     disconnect_req = Signal(str)
@@ -332,29 +401,50 @@ class _BtRow(QWidget):
         super().__init__(parent)
         row = QHBoxLayout(self)
         row.setContentsMargins(4, 6, 4, 6)
+        row.setSpacing(8)
 
+        icon = QLabel(_BT_ICONS.get(dev.icon, "🔷"), self)
+        icon.setFixedWidth(22)
+        row.addWidget(icon)
+
+        info = QVBoxLayout()
+        info.setSpacing(0)
         name_lbl = QLabel(dev.name or dev.mac, self)
         if dev.connected:
             name_lbl.setStyleSheet("font-weight: bold; color: #0067c0;")
-        row.addWidget(name_lbl, 1)
+        info.addWidget(name_lbl)
+        state = (
+            tr("Connected")
+            if dev.connected
+            else tr("Paired")
+            if dev.paired
+            else tr("New device — not paired")
+        )
+        if dev.battery is not None:
+            state += " · " + tr("battery %{n}").format(n=dev.battery)
+        sub = QLabel(state, self)
+        sub.setObjectName("Secondary")
+        info.addWidget(sub)
+        row.addLayout(info, 1)
 
-        mac_lbl = QLabel(dev.mac, self)
-        mac_lbl.setObjectName("Secondary")
-        row.addWidget(mac_lbl)
+        # Sinyal yalnızca yakın zamanda taramada görülen cihazlarda bilinir
+        if dev.quality:
+            row.addWidget(_signal_widget(self, dev.quality, None))
 
         if dev.connected:
             dis_btn = QPushButton(tr("Disconnect"), self)
             dis_btn.clicked.connect(lambda: self.disconnect_req.emit(dev.mac))
             row.addWidget(dis_btn)
         else:
-            con_btn = QPushButton(tr("Connect"), self)
+            con_btn = QPushButton(tr("Connect") if dev.paired else tr("Pair"), self)
             con_btn.setProperty("primary", True)
             con_btn.clicked.connect(lambda: self.connect_req.emit(dev.mac))
             row.addWidget(con_btn)
 
-        forget_btn = QPushButton(tr("Forget"), self)
-        forget_btn.clicked.connect(lambda: self.forget_req.emit(dev.mac))
-        row.addWidget(forget_btn)
+        if dev.paired:
+            forget_btn = QPushButton(tr("Forget"), self)
+            forget_btn.clicked.connect(lambda: self.forget_req.emit(dev.mac))
+            row.addWidget(forget_btn)
 
 
 # --- Bluetooth sekmesi ---

@@ -85,7 +85,7 @@ def import_profile(profile: WifiProfile) -> tuple[bool, str]:
     mgmt = _KEY_MGMT[profile.authentication]
     if mgmt:
         cmd += ["wifi-sec.key-mgmt", mgmt, "wifi-sec.psk", profile.key]
-    env = {**os.environ, "LANG": "C", "LC_ALL": "C"}
+    env = {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8"}
     try:
         r = subprocess.run(cmd, capture_output=True, text=True, timeout=30, shell=False, env=env)
     except (FileNotFoundError, subprocess.TimeoutExpired) as exc:

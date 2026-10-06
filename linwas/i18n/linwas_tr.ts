@@ -1194,10 +1194,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>{ssid} ağına bağlan</translation>
     </message>
     <message>
-        <source>Connected: {ssid}</source>
-        <translation>Bağlı: {ssid}</translation>
-    </message>
-    <message>
         <source>Connection failed</source>
         <translation>Bağlantı kurulamadı</translation>
     </message>
@@ -1252,6 +1248,66 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>Wi-Fi is off</source>
         <translation>Wi-Fi kapalı</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Bağlı</translation>
+    </message>
+    <message>
+        <source>Connected: {ssid} · signal %{n} ({quality})</source>
+        <translation>Bağlı: {ssid} · sinyal %{n} ({quality})</translation>
+    </message>
+    <message>
+        <source>Excellent</source>
+        <translation>Çok iyi</translation>
+    </message>
+    <message>
+        <source>Fair</source>
+        <translation>Orta</translation>
+    </message>
+    <message>
+        <source>Good</source>
+        <translation>İyi</translation>
+    </message>
+    <message>
+        <source>New device — not paired</source>
+        <translation>Yeni cihaz — eşleşmemiş</translation>
+    </message>
+    <message>
+        <source>No password</source>
+        <translation>Şifresiz</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Açık ağ</translation>
+    </message>
+    <message>
+        <source>Pair</source>
+        <translation>Eşleştir</translation>
+    </message>
+    <message>
+        <source>Paired</source>
+        <translation>Eşleşmiş</translation>
+    </message>
+    <message>
+        <source>Password protected</source>
+        <translation>Şifre korumalı</translation>
+    </message>
+    <message>
+        <source>Signal: {quality}</source>
+        <translation>Sinyal: {quality}</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Bilinmiyor</translation>
+    </message>
+    <message>
+        <source>Weak</source>
+        <translation>Zayıf</translation>
+    </message>
+    <message>
+        <source>battery %{n}</source>
+        <translation>pil %{n}</translation>
     </message>
 </context>
 <context>
