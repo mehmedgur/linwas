@@ -1,0 +1,684 @@
+{
+ "_note": "Windows terimi → Linux karşılığı. action: page (Linwas sayfası), settings (settings_map kimliği) veya search (Programlar araması). GNOME kısayolları Pardus 23'te gsettings ile doğrulandı.",
+ "entries": [
+  {
+   "kind": "setting",
+   "windows": [
+    "Denetim Masası",
+    "Control Panel"
+   ],
+   "tr": "Linwas › Tüm Ayarlar (Windows'taki Denetim Masası gibi).",
+   "en": "Linwas › All Settings (like the Windows Control Panel).",
+   "action": {
+    "page": "all_settings"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Ayarlar",
+    "Settings"
+   ],
+   "tr": "Sistem ayarları: Tüm Ayarlar › Sistem ayarlarını aç.",
+   "en": "System settings: All Settings › Open system settings.",
+   "action": {
+    "page": "all_settings"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Windows Update",
+    "Güncelleştirmeler"
+   ],
+   "tr": "Linwas › Sistem › Güncellemeler.",
+   "en": "Linwas › System › Updates.",
+   "action": {
+    "page": "updates"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Aygıt Yöneticisi",
+    "Device Manager",
+    "Sürücü",
+    "Driver"
+   ],
+   "tr": "Linwas › Sistem › Sürücüler ve Donanım ve Yazıcılar.",
+   "en": "Linwas › System › Drivers and Hardware & Printers.",
+   "action": {
+    "page": "drivers"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Görev Yöneticisi",
+    "Task Manager",
+    "Ctrl+Shift+Esc"
+   ],
+   "tr": "Linwas › Sistem › Görev Yöneticisi.",
+   "en": "Linwas › System › Task Manager.",
+   "action": {
+    "page": "taskmgr"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Programlar ve Özellikler",
+    "Programs and Features",
+    "Program ekle veya kaldır",
+    "Add or remove programs",
+    "Uygulamalar"
+   ],
+   "tr": "Linwas › Programlar › Kurulu programlar.",
+   "en": "Linwas › Software › Installed programs.",
+   "action": {
+    "page": "software"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Microsoft Store",
+    "Mağaza"
+   ],
+   "tr": "Linwas › Programlar: arayın ve “Kur”a basın.",
+   "en": "Linwas › Software: search and press “Install”.",
+   "action": {
+    "page": "software"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Disk Temizleme",
+    "Disk Cleanup"
+   ],
+   "tr": "Linwas › Sistem › Disk Temizliği.",
+   "en": "Linwas › System › Disk Cleanup.",
+   "action": {
+    "page": "cleanup"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Sistem Geri Yükleme",
+    "System Restore",
+    "Geri yükleme noktası",
+    "Restore point"
+   ],
+   "tr": "Linwas › Sistem › Yedekler ve Geri Alma (Timeshift tam yedek).",
+   "en": "Linwas › System › Backups & Rollback (Timeshift full backup).",
+   "action": {
+    "page": "backups"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Dosya Geçmişi",
+    "File History",
+    "Yedekleme",
+    "Backup"
+   ],
+   "tr": "Linwas › Sistem › Kişisel Yedekleme.",
+   "en": "Linwas › System › Personal Backup.",
+   "action": {
+    "page": "personal_backup"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Güç Seçenekleri",
+    "Power Options",
+    "Pil",
+    "Battery"
+   ],
+   "tr": "Linwas › Sistem › Güç ve Pil.",
+   "en": "Linwas › System › Power & Battery.",
+   "action": {
+    "page": "power"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Yazıcılar ve Tarayıcılar",
+    "Printers & scanners",
+    "Yazıcı ekle"
+   ],
+   "tr": "Linwas › Sistem › Donanım ve Yazıcılar.",
+   "en": "Linwas › System › Hardware & Printers.",
+   "action": {
+    "page": "hardware"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Ağ ve İnternet",
+    "Network",
+    "Wi-Fi",
+    "Kablosuz"
+   ],
+   "tr": "Linwas › Sistem › Wi-Fi ve Bluetooth.",
+   "en": "Linwas › System › Wi-Fi & Bluetooth.",
+   "action": {
+    "page": "network"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Bluetooth"
+   ],
+   "tr": "Linwas › Sistem › Wi-Fi ve Bluetooth.",
+   "en": "Linwas › System › Wi-Fi & Bluetooth.",
+   "action": {
+    "page": "network"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Fare",
+    "Mouse",
+    "Dokunmatik yüzey",
+    "Touchpad"
+   ],
+   "tr": "Sistem ayarları › Fare ve dokunmatik yüzey.",
+   "en": "System settings › Mouse & touchpad.",
+   "action": {
+    "settings": "mouse"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Klavye",
+    "Keyboard",
+    "Q klavye",
+    "F klavye",
+    "Giriş dili"
+   ],
+   "tr": "Sistem ayarları › Klavye (düzen eklemek için).",
+   "en": "System settings › Keyboard (to add a layout).",
+   "action": {
+    "settings": "keyboard"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Ses",
+    "Sound",
+    "Hoparlör",
+    "Mikrofon"
+   ],
+   "tr": "Sistem ayarları › Ses.",
+   "en": "System settings › Sound.",
+   "action": {
+    "settings": "sound"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Ekran",
+    "Display",
+    "Çözünürlük",
+    "Resolution",
+    "Ölçek"
+   ],
+   "tr": "Linwas › Arayüz › Ekran ve Ölçekleme.",
+   "en": "Linwas › Interface › Display & Scaling.",
+   "action": {
+    "page": "display"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Kişiselleştirme",
+    "Personalization",
+    "Arka plan",
+    "Duvar kağıdı",
+    "Wallpaper",
+    "Tema",
+    "Koyu mod",
+    "Dark mode"
+   ],
+   "tr": "Linwas › Arayüz › Tema ve Duvar Kâğıdı.",
+   "en": "Linwas › Interface › Theme & Wallpaper.",
+   "action": {
+    "page": "theme"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Görev çubuğu",
+    "Taskbar",
+    "Başlat menüsü",
+    "Start menu"
+   ],
+   "tr": "Linwas › Arayüz › Windows Görünümü.",
+   "en": "Linwas › Interface › Windows Appearance.",
+   "action": {
+    "page": "appearance"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Yazı tipleri",
+    "Fonts",
+    "Calibri",
+    "Arial",
+    "Times New Roman"
+   ],
+   "tr": "Linwas › Arayüz › Yazı Tipleri.",
+   "en": "Linwas › Interface › Fonts.",
+   "action": {
+    "page": "fonts"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Tarih ve saat",
+    "Date and time",
+    "Saat dilimi"
+   ],
+   "tr": "Sistem ayarları › Tarih ve saat.",
+   "en": "System settings › Date & time.",
+   "action": {
+    "settings": "datetime"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Bölge",
+    "Region",
+    "Dil",
+    "Language"
+   ],
+   "tr": "Sistem ayarları › Dil ve bölge.",
+   "en": "System settings › Language & region.",
+   "action": {
+    "settings": "region"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Kullanıcı hesapları",
+    "User accounts",
+    "Şifre değiştir"
+   ],
+   "tr": "Sistem ayarları › Kullanıcı hesapları.",
+   "en": "System settings › User accounts.",
+   "action": {
+    "settings": "users"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Varsayılan uygulamalar",
+    "Default apps"
+   ],
+   "tr": "Sistem ayarları › Varsayılan uygulamalar.",
+   "en": "System settings › Default apps.",
+   "action": {
+    "settings": "default_apps"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Bildirimler",
+    "Notifications"
+   ],
+   "tr": "Sistem ayarları › Bildirimler.",
+   "en": "System settings › Notifications.",
+   "action": {
+    "settings": "notifications"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Erişilebilirlik",
+    "Ease of Access",
+    "Accessibility",
+    "Büyüteç",
+    "Ekran okuyucu"
+   ],
+   "tr": "Sistem ayarları › Erişilebilirlik (Orca ekran okuyucu dahil).",
+   "en": "System settings › Accessibility (including the Orca screen reader).",
+   "action": {
+    "settings": "accessibility"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Sistem bilgisi",
+    "System information",
+    "Bu bilgisayar"
+   ],
+   "tr": "Linwas › Donanım ve Yazıcılar › Bilgisayarım.",
+   "en": "Linwas › Hardware & Printers › My computer.",
+   "action": {
+    "page": "hardware"
+   }
+  },
+  {
+   "kind": "setting",
+   "windows": [
+    "Sorun giderici",
+    "Troubleshooter"
+   ],
+   "tr": "Linwas › Sorun Giderme.",
+   "en": "Linwas › Troubleshooting.",
+   "action": {
+    "page": "troubleshoot"
+   }
+  },
+  {
+   "kind": "program",
+   "windows": [
+    "Word",
+    "Microsoft Word"
+   ],
+   "tr": "LibreOffice Writer (çoğu dağıtımda kurulu gelir).",
+   "en": "LibreOffice Writer (preinstalled on most distributions).",
+   "action": {
+    "search": "libreoffice writer"
+   }
+  },
+  {
+   "kind": "program",
+   "windows": [
+    "Excel",
+    "Microsoft Excel"
+   ],
+   "tr": "LibreOffice Calc.",
+   "en": "LibreOffice Calc.",
+   "action": {
+    "search": "libreoffice calc"
+   }
+  },
+  {
+   "kind": "program",
+   "windows": [
+    "PowerPoint"
+   ],
+   "tr": "LibreOffice Impress.",
+   "en": "LibreOffice Impress.",
+   "action": {
+    "search": "libreoffice impress"
+   }
+  },
+  {
+   "kind": "program",
+   "windows": [
+    "Outlook"
+   ],
+   "tr": "Thunderbird (e-postalar için Windows'tan Taşı › rehberler).",
+   "en": "Thunderbird (for e-mails see Import from Windows › guides).",
+   "action": {
+    "search": "thunderbird"
+   }
+  },
+  {
+   "kind": "program",
+   "windows": [
+    "Not Defteri",
+    "Notepad"
+   ],
+   "tr": "Metin Düzenleyici (GNOME: gnome-text-editor / gedit).",
+   "en": "Text Editor (GNOME: gnome-text-editor / gedit).",
+   "action": {
+    "search": "text editor"
+   }
+  },
+  {
+   "kind": "program",
+   "windows": [
+    "Paint"
+   ],
+   "tr": "Pinta veya Drawing.",
+   "en": "Pinta or Drawing.",
+   "action": {
+    "search": "pinta"
+   }
+  },
+  {
+   "kind": "program",
+   "windows": [
+    "Photoshop"
+   ],
+   "tr": "GIMP veya Krita.",
+   "en": "GIMP or Krita.",
+   "action": {
+    "search": "gimp"
+   }
+  },
+  {
+   "kind": "program",
+   "windows": [
+    "Dosya Gezgini",
+    "File Explorer",
+    "Bilgisayarım",
+    "This PC"
+   ],
+   "tr": "Dosyalar uygulaması (GNOME: Nautilus).",
+   "en": "The Files app (GNOME: Nautilus)."
+  },
+  {
+   "kind": "program",
+   "windows": [
+    "Windows Media Player",
+    "Filmler ve TV"
+   ],
+   "tr": "VLC.",
+   "en": "VLC.",
+   "action": {
+    "search": "vlc"
+   }
+  },
+  {
+   "kind": "program",
+   "windows": [
+    "WinRAR",
+    "7-Zip"
+   ],
+   "tr": "Arşiv Yöneticisi (dosyaya sağ tıklayıp “Burada aç”).",
+   "en": "Archive Manager (right-click a file › “Extract here”).",
+   "action": {
+    "search": "file-roller"
+   }
+  },
+  {
+   "kind": "program",
+   "windows": [
+    "Ekran Alıntısı Aracı",
+    "Snipping Tool"
+   ],
+   "tr": "Print Screen tuşu (GNOME ekran görüntüsü aracı).",
+   "en": "The Print Screen key (GNOME screenshot tool)."
+  },
+  {
+   "kind": "program",
+   "windows": [
+    "Hesap Makinesi",
+    "Calculator"
+   ],
+   "tr": "Hesap Makinesi (gnome-calculator).",
+   "en": "Calculator (gnome-calculator).",
+   "action": {
+    "search": "gnome-calculator"
+   }
+  },
+  {
+   "kind": "program",
+   "windows": [
+    "Komut İstemi",
+    "Command Prompt",
+    "PowerShell",
+    "cmd"
+   ],
+   "tr": "Terminal (Linwas ile çoğu işi terminalsiz yapabilirsiniz).",
+   "en": "Terminal (with Linwas you can do most things without it)."
+  },
+  {
+   "kind": "program",
+   "windows": [
+    ".exe",
+    "exe dosyası",
+    "Windows programı"
+   ],
+   "tr": "Linux .exe çalıştırmaz. Programlar sayfasında Linux karşılığını arayın.",
+   "en": "Linux doesn't run .exe files. Search the Software page for a Linux alternative.",
+   "action": {
+    "page": "software"
+   }
+  },
+  {
+   "kind": "shortcut",
+   "windows": [
+    "Windows tuşu",
+    "Win tuşu",
+    "Başlat"
+   ],
+   "tr": "Super (Windows) tuşu: etkinlikler ve uygulama araması.",
+   "en": "Super (Windows) key: activities and app search."
+  },
+  {
+   "kind": "shortcut",
+   "windows": [
+    "Alt+Tab"
+   ],
+   "tr": "Alt+Tab: uygulamalar arasında geçiş (aynı).",
+   "en": "Alt+Tab: switch between apps (same)."
+  },
+  {
+   "kind": "shortcut",
+   "windows": [
+    "Alt+F4"
+   ],
+   "tr": "Alt+F4: pencereyi kapat (aynı).",
+   "en": "Alt+F4: close the window (same)."
+  },
+  {
+   "kind": "shortcut",
+   "windows": [
+    "Win+L",
+    "Kilitle"
+   ],
+   "tr": "Super+L: ekranı kilitle (aynı).",
+   "en": "Super+L: lock the screen (same)."
+  },
+  {
+   "kind": "shortcut",
+   "windows": [
+    "Ctrl+Alt+Del"
+   ],
+   "tr": "Ctrl+Alt+Delete: oturumu kapatma penceresi. Görev Yöneticisi için Linwas › Görev Yöneticisi.",
+   "en": "Ctrl+Alt+Delete: log out dialog. For the Task Manager use Linwas › Task Manager.",
+   "action": {
+    "page": "taskmgr"
+   }
+  },
+  {
+   "kind": "shortcut",
+   "windows": [
+    "Print Screen",
+    "PrtSc",
+    "Win+Shift+S"
+   ],
+   "tr": "Print Screen: ekran görüntüsü aracı.",
+   "en": "Print Screen: screenshot tool."
+  },
+  {
+   "kind": "shortcut",
+   "windows": [
+    "Win+D",
+    "Masaüstünü göster"
+   ],
+   "tr": "Bu kısayol GNOME'da tanımlı değil; Ayarlar › Klavye › Kısayollar'dan eklenebilir.",
+   "en": "Not set on GNOME; add it in Settings › Keyboard › Shortcuts.",
+   "action": {
+    "settings": "keyboard"
+   }
+  },
+  {
+   "kind": "shortcut",
+   "windows": [
+    "Win+R",
+    "Çalıştır"
+   ],
+   "tr": "Alt+F2: komut çalıştır penceresi.",
+   "en": "Alt+F2: run a command."
+  },
+  {
+   "kind": "concept",
+   "windows": [
+    "C sürücüsü",
+    "C:",
+    "Program Files"
+   ],
+   "tr": "Linux'ta sürücü harfi yoktur. Kişisel dosyalarınız ev klasörünüzdedir (/home/<ad>); programlar sistem klasörlerine kurulur.",
+   "en": "Linux has no drive letters. Your files are in your home folder (/home/<name>); programs are installed into system folders."
+  },
+  {
+   "kind": "concept",
+   "windows": [
+    "Yönetici",
+    "Administrator",
+    "Yönetici olarak çalıştır"
+   ],
+   "tr": "Sistem değişikliklerinde şifreniz sorulur; Linwas bunu tek seferde ister (Uygula).",
+   "en": "System changes ask for your password; Linwas asks once (Apply)."
+  },
+  {
+   "kind": "concept",
+   "windows": [
+    "Antivirüs",
+    "Windows Defender"
+   ],
+   "tr": "Linux'ta virüs çok nadirdir; programları depolardan kurmak ve güncel kalmak en iyi korumadır.",
+   "en": "Viruses are very rare on Linux; installing from the software sources and staying updated is the best protection.",
+   "action": {
+    "page": "updates"
+   }
+  },
+  {
+   "kind": "concept",
+   "windows": [
+    "Kayıt Defteri",
+    "Registry",
+    "regedit"
+   ],
+   "tr": "Linux'ta kayıt defteri yoktur; ayarlar metin dosyalarında ve ayar uygulamalarında tutulur.",
+   "en": "Linux has no registry; settings live in text files and settings apps."
+  },
+  {
+   "kind": "concept",
+   "windows": [
+    "Geri Dönüşüm Kutusu",
+    "Recycle Bin"
+   ],
+   "tr": "Çöp (Dosyalar uygulamasında solda).",
+   "en": "Trash (on the left in the Files app)."
+  }
+ ]
+}

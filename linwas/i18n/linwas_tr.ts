@@ -180,6 +180,14 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <source>Settings</source>
         <translation>Ayarlar</translation>
     </message>
+    <message>
+        <source>How was it on Windows?</source>
+        <translation>Windows'ta nasıldı?</translation>
+    </message>
+    <message>
+        <source>Press Enter to look up a Windows term</source>
+        <translation>Bir Windows terimini aramak için Enter'a basın</translation>
+    </message>
 </context>
 <context>
     <name>StatusBar</name>
@@ -2886,6 +2894,57 @@ Linux'ta:
     <message>
         <source>{ssid}: password missing or network type not supported</source>
         <translation>{ssid}: şifre eksik ya da ağ türü desteklenmiyor</translation>
+    </message>
+</context>
+<context>
+    <name>GuidePage</name>
+    <message>
+        <source>Concepts</source>
+        <translation>Kavramlar</translation>
+    </message>
+    <message>
+        <source>Everything</source>
+        <translation>Tümü</translation>
+    </message>
+    <message>
+        <source>Find program</source>
+        <translation>Programı bul</translation>
+    </message>
+    <message>
+        <source>How was it on Windows?</source>
+        <translation>Windows'ta nasıldı?</translation>
+    </message>
+    <message>
+        <source>Keyboard shortcuts</source>
+        <translation>Klavye kısayolları</translation>
+    </message>
+    <message>
+        <source>Nothing found. Try another word or ask the assistant.</source>
+        <translation>Bir şey bulunamadı. Başka bir sözcük deneyin ya da yardımcıya sorun.</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Aç</translation>
+    </message>
+    <message>
+        <source>Open settings</source>
+        <translation>Ayarları aç</translation>
+    </message>
+    <message>
+        <source>Programs</source>
+        <translation>Programlar</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>Ayarlar</translation>
+    </message>
+    <message>
+        <source>Type what you used on Windows — a setting, a program or a shortcut.</source>
+        <translation>Windows'ta kullandığınız şeyi yazın — bir ayar, program ya da kısayol.</translation>
+    </message>
+    <message>
+        <source>e.g. Control Panel, Word, Ctrl+Alt+Del</source>
+        <translation>ör. Denetim Masası, Word, Ctrl+Alt+Del</translation>
     </message>
 </context>
 </TS>

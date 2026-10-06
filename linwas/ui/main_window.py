@@ -32,6 +32,7 @@ from linwas.ui.pages.backups import BackupsPage
 from linwas.ui.pages.base import BasePage
 from linwas.ui.pages.cleanup import CleanupPage
 from linwas.ui.pages.drivers import DriversPage
+from linwas.ui.pages.guide import GuidePage
 from linwas.ui.pages.hardware import HardwarePage
 from linwas.ui.pages.interface import DisplayPage, FontsPage, ThemePage, WindowsAppearancePage
 from linwas.ui.pages.migrate import MigratePage
@@ -317,6 +318,10 @@ class MainWindow(QMainWindow):
         self._add_page("fonts", FontsPage(self._stack))
         self._add_page("display", DisplayPage(self._stack))
         self._add_page("troubleshoot", TroubleshootPage(self._stack))
+        guide = GuidePage(self._stack)
+        guide.search_software.connect(self._search_software)
+        self._add_page("guide", guide)
+        self._sidebar.guide_search.connect(self._open_guide)
         settings_page = SettingsPage(self._stack)
         settings_page.theme_changed.connect(self.apply_theme)
         settings_page.close_action_changed.connect(self._on_close_action_changed)
@@ -387,6 +392,17 @@ class MainWindow(QMainWindow):
         self._run_started = now_iso()
         self._running_tasks = temp.all_tasks
         self._start_progress(temp)
+
+    def _open_guide(self, text: str) -> None:
+        if text:
+            self._pages["guide"].set_query(text)
+            self._show_page("guide")
+
+    def _search_software(self, text: str) -> None:
+        page = self._pages["software"]
+        page._tabs.setCurrentIndex(0)
+        page._search.setText(text)
+        self._show_page("software")
 
     def run_onboarding(self) -> None:
         from linwas.ui.dialogs.onboarding import OnboardingWizard

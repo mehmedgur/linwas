@@ -70,6 +70,7 @@ MENU: list[MenuItem] = [
     ),
     MenuItem("software", "Software"),
     MenuItem("troubleshoot", "Troubleshooting"),
+    MenuItem("guide", "How was it on Windows?"),
 ]
 
 BOTTOM_ITEMS: list[MenuItem] = [
@@ -105,6 +106,7 @@ class _NavButton(QPushButton):
 class Sidebar(QWidget):
     """Sol gezinme menüsü."""
 
+    guide_search = Signal(str)
     page_requested = Signal(str)  # menü öğesi ID'si
 
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -121,6 +123,11 @@ class Sidebar(QWidget):
         self._search.setPlaceholderText(tr("Search"))
         self._search.setClearButtonEnabled(True)
         self._search.textChanged.connect(self._filter)
+        # Enter: Windows terimini "Windows'ta nasıl?" rehberinde ara
+        self._search.returnPressed.connect(
+            lambda: self.guide_search.emit(self._search.text().strip())
+        )
+        self._search.setToolTip(tr("Press Enter to look up a Windows term"))
         outer.addWidget(self._search)
 
         # Kaydırılabilir menü alanı
@@ -286,4 +293,5 @@ def _translation_markers() -> None:
     tr("Display & Scaling")
     tr("Software")
     tr("Troubleshooting")
+    tr("How was it on Windows?")
     tr("Settings")
