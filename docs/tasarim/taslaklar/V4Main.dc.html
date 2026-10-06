@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Linwas v4 — Ana pencere (Microsoft rehberi)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#005fb8}a:hover{color:#003e78}
+/* Windows rehberi: renk geçişleri 83 ms, konum değişimi 167 ms cubic-bezier(0,0,0,1) */
+.btn{height:32px;padding:0 11px;box-sizing:border-box;border-radius:4px;border:1px solid var(--ctl-stroke);border-bottom-color:var(--ctl-stroke-2);background:var(--ctl);color:var(--text);font:inherit;font-size:14px;line-height:20px;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:background-color 83ms linear,color 83ms linear}
+.btn:hover{background:var(--ctl-hover)}
+.btn:active{background:var(--ctl-press);color:var(--text-2);border-bottom-color:var(--ctl-stroke)}
+.btn[disabled]{background:var(--ctl-dis);color:var(--text-dis);border-color:var(--ctl-stroke);cursor:default}
+.btn-accent{background:var(--accent);border-color:var(--accent-stroke);color:var(--on-accent)}
+.btn-accent:hover{background:var(--accent-hover)}
+.btn-accent:active{background:var(--accent-press);color:var(--on-accent-2);border-color:transparent}
+.btn-accent[disabled]{background:var(--accent-dis);border-color:transparent;color:var(--on-accent-dis)}
+.sbtn{height:32px;padding:0 11px;border:0;border-radius:4px;background:transparent;color:var(--text);font:inherit;font-size:14px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;transition:background-color 83ms linear}
+.sbtn:hover{background:var(--subtle-hover)}
+.sbtn:active{background:var(--subtle-press);color:var(--text-2)}
+.sbtn.on{background:var(--subtle-hover)}
+.btn:focus-visible,.btn-accent:focus-visible,.sbtn:focus-visible,.nav:focus-visible,.card-link:focus-visible,.tgl:focus-visible,.crumb:focus-visible,.cap:focus-visible,.litem:focus-visible{outline:2px solid var(--focus-out);outline-offset:1px;box-shadow:0 0 0 1px var(--focus-in)}
+.cap{height:48px;width:40px;border:0;border-radius:4px;background:transparent;color:var(--text);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background-color 83ms linear}
+.cap:hover{background:var(--subtle-hover)}
+.cap[disabled]{color:var(--text-dis);background:transparent;cursor:default}
+.nav{position:relative;height:36px;width:100%;padding:0 12px 0 16px;box-sizing:border-box;border:0;border-radius:4px;background:transparent;color:var(--text);font:inherit;font-size:14px;display:flex;align-items:center;gap:16px;text-align:left;cursor:pointer;transition:background-color 83ms linear}
+.nav:hover{background:var(--subtle-hover)}
+.nav:active{background:var(--subtle-press);color:var(--text-2)}
+.nav.sel{background:var(--subtle-hover)}
+/* Gezinme seçim çubuğu: öğeler arasında kayar (250 ms, Windows giriş eğrisi) */
+.pill{position:absolute;left:4px;width:3px;height:16px;border-radius:2px;background:var(--accent-text);transition:top 250ms cubic-bezier(0,0,0,1)}
+/* Windows sayfa geçişleri: giriş = aşağıdan kayarak belirme, alt sayfa = içeri yakınlaşma */
+@keyframes lw-enter{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes lw-drill{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+@keyframes lw-fade{from{opacity:0}to{opacity:1}}
+@keyframes lw-dlg{from{opacity:0;transform:scale(1.05)}to{opacity:1;transform:none}}
+@keyframes lw-bar{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.page-enter{animation:lw-enter 250ms cubic-bezier(0,0,0,1) both}
+.drill-in{animation:lw-drill 250ms cubic-bezier(0,0,0,1) both}
+.smoke{animation:lw-fade 167ms linear both}
+.dlg-in{animation:lw-dlg 250ms cubic-bezier(0,0,0,1) both}
+.bar-in{animation:lw-bar 167ms cubic-bezier(0,0,0,1) both}
+/* Sistemde "hareketi azalt" açıksa tüm hareketler kapanır */
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.card{background:var(--card);border:1px solid var(--card-stroke);border-radius:4px;box-sizing:border-box}
+.card-link{width:100%;font:inherit;color:var(--text);text-align:left;cursor:pointer;transition:background-color 83ms linear}
+.card-link:hover{background:var(--card-hover)}
+.card-link:active{background:var(--card-press)}
+.tgl{width:40px;height:20px;padding:0;box-sizing:border-box;border-radius:10px;border:1px solid var(--text-2);background:var(--ctl-alt);position:relative;cursor:pointer;transition:background-color 83ms linear}
+.tgl::after{content:"";position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:6px;background:var(--text-2);transition:left 167ms cubic-bezier(0,0,0,1),width 83ms,height 83ms,top 83ms}
+.tgl:hover::after{width:14px;height:14px;top:2px}
+.tgl.on{background:var(--accent);border-color:var(--accent)}
+.tgl.on::after{left:23px;background:var(--on-accent)}
+.tgl.on:hover::after{left:22px}
+.search{height:32px;padding:0 8px 0 11px;box-sizing:border-box;border:1px solid var(--ctl-stroke);border-bottom:1px solid var(--text-2);border-radius:4px;background:var(--ctl);display:flex;align-items:center;gap:8px;transition:background-color 83ms linear}
+.search:hover{background:var(--ctl-hover)}
+.search:focus-within{background:var(--ctl-focus);border-bottom:2px solid var(--accent-text)}
+.search input{flex:1;min-width:0;border:0;outline:none;background:transparent;font:inherit;font-size:14px;color:var(--text)}
+.search input::placeholder{color:var(--text-2)}
+.crumb{border:0;background:transparent;padding:0;font:inherit;font-size:28px;line-height:36px;font-weight:600;color:var(--text-2);cursor:pointer;border-radius:4px}
+.crumb:hover{color:var(--text)}
+.litem{position:relative;transition:background-color 83ms linear;cursor:pointer}
+.litem:hover{background:var(--subtle-hover)}
+.litem.sel{background:var(--subtle-hover)}
+.litem.sel::before{content:"";position:absolute;left:0;top:12px;width:3px;height:16px;border-radius:2px;background:var(--accent-text)}
+.cb{width:16px;height:16px;margin:0;accent-color:var(--accent);cursor:pointer}
+</style>
+</helmet>
+<div style="position: relative; width: 1200px; height: 760px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--win-stroke); border-radius: 8px; font-family: 'Segoe UI Variable Text', 'Segoe UI', 'Noto Sans', sans-serif; font-size: 14px; line-height: 20px; color: var(--text); background: var(--mica); --mica: {{t.mica}}; --win-stroke: {{t.winStroke}}; --text: {{t.text}}; --text-2: {{t.text2}}; --text-dis: {{t.textDis}}; --accent: {{t.accent}}; --accent-text: {{t.accentText}}; --accent-hover: {{t.accentHover}}; --accent-press: {{t.accentPress}}; --accent-dis: {{t.accentDis}}; --accent-stroke: {{t.accentStroke}}; --on-accent: {{t.onAccent}}; --on-accent-2: {{t.onAccent2}}; --on-accent-dis: {{t.onAccentDis}}; --ctl: {{t.ctl}}; --ctl-alt: {{t.ctlAlt}}; --ctl-hover: {{t.ctlHover}}; --ctl-press: {{t.ctlPress}}; --ctl-dis: {{t.ctlDis}}; --ctl-focus: {{t.ctlFocus}}; --ctl-stroke: {{t.ctlStroke}}; --ctl-stroke-2: {{t.ctlStroke2}}; --subtle-hover: {{t.subHover}}; --subtle-press: {{t.subPress}}; --card: {{t.card}}; --card-hover: {{t.cardHover}}; --card-press: {{t.cardPress}}; --card-stroke: {{t.cardStroke}}; --divider: {{t.divider}}; --focus-out: {{t.focusOut}}; --focus-in: {{t.focusIn}}; --ok: {{t.ok}}; --warn: {{t.warn}}; --err: {{t.err}}; --warn-bg: {{t.warnBg}}; --ok-bg: {{t.okBg}}; --on-ok: {{t.onOk}}; --dlg: {{t.dlg}}">
+
+<!-- Başlık çubuğu: arama kutusu olduğu için uzun (48 px) -->
+<div style="height: 48px; flex: 0 0 48px; display: flex; align-items: center; position: relative">
+<button type="button" class="cap" onClick="{{goBack}}" disabled="{{noBack}}" aria-label="Geri" style="margin-left: 4px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 8H2.5M7 3.5L2.5 8 7 12.5"/></svg></button>
+<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="margin-left: 12px"><rect x="1" y="1" width="14" height="14" rx="3" fill="var(--accent)"/><path d="M4.5 8.2l2.2 2.2 4.8-5" fill="none" stroke="var(--on-accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<span style="margin-left: 16px; font-size: 12px; line-height: 16px">Linwas</span>
+<label class="search" style="position: absolute; left: 50%; top: 8px; width: 400px; margin-left: -200px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Ayar, program veya Windows terimi ara</span>
+<input type="search" placeholder="Ara (ör. Denetim Masası, Photoshop)">
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--text-2)" stroke-width="1" stroke-linecap="round" aria-hidden="true"><circle cx="9.5" cy="6.5" r="5"/><path d="M6 10L1.5 14.5"/></svg></label>
+<div style="flex: 1"></div>
+<div aria-hidden="true" style="display: flex; align-self: flex-start; height: 32px">
+<div style="width: 46px; display: flex; align-items: center; justify-content: center"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M0 5h10" stroke="var(--text)"/></svg></div>
+<div style="width: 46px; display: flex; align-items: center; justify-content: center"><svg width="10" height="10" viewBox="0 0 10 10"><rect x=".5" y=".5" width="9" height="9" rx="1" fill="none" stroke="var(--text)"/></svg></div>
+<div style="width: 46px; display: flex; align-items: center; justify-content: center"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M0 0l10 10M10 0L0 10" stroke="var(--text)"/></svg></div>
+</div>
+</div>
+
+<!-- Gövde -->
+<div style="flex: 1; min-height: 0; display: flex">
+
+<!-- NavigationView (Left kipi: pencere ≥ 1008 px) -->
+<nav aria-label="Ana menü" style="position: relative; flex: 0 0 320px; padding: 4px 4px 8px; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px">
+<span class="pill" aria-hidden="true" style="top: {{pillTop}}"></span>
+<button type="button" class="nav {{nav.home}}" onClick="{{go.home}}"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7L8 2.5 13.5 7v6a1 1 0 0 1-1 1H10v-4H6v4H3.5a1 1 0 0 1-1-1z"/></svg>Giriş</button>
+<button type="button" class="nav {{nav.ai}}" onClick="{{go.ai}}"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 2.5h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7l-3 2.5v-2.5H2.5a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1z"/><circle cx="5.5" cy="7" r=".5" fill="currentColor"/><circle cx="8" cy="7" r=".5" fill="currentColor"/><circle cx="10.5" cy="7" r=".5" fill="currentColor"/></svg>AI Soru</button>
+<button type="button" class="nav {{nav.system}}" onClick="{{go.system}}"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="9" rx="1"/><path d="M5.5 14h5M8 11.5V14"/></svg><span style="flex: 1">Sistem</span><span style="min-width: 16px; height: 16px; padding: 0 4px; box-sizing: border-box; border-radius: 8px; background: var(--accent); color: var(--on-accent); font-size: 12px; line-height: 16px; text-align: center">12</span></button>
+<button type="button" class="nav {{nav.look}}" onClick="{{go.look}}"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1.5a6.5 6.5 0 1 0 0 13c.9 0 1.4-.6 1.4-1.3 0-.9-.8-1.1-.8-1.9 0-.7.6-1.3 1.4-1.3h1.5a3 3 0 0 0 3-3C14.5 4 11.6 1.5 8 1.5z"/><circle cx="4.8" cy="7.5" r=".9"/><circle cx="7" cy="4.6" r=".9"/><circle cx="10.4" cy="4.9" r=".9"/></svg>Arayüz</button>
+<button type="button" class="nav {{nav.apps}}" onClick="{{go.apps}}"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Program</button>
+<button type="button" class="nav {{nav.fix}}" onClick="{{go.fix}}"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 1.8a3.5 3.5 0 0 0-3.3 4.6L2 11.6a1.4 1.4 0 0 0 2 2l5.2-5.2a3.5 3.5 0 0 0 4.6-3.3l-2 2-1.8-.5-.5-1.8z"/></svg><span style="flex: 1">Sorun Giderme</span><span style="width: 8px; height: 8px; border-radius: 4px; background: var(--err)"></span></button>
+<div style="flex: 1"></div>
+<button type="button" class="nav {{nav.settings}}" onClick="{{go.settings}}"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="2"/><path d="M6.9 1.5h2.2l.4 1.6 1.2.5 1.4-.9 1.6 1.6-.9 1.4.5 1.2 1.6.4v2.2l-1.6.4-.5 1.2.9 1.4-1.6 1.6-1.4-.9-1.2.5-.4 1.6H6.9l-.4-1.6-1.2-.5-1.4.9-1.6-1.6.9-1.4-.5-1.2-1.6-.4V6.9l1.6-.4.5-1.2-.9-1.4 1.6-1.6 1.4.9 1.2-.5z"/></svg>Ayarlar</button>
+</nav>
+
+<!-- İçerik katmanı -->
+<main style="flex: 1; min-width: 0; padding: 0 40px 16px 40px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden">
+
+<!-- Sayfa başlığı: 52 px, BreadcrumbBar + sayfa komutları -->
+<div style="height: 52px; flex: 0 0 52px; display: flex; align-items: center; gap: 8px">
+<nav aria-label="Konum" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px">
+<sc-if value="{{isSub}}" hint-placeholder-val="{{ false }}">
+<button type="button" class="crumb" onClick="{{goBack}}">{{pageTitle}}</button>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--text-2)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+<h1 aria-current="page" style="margin: 0; font-size: 28px; line-height: 36px; font-weight: 600">{{subTitle}}</h1>
+</sc-if>
+<sc-if value="{{isTop}}" hint-placeholder-val="{{ true }}">
+<h1 style="margin: 0; font-size: 28px; line-height: 36px; font-weight: 600">{{pageTitle}}</h1>
+</sc-if>
+</nav>
+<button type="button" class="sbtn"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2v3h-3"/></svg>Tara</button>
+<button type="button" class="sbtn {{aiCls}}" onClick="{{toggleAi}}" aria-pressed="{{showAiStr}}"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11" rx="1"/><path d="M10 2.5v11"/></svg>Yardımcı</button>
+</div>
+
+<div style="flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 12px; padding-top: 4px">
+
+<!-- Sistem ana sayfası: Windows Ayarlar düzeni -->
+<sc-if value="{{isSystemTop}}" hint-placeholder-val="{{ true }}">
+<div class="page-enter" style="display: flex; flex-direction: column; gap: 12px">
+<sc-if value="{{started}}" hint-placeholder-val="{{ false }}">
+<div role="status" class="bar-in" style="display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 16px; box-sizing: border-box; background: var(--ok-bg); border: 1px solid var(--card-stroke); border-radius: 4px">
+<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--ok)"/><path d="M5 8.2l2 2 4-4.2" fill="none" stroke="var(--on-ok)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<span style="font-weight: 600">İşlemler başladı.</span><span>İlerlemeyi alttaki durum çubuğundan izleyebilirsiniz.</span>
+</div>
+</sc-if>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+<div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 12px"><svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="var(--ok)" stroke-width=".8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1.5l5 2v4c0 3-2.2 5.6-5 6.5-2.8-.9-5-3.5-5-6.5v-4z"/><path d="M5.8 8l1.6 1.6 3-3.2"/></svg><span style="font-weight: 600">İyi durumda</span></div>
+<span style="font-size: 12px; line-height: 16px; color: var(--text-2)">Son tarama 10 dakika önce · 2 öneri</span>
+</div>
+<div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 12px"><svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="4.5" width="13" height="7" rx="1.5"/><path d="M4 9h4"/><circle cx="11.5" cy="9" r=".4" fill="currentColor"/></svg><span style="font-weight: 600">312 / 500 GB</span></div>
+<div role="progressbar" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100" aria-label="Disk doluluğu yüzde 62" style="height: 3px; border-radius: 2px; background: var(--divider)"><div style="width: 62%; height: 3px; border-radius: 2px; background: var(--accent-text)"></div></div>
+</div>
+<div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 12px"><svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8a5.5 5.5 0 1 0 1.6-3.9M2.5 2v3h3"/><path d="M8 5v3l2 1.5"/></svg><span style="font-weight: 600">Son yedek: dün</span></div>
+<span style="font-size: 12px; line-height: 16px; color: var(--text-2)">21:40 · Timeshift</span>
+</div>
+</div>
+
+<section aria-label="Sistem ayarları" style="display: flex; flex-direction: column; gap: 4px">
+<button type="button" class="card card-link" onClick="{{openUpdates}}" style="display: flex; align-items: center; gap: 16px; min-height: 68px; padding: 0 16px">
+<svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8a5.5 5.5 0 0 1 9.6-3.6M13.5 8a5.5 5.5 0 0 1-9.6 3.6M12.5 1.5v3h-3M3.5 14.5v-3h3"/></svg>
+<span style="flex: 1; display: flex; flex-direction: column"><span>Güncellemeler</span><span style="font-size: 12px; line-height: 16px; color: var(--text-2)">12 güncelleme hazır · 3 güvenlik yaması</span></span>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+</button>
+<button type="button" class="card card-link" style="display: flex; align-items: center; gap: 16px; min-height: 68px; padding: 0 16px">
+<svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="9" rx="1"/><path d="M5.5 14h5M8 11.5V14"/></svg>
+<span style="flex: 1; display: flex; flex-direction: column"><span>Sürücüler</span><span style="font-size: 12px; line-height: 16px; color: var(--text-2)">Ekran kartı için önerilen sürücü kurulu değil</span></span>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--warn)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2l6.5 11.5h-13z"/><path d="M8 6.5v3M8 11.5v.01"/></svg>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+</button>
+<button type="button" class="card card-link" style="display: flex; align-items: center; gap: 16px; min-height: 68px; padding: 0 16px">
+<svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8a5.5 5.5 0 1 0 1.6-3.9M2.5 2v3h3"/><path d="M8 5v3l2 1.5"/></svg>
+<span style="flex: 1; display: flex; flex-direction: column"><span>Yedekler ve geri alma</span><span style="font-size: 12px; line-height: 16px; color: var(--text-2)">3 yedek · toplam 8,4 GB</span></span>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+</button>
+<div class="card" style="display: flex; align-items: center; gap: 16px; min-height: 68px; padding: 0 16px">
+<svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 6a9.5 9.5 0 0 1 13 0M3.8 8.5a6 6 0 0 1 8.4 0M6 11a3 3 0 0 1 4 0"/><circle cx="8" cy="13.3" r=".5" fill="currentColor"/></svg>
+<span style="flex: 1; display: flex; flex-direction: column"><span>Wi-Fi</span><span style="font-size: 12px; line-height: 16px; color: var(--text-2)">{{wifiText}}</span></span>
+<span>{{wifiState}}</span>
+<button type="button" class="tgl {{wifiCls}}" onClick="{{toggleWifi}}" aria-pressed="{{wifiPressed}}" aria-label="Wi-Fi"></button>
+</div>
+<div class="card" style="display: flex; align-items: center; gap: 16px; min-height: 68px; padding: 0 16px">
+<svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 5l7 6-3.5 3V2l3.5 3-7 6"/></svg>
+<span style="flex: 1; display: flex; flex-direction: column"><span>Bluetooth</span><span style="font-size: 12px; line-height: 16px; color: var(--text-2)">{{btText}}</span></span>
+<span>{{btState}}</span>
+<button type="button" class="tgl {{btCls}}" onClick="{{toggleBt}}" aria-pressed="{{btPressed}}" aria-label="Bluetooth"></button>
+</div>
+</section>
+</div>
+</sc-if>
+
+<!-- Alt sayfa: Sistem › Güncellemeler -->
+<sc-if value="{{isUpdates}}" hint-placeholder-val="{{ false }}">
+<div class="drill-in" style="display: flex; flex-direction: column; gap: 12px">
+<div role="status" style="display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 16px; box-sizing: border-box; background: var(--card); border: 1px solid var(--card-stroke); border-radius: 4px">
+<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent-text)"/><path d="M8 7.3v3.7M8 4.8v.1" stroke="var(--on-accent)" stroke-width="1.4" stroke-linecap="round"/></svg>
+<span style="font-weight: 600">12 güncelleme hazır</span>
+<span>3 tanesi güvenlik yaması · 480 MB</span>
+</div>
+<div style="display: flex; align-items: center; gap: 8px">
+<button type="button" class="btn btn-accent" disabled="{{noneSelected}}" onClick="{{openDlg}}">Seçilenleri kuyruğa ekle ({{selCount}})</button>
+<button type="button" class="btn">Tümünü seç</button>
+</div>
+<div role="listbox" aria-label="Güncellemeler" aria-multiselectable="true" class="card" style="display: flex; flex-direction: column; overflow: hidden">
+<div style="display: grid; grid-template-columns: 40px minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) 80px 96px; align-items: center; height: 32px; padding: 0 12px; font-size: 12px; line-height: 16px; color: var(--text-2); border-bottom: 1px solid var(--divider)">
+<span></span><span>Paket</span><span>Mevcut</span><span>Yeni</span><span style="text-align: right; padding-right: 12px">Boyut</span><span>Tür</span>
+</div>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+<label role="option" aria-selected="{{r.ariaSel}}" class="litem {{r.cls}}" style="display: grid; grid-template-columns: 40px minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) 80px 96px; align-items: center; min-height: 40px; padding: 0 12px; box-sizing: border-box">
+<span><input type="checkbox" class="cb" checked="{{r.checked}}" onChange="{{r.toggle}}" aria-label="{{r.label}}"></span>
+<span>{{r.name}}</span>
+<span style="color: var(--text-2)">{{r.cur}}</span>
+<span>{{r.next}}</span>
+<span style="text-align: right; padding-right: 12px; color: var(--text-2)">{{r.size}}</span>
+<span style="display: flex; align-items: center; gap: 8px; color: {{r.kindColor}}"><span style="width: 8px; height: 8px; border-radius: 4px; background: {{r.kindColor}}"></span>{{r.kind}}</span>
+</label>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isOther}}" hint-placeholder-val="{{ false }}">
+<div class="card page-enter" style="padding: 16px; color: var(--text-2)">Bu sayfanın taslağı sırada. Sistem sayfası ve Güncellemeler alt sayfası tıklanabilir.</div>
+</sc-if>
+</div>
+</main>
+
+<!-- Yardımcı bölmesi -->
+<sc-if value="{{showAi}}" hint-placeholder-val="{{ false }}">
+<aside aria-label="AI yardımcısı" style="flex: 0 0 320px; margin: 0 8px 8px 0; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; background: var(--card); border: 1px solid var(--card-stroke); border-radius: 8px">
+<h2 style="margin: 0; font-size: 14px; font-weight: 600">Yardımcı · Gemini</h2>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 8px">
+<div style="align-self: flex-end; max-width: 85%; padding: 8px 12px; border-radius: 4px; background: var(--accent); color: var(--on-accent)">Oyunlarda ekran takılıyor.</div>
+<div style="align-self: flex-start; max-width: 92%; padding: 8px 12px; border-radius: 4px; background: var(--ctl); border: 1px solid var(--card-stroke)">Önerilen ekran kartı sürücüsü kurulu değil. Kurmak sorunu büyük olasılıkla çözer.</div>
+<div><button type="button" class="btn btn-accent">Sürücüyü kuyruğa ekle</button></div>
+</div>
+<label class="search"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Yardımcıya sor</span><input type="text" placeholder="Bir şey sorun"></label>
+</aside>
+</sc-if>
+</div>
+
+<!-- Durum çubuğu -->
+<div role="status" style="height: 24px; flex: 0 0 24px; display: flex; align-items: center; gap: 8px; padding: 0 16px; font-size: 12px; line-height: 16px; color: var(--text-2); border-top: 1px solid var(--divider)">
+<span style="color: var(--text)">2 işlem kuyrukta</span><span>·</span><span>Güncellemeler indiriliyor %45</span>
+<div role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" aria-label="İndirme ilerlemesi" style="width: 120px; height: 3px; border-radius: 2px; background: var(--divider)"><div style="width: 45%; height: 3px; border-radius: 2px; background: var(--accent-text)"></div></div>
+<div style="flex: 1"></div>
+<span>Pardus 23 · GNOME · Linwas 2.0</span>
+</div>
+
+<!-- Onay iletişim kutusu: Smoke soluklaşarak, kutu 1,05'ten küçülerek belirir -->
+<sc-if value="{{dlgOpen}}" hint-placeholder-val="{{ false }}">
+<div class="smoke" style="position: absolute; inset: 0; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; z-index: 5">
+<div role="dialog" aria-modal="true" aria-labelledby="v4-dlg-title" class="dlg-in" style="width: 448px; background: var(--dlg); border: 1px solid var(--card-stroke); border-radius: 8px; box-shadow: 0 32px 64px rgba(0,0,0,0.19), 0 2px 21px rgba(0,0,0,0.15); overflow: hidden">
+<div style="padding: 24px; display: flex; flex-direction: column; gap: 12px">
+<h2 id="v4-dlg-title" style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 600">{{selCount}} güncellemeyi yükleyelim mi?</h2>
+<p style="margin: 0">Seçilen güncellemeler kuyruğa eklenip sırayla yüklenecek. Sistem şifreniz bir kez sorulacak.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 24px; background: var(--mica); border-top: 1px solid var(--divider)">
+<button type="button" class="btn btn-accent" onClick="{{confirmDlg}}">Yükle</button>
+<button type="button" class="btn" onClick="{{closeDlg}}">İptal</button>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"showAi":{"editor":"boolean","default":false},"$preview":{"width":1200,"height":760}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { page: 'system', sub: null, aiOverride: null, wifi: true, bt: false, sel: { 0: true, 1: true }, dlg: false, started: false };
+  }
+  renderVals() {
+    var self = this;
+    var dark = this.props.dark ?? false;
+    // WinUI tema kaynakları (açık / koyu). Mica yerine Microsoft'un önerdiği düz yedek renk.
+    var t = dark ? {
+      mica: '#202020', winStroke: 'rgba(255,255,255,0.08)',
+      text: '#FFFFFF', text2: 'rgba(255,255,255,0.786)', textDis: 'rgba(255,255,255,0.363)',
+      accent: '#60CDFF', accentText: '#60CDFF', accentHover: 'rgba(96,205,255,0.9)', accentPress: 'rgba(96,205,255,0.8)',
+      accentDis: 'rgba(255,255,255,0.158)', accentStroke: 'rgba(0,0,0,0.14)',
+      onAccent: '#000000', onAccent2: 'rgba(0,0,0,0.5)', onAccentDis: 'rgba(255,255,255,0.53)',
+      ctl: 'rgba(255,255,255,0.061)', ctlAlt: 'rgba(0,0,0,0.1)', ctlHover: 'rgba(255,255,255,0.084)', ctlPress: 'rgba(255,255,255,0.033)',
+      ctlDis: 'rgba(255,255,255,0.042)', ctlFocus: 'rgba(30,30,30,0.7)',
+      ctlStroke: 'rgba(255,255,255,0.07)', ctlStroke2: 'rgba(255,255,255,0.035)',
+      subHover: 'rgba(255,255,255,0.061)', subPress: 'rgba(255,255,255,0.042)',
+      card: 'rgba(255,255,255,0.051)', cardHover: 'rgba(255,255,255,0.084)', cardPress: 'rgba(255,255,255,0.033)', cardStroke: 'rgba(0,0,0,0.1)',
+      divider: 'rgba(255,255,255,0.084)', focusOut: '#FFFFFF', focusIn: 'rgba(0,0,0,0.7)',
+      ok: '#6CCB5F', warn: '#FCE100', err: '#FF99A4', warnBg: '#433519',
+      okBg: '#393D1B', onOk: '#000000', dlg: '#2B2B2B'
+    } : {
+      mica: '#F3F3F3', winStroke: 'rgba(0,0,0,0.1)',
+      text: 'rgba(0,0,0,0.894)', text2: 'rgba(0,0,0,0.62)', textDis: 'rgba(0,0,0,0.361)',
+      accent: '#005FB8', accentText: '#005FB8', accentHover: 'rgba(0,95,184,0.9)', accentPress: 'rgba(0,95,184,0.8)',
+      accentDis: 'rgba(0,0,0,0.216)', accentStroke: 'rgba(255,255,255,0.08)',
+      onAccent: '#FFFFFF', onAccent2: 'rgba(255,255,255,0.7)', onAccentDis: '#FFFFFF',
+      ctl: 'rgba(255,255,255,0.7)', ctlAlt: 'rgba(0,0,0,0.024)', ctlHover: 'rgba(249,249,249,0.5)', ctlPress: 'rgba(249,249,249,0.3)',
+      ctlDis: 'rgba(249,249,249,0.3)', ctlFocus: '#FFFFFF',
+      ctlStroke: 'rgba(0,0,0,0.058)', ctlStroke2: 'rgba(0,0,0,0.162)',
+      subHover: 'rgba(0,0,0,0.037)', subPress: 'rgba(0,0,0,0.024)',
+      card: 'rgba(255,255,255,0.7)', cardHover: 'rgba(249,249,249,0.5)', cardPress: 'rgba(249,249,249,0.3)', cardStroke: 'rgba(0,0,0,0.058)',
+      divider: 'rgba(0,0,0,0.08)', focusOut: 'rgba(0,0,0,0.894)', focusIn: '#FFFFFF',
+      ok: '#0F7B0F', warn: '#9D5D00', err: '#C42B1C', warnBg: '#FFF4CE',
+      okBg: '#DFF6DD', onOk: '#FFFFFF', dlg: '#FFFFFF'
+    };
+    // Seçim çubuğunun konumu: öğe yüksekliği 36 + aralık 4; Ayarlar en altta (gövde 688 px).
+    var order = ['home', 'ai', 'system', 'look', 'apps', 'fix'];
+    var idx = order.indexOf(this.state.page);
+    var pillTop = (idx >= 0 ? 4 + idx * 40 + 10 : 688 - 8 - 36 + 10) + 'px';
+    var pages = { home: 'Giriş', ai: 'AI Soru', system: 'Sistem', look: 'Arayüz', apps: 'Program', fix: 'Sorun Giderme', settings: 'Ayarlar' };
+    var nav = {}, go = {};
+    Object.keys(pages).forEach(function (id) {
+      nav[id] = self.state.page === id ? 'sel' : '';
+      go[id] = function () { self.setState({ page: id, sub: null, started: false }); };
+    });
+    var data = [
+      ['linux-image-generic', '6.1.0-25', '6.1.0-26', '92 MB', true],
+      ['firefox-esr', '128.3.0', '128.4.0', '68 MB', true],
+      ['openssl', '3.0.14', '3.0.15', '4 MB', true],
+      ['libreoffice-core', '7.4.7', '7.4.8', '112 MB', false],
+      ['gnome-shell', '43.9', '43.10', '6 MB', false],
+      ['pardus-software', '1.4.2', '1.4.3', '1 MB', false]
+    ];
+    var sel = this.state.sel;
+    var rows = data.map(function (d, i) {
+      var on = !!sel[i];
+      return {
+        name: d[0], cur: d[1], next: d[2], size: d[3],
+        kind: d[4] ? 'Güvenlik' : 'Standart', kindColor: d[4] ? t.err : t.text2,
+        checked: on, cls: on ? 'sel' : '', ariaSel: on ? 'true' : 'false', label: d[0] + ' seç',
+        toggle: function () { var n = Object.assign({}, self.state.sel); n[i] = !n[i]; self.setState({ sel: n }); }
+      };
+    });
+    var selCount = rows.filter(function (r) { return r.checked; }).length;
+    var isSystem = this.state.page === 'system';
+    var isSub = isSystem && this.state.sub === 'updates';
+    var showAi = this.state.aiOverride !== null ? this.state.aiOverride : (this.props.showAi ?? false);
+    return {
+      t: t, nav: nav, go: go, pillTop: pillTop,
+      dlgOpen: this.state.dlg, started: this.state.started,
+      openDlg: function () { self.setState({ dlg: true }); },
+      closeDlg: function () { self.setState({ dlg: false }); },
+      confirmDlg: function () { self.setState({ dlg: false, sub: null, started: true }); },
+      pageTitle: pages[this.state.page], subTitle: 'Güncellemeler',
+      isSub: isSub, isTop: !isSub,
+      isSystemTop: isSystem && !isSub, isUpdates: isSub, isOther: !isSystem,
+      noBack: !isSub, goBack: function () { self.setState({ sub: null }); },
+      openUpdates: function () { self.setState({ sub: 'updates' }); },
+      rows: rows, selCount: selCount, noneSelected: selCount === 0,
+      showAi: showAi, showAiStr: showAi ? 'true' : 'false', aiCls: showAi ? 'on' : '',
+      toggleAi: function () { self.setState({ aiOverride: !showAi }); },
+      wifiCls: this.state.wifi ? 'on' : '', wifiPressed: this.state.wifi ? 'true' : 'false',
+      wifiState: this.state.wifi ? 'Açık' : 'Kapalı', wifiText: this.state.wifi ? 'Ev_Agi · Bağlı' : 'Kapalı',
+      toggleWifi: function () { self.setState({ wifi: !self.state.wifi }); },
+      btCls: this.state.bt ? 'on' : '', btPressed: this.state.bt ? 'true' : 'false',
+      btState: this.state.bt ? 'Açık' : 'Kapalı', btText: this.state.bt ? 'Kulaklık · bağlı değil' : 'Kapalı',
+      toggleBt: function () { self.setState({ bt: !self.state.bt }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

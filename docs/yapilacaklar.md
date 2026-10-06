@@ -61,10 +61,18 @@ Son güncelleme: 6 Ekim 2026
   nereden okunacağı; kaldırılması engellenecek kritik paketlerin (masaüstü, oturum açma ekranı, ağ,
   ses, Linwas) dağıtım bazında listesi — her biri resmi belgeden.
 
+## Tasarımda bekleyenler
+- [ ] Kuyruk ekranlarını (Kuyruk / Çalışıyor / Sonuç) v4 sistemine göre yeniden çiz.
+- [ ] Yüksek kontrast tema taslağı.
+- [ ] Diğer sayfaların taslakları (Giriş, AI Soru, Arayüz, Program, Sorun Giderme, Ayarlar).
+- [ ] Doğrula: özel 48 px başlık çubuğu (çerçevesiz pencere) GNOME/Wayland ve XFCE/X11'de düzgün çalışıyor mu.
+- [ ] Doğrula: "hareketi azalt" ayarının GNOME/Cinnamon/XFCE'de nereden okunacağı.
+
 ## Tamamlananlar
 - [x] Aşama 0: iskelet, çeviri altyapısı, geliştirici betikleri, Actions ile .deb + kapsayıcı
   kurulum testi. Pardus 23'te doğrulandı.
 - [x] PySide6'nın istediği glibc ve sistem kütüphaneleri → PySide6 6.11.2: manylinux_2_34
   (glibc ≥ 2.34, libstdc++ ≥ 11). Bağımlılık listesi Ubuntu 22.04/24.04 ve Debian 12/13'te CI ile
   doğrulandı.
+- [x] Tasarım sistemi: Microsoft Windows tasarım rehberi esas (v4); `docs/tasarim-sistemi.md` + `tokens.json`.
 - [x] Ubuntu 20.04 / Debian 11 kararı → seçenek A: destekten çıkarıldı (PR #1).

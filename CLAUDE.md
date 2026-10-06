@@ -1,6 +1,9 @@
 # Linwas 2.0 — Claude için proje notları
 
 **Önce oku:** `docs/kararlar.md` (bütün kararlar) ve `docs/yapilacaklar.md` (bekleyenler).
+**Arayüz kodu yazarken:** `docs/tasarim-sistemi.md` + `docs/tasarim/tokens.json` tek kaynaktır
+(Microsoft Windows tasarım rehberi esas). Görsel taslaklar `docs/tasarim/taslaklar/` (v4).
+Yeni ölçü/renk/süre icat etme; bir değer eksikse Microsoft rehberine bak ve belgeye ekle.
 Bu belgeler projenin tek doğru kaynağıdır. Yeni bir karar alındığında aynı değişiklikte güncelle.
 
 ## Çalışma kuralları

@@ -73,6 +73,7 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - Teknoloji: **Qt Widgets + QSS** (PySide6). QML seçilmedi: erişilebilirlik Widgets'ta daha güçlü.
 - **Kural (7 Ekim 2026): Tasarımda Microsoft Windows tasarım rehberi ne diyorsa o uygulanır.** Kaynak: learn.microsoft.com/windows/apps/design (tipografi, geometri, boşluk, başlık çubuğu, gezinme, komutlar, simgeler, malzemeler, renk, hareket, iletişim kutuları). Rehberle çelişen önceki taslak kararları geçersizdir.
 - Windows 11 tasarım ilkeleri: Zahmetsiz, Sakin, Kişisel, Tanıdık, Bütün ve tutarlı.
+- **Ayrıntılı tasarım sistemi:** [tasarim-sistemi.md](tasarim-sistemi.md) ve [tasarim/tokens.json](tasarim/tokens.json) (arayüz kodunun tek kaynağı).
 - Tasarım değerleri tek dosyada: `ui/theme/tokens.py` (Açık / Koyu / Yüksek kontrast); QSS bu değerlerden üretilir.
 - **Tasarım sistemi (rehberden):**
   - Yazı ölçeği: Açıklama 12/16 · Gövde 14/20 · Gövde vurgulu 14/20 yarı kalın · Alt başlık 20/28 · Başlık 28/36. Yalnızca normal ve yarı kalın (Semibold) ağırlık; kalın/italik yok. Cümle düzeni büyük harf. Yazı tipi Segoe UI Variable; Linux'ta Noto Sans (Segoe pakete gömülemez).
