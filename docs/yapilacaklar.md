@@ -23,11 +23,11 @@ Son güncelleme: 6 Ekim 2026
 - [ ] **PR #2 — Proje belgelerinin depoya taşınması** (bu klasör) + program kaldırma kararı.
 
 ## Sıradaki aşama
-- Oyun sekmesi. (Testler kullanıcı yeni emir verene kadar yazılmıyor.)
+- Kodlama özellikleri tamam; kalanlar: kullanıcı denemeleri, yayın öncesi kararlar,
+  doğrulanacaklar. (Testler kullanıcı yeni emir verene kadar yazılmıyor.)
 
 ## Aşama 4'ün en sonunda yapılacaklar (kullanıcı kararı, 6 Ekim 2026)
-- [ ] **Oyun sekmesi** (Program › Oyun): Steam + Proton, Lutris / Heroic, GameMode, uyumluluk
-  kontrolü (AI + ProtonDB).
+- Oyun sekmesi sonraki sürüme ertelendi (kullanıcı kararı, 7 Ekim 2026; bkz. Bekleyen fikirler).
 - [x] **EXE ve Wine:** kodlandı (feat/asama-5-paketleme), kullanıcının denemesi bekleniyor.
 
 ## Aşama 5 sonuna ertelenenler (token tasarrufu, 6 Ekim 2026)
@@ -36,6 +36,8 @@ Son güncelleme: 6 Ekim 2026
   sayfaların görsel kontrolü. Commit öncesi mevcut `ruff` + `pytest` çalışmaya devam ediyor.
 
 ## Bekleyen fikirler (sonraki sürümler)
+- [ ] **Oyun sekmesi** (Program › Oyun): Steam + Proton, Lutris / Heroic, GameMode, uyumluluk
+  kontrolü (AI + ProtonDB). 7 Ekim 2026: ilk yayından sonraki sürüme ertelendi.
 - [ ] **"Linwas Hazırlık" Windows aracı:** Geçişten önce Windows'ta çalışan küçük bir araç.
   Chrome/Edge şifrelerini, Wi-Fi şifrelerini ve Outlook verisini güvenli bir pakete aktarır; Linwas
   bu paketi içeri alır. (Ayrı Windows uygulaması gerektirir.)
