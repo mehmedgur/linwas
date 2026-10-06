@@ -881,4 +881,99 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Anlık görüntü sil: {name}</translation>
     </message>
 </context>
+<context>
+    <name>NetworkPage</name>
+    <message>
+        <source>(Hidden network)</source>
+        <translation>(Gizli ağ)</translation>
+    </message>
+    <message>
+        <source>Available networks</source>
+        <translation>Kullanılabilir ağlar</translation>
+    </message>
+    <message>
+        <source>Bluetooth</source>
+        <translation>Bluetooth</translation>
+    </message>
+    <message>
+        <source>Bluetooth is off</source>
+        <translation>Bluetooth kapalı</translation>
+    </message>
+    <message>
+        <source>Bluetooth is on</source>
+        <translation>Bluetooth açık</translation>
+    </message>
+    <message>
+        <source>Checking…</source>
+        <translation>Denetleniyor…</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Bağlan</translation>
+    </message>
+    <message>
+        <source>Connect to {ssid}</source>
+        <translation>{ssid} ağına bağlan</translation>
+    </message>
+    <message>
+        <source>Connected: {ssid}</source>
+        <translation>Bağlı: {ssid}</translation>
+    </message>
+    <message>
+        <source>Connection failed</source>
+        <translation>Bağlantı kurulamadı</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Bağlantıyı kes</translation>
+    </message>
+    <message>
+        <source>Forget</source>
+        <translation>Unut</translation>
+    </message>
+    <message>
+        <source>No paired devices.</source>
+        <translation>Eşleşmiş cihaz yok.</translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation>Parola:</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>Yenile</translation>
+    </message>
+    <message>
+        <source>Scan</source>
+        <translation>Tara</translation>
+    </message>
+    <message>
+        <source>Scanning…</source>
+        <translation>Taranıyor…</translation>
+    </message>
+    <message>
+        <source>Turn off</source>
+        <translation>Kapat</translation>
+    </message>
+    <message>
+        <source>Turn on</source>
+        <translation>Aç</translation>
+    </message>
+    <message>
+        <source>Wi-Fi</source>
+        <translation>Wi-Fi</translation>
+    </message>
+    <message>
+        <source>Wi-Fi &amp; Bluetooth</source>
+        <translation>Wi-Fi ve Bluetooth</translation>
+    </message>
+    <message>
+        <source>Wi-Fi enabled — not connected</source>
+        <translation>Wi-Fi açık — bağlı değil</translation>
+    </message>
+    <message>
+        <source>Wi-Fi is off</source>
+        <translation>Wi-Fi kapalı</translation>
+    </message>
+</context>
 </TS>

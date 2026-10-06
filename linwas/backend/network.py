@@ -10,8 +10,8 @@ import os
 import subprocess
 from dataclasses import dataclass
 
-
 # --- Yardımcılar ---
+
 
 def _run(cmd: list[str], timeout: int = 10) -> tuple[str, str]:
     """(stdout, stderr) döner; LANG=C ile dil bağımsız çıktı."""
@@ -32,11 +32,12 @@ def _nmcli(*args: str, timeout: int = 10) -> str:
 
 # --- Wi-Fi ---
 
+
 @dataclass
 class WifiNetwork:
     ssid: str
-    signal: int      # 0-100
-    security: str    # "WPA2", "WPA1", "OWE", "" (açık)
+    signal: int  # 0-100
+    security: str  # "WPA2", "WPA1", "OWE", "" (açık)
     active: bool
     bssid: str
 
@@ -45,8 +46,8 @@ class WifiNetwork:
 class WifiStatus:
     enabled: bool
     connected: bool
-    ssid: str        # bağlı ağ adı; bağlı değilse ""
-    device: str      # ör. "wlan0"
+    ssid: str  # bağlı ağ adı; bağlı değilse ""
+    device: str  # ör. "wlan0"
 
 
 def wifi_status() -> WifiStatus:
@@ -139,11 +140,7 @@ def wifi_set_enabled(enabled: bool) -> bool:
 def wifi_saved_connections() -> list[str]:
     """Kayıtlı Wi-Fi bağlantılarını döner."""
     out = _nmcli("-t", "-f", "NAME,TYPE", "connection")
-    return [
-        line.split(":")[0]
-        for line in out.splitlines()
-        if ":wifi" in line.lower()
-    ]
+    return [line.split(":")[0] for line in out.splitlines() if ":wifi" in line.lower()]
 
 
 def wifi_forget(ssid: str) -> bool:
@@ -153,6 +150,7 @@ def wifi_forget(ssid: str) -> bool:
 
 
 # --- Bluetooth ---
+
 
 @dataclass
 class BluetoothDevice:
@@ -253,6 +251,6 @@ def bluetooth_forget(mac: str) -> bool:
 
 def bluetooth_scan(timeout: int = 8) -> list[BluetoothDevice]:
     """Yeni cihazları tarar ve bulduklarını döner."""
-    out = _bt_run([f"scan on", "exit"], timeout=timeout)
+    _bt_run(["scan on", "exit"], timeout=timeout)
     # Tarama sonrası bilinen cihazları döndür
     return bluetooth_list_devices()

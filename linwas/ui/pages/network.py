@@ -46,9 +46,10 @@ def tr(text: str) -> str:
 
 # --- Workers ---
 
+
 class _WifiWorker(QThread):
-    status_ready = Signal(object)   # WifiStatus
-    networks_ready = Signal(object) # list[WifiNetwork]
+    status_ready = Signal(object)  # WifiStatus
+    networks_ready = Signal(object)  # list[WifiNetwork]
 
     def run(self) -> None:
         try:
@@ -92,6 +93,7 @@ class _ConnectWorker(QThread):
 
 # --- Password Dialog ---
 
+
 class _PasswordDialog(QDialog):
     def __init__(self, ssid: str, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -117,6 +119,7 @@ class _PasswordDialog(QDialog):
 
 # --- Sinyal gücü çubuğu ---
 
+
 def _signal_bars(signal: int) -> str:
     if signal >= 80:
         return "▂▄▆█"
@@ -129,8 +132,9 @@ def _signal_bars(signal: int) -> str:
 
 # --- Wi-Fi ağ satırı ---
 
+
 class _WifiRow(QWidget):
-    connect_requested = Signal(str)   # ssid
+    connect_requested = Signal(str)  # ssid
     forget_requested = Signal(str)
 
     def __init__(self, net: WifiNetwork, parent: QWidget | None = None) -> None:
@@ -176,6 +180,7 @@ class _WifiRow(QWidget):
 
 
 # --- Wi-Fi sekmesi ---
+
 
 class _WifiTab(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -299,6 +304,7 @@ class _WifiTab(QWidget):
         self._load()
         if not ok:
             from PySide6.QtWidgets import QMessageBox
+
             QMessageBox.warning(self, tr("Connection failed"), msg)
 
     def _on_forget(self, ssid: str) -> None:
@@ -315,6 +321,7 @@ class _WifiTab(QWidget):
 
 
 # --- Bluetooth cihaz satırı ---
+
 
 class _BtRow(QWidget):
     connect_req = Signal(str)
@@ -351,6 +358,7 @@ class _BtRow(QWidget):
 
 
 # --- Bluetooth sekmesi ---
+
 
 class _BtTab(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -460,6 +468,7 @@ class _BtTab(QWidget):
 
 
 # --- Ana sayfa ---
+
 
 class NetworkPage(BasePage):
     """Wi-Fi ve Bluetooth sayfası."""
