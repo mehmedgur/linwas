@@ -23,8 +23,7 @@ Son güncelleme: 6 Ekim 2026
 - [ ] **PR #2 — Proje belgelerinin depoya taşınması** (bu klasör) + program kaldırma kararı.
 
 ## Sıradaki aşama
-- **Aşama 1 — Altyapı:** kuyruk, izin listesi ve parametre doğrulama, root helper, pkexec/polkit,
-  yedek/geri alma kaydı, maskeleme, işlem geçmişi, eklenti yükleyici ve kapılar.
+- Aşama 5 sonuna ertelenen birim testleri; ardından Oyun sekmesi ve EXE/Wine.
 
 ## Aşama 4'ün en sonunda yapılacaklar (kullanıcı kararı, 6 Ekim 2026)
 - [ ] **Oyun sekmesi** (Program › Oyun): Steam + Proton, Lutris / Heroic, GameMode, uyumluluk
@@ -58,6 +57,9 @@ Son güncelleme: 6 Ekim 2026
   kapsayıcılarda otomatik test ediliyor).
 - [ ] Çift tıkla .deb kurulumunun her dağıtımda testi.
 - [ ] Paket içindeki Maintainer bilgisi (şu an kullanıcının e-postası) yayından önce gözden geçirilecek.
+- [ ] İmza anahtarını üret (`packaging/create-signing-key.sh`), yedeğini çevrim dışı al; GitHub'a
+  `LINWAS_SIGNING_KEY` gizli değeri ve `LINWAS_APT_URL` değişkenini ekle.
+- [ ] Yayın yeri belli olunca `release.yml`'ye depo yükleme adımı (ör. GitHub Pages).
 
 ## Kodlama sırasında doğrulanacaklar
 - [ ] Windows NTUSER.DAT değer yolları (klavye Preload, AppsUseLightTheme, SwapMouseButtons,
@@ -84,4 +86,7 @@ Son güncelleme: 6 Ekim 2026
 - [x] PySide6'nın istediği glibc ve sistem kütüphaneleri → PySide6 6.11.2: manylinux_2_34
   (glibc ≥ 2.34, libstdc++ ≥ 11). Bağımlılık listesi Ubuntu 22.04/24.04 ve Debian 12/13'te CI ile
   doğrulandı.
+- [x] Aşama 5 — Son paketleme: kurulu root helper + polkit eylemi (Linwas'a özel mesaj),
+  postinst/postrm, imzalı APT deposu betiği, imza anahtarı betiği, yayın iş akışı, CI APT testi
+  (debian:12 ve ubuntu:22.04 kapsayıcılarında yerelde de geçti).
 - [x] Ubuntu 20.04 / Debian 11 kararı → seçenek A: destekten çıkarıldı (PR #1).

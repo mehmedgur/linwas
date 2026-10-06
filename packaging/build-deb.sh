@@ -73,11 +73,13 @@ install -D -m 0644 "$ROOT/packaging/org.linwas.helper.policy" \
 
 # APT deposu (yayın yeri kararlaştırılınca): LINWAS_APT_URL ve imza anahtarı verilirse
 APT_URL=${LINWAS_APT_URL:-}
-if [ -n "$APT_URL" ] && [ -f "$ROOT/packaging/linwas-archive-keyring.gpg" ]; then
+if [ -n "$APT_URL" ]; then
+    if [ ! -f "$ROOT/packaging/linwas-archive-keyring.gpg" ]; then
+        echo "HATA: LINWAS_APT_URL verildi ama packaging/linwas-archive-keyring.gpg yok." >&2
+        exit 1
+    fi
     install -D -m 0644 "$ROOT/packaging/linwas-archive-keyring.gpg" \
         "$PKG/usr/share/keyrings/linwas-archive-keyring.gpg"
-else
-    APT_URL=""
 fi
 
 echo "==> Paket bilgileri"

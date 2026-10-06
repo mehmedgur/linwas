@@ -207,6 +207,10 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - Derleme GitHub Actions'ta (bkz. Geliştirme).
 - Dağıtım: .deb paketi; çift tıkla kurulum, postinst kendi APT deposunu ve imza anahtarını ekler. Güncellemeler sistem güncellemesiyle gelir. Resmi eklentiler aynı depodan ayrı .deb paketleri olarak.
 - Çift tıklama davranışı her dağıtımda test edilecek.
+- **APT deposu (aşama 5):** `stable` dağıtımı, `main` bileşeni, amd64; `packaging/build-apt-repo.sh` (apt-ftparchive + gpg) `pool/` ve `dists/stable/` üretir, `InRelease` ve `Release.gpg` ile imzalar. postinst kaynağı deb822 biçiminde `/etc/apt/sources.list.d/linwas.sources` olarak ekler (`Signed-By: /usr/share/keyrings/linwas-archive-keyring.gpg`); kullanıcı dosyayı `.disabled` yaptıysa yeniden eklemez; purge ikisini de siler.
+- **İmza anahtarı:** ed25519, 5 yıl geçerli, parolasız (CI imzalar); `packaging/create-signing-key.sh` ile ayrı bir klasörde (`~/.linwas-signing`) bir kez üretilir. Gizli anahtar GitHub gizli değeri `LINWAS_SIGNING_KEY`, depo adresi değişken `LINWAS_APT_URL`. Süre dolmadan uzatılıp açık anahtar bir Linwas güncellemesiyle dağıtılır.
+- **Yayın iş akışı:** `.github/workflows/release.yml` (`v*` etiketi veya elle): imzalı .deb + APT deposu → artifact. Yükleme adımı yayın yeri kararından sonra.
+- **CI APT testi:** Ubuntu 22.04 ve Debian 12 kapsayıcılarında geçici anahtarla imzalı yerel depo → postinst kaynağı → `apt-get update` imza kabulü → depodan güncelleme → purge.
 
 ## Test
 - Birim testleri: dağıtım/masaüstü algılama, çeviri eksiksizliği, whitelist ve parametre doğrulama, maskeleme, kuyruk, yedek/geri alma kaydı, ayar eşleşmeleri, eklenti yükleyici ve sürüm uyumu, .deb risk analizi.
@@ -247,4 +251,4 @@ linwas2/
 2. Arayüz temeli: tema değerleri, ortak bileşenler, ana pencere, menü, durum çubuğu, kuyruk/onay/çalışıyor/sonuç pencereleri.
 3. AI: üç sağlayıcı, anahtar kasası, kullanım sayacı, yardımcı paneli.
 4. Sayfalar ve yerleşik eklentiler, sırayla.
-5. Son paketleme: APT deposu, imza anahtarı, postinst, Linwas'a özel polkit kuralı.
+5. ✅ Son paketleme: APT deposu, imza anahtarı, postinst, Linwas'a özel polkit kuralı.

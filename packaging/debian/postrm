@@ -4,7 +4,7 @@ set -e
 
 if [ "$1" = "purge" ]; then
     # Linwas'ın eklediği depo ve root'a ait geri alma kayıtları
-    rm -f /etc/apt/sources.list.d/linwas.sources
+    rm -f /etc/apt/sources.list.d/linwas.sources /etc/apt/sources.list.d/linwas.sources.disabled
     rm -rf /var/lib/linwas
 fi
 
