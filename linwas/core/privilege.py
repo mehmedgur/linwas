@@ -108,6 +108,7 @@ def run_task(
                     step_label=step_label,
                     done=(resp.status == "ok" and resp.progress >= 1.0),
                     error=resp.message if resp.status == "error" else None,
+                    message=resp.message if resp.status == "ok" else "",
                 )
             )
 

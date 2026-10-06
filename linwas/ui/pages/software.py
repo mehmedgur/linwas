@@ -271,6 +271,8 @@ class SoftwarePage(BasePage):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._worker: _SearchWorker | None = None
+        # Yerine yenisi başlatılan aramalar bitene kadar burada tutulur (silinirse Qt çöker)
+        self._old_workers: list[_SearchWorker] = []
         self._last_result: _SearchResult | None = None
         self._third_party = _load_third_party()
         self._removal = RemovalFlow(self)
@@ -369,7 +371,11 @@ class SoftwarePage(BasePage):
         if len(query) < 2:
             return
         if self._worker and self._worker.isRunning():
-            self._worker.terminate()
+            # Eski aramanın sonucu yok sayılır; iş parçacığı kendi bitene kadar yaşar
+            old = self._worker
+            old.done.disconnect(self._on_results)
+            self._old_workers.append(old)
+            old.finished.connect(lambda w=old: self._old_workers.remove(w))
 
         # "Zaten kurulu" denetimi için kurulu programlar arka planda bir kez yüklenir
         if not self._installed.is_loaded:

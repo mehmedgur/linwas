@@ -454,8 +454,9 @@ class MainWindow(QMainWindow):
         dlg.done.connect(self._on_tasks_done)
         dlg.step_progress.connect(self._status_bar.set_progress)
         self._progress_dlg = dlg
-        dlg.exec()
-        self._progress_dlg = None
+        # Engellemeden aç: "Arka planda devam et" pencereyi gizler ama işlem ve pencere sürer;
+        # durum çubuğundaki "Detay" aynı pencereyi geri getirir. Bitince _on_tasks_done temizler.
+        dlg.show()
 
     def _show_progress(self) -> None:
         dlg = getattr(self, "_progress_dlg", None)
@@ -493,6 +494,10 @@ class MainWindow(QMainWindow):
         self._start_progress(self._queue)
 
     def _on_tasks_done(self, success: bool, error: str) -> None:
+        dlg = getattr(self, "_progress_dlg", None)
+        self._progress_dlg = None
+        if dlg is not None:
+            dlg.deleteLater()
         self._status_bar.set_running(False)
         self._status_bar.update_queue(len(self._queue.pending))
 

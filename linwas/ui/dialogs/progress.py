@@ -1,15 +1,18 @@
 """Görev ilerleme iletişim kutusu.
 
-Görevler QThread içinde çalışır; her adım için UI güncellenir.
-Pencere kapatılamaz (arka plana alınabilir: TODO).
+Görevler QThread içinde çalışır; her adım ve helper çıktısı canlı gösterilir.
+Pencere işlem sürerken kapatılamaz; arka plana alınabilir (durum çubuğu › Detay geri açar).
 """
 
 from __future__ import annotations
 
 from PySide6.QtCore import QCoreApplication, Qt, QThread, Signal
+from PySide6.QtGui import QFontDatabase
 from PySide6.QtWidgets import (
     QDialog,
+    QHBoxLayout,
     QLabel,
+    QPlainTextEdit,
     QProgressBar,
     QPushButton,
     QVBoxLayout,
@@ -33,25 +36,29 @@ class _TaskWorker(QThread):
     """Görevi arka planda çalıştırır; ilerleme sinyali yayar."""
 
     progress = Signal(TaskProgress)
-    finished = Signal(bool, str)  # (başarılı, hata mesajı)
+    # QThread'in kendi `finished` sinyalini gölgelememek için ayrı ad
+    completed = Signal(bool, str)  # (başarılı, hata mesajı)
 
-    def __init__(self, queue: TaskQueue) -> None:
-        super().__init__()
+    def __init__(self, queue: TaskQueue, parent: QWidget) -> None:
+        # Ebeveyn: iş parçacığı nesnesi pencereyle yaşar (çalışırken silinirse Qt çöker)
+        super().__init__(parent)
         self._queue = queue
 
     def run(self) -> None:
         error_msg = ""
         success = True
         try:
-            for prog in self._queue.apply(executor=_privilege_executor):
-                self.progress.emit(prog)
+            # İlerleme canlı yayınlanır; apply() olayları ancak görev bitince döndürür
+            for prog in self._queue.apply(
+                executor=_privilege_executor, on_progress=self.progress.emit
+            ):
                 if prog.error:
                     success = False
                     error_msg = prog.error
         except Exception as exc:
             success = False
             error_msg = str(exc)
-        self.finished.emit(success, error_msg)
+        self.completed.emit(success, error_msg)
 
 
 class ProgressDialog(QDialog):
@@ -88,15 +95,39 @@ class ProgressDialog(QDialog):
         self._detail_lbl.setWordWrap(True)
         layout.addWidget(self._detail_lbl)
 
+        # Komut çıktısı (dpkg/apt satırları); "Ayrıntıları göster" ile açılır
+        self._log = QPlainTextEdit(self)
+        self._log.setReadOnly(True)
+        self._log.setMaximumBlockCount(5000)
+        self._log.setFont(QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont))
+        self._log.setMinimumHeight(220)
+        self._log.setVisible(False)
+        layout.addWidget(self._log, 1)
+
+        buttons = QHBoxLayout()
+        self._details_btn = QPushButton(tr("Show details"), self)
+        self._details_btn.clicked.connect(self._toggle_details)
+        buttons.addWidget(self._details_btn)
+        buttons.addStretch(1)
         # Pencere gizlenir, işlem sürer; durum çubuğundaki "Detay" geri açar
         bg_btn = QPushButton(tr("Continue in background"), self)
         bg_btn.clicked.connect(self.hide)
-        layout.addWidget(bg_btn, 0, Qt.AlignmentFlag.AlignRight)
+        buttons.addWidget(bg_btn)
+        layout.addLayout(buttons)
 
-        self._worker = _TaskWorker(queue)
+        self._worker = _TaskWorker(queue, self)
         self._worker.progress.connect(self._on_progress)
-        self._worker.finished.connect(self._on_finished)
+        self._worker.completed.connect(self._on_finished)
         self._worker.start()
+
+    def _toggle_details(self) -> None:
+        show = not self._log.isVisible()
+        self._log.setVisible(show)
+        self._details_btn.setText(tr("Hide details") if show else tr("Show details"))
+        if show:
+            self.resize(max(self.width(), 640), self.height())
+        else:
+            self.adjustSize()
 
     def _on_progress(self, prog: TaskProgress) -> None:
         self._title_lbl.setText(prog.task_label)
@@ -110,11 +141,16 @@ class ProgressDialog(QDialog):
         if prog.step_total > 0:
             self._progress.setRange(0, prog.step_total)
             self._progress.setValue(prog.step_index + 1)
+        if prog.message:
+            self._log.appendPlainText(prog.message)
         if prog.error:
             self._detail_lbl.setText(prog.error)
+            self._log.appendPlainText(prog.error)
         self.step_progress.emit(prog.step_index + 1, prog.step_total, prog.step_label)
 
     def _on_finished(self, success: bool, error: str) -> None:
+        # run() completed'i yayınlayıp hemen döner; pencere silinmeden önce iş parçacığı bitsin
+        self._worker.wait(5000)
         self.setWindowFlag(Qt.WindowType.WindowCloseButtonHint, True)
         self.done.emit(success, error)
         self.accept()

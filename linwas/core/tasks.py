@@ -84,6 +84,7 @@ class TaskProgress:
     step_label: str
     done: bool = False
     error: str | None = None
+    message: str = ""  # helper'ın gönderdiği çıktı satırı (ayrıntılar için)
 
 
 ProgressCallback = Callable[[TaskProgress], None]

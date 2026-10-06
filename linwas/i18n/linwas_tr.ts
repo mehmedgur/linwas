@@ -320,6 +320,14 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
 <context>
     <name>ProgressDialog</name>
     <message>
+        <source>Show details</source>
+        <translation>Ayrıntıları göster</translation>
+    </message>
+    <message>
+        <source>Hide details</source>
+        <translation>Ayrıntıları gizle</translation>
+    </message>
+    <message>
         <source>Applying changes…</source>
         <translation>Değişiklikler uygulanıyor…</translation>
     </message>
