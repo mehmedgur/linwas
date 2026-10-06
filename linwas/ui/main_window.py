@@ -21,6 +21,7 @@ from linwas.core import app_settings
 from linwas.core.history import HistoryDB, HistoryEntry
 from linwas.core.rollback import RollbackRecord, now_iso, records_since, undo_ops
 from linwas.core.tasks import Task, TaskQueue, TaskStatus, TaskStep
+from linwas.ui import icons
 from linwas.ui.ai_dock import AIDock, make_content_splitter
 from linwas.ui.dialogs.confirm import BackupChoice, ConfirmDialog
 from linwas.ui.dialogs.progress import ProgressDialog
@@ -42,7 +43,7 @@ from linwas.ui.pages.updates import UpdatesPage
 from linwas.ui.sidebar import Sidebar
 from linwas.ui.status_bar import StatusBar
 from linwas.ui.theme.stylesheet import build as build_qss
-from linwas.ui.theme.tokens import Theme
+from linwas.ui.theme.tokens import THEMES, Theme
 
 ICON_PATH = Path(__file__).resolve().parent.parent / "resources" / "linwas.svg"
 
@@ -121,7 +122,8 @@ class MainWindow(QMainWindow):
         self._tray = None
         self._quitting = False
 
-        # Stil uygula
+        # Stil uygula (simge renkleri de temadan)
+        icons.set_palette(THEMES[self._current_theme])
         self.setStyleSheet(build_qss(self._current_theme))
 
         # Merkezi widget
@@ -222,6 +224,7 @@ class MainWindow(QMainWindow):
 
     def apply_theme(self, name: str) -> None:
         self._current_theme = self._resolve_theme(name)
+        icons.set_palette(THEMES[self._current_theme])
         self.setStyleSheet(build_qss(self._current_theme))
 
     # --- Pencere kapatma ve sistem tepsisi ---

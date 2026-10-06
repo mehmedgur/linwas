@@ -26,6 +26,8 @@ class AIDock(QWidget):
 
     def __init__(self, splitter: QSplitter, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        self.setObjectName("AIDock")
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self._splitter = splitter
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)

@@ -6,6 +6,7 @@ Tasarım değerlerinden (tokens.py) QSS stringi üretir.
 
 from __future__ import annotations
 
+from linwas.ui.theme.icon_data import asset_path
 from linwas.ui.theme.tokens import THEMES, ColorSet, Theme
 
 
@@ -15,6 +16,8 @@ def build(theme: Theme = Theme.LIGHT) -> str:
 
 
 def _qss(c: ColorSet) -> str:
+    check = asset_path("check", c.text_on_accent)
+    chevron = asset_path("chevron_down", c.text_secondary)
     return f"""
 /* === Temel === */
 QWidget {{
@@ -22,6 +25,11 @@ QWidget {{
     font-size: 13px;
     color: {c.text_primary};
     background-color: {c.background};
+}}
+
+/* Etiketler üst bileşenin zeminini göstersin (başlık şeridinde kutu görünmesin) */
+QLabel {{
+    background-color: transparent;
 }}
 
 /* === Kaydırma çubuğu === */
@@ -81,19 +89,33 @@ QPushButton[primary="true"]:disabled {{
 }}
 
 /* === Sidebar === */
-QWidget#Sidebar {{
+QWidget#Sidebar, QWidget#Sidebar QScrollArea, QWidget#Sidebar QScrollArea > QWidget > QWidget {{
     background-color: {c.sidebar_bg};
+}}
+QWidget#Sidebar {{
     border-right: 1px solid {c.border};
+}}
+QWidget#AIDock {{
+    border-left: 1px solid {c.border};
+}}
+QLabel#Brand {{
+    font-size: 17px;
+    font-weight: bold;
+    color: {c.text_primary};
 }}
 
 QPushButton#SidebarItem {{
     background-color: transparent;
     border: none;
     border-radius: 6px;
-    padding: 8px 12px;
+    padding: 7px 10px;
+    min-height: 22px;
     text-align: left;
     color: {c.text_primary};
     font-weight: normal;
+}}
+QPushButton#SidebarItem[indent="1"] {{
+    padding-left: 22px;
 }}
 QPushButton#SidebarItem:hover {{
     background-color: {c.sidebar_item_hover};
@@ -103,12 +125,35 @@ QPushButton#SidebarItem[active="true"] {{
     color: {c.accent};
     font-weight: bold;
 }}
+QPushButton#SidebarGroup {{
+    background-color: transparent;
+    border: none;
+    padding: 12px 10px 4px 8px;
+    min-height: 16px;
+    text-align: left;
+    color: {c.text_secondary};
+    font-size: 12px;
+    font-weight: bold;
+}}
+QPushButton#SidebarGroup:hover {{
+    color: {c.text_primary};
+}}
 
 /* === Kartlar === */
 QFrame#Card {{
     background-color: {c.surface};
     border: 1px solid {c.border};
-    border-radius: 8px;
+    border-radius: 10px;
+}}
+QFrame#Card[clickable="true"]:hover {{
+    border-color: {c.accent};
+}}
+QLabel#CardIcon {{
+    background-color: {c.sidebar_item_active};
+    border-radius: 10px;
+}}
+QFrame#Card QLabel#CardIcon {{
+    background-color: {c.sidebar_item_active};
 }}
 /* Kart içindeki metinler kartın zeminini kullansın (genel QWidget zemini yerine).
    Saydam verilmez: seçim düğmesi/onay kutusu çerçevesi zeminle birlikte kaybolur. */
@@ -162,6 +207,188 @@ QLabel#H2 {{
 QLabel#Secondary {{
     color: {c.text_secondary};
     font-size: 12px;
+}}
+
+/* === Metin alanları, açılır listeler, sayı kutuları === */
+QTextEdit, QPlainTextEdit, QTextBrowser, QSpinBox, QDoubleSpinBox, QComboBox {{
+    background-color: {c.surface};
+    border: 1px solid {c.border};
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: {c.text_primary};
+    selection-background-color: {c.accent};
+    selection-color: {c.text_on_accent};
+}}
+QTextEdit:focus, QPlainTextEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus,
+QComboBox:focus {{
+    border-color: {c.accent};
+}}
+QComboBox {{
+    min-height: 24px;
+    padding-right: 24px;
+}}
+QComboBox:hover {{
+    border-color: {c.accent};
+}}
+QComboBox::drop-down {{
+    border: none;
+    width: 24px;
+}}
+QComboBox::down-arrow {{
+    image: url("{chevron}");
+    width: 14px;
+    height: 14px;
+}}
+QComboBox QAbstractItemView {{
+    background-color: {c.surface};
+    border: 1px solid {c.border};
+    selection-background-color: {c.sidebar_item_active};
+    selection-color: {c.text_primary};
+    outline: none;
+}}
+
+/* === Onay kutusu ve seçim düğmesi === */
+QCheckBox, QRadioButton {{
+    spacing: 8px;
+    background-color: transparent;
+}}
+QCheckBox::indicator, QRadioButton::indicator {{
+    width: 16px;
+    height: 16px;
+    border: 1px solid {c.text_secondary};
+    background-color: {c.surface};
+}}
+QCheckBox::indicator {{
+    border-radius: 4px;
+}}
+QRadioButton::indicator {{
+    border-radius: 9px;
+}}
+QCheckBox::indicator:hover, QRadioButton::indicator:hover {{
+    border-color: {c.accent};
+}}
+QCheckBox::indicator:checked {{
+    background-color: {c.accent};
+    border-color: {c.accent};
+    image: url("{check}");
+}}
+QRadioButton::indicator:checked {{
+    border: 5px solid {c.accent};
+    background-color: {c.text_on_accent};
+}}
+QCheckBox::indicator:disabled, QRadioButton::indicator:disabled {{
+    border-color: {c.text_disabled};
+    background-color: {c.surface_hover};
+}}
+
+/* === Sekmeler === */
+QTabWidget::pane {{
+    border: none;
+    border-top: 1px solid {c.border};
+    top: -1px;
+}}
+QTabBar {{
+    background: transparent;
+}}
+QTabBar::tab {{
+    background: transparent;
+    color: {c.text_secondary};
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 8px 14px;
+    margin-right: 4px;
+}}
+QTabBar::tab:hover {{
+    color: {c.text_primary};
+}}
+QTabBar::tab:selected {{
+    color: {c.text_primary};
+    border-bottom-color: {c.accent};
+    font-weight: bold;
+}}
+
+/* === Listeler, ağaçlar, tablolar === */
+QListView, QTreeView, QTableView, QListWidget, QTreeWidget, QTableWidget {{
+    background-color: {c.surface};
+    alternate-background-color: {c.surface_hover};
+    border: 1px solid {c.border};
+    border-radius: 8px;
+    selection-background-color: {c.sidebar_item_active};
+    selection-color: {c.text_primary};
+    outline: none;
+}}
+QListView::item, QTreeView::item {{
+    padding: 4px;
+}}
+QListView::item:hover, QTreeView::item:hover {{
+    background-color: {c.surface_hover};
+}}
+QHeaderView::section {{
+    background-color: {c.surface};
+    color: {c.text_secondary};
+    border: none;
+    border-bottom: 1px solid {c.border};
+    padding: 6px 8px;
+    font-weight: bold;
+}}
+QTableCornerButton::section {{
+    background-color: {c.surface};
+    border: none;
+}}
+
+/* === Grup kutusu === */
+QGroupBox {{
+    border: 1px solid {c.border};
+    border-radius: 8px;
+    margin-top: 14px;
+    padding: 12px 10px 10px 10px;
+    font-weight: bold;
+}}
+QGroupBox::title {{
+    subcontrol-origin: margin;
+    left: 12px;
+    padding: 0 4px;
+    color: {c.text_secondary};
+}}
+
+/* === Kaydırıcı === */
+QSlider::groove:horizontal {{
+    height: 4px;
+    background: {c.border};
+    border-radius: 2px;
+}}
+QSlider::sub-page:horizontal {{
+    background: {c.accent};
+    border-radius: 2px;
+}}
+QSlider::handle:horizontal {{
+    background: {c.accent};
+    border: 3px solid {c.surface};
+    width: 12px;
+    height: 12px;
+    margin: -7px 0;
+    border-radius: 9px;
+}}
+
+/* === Menü ve ipucu === */
+QMenu {{
+    background-color: {c.surface};
+    border: 1px solid {c.border};
+    border-radius: 8px;
+    padding: 4px;
+}}
+QMenu::item {{
+    padding: 6px 20px 6px 12px;
+    border-radius: 4px;
+}}
+QMenu::item:selected {{
+    background-color: {c.sidebar_item_hover};
+}}
+QToolTip {{
+    background-color: {c.surface};
+    color: {c.text_primary};
+    border: 1px solid {c.border};
+    padding: 4px 8px;
 }}
 
 /* === Diyalog === */

@@ -7,10 +7,14 @@ altta Ayarlar düğmesi içerir. Daraltılabilir (220 px ↔ 48 px).
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from PySide6.QtCore import QCoreApplication, Qt, Signal
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (
     QFrame,
+    QHBoxLayout,
+    QLabel,
     QLineEdit,
     QPushButton,
     QScrollArea,
@@ -19,7 +23,10 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from linwas.ui import icons
 from linwas.ui.theme.tokens import SIDEBAR_WIDTH
+
+_LOGO = Path(__file__).resolve().parent.parent / "resources" / "linwas.svg"
 
 
 def tr(text: str) -> str:
@@ -82,23 +89,41 @@ class _NavButton(QPushButton):
     def __init__(self, item: MenuItem, indent: int = 0, parent: QWidget | None = None) -> None:
         label = tr(item.label)
         super().__init__(label, parent)
-        self.setObjectName("SidebarItem")
-        self.setProperty("active", False)
         self._item = item
-        # İç girinti alt menü öğeleri için
-        margin_left = 12 + indent * 16
-        self.setStyleSheet(
-            self.styleSheet() + f" QPushButton#SidebarItem {{ padding-left: {margin_left}px; }}"
-        )
+        self._active = False
+        self._expanded = False
+        # Grup başlığı ayrı görünür (küçük, ikincil renk, aç/kapa oku)
+        self.setObjectName("SidebarGroup" if item.is_group else "SidebarItem")
+        self.setProperty("active", False)
+        self.setProperty("indent", str(indent))
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self.setCheckable(False)
+        self._update_icon()
 
     @property
     def item_id(self) -> str:
         return self._item.id
 
+    def _update_icon(self) -> None:
+        if self._item.is_group:
+            name = "chevron_down" if self._expanded else "chevron_right"
+            icons.bind(self, name, "secondary", 14)
+        else:
+            icons.bind(
+                self, self._item.icon or self._item.id, "accent" if self._active else "normal", 18
+            )
+
+    def set_expanded(self, expanded: bool) -> None:
+        self._expanded = expanded
+        self._update_icon()
+
     def set_active(self, active: bool) -> None:
+        if active == self._active:
+            return
+        self._active = active
         self.setProperty("active", active)
+        self._update_icon()
         self.style().unpolish(self)
         self.style().polish(self)
 
@@ -112,11 +137,25 @@ class Sidebar(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setObjectName("Sidebar")
+        # QWidget alt sınıfı QSS zeminini ve kenarlığını ancak bu bayrakla çizer
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self.setFixedWidth(SIDEBAR_WIDTH)
 
         outer = QVBoxLayout(self)
-        outer.setContentsMargins(8, 8, 8, 8)
-        outer.setSpacing(4)
+        outer.setContentsMargins(8, 12, 8, 8)
+        outer.setSpacing(6)
+
+        # Uygulama adı ve simgesi
+        brand = QHBoxLayout()
+        brand.setContentsMargins(8, 0, 0, 6)
+        brand.setSpacing(10)
+        logo = QLabel(self)
+        logo.setPixmap(QIcon(str(_LOGO)).pixmap(26, 26))
+        brand.addWidget(logo)
+        name = QLabel("Linwas", self)
+        name.setObjectName("Brand")
+        brand.addWidget(name, 1)
+        outer.addLayout(brand)
 
         # Arama kutusu
         self._search = QLineEdit(self)
@@ -169,6 +208,7 @@ class Sidebar(QWidget):
         for item in MENU:
             btn = _NavButton(item)
             btn.clicked.connect(self._on_click)
+            btn.set_expanded(item.id in self._expanded)
             layout.addWidget(btn)
             self._buttons.append(btn)
 
@@ -213,6 +253,8 @@ class Sidebar(QWidget):
 
     def _update_visibility(self) -> None:
         for btn in self._buttons:
+            if btn.objectName() == "SidebarGroup":
+                btn.set_expanded(btn.item_id in self._expanded)
             # Alt menü öğesi mi? Üst grubunu bul
             parent_group = next(
                 (m for m in MENU if any(c.id == btn.item_id for c in m.children)),

@@ -73,13 +73,14 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - Teknoloji: **Qt Widgets + QSS** (PySide6). QML seçilmedi: animasyon yok, erişilebilirlik Widgets'ta daha güçlü.
 - Tasarım değerleri (renk, yazı, boşluk, köşe) tek dosyada: `ui/theme/tokens.py`. Açık / Koyu / Yüksek kontrast setleri; QSS bu değerlerden üretilir.
 - Ortak bileşen kütüphanesi (kart, menü öğesi, rozet, ana buton, durum çubuğu, görev kartı); sayfalar bunlardan kurulur.
-- Simgeler: kendi SVG simge setimiz (Windows benzeri çizgi stil), HiDPI uyumlu.
+- Simgeler: kendi SVG simge setimiz (Windows benzeri çizgi stil), HiDPI uyumlu. Çizimler `ui/theme/icon_data.py`'de (masaüstü simge temasına bağlı değil); renk temadan gelir, tema değişince `ui/icons.py` bağlı simgeleri yeniler. QSS'teki onay işareti/ok simgeleri `~/.cache/linwas/icons` altına yazılır.
 - Animasyon: yok.
 - Erişilebilirlik her bileşene baştan eklenir.
 - Tasarım akışı: sayfa sayfa — tuvalde taslak → onay → Qt'ye aktarım → sıradaki sayfa.
 - Onaylı taslaklar: ana pencere (Sistem › Genel bakış) ve kuyruk senaryosu (Kuyruk → Onay → Çalışıyor → Sonuç).
   - Ana pencere: üstte başlık çubuğu; solda daraltılabilir menü (arama kutusu, rozetler, açılır alt menüler, altta sistem durumu kartı, Yardımcı paneli düğmesi, Ayarlar); ortada içerik (Genel bakış: Timeshift rozeti, 4 hızlı işlem kutusu, Güncellemeler/Sürücüler/Wi-Fi/Bluetooth kartları); sağda AI yardımcı paneli (sağlayıcı seçimi, sohbet, önerilen görev kartı + "Kuyruğa ekle", ekran görüntüsü/log ekleme, "Sistem bilgimi ekle", token çubuğu); altta durum çubuğu (kuyruk sayısı, ilerleme, Detay, "Uygula (tek onay)").
-  - Vurgu rengi `#0067c0`, yazı tipi Noto Sans, açık tema zemin `#f3f3f3`, kartlar beyaz, kenarlık `#e0e3e7`, köşe 8 px.
+  - Vurgu rengi `#0067c0`, yazı tipi Noto Sans, açık tema zemin `#f3f3f3`, kartlar beyaz, kenarlık `#e0e3e7`, köşe 8 px (kartlar 10 px).
+  - Kenar çubuğu: üstte logo + ad, her öğede simge, gruplar (Sistem, Arayüz) küçük ikincil renkli başlık + aç/kapa oku. Genel bakış kartlarında vurgu renkli simge kutusu, tıklanabilir kartlarda üzerine gelince vurgu kenarlık; durum kartları ilgili sayfayı açar.
 
 ## Menü yapısı
 - **AI Soru** (geniş sohbet ekranı; ayrıca her sayfada yardımcı panel)

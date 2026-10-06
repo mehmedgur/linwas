@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from linwas.ui import icons
 from linwas.ui.widgets.card import Card
 
 
@@ -21,25 +22,47 @@ def tr(text: str) -> str:
     return QCoreApplication.translate("OverviewPage", text)
 
 
+def _icon_label(name: str, parent: QWidget) -> QLabel:
+    """Kart simgesi: vurgu renginde simge, yumuşak renkli kare zemin üzerinde."""
+    from PySide6.QtCore import Qt
+
+    lbl = QLabel(parent)
+    lbl.setObjectName("CardIcon")
+    lbl.setFixedSize(40, 40)
+    lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
+    icons.bind(lbl, name, "accent", 22)
+    return lbl
+
+
 class _QuickActionCard(Card):
     """Hızlı işlem kartı: büyük ikon + başlık + kısa açıklama."""
 
     clicked = Signal()
 
-    def __init__(self, title: str, description: str, parent: QWidget | None = None) -> None:
+    def __init__(
+        self, title: str, description: str, icon: str, parent: QWidget | None = None
+    ) -> None:
         super().__init__(parent)
         from PySide6.QtCore import Qt
 
         self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setProperty("clickable", True)
 
+        row = QHBoxLayout()
+        row.setSpacing(14)
+        row.addWidget(_icon_label(icon, self), 0, Qt.AlignmentFlag.AlignTop)
+        texts = QVBoxLayout()
+        texts.setSpacing(4)
         lbl_title = QLabel(title, self)
         lbl_title.setObjectName("H2")
-        self.layout.addWidget(lbl_title)
+        texts.addWidget(lbl_title)
 
         lbl_desc = QLabel(description, self)
         lbl_desc.setObjectName("Secondary")
         lbl_desc.setWordWrap(True)
-        self.layout.addWidget(lbl_desc)
+        texts.addWidget(lbl_desc)
+        row.addLayout(texts, 1)
+        self.layout.addLayout(row)
 
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
 
@@ -49,17 +72,36 @@ class _QuickActionCard(Card):
 
 
 class _StatusCard(Card):
-    """Sistem durum kartı: başlık + durum metni."""
+    """Sistem durum kartı: simge + başlık + durum metni; tıklanınca ilgili sayfa açılır."""
 
-    def __init__(self, title: str, parent: QWidget | None = None) -> None:
+    clicked = Signal()
+
+    def __init__(self, title: str, icon: str, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        from PySide6.QtCore import Qt
+
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setProperty("clickable", True)
+
+        row = QHBoxLayout()
+        row.setSpacing(12)
+        row.addWidget(_icon_label(icon, self), 0, Qt.AlignmentFlag.AlignTop)
+        texts = QVBoxLayout()
+        texts.setSpacing(4)
         self._title = QLabel(title, self)
         self._title.setObjectName("H2")
-        self.layout.addWidget(self._title)
+        texts.addWidget(self._title)
 
         self._status = QLabel(tr("Checking…"), self)
         self._status.setObjectName("Secondary")
-        self.layout.addWidget(self._status)
+        self._status.setWordWrap(True)
+        texts.addWidget(self._status)
+        row.addLayout(texts, 1)
+        self.layout.addLayout(row)
+
+    def mousePressEvent(self, event: object) -> None:  # type: ignore[override]
+        self.clicked.emit()
+        super().mousePressEvent(event)  # type: ignore[misc]
 
     def set_status(self, text: str) -> None:
         self._status.setText(text)
@@ -109,7 +151,7 @@ class OverviewPage(QWidget):
             ),
         ]
         for i, (page_id, label, desc) in enumerate(quick_actions):
-            card = _QuickActionCard(label, desc, content)
+            card = _QuickActionCard(label, desc, page_id, content)
             card.clicked.connect(lambda pid=page_id: self.page_requested.emit(pid))
             quick_grid.addWidget(card, i // 2, i % 2)
         outer.addLayout(quick_grid)
@@ -121,10 +163,15 @@ class OverviewPage(QWidget):
 
         status_row = QHBoxLayout()
         status_row.setSpacing(12)
-        self._updates_card = _StatusCard(tr("Updates"), content)
-        self._drivers_card = _StatusCard(tr("Drivers"), content)
-        self._wifi_card = _StatusCard(tr("Wi-Fi & Bluetooth"), content)
-        for card in (self._updates_card, self._drivers_card, self._wifi_card):
+        self._updates_card = _StatusCard(tr("Updates"), "updates", content)
+        self._drivers_card = _StatusCard(tr("Drivers"), "drivers", content)
+        self._wifi_card = _StatusCard(tr("Wi-Fi & Bluetooth"), "network", content)
+        for page_id, card in (
+            ("updates", self._updates_card),
+            ("drivers", self._drivers_card),
+            ("network", self._wifi_card),
+        ):
+            card.clicked.connect(lambda pid=page_id: self.page_requested.emit(pid))
             status_row.addWidget(card)
         outer.addLayout(status_row)
 
