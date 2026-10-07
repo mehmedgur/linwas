@@ -23,33 +23,6 @@ Son güncelleme: 7 Ekim 2026
 - [ ] **PR #2 — Proje belgelerinin depoya taşınması** (bu klasör) + program kaldırma kararı.
 
 ## Sıradaki aşama
-- **Windows sanal makinesi (Microsoft 365)** (kararlar.md › EXE › Windows sanal makinesi): önce
-  araştırma, sonra aşamalar:
-  0. [x] Araştırma (7 Ekim 2026) — sonuçlar:
-     - **dockur/windows (MIT):** `VERSION=11i` → `win11x64-enterprise-iot-eval` (Windows 11 IoT Enterprise
-       LTSC deneme sürümü), `11l` → Enterprise LTSC (IoT değil). ISO Microsoft'un kendi sunucusundan
-       (software-static.download.prss.microsoft.com) iner. Varsayılan 4 GB / 2 çekirdek / 64 GB; `RAM_SIZE`,
-       `CPU_CORES`, `DISK_SIZE`, `LANGUAGE`, `REGION`, `KEYBOARD`; `/dev/kvm`, `/dev/net/tun`, `NET_ADMIN`;
-       RDP 3389, kurulum izleme 8006 (tarayıcı); paylaşılan klasör `/shared` → Windows'ta Z:; kapatırken
-       `--stop-timeout 120`. Docker ve Podman destekli; compose şart değil (`docker run` örneği var).
-     - **WinApps ve LinOffice: AGPLv3** (WinApps'in eski bazı dosyaları "tüm hakları saklı"). Kodları
-       kopyalanmaz; Linwas kendi uygulamasını yazar, dockur'u (MIT) arka uç olarak kullanır.
-     - **RemoteApp için Windows içi ayarlar** (Microsoft'un belgelenmiş ayarları): `fDenyTSConnections=0`,
-       `TSAppAllowList\fDisabledAllowList=1`, `fAllowUnlistedRemotePrograms=1`, NLA, güvenlik duvarında
-       "Remote Desktop" kuralı.
-     - **FreeRDP 3:** Ubuntu 24.04 (3.32) ve Debian 13 (3.15) depolarında var; Debian 12/Pardus 23 yalnızca
-       bookworm-backports (3.10), Ubuntu 22.04'te yok → bu sistemlerde Flathub `com.freerdp.FreeRDP` (3.32;
-       varsayılan komut `sdl-freerdp`, yalnızca İndirilenler'e erişir → ev klasörü için çalıştırırken
-       `--filesystem`). RemoteApp argümanları: `/app:program:…,cmd:"dosya"`, `/drive:`, `/wm-class:`.
-     - **Kapsayıcı:** Pardus 23'te docker.io 20.10 var ama compose yok; Podman 4.3.1 + podman-compose 1.0.3
-       depoda. Linwas compose kullanmadan `podman/docker run` argümanlarını kendisi kurar.
-     - **Bellek:** kapsayıcıyı duraklatmak (pause) belleği boşaltmaz; 8 GB'lık makinede boşta Windows'u
-       kapatmak gerekir (yeniden açılış yarım dakikayı bulabilir).
-  0b. [ ] Kendi makinende deneme (prototip, kod yazmadan önce): root'suz Podman + /dev/kvm + /dev/net/tun
-     ile dockur `11i` kurulumu; Flatpak FreeRDP'nin RemoteApp (`/app:`) ile tek pencere açması ve ev klasörü
-     paylaşımı; Microsoft 365'in bu Windows'a kurulması; dockur'un kurulum sonrası betik desteği
-     (RemoteApp ayarlarını otomatik yapmak için); şifrenin komut satırında görünmemesi (FreeRDP
-     `/from-stdin`).
   1. [ ] Donanım denetimi ve öneri ekranı (KVM, bellek, disk) + web Office'i uygulama olarak ekleme.
   2. [ ] Kurulum (root işlemleri: Podman/Docker, FreeRDP; Windows'un gözetimsiz kurulumu, ilerleme).
   3. [ ] Office kurulumu, RemoteApp kısayolları, dosya ilişkilendirmesi, paylaşılan klasör.
@@ -85,6 +58,35 @@ Son güncelleme: 7 Ekim 2026
   sayfaların görsel kontrolü. Commit öncesi mevcut `ruff` + `pytest` çalışmaya devam ediyor.
 
 ## Bekleyen fikirler (sonraki sürümler)
+- [ ] **Windows sanal makinesi (Microsoft 365)** — 7 Ekim 2026'da askıya alındı (kullanıcı kararı); araştırma
+  bitti, sıradaki adım 0b (elle prototip). Ayrıntı: kararlar.md › EXE › Windows sanal makinesi. Başlarken
+  lisans kararı da verilecek (IoT LTSC lisansının bireysel kullanıma uygunluğu, perakende seçenek,
+  kurulum ekranındaki lisans metni). Aşamalar:
+  0. [x] Araştırma (7 Ekim 2026) — sonuçlar:
+     - **dockur/windows (MIT):** `VERSION=11i` → `win11x64-enterprise-iot-eval` (Windows 11 IoT Enterprise
+       LTSC deneme sürümü), `11l` → Enterprise LTSC (IoT değil). ISO Microsoft'un kendi sunucusundan
+       (software-static.download.prss.microsoft.com) iner. Varsayılan 4 GB / 2 çekirdek / 64 GB; `RAM_SIZE`,
+       `CPU_CORES`, `DISK_SIZE`, `LANGUAGE`, `REGION`, `KEYBOARD`; `/dev/kvm`, `/dev/net/tun`, `NET_ADMIN`;
+       RDP 3389, kurulum izleme 8006 (tarayıcı); paylaşılan klasör `/shared` → Windows'ta Z:; kapatırken
+       `--stop-timeout 120`. Docker ve Podman destekli; compose şart değil (`docker run` örneği var).
+     - **WinApps ve LinOffice: AGPLv3** (WinApps'in eski bazı dosyaları "tüm hakları saklı"). Kodları
+       kopyalanmaz; Linwas kendi uygulamasını yazar, dockur'u (MIT) arka uç olarak kullanır.
+     - **RemoteApp için Windows içi ayarlar** (Microsoft'un belgelenmiş ayarları): `fDenyTSConnections=0`,
+       `TSAppAllowList\fDisabledAllowList=1`, `fAllowUnlistedRemotePrograms=1`, NLA, güvenlik duvarında
+       "Remote Desktop" kuralı.
+     - **FreeRDP 3:** Ubuntu 24.04 (3.32) ve Debian 13 (3.15) depolarında var; Debian 12/Pardus 23 yalnızca
+       bookworm-backports (3.10), Ubuntu 22.04'te yok → bu sistemlerde Flathub `com.freerdp.FreeRDP` (3.32;
+       varsayılan komut `sdl-freerdp`, yalnızca İndirilenler'e erişir → ev klasörü için çalıştırırken
+       `--filesystem`). RemoteApp argümanları: `/app:program:…,cmd:"dosya"`, `/drive:`, `/wm-class:`.
+     - **Kapsayıcı:** Pardus 23'te docker.io 20.10 var ama compose yok; Podman 4.3.1 + podman-compose 1.0.3
+       depoda. Linwas compose kullanmadan `podman/docker run` argümanlarını kendisi kurar.
+     - **Bellek:** kapsayıcıyı duraklatmak (pause) belleği boşaltmaz; 8 GB'lık makinede boşta Windows'u
+       kapatmak gerekir (yeniden açılış yarım dakikayı bulabilir).
+  0b. [ ] Kendi makinende deneme (prototip, kod yazmadan önce): root'suz Podman + /dev/kvm + /dev/net/tun
+     ile dockur `11i` kurulumu; Flatpak FreeRDP'nin RemoteApp (`/app:`) ile tek pencere açması ve ev klasörü
+     paylaşımı; Microsoft 365'in bu Windows'a kurulması; dockur'un kurulum sonrası betik desteği
+     (RemoteApp ayarlarını otomatik yapmak için); şifrenin komut satırında görünmemesi (FreeRDP
+     `/from-stdin`).
 - [ ] **Oyun sekmesi** (Program › Oyun): Steam + Proton, Lutris / Heroic, GameMode, uyumluluk
   kontrolü (AI + ProtonDB). 7 Ekim 2026: ilk yayından sonraki sürüme ertelendi.
 - [ ] **"Linwas Hazırlık" Windows aracı:** Geçişten önce Windows'ta çalışan küçük bir araç.
@@ -104,8 +106,6 @@ Son güncelleme: 7 Ekim 2026
 - [ ] **Üçüncü taraf eklentiler:** kendi imza sistemi + izin ekranı.
 
 ## Yayın öncesi yapılacaklar (2.0)
-- [ ] Windows sanal makinesi için lisans kararı (Windows 11 IoT Enterprise LTSC 2024 lisansının bireysel
-  kullanıma uygunluğu; perakende seçenek) ve kurulum ekranındaki lisans metni.
 - [ ] Lisans kararı (GPL-3.0 önerildi).
 - [ ] Herkese açık yayın yeri: depoyu açmak mı, ayrı "linwas-releases" deposu mu (APT deposu +
   GitHub Issues).
