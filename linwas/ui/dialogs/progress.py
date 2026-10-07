@@ -138,15 +138,20 @@ class ProgressDialog(QDialog):
                 label=prog.step_label,
             )
         )
-        if prog.step_total > 0:
+        # Çubuk biten adımları gösterir; adım başlarken bitmiş sayılmaz. Henüz biten adım
+        # yoksa (ör. tek adımlı görev) belirsiz ilerleme (hareketli çubuk) gösterilir.
+        completed = prog.step_index + (1 if prog.done else 0)
+        if prog.step_total > 0 and completed > 0:
             self._progress.setRange(0, prog.step_total)
-            self._progress.setValue(prog.step_index + 1)
+            self._progress.setValue(completed)
+        else:
+            self._progress.setRange(0, 0)
         if prog.message:
             self._log.appendPlainText(prog.message)
         if prog.error:
             self._detail_lbl.setText(prog.error)
             self._log.appendPlainText(prog.error)
-        self.step_progress.emit(prog.step_index + 1, prog.step_total, prog.step_label)
+        self.step_progress.emit(completed, prog.step_total, prog.step_label)
 
     def _on_finished(self, success: bool, error: str) -> None:
         # run() completed'i yayınlayıp hemen döner; pencere silinmeden önce iş parçacığı bitsin
