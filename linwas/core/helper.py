@@ -16,6 +16,7 @@ import contextlib
 import json
 import os
 import pwd
+import re
 import shutil
 import subprocess
 import sys
@@ -574,6 +575,29 @@ def _exec_driver_remove_nvidia(seq: int, params: dict[str, str]) -> bool:
     return _run(["apt-get", "autoremove", "-y"], seq, _APT_ENV)
 
 
+def _exec_firmware_refresh(seq: int, params: dict[str, str]) -> bool:
+    return _run(["fwupdmgr", "refresh", "--force"], seq)
+
+
+def _exec_firmware_update_device(seq: int, params: dict[str, str]) -> bool:
+    return _run(["fwupdmgr", "update", params["device_id"], "-y", "--no-reboot-check"], seq)
+
+
+def _exec_kernel_install_backports(seq: int, params: dict[str, str]) -> bool:
+    """Backports'taki çekirdeği kurar (paket adı mimariden: linux-image-<mimari>)."""
+    try:
+        arch = subprocess.run(
+            ["dpkg", "--print-architecture"], capture_output=True, text=True, timeout=10
+        ).stdout.strip()
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        arch = ""
+    if not re.match(r"^[a-z0-9]+$", arch):
+        _error(seq, "Sistem mimarisi okunamadı")
+        return False
+    cmd = ["apt-get", "install", "-y", "-t", params["suite"], "--", f"linux-image-{arch}"]
+    return _run(cmd, seq, _APT_ENV)
+
+
 # DKMS modül imza anahtarı: Ubuntu (shim-signed) ve Debian (dkms)
 _MOK_KEYS = ("/var/lib/shim-signed/mok/MOK.der", "/var/lib/dkms/mok.pub")
 
@@ -788,6 +812,9 @@ _EXECUTORS: dict[str, Any] = {
     "wine.setup": _exec_wine_setup,
     "flatpak.setup": _exec_flatpak_setup,
     "driver.remove_nvidia": _exec_driver_remove_nvidia,
+    "firmware.refresh": _exec_firmware_refresh,
+    "firmware.update_device": _exec_firmware_update_device,
+    "kernel.install_backports": _exec_kernel_install_backports,
     "secureboot.enroll_mok": _exec_secureboot_enroll_mok,
     "autoupdate.configure": _exec_autoupdate_configure,
     "power.schedule_reboot": _exec_power_schedule_reboot,

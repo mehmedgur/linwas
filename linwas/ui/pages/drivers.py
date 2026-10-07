@@ -121,15 +121,18 @@ def _description_markers() -> None:
 
 
 class _ScanWorker(QThread):
-    done = Signal(object)  # (list[DriverCandidate], Secure Boot açık mı, MOK kayıtlı mı | None)
+    # (list[DriverCandidate], Secure Boot açık mı, MOK kayıtlı mı | None, KernelOffer | None)
+    done = Signal(object)
     error = Signal(str)
 
     def run(self) -> None:
         try:
+            from linwas.backend.kernel import kernel_offer
+
             drivers = list_drivers()
             secure_boot = dopt.secure_boot_enabled()
             mok = dopt.mok_enrolled() if secure_boot else None
-            self.done.emit((drivers, secure_boot, mok))
+            self.done.emit((drivers, secure_boot, mok, kernel_offer()))
         except Exception as exc:
             self.error.emit(str(exc))
 
@@ -261,6 +264,7 @@ class DriversPage(BasePage):
         self._scanned = False
         self._secure_boot = False
         self._mok: bool | None = None
+        self._kernel = None  # backend.kernel.KernelOffer | None
         self._candidates: list[DriverCandidate] = []
         # Görev bitince geçmişe yazılacak değişiklik: (aygıt, önceki paket, yeni paket)
         self._pending_change: tuple[str, str, str] | None = None
@@ -341,7 +345,7 @@ class DriversPage(BasePage):
         return self._categories is None or category in self._categories
 
     def _on_done(self, result: tuple) -> None:
-        candidates, self._secure_boot, self._mok = result
+        candidates, self._secure_boot, self._mok, self._kernel = result
         self._clear_cards()
         if self._categories is not None:
             candidates = [c for c in candidates if c.category in self._categories]
@@ -420,7 +424,96 @@ class DriversPage(BasePage):
         card.layout.addWidget(btn, 0, Qt.AlignmentFlag.AlignLeft)
         return card
 
+    def _add_kernel_card(self) -> None:
+        """Yeni donanım için daha yeni çekirdek (Ubuntu HWE / Debian backports)."""
+        offer = self._kernel
+        if offer is None or not self._shows(DriverCategory.GPU):
+            return
+        import os
+
+        card = Card(self._content)
+        h = QLabel(tr("Newer kernel for new hardware"), card)
+        h.setObjectName("H2")
+        card.layout.addWidget(h)
+        if offer.kind == "hwe":
+            what = tr("Ubuntu's hardware enablement (HWE) kernel")
+        else:
+            what = tr("the newer kernel from {suite}").format(suite=offer.suite)
+        text = tr(
+            "If a very new device (Wi-Fi, graphics, touchpad…) does not work, {what} may "
+            "support it. You are using kernel {running}."
+        ).format(what=what, running=os.uname().release)
+        if offer.version:
+            text += " " + tr("Offered version: {version}.").format(version=offer.version)
+        body = QLabel(text, card)
+        body.setWordWrap(True)
+        card.layout.addWidget(body)
+        warn = QLabel(
+            tr(
+                "Install it only if something does not work. A full system backup is taken "
+                "first; the old kernel stays and can be chosen at startup. A restart is required."
+            ),
+            card,
+        )
+        warn.setObjectName("Secondary")
+        warn.setWordWrap(True)
+        card.layout.addWidget(warn)
+        btn = QPushButton(tr("Install the newer kernel"), card)
+        btn.clicked.connect(self._install_kernel)
+        card.layout.addWidget(btn, 0, Qt.AlignmentFlag.AlignLeft)
+        self._outer.addWidget(card)
+
+    def _install_kernel(self) -> None:
+        import shutil
+
+        offer = self._kernel
+        if offer is None:
+            return
+        steps: list[TaskStep] = []
+        if shutil.which("timeshift"):
+            steps.append(
+                TaskStep(
+                    op_id="snapshot.timeshift_create",
+                    label=tr("System backup (Timeshift)"),
+                    params={},
+                )
+            )
+        if offer.kind == "hwe":
+            steps.append(
+                TaskStep(
+                    op_id="package.install",
+                    label=tr("Install {pkg}").format(pkg=offer.package),
+                    params={"name": offer.package},
+                )
+            )
+        else:
+            if offer.kind == "enable-backports":
+                steps += [
+                    TaskStep(
+                        op_id="apt.add_source",
+                        label=tr("Enable {suite}").format(suite=offer.suite),
+                        params={
+                            "source_line": offer.source_line,
+                            "list_name": "linwas-backports.list",
+                        },
+                    ),
+                    TaskStep(
+                        op_id="package.update_index",
+                        label=tr("Refresh package index"),
+                        params={},
+                    ),
+                ]
+            steps.append(
+                TaskStep(
+                    op_id="kernel.install_backports",
+                    label=tr("Install the newer kernel"),
+                    params={"suite": offer.suite},
+                )
+            )
+        self.task_run_now.emit(Task(label=tr("Install the newer kernel"), steps=steps))
+
     def _add_troubleshooting(self) -> None:
+        self._add_kernel_card()
         if not (self._shows(DriverCategory.GPU) or self._shows(DriverCategory.NETWORK)):
             return
         card = Card(self._content)
@@ -558,9 +651,9 @@ class DriversPage(BasePage):
         if self._pending_change:
             device, previous, new = self._pending_change
             self._pending_change = None
-            from linwas.backend.drivers import _dpkg_installed
+            from linwas.backend.drivers import dpkg_installed
 
-            done = _dpkg_installed(new) if new else not (previous and _dpkg_installed(previous))
+            done = dpkg_installed(new) if new else not (previous and dpkg_installed(previous))
             if done and new != previous:
                 dopt.record_change(device, previous, new)
         if self._scanned:

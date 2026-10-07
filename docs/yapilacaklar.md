@@ -30,7 +30,7 @@ Son güncelleme: 7 Ekim 2026
      koşulları, kurulum öncesi Timeshift, yeniden başlatma bildirimi.
   3. [x] Sürücü sürüm seçimi, önceki sürücüye dönme, Secure Boot (MOK), sorun giderme + AI.
   4. [x] Aygıt Yöneticisi (Donanım altında) + yazıcı/tarayıcı sürücüleri.
-  5. [ ] Firmware ayrıntıları (fwupd) + yeni donanım için yeni çekirdek (HWE / backports).
+  5. [x] Firmware ayrıntıları (fwupd) + yeni donanım için yeni çekirdek (HWE / backports).
 - **Bottles'a geçiş** (kararlar.md › EXE): kodlandı (7 Ekim 2026), kullanıcının denemesi bekleniyor;
   beğenilmezse `bottles.ENABLED = False` ile dağıtım Wine'ına dönülür.
 - Kodlama özellikleri tamam; kalanlar: kullanıcı denemeleri, yayın öncesi kararlar,
@@ -79,6 +79,9 @@ Son güncelleme: 7 Ekim 2026
 - [ ] Yayın yeri belli olunca `release.yml`'ye depo yükleme adımı (ör. GitHub Pages).
 
 ## Kodlama sırasında doğrulanacaklar
+- [ ] **Firmware ve çekirdek (aşama 5, denenmedi):** gerçek bir fwupd güncellemesiyle `get-updates --json`
+  alanları (Releases, Urgency) ve `fwupdmgr update <id> -y`; Ubuntu 22.04'te HWE önerisi; saf Debian 12'de
+  backports etkinleştirme + `apt-get install -t bookworm-backports linux-image-amd64`.
 - [ ] **Sürücüler (aşama 3–4, denenmedi):** Secure Boot açık bir makinede MOK akışı (mavi ekran,
   `mokutil --test-key`); Ubuntu'da `ubuntu-drivers devices` çıktısı ve `nvidia-driver-<n>` seçenekleri;
   `apt-get purge '.*nvidia.*'` sonrası nouveau ile açılış; yazıcı üretici → paket eşlemesinin gerçek

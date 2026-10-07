@@ -45,6 +45,7 @@ from linwas.core.tasks import Task, TaskStep
 from linwas.ui import icons
 from linwas.ui.pages.base import BasePage
 from linwas.ui.pages.drivers import DriversPage
+from linwas.ui.pages.firmware_view import FirmwareView
 from linwas.ui.pages.updates import UpdatesPage
 from linwas.ui.widgets.card import Card
 
@@ -427,7 +428,7 @@ class UpdateCenterPage(BasePage):
             categories={DriverCategory.GPU, DriverCategory.NETWORK, DriverCategory.PRINTER},
             title=tr("Drivers"),
         )
-        self._firmware = DriversPage(categories={DriverCategory.FIRMWARE}, title=tr("Firmware"))
+        self._firmware = FirmwareView()
         for sub in (self._system, self._drivers, self._firmware):
             sub.task_requested.connect(self.task_requested)
             sub.task_run_now.connect(self.task_run_now)

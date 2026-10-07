@@ -54,6 +54,10 @@ class ParamKind(Enum):
     CLOCK_TIME = "clock_time"
     # Secure Boot MOK kaydı için 8 haneli tek kullanımlık şifre
     MOK_PASSWORD = "mok_password"
+    # fwupd aygıt kimliği (40 karakter onaltılık)
+    FWUPD_DEVICE_ID = "fwupd_device_id"
+    # Backports kod adı (ör. bookworm-backports)
+    BACKPORTS_SUITE = "backports_suite"
 
 
 @dataclass(frozen=True)
@@ -247,6 +251,22 @@ def _validate_mok_password(value: str) -> str:
     return value
 
 
+_RE_FWUPD_ID = re.compile(r"^[0-9a-f]{40}$")
+_RE_BACKPORTS = re.compile(r"^[a-z]+-backports$")
+
+
+def _validate_fwupd_device_id(value: str) -> str:
+    if not _RE_FWUPD_ID.match(value):
+        raise ValidationError(f"Geçersiz fwupd aygıt kimliği: {value!r}")
+    return value
+
+
+def _validate_backports_suite(value: str) -> str:
+    if not _RE_BACKPORTS.match(value):
+        raise ValidationError(f"Geçersiz backports adı: {value!r}")
+    return value
+
+
 _RE_UUID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 
 
@@ -283,6 +303,8 @@ _VALIDATORS: dict[ParamKind, object] = {
     ParamKind.PAUSE_WEEKS: _validate_pause_weeks,
     ParamKind.CLOCK_TIME: _validate_clock_time,
     ParamKind.MOK_PASSWORD: _validate_mok_password,
+    ParamKind.FWUPD_DEVICE_ID: _validate_fwupd_device_id,
+    ParamKind.BACKPORTS_SUITE: _validate_backports_suite,
 }
 
 
@@ -422,6 +444,19 @@ OPERATIONS: dict[str, OperationSpec] = {
         ("password", ParamKind.MOK_PASSWORD),
         risk=RiskLevel.MEDIUM,
         label="Register the driver signing key for Secure Boot",
+    ),
+    "firmware.refresh": OperationSpec(
+        params=[], risk=RiskLevel.LOW, label="Download the latest firmware information"
+    ),
+    "firmware.update_device": _op(
+        ("device_id", ParamKind.FWUPD_DEVICE_ID),
+        risk=RiskLevel.HIGH,
+        label="Update device firmware",
+    ),
+    "kernel.install_backports": _op(
+        ("suite", ParamKind.BACKPORTS_SUITE),
+        risk=RiskLevel.HIGH,
+        label="Install a newer kernel (backports)",
     ),
     "flatpak.setup": OperationSpec(
         params=[],

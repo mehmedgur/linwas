@@ -51,17 +51,9 @@ def _run(cmd: list[str], timeout: int = 20) -> str:
         return ""
 
 
-def _dpkg_installed(pkg: str) -> bool:
+def dpkg_installed(pkg: str) -> bool:
     out = _run(["dpkg-query", "-W", "-f=${Status}", pkg], timeout=5)
     return "install ok installed" in out
-
-
-def _dpkg_installed_any(*pkgs: str) -> tuple[str, bool]:
-    """İlk kurulu paketi döner; yoksa ilk paketi False ile döner."""
-    for p in pkgs:
-        if _dpkg_installed(p):
-            return p, True
-    return pkgs[0], False
 
 
 # --- lspci -k ayrıştırıcı ---
@@ -196,7 +188,7 @@ def _gpu_candidates(dev: _PciDevice) -> list[DriverCandidate]:
                     description="NVIDIA open-source kernel modules (Turing+ only, experimental).",
                     driver_type="open-source",
                     recommended=False,
-                    installed=_dpkg_installed("nvidia-open-kernel-dkms"),
+                    installed=dpkg_installed("nvidia-open-kernel-dkms"),
                     needs_reboot=True,
                 )
             )
@@ -263,7 +255,7 @@ def _package_candidate(
     driver_type: str,
     needs_reboot: bool = False,
 ) -> DriverCandidate:
-    installed = _dpkg_installed(package)
+    installed = dpkg_installed(package)
     return DriverCandidate(
         package=package,
         device_name=device,
@@ -290,7 +282,7 @@ def _cpu_vendor(cpuinfo: Path = Path("/proc/cpuinfo")) -> str:
     return ""
 
 
-def _microcode_candidates() -> list[DriverCandidate]:
+def microcode_candidates() -> list[DriverCandidate]:
     """İşlemci üreticisinin güvenlik ve kararlılık düzeltmeleri (açılışta yüklenir)."""
     package = {"GenuineIntel": "intel-microcode", "AuthenticAMD": "amd64-microcode"}.get(
         _cpu_vendor(), ""
@@ -310,7 +302,7 @@ def _microcode_candidates() -> list[DriverCandidate]:
     ]
 
 
-def _available_in_repo(packages: list[str]) -> set[str]:
+def available_in_repo(packages: list[str]) -> set[str]:
     """Depoda kurulabilir (aday sürümü olan) ya da zaten kurulu paketler."""
     from linwas.backend.featured import parse_policy
 
@@ -339,8 +331,8 @@ def _network_candidates(dev: _PciDevice) -> list[DriverCandidate]:
 
     if _BROADCOM.search(name):
         # Broadcom: firmware veya STA sürücüsü
-        fw_installed = _dpkg_installed("firmware-brcm80211")
-        sta_installed = _dpkg_installed("broadcom-sta-dkms")
+        fw_installed = dpkg_installed("firmware-brcm80211")
+        sta_installed = dpkg_installed("broadcom-sta-dkms")
         if not fw_installed:
             results.append(
                 DriverCandidate(
@@ -386,7 +378,7 @@ def _network_candidates(dev: _PciDevice) -> list[DriverCandidate]:
             )
 
     elif _REALTEK_NET.search(name):
-        fw_installed = _dpkg_installed("firmware-realtek")
+        fw_installed = dpkg_installed("firmware-realtek")
         results.append(
             DriverCandidate(
                 package="firmware-realtek",
@@ -402,7 +394,7 @@ def _network_candidates(dev: _PciDevice) -> list[DriverCandidate]:
         )
 
     elif _INTEL_WIFI.search(name):
-        fw_installed = _dpkg_installed("firmware-iwlwifi")
+        fw_installed = dpkg_installed("firmware-iwlwifi")
         if not fw_installed:
             results.append(
                 DriverCandidate(
@@ -419,7 +411,7 @@ def _network_candidates(dev: _PciDevice) -> list[DriverCandidate]:
             )
 
     elif _MEDIATEK.search(name):
-        fw_installed = _dpkg_installed("firmware-linux-nonfree")
+        fw_installed = dpkg_installed("firmware-linux-nonfree")
         results.append(
             DriverCandidate(
                 package="firmware-linux-nonfree",
@@ -445,7 +437,7 @@ def _printer_candidates() -> list[DriverCandidate]:
 
     results = []
     for s in printer_suggestions(list_usb()):
-        installed = _dpkg_installed(s.package)
+        installed = dpkg_installed(s.package)
         results.append(
             DriverCandidate(
                 package=s.package,
@@ -488,19 +480,10 @@ def _fwupd_candidates() -> list[DriverCandidate]:
             )
         ]
 
-    # fwupd var; güncellemeleri sorgula
-    output = _run(["fwupdmgr", "get-updates", "--no-unreported-check"], timeout=30)
-    if not output:
-        return []
+    # fwupd var; güncellemeler JSON'dan sayılır (metin çıktısı dile ve sürüme göre değişir)
+    from linwas.backend.firmware import list_updates
 
-    # Güncelleme bulunamadıysa boş liste
-    if "No updates available" in output or "nothing to update" in output.lower():
-        return []
-
-    # Kaç cihaz güncellenebilir?
-    count = output.count("• ")
-    if count == 0:
-        count = output.count("\n  ") // 3  # kaba tahmin
+    count = len(list_updates())
     if count <= 0:
         return []
 
@@ -539,12 +522,12 @@ def list_drivers() -> list[DriverCandidate]:
                 candidates.extend(_network_candidates(dev))
 
         candidates.extend(_printer_candidates())
-        candidates.extend(_microcode_candidates())
+        candidates.extend(microcode_candidates())
 
         # Paket adları dağıtıma göre değişir (ör. Ubuntu'da firmware-* yok, linux-firmware
         # içinde gelir): depoda olmayan öneri gösterilmez
         names = sorted({c.package for c in candidates if not c.options})
-        available = _available_in_repo(names)
+        available = available_in_repo(names)
         candidates = [c for c in candidates if c.options or c.package in available]
         # Aynı paket birden çok aygıt için önerildiyse (ör. Mesa) bir kez gösterilir
         unique: dict[str, DriverCandidate] = {}

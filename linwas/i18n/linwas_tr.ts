@@ -755,6 +755,42 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <source>{n} firmware update(s) available (BIOS, SSD, docks…).</source>
         <translation>{n} firmware güncellemesi var (BIOS, SSD, yerleştirme istasyonu…).</translation>
     </message>
+    <message>
+        <source>Enable {suite}</source>
+        <translation>{suite} deposunu etkinleştir</translation>
+    </message>
+    <message>
+        <source>If a very new device (Wi-Fi, graphics, touchpad…) does not work, {what} may support it. You are using kernel {running}.</source>
+        <translation>Çok yeni bir aygıt (Wi-Fi, ekran kartı, dokunmatik yüzey…) çalışmıyorsa {what} onu destekleyebilir. Kullandığınız çekirdek: {running}.</translation>
+    </message>
+    <message>
+        <source>Install it only if something does not work. A full system backup is taken first; the old kernel stays and can be chosen at startup. A restart is required.</source>
+        <translation>Yalnızca bir şey çalışmıyorsa kurun. Önce tam sistem yedeği alınır; eski çekirdek kalır ve açılışta seçilebilir. Yeniden başlatma gerekir.</translation>
+    </message>
+    <message>
+        <source>Install the newer kernel</source>
+        <translation>Yeni çekirdeği kur</translation>
+    </message>
+    <message>
+        <source>Newer kernel for new hardware</source>
+        <translation>Yeni donanım için yeni çekirdek</translation>
+    </message>
+    <message>
+        <source>Offered version: {version}.</source>
+        <translation>Önerilen sürüm: {version}.</translation>
+    </message>
+    <message>
+        <source>Refresh package index</source>
+        <translation>Paket listesini yenile</translation>
+    </message>
+    <message>
+        <source>Ubuntu's hardware enablement (HWE) kernel</source>
+        <translation>Ubuntu'nun donanım desteği (HWE) çekirdeği</translation>
+    </message>
+    <message>
+        <source>the newer kernel from {suite}</source>
+        <translation>{suite} deposundaki yeni çekirdek</translation>
+    </message>
 </context>
 <context>
     <name>SoftwarePage</name>
@@ -4117,6 +4153,141 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>open kernel modules</source>
         <translation>açık çekirdek modülleri</translation>
+    </message>
+</context>
+<context>
+    <name>FirmwareView</name>
+    <message>
+        <source>Available firmware updates</source>
+        <translation>Hazır firmware güncellemeleri</translation>
+    </message>
+    <message>
+        <source>Devices</source>
+        <translation>Aygıtlar</translation>
+    </message>
+    <message>
+        <source>Do not turn off the computer while firmware is updating. Some updates finish during the next restart.</source>
+        <translation>Firmware güncellenirken bilgisayarı kapatmayın. Bazı güncellemeler bir sonraki yeniden başlatmada tamamlanır.</translation>
+    </message>
+    <message>
+        <source>Download latest firmware information</source>
+        <translation>En güncel firmware bilgilerini indir</translation>
+    </message>
+    <message>
+        <source>Download latest information</source>
+        <translation>Güncel bilgileri indir</translation>
+    </message>
+    <message>
+        <source>Downloads the list of firmware updates from LVFS (asks for your password).</source>
+        <translation>Firmware güncellemelerinin listesini LVFS'ten indirir (şifrenizi sorar).</translation>
+    </message>
+    <message>
+        <source>Finishes during the next restart.</source>
+        <translation>Bir sonraki yeniden başlatmada tamamlanır.</translation>
+    </message>
+    <message>
+        <source>Firmware</source>
+        <translation>Firmware</translation>
+    </message>
+    <message>
+        <source>Firmware is the built-in software of devices such as the BIOS, SSD, docks and the processor. Updates come from the device makers through LVFS.</source>
+        <translation>Firmware; BIOS, SSD, yerleştirme istasyonu ve işlemci gibi aygıtların içindeki yazılımdır. Güncellemeler aygıt üreticilerinden LVFS aracılığıyla gelir.</translation>
+    </message>
+    <message>
+        <source>Firmware update history</source>
+        <translation>Firmware güncelleme geçmişi</translation>
+    </message>
+    <message>
+        <source>Important</source>
+        <translation>Önemli</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Kur</translation>
+    </message>
+    <message>
+        <source>Install fwupd</source>
+        <translation>fwupd'yi kur</translation>
+    </message>
+    <message>
+        <source>Install {pkg}</source>
+        <translation>{pkg} kur</translation>
+    </message>
+    <message>
+        <source>Installed; updated together with system updates.</source>
+        <translation>Kurulu; sistem güncellemeleriyle birlikte güncellenir.</translation>
+    </message>
+    <message>
+        <source>No firmware updates. Your devices are up to date.</source>
+        <translation>Firmware güncellemesi yok. Aygıtlarınız güncel.</translation>
+    </message>
+    <message>
+        <source>Plug in the computer to update this device.</source>
+        <translation>Bu aygıtı güncellemek için bilgisayarı prize takın.</translation>
+    </message>
+    <message>
+        <source>Processor microcode</source>
+        <translation>İşlemci mikrokodu</translation>
+    </message>
+    <message>
+        <source>Reading firmware information…</source>
+        <translation>Firmware bilgileri okunuyor…</translation>
+    </message>
+    <message>
+        <source>Release notes</source>
+        <translation>Sürüm notları</translation>
+    </message>
+    <message>
+        <source>Security and stability fixes from the processor maker, loaded at every start ({pkg}).</source>
+        <translation>İşlemci üreticisinden güvenlik ve kararlılık düzeltmeleri, her açılışta yüklenir ({pkg}).</translation>
+    </message>
+    <message>
+        <source>The computer must be plugged in to update this device.</source>
+        <translation>Bu aygıtı güncellemek için bilgisayar prize takılı olmalı.</translation>
+    </message>
+    <message>
+        <source>The computer must be plugged in.</source>
+        <translation>Bilgisayar prize takılı olmalı.</translation>
+    </message>
+    <message>
+        <source>The device battery is too low.</source>
+        <translation>Aygıtın pili çok düşük.</translation>
+    </message>
+    <message>
+        <source>The firmware update tool (fwupd) is not installed.</source>
+        <translation>Firmware güncelleme aracı (fwupd) kurulu değil.</translation>
+    </message>
+    <message>
+        <source>Update</source>
+        <translation>Güncelle</translation>
+    </message>
+    <message>
+        <source>Update firmware</source>
+        <translation>Firmware'i güncelle</translation>
+    </message>
+    <message>
+        <source>Update firmware: {name}</source>
+        <translation>Firmware güncelle: {name}</translation>
+    </message>
+    <message>
+        <source>Update the firmware of {name}? Keep the computer plugged in and do not turn it off until it finishes.</source>
+        <translation>{name} firmware'i güncellensin mi? Bitene kadar bilgisayarı prize takılı tutun ve kapatmayın.</translation>
+    </message>
+    <message>
+        <source>can be updated</source>
+        <translation>güncellenebilir</translation>
+    </message>
+    <message>
+        <source>updates not supported</source>
+        <translation>güncelleme desteklenmiyor</translation>
+    </message>
+    <message>
+        <source>{name}: version {version}</source>
+        <translation>{name}: sürüm {version}</translation>
+    </message>
+    <message>
+        <source>{vendor} · version {old} → {new}</source>
+        <translation>{vendor} · sürüm {old} → {new}</translation>
     </message>
 </context>
 </TS>

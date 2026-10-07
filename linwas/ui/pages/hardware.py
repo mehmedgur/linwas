@@ -47,10 +47,10 @@ class _Worker(QThread):
 
 
 def _load_printers() -> tuple[list[hardware.Printer], list[str], list]:
-    from linwas.backend.drivers import _dpkg_installed
+    from linwas.backend.drivers import dpkg_installed
 
     suggestions = [
-        s for s in devices.printer_suggestions(devices.list_usb()) if not _dpkg_installed(s.package)
+        s for s in devices.printer_suggestions(devices.list_usb()) if not dpkg_installed(s.package)
     ]
     return hardware.list_printers(), hardware.detect_usb_printers(), suggestions
 
