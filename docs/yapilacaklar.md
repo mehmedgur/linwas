@@ -23,6 +23,16 @@ Son güncelleme: 7 Ekim 2026
 - [ ] **PR #2 — Proje belgelerinin depoya taşınması** (bu klasör) + program kaldırma kararı.
 
 ## Sıradaki aşama
+- **Windows sanal makinesi (Microsoft 365)** (kararlar.md › EXE › Windows sanal makinesi): önce
+  araştırma, sonra aşamalar:
+  0. [ ] Doğrula: dockur/windows'ta Windows 11 IoT Enterprise LTSC 2024 seçeneği (`11l` IoT mi Enterprise
+     mi; değilse ISO adresiyle), Evaluation ISO'sunun indirilme yolu; LinOffice/WinApps/dockur lisansları ve
+     Linwas'ta nasıl kullanılabilecekleri; RemoteApp için Windows içi ayarlar; FreeRDP 3 paket adları
+     (Debian 12/Pardus 23, Ubuntu 22.04/24.04); Podman/Docker gereksinimi.
+  1. [ ] Donanım denetimi ve öneri ekranı (KVM, bellek, disk) + web Office'i uygulama olarak ekleme.
+  2. [ ] Kurulum (root işlemleri: Podman/Docker, FreeRDP; Windows'un gözetimsiz kurulumu, ilerleme).
+  3. [ ] Office kurulumu, RemoteApp kısayolları, dosya ilişkilendirmesi, paylaşılan klasör.
+  4. [ ] Yaşam döngüsü: gerektiğinde başlat, boştayken durdur; bellek ayarı; kaldırma.
 - **Ayarlar** (kararlar.md › Ayarlar, 7 Ekim 2026), aşamalar:
   1. [x] İskelet: solda kategoriler + arama, anında kaydetme; mevcut Genel/tema/eklentiler/geçmiş taşınır.
   2. [x] Yapay zekâ bölümü (AI penceresi taşınır, token sınırı, sohbet saklama süresi, erişim izinleri).
@@ -73,6 +83,8 @@ Son güncelleme: 7 Ekim 2026
 - [ ] **Üçüncü taraf eklentiler:** kendi imza sistemi + izin ekranı.
 
 ## Yayın öncesi yapılacaklar (2.0)
+- [ ] Windows sanal makinesi için lisans kararı (Windows 11 IoT Enterprise LTSC 2024 lisansının bireysel
+  kullanıma uygunluğu; perakende seçenek) ve kurulum ekranındaki lisans metni.
 - [ ] Lisans kararı (GPL-3.0 önerildi).
 - [ ] Herkese açık yayın yeri: depoyu açmak mı, ayrı "linwas-releases" deposu mu (APT deposu +
   GitHub Issues).
