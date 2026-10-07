@@ -65,7 +65,7 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - İlk açılış: kısa tanıtım turu → kurulum sihirbazı (sistem taraması, Windows'tan taşıma, Timeshift önerisi ve ilk tam yedek, isteğe bağlı AI anahtarı).
 - Tema: Windows benzeri tasarım; Açık / Koyu / Sistem (Ayarlar'dan).
 - Dil: Türkçe + İngilizce (Qt Linguist altyapısı).
-- Pencere kapatma: Ayarlar'dan seçilir. Varsayılan: sistem tepsisi destekleniyorsa tepsiye küçülür; desteklenmiyorsa (ör. Debian/Pardus GNOME) uygulama kapanır, arka planda iş varsa bildirimle devam eder.
+- ~~Pencere kapatma varsayılanı~~ → aşağıdaki **Ayarlar (7 Ekim 2026)** kararına bakın (tepside arka planda çalışma). Pencere kapatma: Ayarlar'dan seçilir. Varsayılan: sistem tepsisi destekleniyorsa tepsiye küçülür; desteklenmiyorsa (ör. Debian/Pardus GNOME) uygulama kapanır, arka planda iş varsa bildirimle devam eder.
 - Erişilebilirlik: yazı boyutu, yüksek kontrast, tam klavye kullanımı, ekran okuyucu (Orca) uyumu.
 - Telemetri yok.
 
@@ -89,6 +89,14 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - **Program:** Üstte arama, altta "Windows'ta ne kullanıyordun?" bölümü; **Kurulu programlar** sekmesi; Oyun sekmesi
 - **Sorun Giderme:** Üstte tek tıkla tam tarama, altta belirti kartları
 - **Ayarlar:** Linwas'ın kendi ayarları (işlem geçmişi ve eklenti listesi burada)
+- **Ayarlar (7 Ekim 2026 kararı):**
+  - **Düzen:** sayfa içinde solda kategori listesi, sağda seçilen bölüm; üstte "Ayarlarda ara". Bölümler: Genel, Görünüm, Yapay zekâ, Bildirimler ve başlangıç, Gizlilik ve veriler, Yedekleme ve sıfırlama, Eklentiler, Hakkında.
+  - **Kaydetme:** değişiklik anında kaydedilir ve uygulanır ("Kaydet" düğmesi yok); root gerektirenler yine şifre sorar.
+  - **Teknik ayarlar ayrı yerde (Denetim Masası gibi):** basit Ayarlar sayfasında teknik ayar yok; teknik ayarların hepsi ayrı bir "Gelişmiş" sayfasında (ör. komut çıktılarını ve paket adlarını gösterme, ayrıntılı günlük, tanılama).
+  - **Yapay zekâ:** AI ayarları penceresi bu bölüme taşınır (sağlayıcı, API anahtarı, model); aylık token sınırı (yaklaşınca uyarı, aşılınca durdurma); sohbet geçmişi saklama süresi (hiç / 7 gün / 30 gün / her zaman) + tümünü sil; asistanın erişim izinleri (sistem bilgisi, ekran görüntüsü, log ekleme).
+  - **Bildirimler ve başlangıç:** Linwas oturum açılınca tepside sessizce başlar (varsayılan açık, kapatılabilir); masaüstü bildirimleri (güncelleme, yeniden başlatma, yedek, sorun), sessiz saatler.
+  - **Gizlilik ve veriler:** Linwas'ın tuttuğu veriler (işlem geçmişi, AI sohbetleri, geri alma kayıtları) görülür ve tek tıkla silinir; hata raporu izni.
+  - **Yedekleme ve sıfırlama:** Linwas ayarlarını dosyaya dışa/içe aktarma (yeni bilgisayara taşıma), varsayılanlara sıfırlama. **Hakkında:** sürüm, sistem bilgisini kopyala, lisanslar.
 - Menü özellikleri: daraltma, arama kutusu (Windows terimlerini de arar), açılır alt menüler, bildirim rozetleri, sistem durumu kartı, yardımcı paneli düğmesi.
 - Genel bakışta hızlı işlemler: Görev Yöneticisi, Disk temizliği, Dosyalarımı yedekle, Windows'tan taşı.
 

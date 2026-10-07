@@ -23,6 +23,12 @@ Son güncelleme: 7 Ekim 2026
 - [ ] **PR #2 — Proje belgelerinin depoya taşınması** (bu klasör) + program kaldırma kararı.
 
 ## Sıradaki aşama
+- **Ayarlar** (kararlar.md › Ayarlar, 7 Ekim 2026), aşamalar:
+  1. [ ] İskelet: solda kategoriler + arama, anında kaydetme; mevcut Genel/tema/eklentiler/geçmiş taşınır.
+  2. [ ] Yapay zekâ bölümü (AI penceresi taşınır, token sınırı, sohbet saklama süresi, erişim izinleri).
+  3. [ ] Bildirimler ve başlangıç (oturumla tepside başlama, masaüstü bildirimleri, sessiz saatler).
+  4. [ ] Gizlilik ve veriler, Yedekleme ve sıfırlama, Hakkında.
+  5. [ ] Ayrı "Gelişmiş" sayfası (teknik ayarlar).
 - **Güncelleme merkezi** (kararlar.md › Güncelleme merkezi), aşamalar — her biri ayrı commit, aralarda
   kullanıcı dener:
   1. [x] Güncelleme merkezi arayüzü (Güncellemeler + Sürücüler + Firmware tek sayfa) + güncelleme geçmişi.
