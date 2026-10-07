@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Linwas v4 — Onay iletişim kutusu</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#005fb8}a:hover{color:#003e78}
+.btn{height:32px;padding:0 11px;box-sizing:border-box;border-radius:4px;border:1px solid var(--ctl-stroke);border-bottom-color:var(--ctl-stroke-2);background:var(--ctl);color:var(--text);font:inherit;font-size:14px;line-height:20px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background-color 83ms linear,color 83ms linear}
+.btn:hover{background:var(--ctl-hover)}
+.btn:active{background:var(--ctl-press);color:var(--text-2);border-bottom-color:var(--ctl-stroke)}
+.btn-accent{background:var(--accent);border-color:var(--accent-stroke);color:var(--on-accent)}
+.btn-accent:hover{background:var(--accent-hover)}
+.btn-accent:active{background:var(--accent-press);color:var(--on-accent-2);border-color:transparent}
+.link{height:32px;padding:0 11px;margin-left:-11px;border:0;border-radius:4px;background:transparent;color:var(--accent-text);font:inherit;font-size:14px;cursor:pointer;transition:background-color 83ms linear}
+.link:hover{background:var(--subtle-hover)}
+.btn:focus-visible,.link:focus-visible,.radio:focus-within{outline:2px solid var(--focus-out);outline-offset:1px;box-shadow:0 0 0 1px var(--focus-in)}
+.radio{display:flex;gap:8px;align-items:flex-start;cursor:pointer;border-radius:4px}
+.radio input{width:20px;height:20px;margin:0;accent-color:var(--accent)}
+@keyframes lw-fade{from{opacity:0}to{opacity:1}}
+@keyframes lw-dlg{from{opacity:0;transform:scale(1.05)}to{opacity:1;transform:none}}
+.smoke{animation:lw-fade 167ms linear both}
+.dlg-in{animation:lw-dlg 250ms cubic-bezier(0,0,0,1) both}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 760px; height: 600px; box-sizing: border-box; position: relative; display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI Variable Text', 'Segoe UI', 'Noto Sans', sans-serif; font-size: 14px; line-height: 20px; color: var(--text); background: var(--mica); --mica: {{t.mica}}; --text: {{t.text}}; --text-2: {{t.text2}}; --accent: {{t.accent}}; --accent-text: {{t.accent}}; --accent-hover: {{t.accentHover}}; --accent-press: {{t.accentPress}}; --accent-stroke: {{t.accentStroke}}; --on-accent: {{t.onAccent}}; --on-accent-2: {{t.onAccent2}}; --ctl: {{t.ctl}}; --ctl-hover: {{t.ctlHover}}; --ctl-press: {{t.ctlPress}}; --ctl-stroke: {{t.ctlStroke}}; --ctl-stroke-2: {{t.ctlStroke2}}; --subtle-hover: {{t.subHover}}; --surface: {{t.surface}}; --footer: {{t.footer}}; --stroke: {{t.stroke}}; --divider: {{t.divider}}; --focus-out: {{t.focusOut}}; --focus-in: {{t.focusIn}}; --warn: {{t.warn}}; --warn-bg: {{t.warnBg}}">
+
+<!-- Smoke: modal arkasını karartan yarı saydam siyah (her iki temada aynı) -->
+<div aria-hidden="true" class="smoke" style="position: absolute; inset: 0; background: rgba(0,0,0,0.3)"></div>
+
+<div role="dialog" aria-modal="true" aria-labelledby="dlg-title" aria-describedby="dlg-body" class="dlg-in" style="position: relative; width: 480px; background: var(--surface); border: 1px solid var(--stroke); border-radius: 8px; box-shadow: 0 32px 64px rgba(0,0,0,0.19), 0 2px 21px rgba(0,0,0,0.15); overflow: hidden">
+<div style="padding: 24px; display: flex; flex-direction: column; gap: 12px">
+<h1 id="dlg-title" style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 600">3 işlemi başlatmak üzeresiniz</h1>
+<p id="dlg-body" style="margin: 0">Güncellemeler, ekran kartı sürücüsü ve VLC sırayla kurulacak. Sistem şifreniz bir kez sorulacak. Sürücü için sonunda yeniden başlatma gerekir.</p>
+
+<fieldset style="margin: 8px 0 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px">
+<legend style="padding: 0 0 8px; font-weight: 600">Başlamadan önce yedek al</legend>
+<label class="radio"><input type="radio" name="yedek" checked="{{full}}" onChange="{{pickFull}}"><span style="display: flex; flex-direction: column"><span>Tam yedek (önerilen)</span><span style="font-size: 12px; line-height: 16px; color: var(--text-2)">Tüm sistemin anlık görüntüsü; birkaç dakika sürebilir</span></span></label>
+<label class="radio"><input type="radio" name="yedek" checked="{{quick}}" onChange="{{pickQuick}}"><span style="display: flex; flex-direction: column"><span>Hızlı geri alma</span><span style="font-size: 12px; line-height: 16px; color: var(--text-2)">Yalnızca değişen dosyalar ve paket listesi</span></span></label>
+</fieldset>
+
+<div><button type="button" class="link">Çalışacak komutları göster</button></div>
+</div>
+
+<!-- Komut alanı: ana eylem solda, güvenli eylem (İptal) sağda; düğmeler eşit genişlikte -->
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 24px; background: var(--footer); border-top: 1px solid var(--divider)">
+<button type="button" class="btn btn-accent">Yedek al ve başlat</button>
+<button type="button" class="btn">İptal</button>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":760,"height":600}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { mode: 'full' };
+  }
+  renderVals() {
+    var self = this;
+    var dark = this.props.dark ?? false;
+    var t = dark ? {
+      mica: '#202020', surface: '#2B2B2B', footer: '#202020', stroke: 'rgba(0,0,0,0.2)', divider: 'rgba(255,255,255,0.084)',
+      text: '#FFFFFF', text2: 'rgba(255,255,255,0.786)',
+      accent: '#60CDFF', accentHover: 'rgba(96,205,255,0.9)', accentPress: 'rgba(96,205,255,0.8)', accentStroke: 'rgba(0,0,0,0.14)',
+      onAccent: '#000000', onAccent2: 'rgba(0,0,0,0.5)',
+      ctl: 'rgba(255,255,255,0.061)', ctlHover: 'rgba(255,255,255,0.084)', ctlPress: 'rgba(255,255,255,0.033)',
+      ctlStroke: 'rgba(255,255,255,0.07)', ctlStroke2: 'rgba(255,255,255,0.035)', subHover: 'rgba(255,255,255,0.061)',
+      focusOut: '#FFFFFF', focusIn: 'rgba(0,0,0,0.7)', warn: '#FCE100', warnBg: '#433519'
+    } : {
+      mica: '#F3F3F3', surface: '#FFFFFF', footer: '#F3F3F3', stroke: 'rgba(0,0,0,0.058)', divider: 'rgba(0,0,0,0.08)',
+      text: 'rgba(0,0,0,0.894)', text2: 'rgba(0,0,0,0.62)',
+      accent: '#005FB8', accentHover: 'rgba(0,95,184,0.9)', accentPress: 'rgba(0,95,184,0.8)', accentStroke: 'rgba(255,255,255,0.08)',
+      onAccent: '#FFFFFF', onAccent2: 'rgba(255,255,255,0.7)',
+      ctl: 'rgba(255,255,255,0.7)', ctlHover: 'rgba(249,249,249,0.5)', ctlPress: 'rgba(249,249,249,0.3)',
+      ctlStroke: 'rgba(0,0,0,0.058)', ctlStroke2: 'rgba(0,0,0,0.162)', subHover: 'rgba(0,0,0,0.037)',
+      focusOut: 'rgba(0,0,0,0.894)', focusIn: '#FFFFFF', warn: '#9D5D00', warnBg: '#FFF4CE'
+    };
+    var full = this.state.mode === 'full';
+    return {
+      t: t, full: full, quick: !full,
+      pickFull: function () { self.setState({ mode: 'full' }); },
+      pickQuick: function () { self.setState({ mode: 'quick' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>
