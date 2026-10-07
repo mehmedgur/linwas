@@ -23,6 +23,14 @@ Son güncelleme: 7 Ekim 2026
 - [ ] **PR #2 — Proje belgelerinin depoya taşınması** (bu klasör) + program kaldırma kararı.
 
 ## Sıradaki aşama
+- **Güncelleme merkezi** (kararlar.md › Güncelleme merkezi), aşamalar — her biri ayrı commit, aralarda
+  kullanıcı dener:
+  1. [ ] Güncelleme merkezi arayüzü (Güncellemeler + Sürücüler + Firmware tek sayfa) + güncelleme geçmişi.
+  2. [ ] Otomatik kurulum (Linwas systemd zamanlayıcısı), duraklatma (1–5 hafta), pil/ölçülü bağlantı
+     koşulları, kurulum öncesi Timeshift, yeniden başlatma bildirimi.
+  3. [ ] Sürücü sürüm seçimi, önceki sürücüye dönme, Secure Boot (MOK), sorun giderme + AI.
+  4. [ ] Aygıt Yöneticisi (Donanım altında) + yazıcı/tarayıcı sürücüleri.
+  5. [ ] Firmware ayrıntıları (fwupd) + yeni donanım için yeni çekirdek (HWE / backports).
 - **Bottles'a geçiş** (kararlar.md › EXE): kodlandı (7 Ekim 2026), kullanıcının denemesi bekleniyor;
   beğenilmezse `bottles.ENABLED = False` ile dağıtım Wine'ına dönülür.
 - Kodlama özellikleri tamam; kalanlar: kullanıcı denemeleri, yayın öncesi kararlar,

@@ -139,8 +139,17 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
   - **Herhangi bir .deb dosyası:** kullanıcı indirdiği .deb'i Linwas ile açar; Linwas risk analizini (kaynak, imza, bağımlılıklar, ne değiştireceği) gösterir, onayla kuyruğa ekler.
 - Ubuntu'da Flatpak gerekirse Linwas onu da kurar (kuyruk üzerinden).
 - **Snap:** Snap ile kurulu uygulamalar listede gösterilir ve güncellenebilir; yeni kurulum kaynağı olarak sunulmaz. Mint'te gösterilmez.
-- Güncellemeler: bildirilir, kullanıcı başlatır.
-- Sürücüler: önerilen tek tıkla + "Diğer seçenekler".
+- ~~Güncellemeler: bildirilir, kullanıcı başlatır.~~ → **Güncelleme merkezi** (7 Ekim 2026 kararı, aşağıda).
+- Sürücüler: önerilen tek tıkla + "Diğer seçenekler" (Güncelleme merkezi › Sürücüler altında).
+- **Güncelleme merkezi (7 Ekim 2026 kararı; Windows Update benzeri, daha gelişmiş):**
+  - **Tek sayfa:** Güncellemeler + Sürücüler + Firmware birleşir. Üstte durum ("Güncelsiniz" / "N güncelleme"), "Denetle" düğmesi, son denetim zamanı; altında bölümler: Sistem güncellemeleri, Sürücüler, Firmware, Güncelleme geçmişi, Gelişmiş seçenekler.
+  - **Otomatik kurulum:** güvenlik + sistem güncellemeleri (dağıtım deposu) kendiliğinden kurulur. Sürücü değişikliği, yeni çekirdek serisi ve firmware her zaman kullanıcı onayıyla. **Linwas'ın kendi systemd zamanlayıcısı** + root helper (unattended-upgrades değil); geri alma kaydı tutulur, hata AI'a sorulabilir.
+  - **Duraklatma:** Windows gibi "1 hafta duraklat", açılır listeden 5 haftaya kadar; süre dolunca kendiliğinden devam eder. Gelişmiş seçeneklerde tamamen kapatma.
+  - **Koşullar:** pilde çalışırken ve ölçülü bağlantıda (NetworkManager) bekler; Timeshift varsa kurulumdan önce anlık görüntü (sınırlı sayıda tutulur).
+  - **Yeniden başlatma:** bildirim + rozet; "Şimdi yeniden başlat" ya da "Bu gece şu saatte". Linwas kendiliğinden yeniden başlatmaz.
+  - **Sürücüler:** sürüm seçimi (ör. NVIDIA 535/550, önerilen işaretli), önceki sürücüye dönme (değişiklikten önce yedek), Secure Boot açıksa MOK kaydı adımları sade dille, kurulum sonrası sorunlar (siyah ekran, çözünürlük) için hazır çözümler + AI.
+  - **Kapsam:** yazıcı/tarayıcı sürücüleri (takılan aygıta göre paket önerisi), firmware (fwupd; sürüm notları, geçmiş, yeniden başlatma gereksinimi), yeni donanım için yeni çekirdek (Ubuntu HWE, Debian/Pardus backports; tam yedekle).
+  - **Aygıt Yöneticisi:** Donanım ve yazıcı altında ayrı görünüm; bütün PCI/USB aygıtları, kullandığı sürücü, durumu; sürücüsüz/sorunlu aygıtlar en üstte uyarıyla. Güncelleme merkezi ile karşılıklı bağlantı.
 - EXE: risk analizi; Linux alternatifi varsa önerilir, yoksa Wine ile açılır. (6 Ekim 2026 ayrıntıları:)
   - **Açma:** Programlar › "Windows programı aç (.exe)…" ve "Windows programları" sekmesi; .exe/.msi çift tıklanınca Linwas açılır (kurulu pakette ilk açılışta `xdg-mime default`, kullanıcı düzeyinde).
   - **Analiz** (`backend/exe_inspect.py`, salt okunur): PE başlığı (mimari, konsol/pencere, imza tablosu var mı — Linux'ta doğrulanamaz, .NET), sürüm bilgisi (şirket/ürün), kurulum türü (Inno/NSIS/MSI/InstallShield/WiX), çift uzantı hilesi, tarayıcının yazdığı indirme adresi (xattr), SHA256. Risk: yüksek = geçersiz PE / çift uzantı / ARM; orta = imzasız veya yapımcı yok.
