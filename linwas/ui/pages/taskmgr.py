@@ -24,6 +24,7 @@ from PySide6.QtWidgets import (
 from linwas.backend.process_list import ProcessInfo, kill_process, list_processes
 from linwas.backend.startup import StartupApp, list_startup_apps, set_enabled
 from linwas.translations import ui_language
+from linwas.ui import icons
 from linwas.ui.pages.base import BasePage
 
 _DATA = Path(__file__).resolve().parent.parent.parent / "data"
@@ -294,12 +295,14 @@ class _StartupRow(QWidget):
             row.addWidget(sys_lbl)
 
         # Bilgi butonu (her satırda; veri yoksa .desktop açıklaması gösterilir)
-        self._info_btn = QPushButton("ⓘ", row_widget)
-        self._info_btn.setFixedSize(28, 28)
+        # Genel düğme stili 14px yan boşluk verir; küçük düğmede simge sığsın diye sıfırlanır
+        self._info_btn = QPushButton(row_widget)
+        self._info_btn.setFixedSize(32, 32)
         self._info_btn.setStyleSheet(
-            "QPushButton { border: none; color: #0067c0; font-size: 16px; }"
-            "QPushButton:hover { color: #005ba6; }"
+            "QPushButton { border: none; padding: 0; min-height: 0; background: transparent; }"
         )
+        icons.bind(self._info_btn, "info", "accent", 20)
+        self._info_btn.setAccessibleName(tr("Show info"))
         self._info_btn.setToolTip(tr("Show info"))
         self._info_btn.clicked.connect(self._toggle_info)
         row.addWidget(self._info_btn)

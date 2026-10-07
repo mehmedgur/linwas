@@ -99,6 +99,10 @@ PATHS: dict[str, str] = {
     "chevron_right": '<path d="M9 6l6 6-6 6"/>',
     "chevron_down": '<path d="M6 9l6 6 6-6"/>',
     "check": '<path d="M5 12.5l4.5 4.5L19 7.5" stroke-width="3"/>',
+    "info": (
+        '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/>'
+        '<circle cx="12" cy="7.5" r="0.6" fill="{c}"/>'
+    ),
 }
 
 
