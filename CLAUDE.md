@@ -31,6 +31,7 @@ Bu belgeler projenin tek doğru kaynağıdır. Yeni bir karar alındığında ay
 - **Kullanıcının makinesi (Claude Code burada çalışır):** Pardus 23, testler **GNOME oturumunda**
   (KDE oturumu da var; KDE desteği sonraki sürümde).
   - Kaynak koddan çalıştırma: `./scripts/dev-setup.sh` (bir kerelik) → `./scripts/run-dev.sh`.
+    Masaüstü/menü kısayolu: `./scripts/install-dev-shortcut.sh` (kaldırma: `--remove`).
   - `sudo`, `pkexec`, `apt install` gibi sistemi değiştiren komutları kendin çalıştırma; ne
     yapacağını açıkla ve kullanıcının onayını al ya da kullanıcıya çalıştırt.
 - **Sanal makine:** Ubuntu 22.04.
