@@ -63,6 +63,9 @@ def main(argv: list[str] | None = None) -> int:
 
     lang = selected_language() if "LINWAS_LANG" in os.environ else app_settings.load().language
     install_translator(app, lang)
+    from linwas.core import logging_setup
+
+    logging_setup.setup(app_settings.load().debug_log)
 
     # "Linwas ile aç": .deb ya da .exe/.msi verildiyse risk analizi penceresi açılır
     deb = next((a for a in argv[1:] if a.endswith(".deb") and os.path.isfile(a)), None)

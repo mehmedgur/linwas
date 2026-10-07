@@ -102,11 +102,18 @@ class ProgressDialog(QDialog):
         self._log.setFont(QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont))
         self._log.setMinimumHeight(220)
         self._log.setVisible(False)
+        # Gelişmiş › "Teknik ayrıntıları göster" açıksa komut çıktısı baştan görünür
+        from linwas.core import app_settings
+
+        if app_settings.load().show_details:
+            self._log.setVisible(True)
         layout.addWidget(self._log, 1)
 
         buttons = QHBoxLayout()
         self._details_btn = QPushButton(tr("Show details"), self)
         self._details_btn.clicked.connect(self._toggle_details)
+        if self._log.isVisibleTo(self):
+            self._details_btn.setText(tr("Hide details"))
         buttons.addWidget(self._details_btn)
         buttons.addStretch(1)
         # Pencere gizlenir, işlem sürer; durum çubuğundaki "Detay" geri açar

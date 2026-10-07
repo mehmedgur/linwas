@@ -2878,6 +2878,190 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <source>Updates are ready</source>
         <translation>Güncellemeler hazır</translation>
     </message>
+    <message>
+        <source>AI conversations</source>
+        <translation>Yapay zekâ sohbetleri</translation>
+    </message>
+    <message>
+        <source>AI usage counters</source>
+        <translation>Yapay zekâ kullanım sayaçları</translation>
+    </message>
+    <message>
+        <source>About</source>
+        <translation>Hakkında</translation>
+    </message>
+    <message>
+        <source>Advanced settings</source>
+        <translation>Gelişmiş ayarlar</translation>
+    </message>
+    <message>
+        <source>Backup and reset</source>
+        <translation>Yedekleme ve sıfırlama</translation>
+    </message>
+    <message>
+        <source>Backups &amp; Rollback</source>
+        <translation>Yedekler ve geri alma</translation>
+    </message>
+    <message>
+        <source>Copy system information</source>
+        <translation>Sistem bilgisini kopyala</translation>
+    </message>
+    <message>
+        <source>Data Linwas keeps</source>
+        <translation>Linwas'ın tuttuğu veriler</translation>
+    </message>
+    <message>
+        <source>Delete all my Linwas data</source>
+        <translation>Tüm Linwas verilerimi sil</translation>
+    </message>
+    <message>
+        <source>Delete the activity history, AI conversations and usage counters, notification state, driver change history and logs? Settings and API keys are kept.</source>
+        <translation>İşlem geçmişi, yapay zekâ sohbetleri ve kullanım sayaçları, bildirim durumu, sürücü değişikliği geçmişi ve günlükler silinsin mi? Ayarlar ve API anahtarları korunur.</translation>
+    </message>
+    <message>
+        <source>Delete {name}?</source>
+        <translation>{name} silinsin mi?</translation>
+    </message>
+    <message>
+        <source>Desktop</source>
+        <translation>Masaüstü</translation>
+    </message>
+    <message>
+        <source>Driver change history</source>
+        <translation>Sürücü değişikliği geçmişi</translation>
+    </message>
+    <message>
+        <source>Everything stays on this computer. API keys are kept in the system keyring and deleted under AI assistant.</source>
+        <translation>Her şey bu bilgisayarda kalır. API anahtarları sistem anahtarlığında tutulur ve Yapay zekâ bölümünden silinir.</translation>
+    </message>
+    <message>
+        <source>Export settings</source>
+        <translation>Ayarları dışa aktar</translation>
+    </message>
+    <message>
+        <source>Export settings…</source>
+        <translation>Ayarları dışa aktar…</translation>
+    </message>
+    <message>
+        <source>Import settings</source>
+        <translation>Ayarları içe aktar</translation>
+    </message>
+    <message>
+        <source>Import settings…</source>
+        <translation>Ayarları içe aktar…</translation>
+    </message>
+    <message>
+        <source>Licenses</source>
+        <translation>Lisanslar</translation>
+    </message>
+    <message>
+        <source>Linwas settings (*.json)</source>
+        <translation>Linwas ayarları (*.json)</translation>
+    </message>
+    <message>
+        <source>Linwas: the licence will be chosen before the first public release.</source>
+        <translation>Linwas: lisans ilk herkese açık sürümden önce belirlenecek.</translation>
+    </message>
+    <message>
+        <source>Log files</source>
+        <translation>Günlük dosyaları</translation>
+    </message>
+    <message>
+        <source>Move your settings</source>
+        <translation>Ayarlarınızı taşıyın</translation>
+    </message>
+    <message>
+        <source>Needed for “Return to the previous driver”</source>
+        <translation>“Önceki sürücüye dön” için gerekir</translation>
+    </message>
+    <message>
+        <source>Notification state</source>
+        <translation>Bildirim durumu</translation>
+    </message>
+    <message>
+        <source>Qt and PySide6: LGPL-3.0 · Python: PSF License · keyring: MIT</source>
+        <translation>Qt ve PySide6: LGPL-3.0 · Python: PSF Lisansı · keyring: MIT</translation>
+    </message>
+    <message>
+        <source>Report a problem</source>
+        <translation>Sorun bildir</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Sıfırla</translation>
+    </message>
+    <message>
+        <source>Reset settings</source>
+        <translation>Ayarları sıfırla</translation>
+    </message>
+    <message>
+        <source>Return all Linwas settings to their defaults. Your data, API keys and the changes Linwas made to the system are not affected.</source>
+        <translation>Bütün Linwas ayarlarını varsayılana döndürür. Verileriniz, API anahtarlarınız ve Linwas'ın sistemde yaptığı değişiklikler etkilenmez.</translation>
+    </message>
+    <message>
+        <source>Return all Linwas settings to their defaults?</source>
+        <translation>Bütün Linwas ayarları varsayılana döndürülsün mü?</translation>
+    </message>
+    <message>
+        <source>Save Linwas settings to a file and load them on another computer. API keys are not written to the file.</source>
+        <translation>Linwas ayarlarını bir dosyaya kaydedip başka bir bilgisayarda yükleyin. API anahtarları dosyaya yazılmaz.</translation>
+    </message>
+    <message>
+        <source>Saved conversations with the assistant</source>
+        <translation>Asistanla kaydedilmiş sohbetler</translation>
+    </message>
+    <message>
+        <source>Settings loaded. The language changes the next time Linwas starts.</source>
+        <translation>Ayarlar yüklendi. Dil, Linwas bir sonraki açılışında değişir.</translation>
+    </message>
+    <message>
+        <source>Settings saved.</source>
+        <translation>Ayarlar kaydedildi.</translation>
+    </message>
+    <message>
+        <source>Some data could not be deleted.</source>
+        <translation>Bazı veriler silinemedi.</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>Sistem</translation>
+    </message>
+    <message>
+        <source>Technical settings, diagnostics and logs</source>
+        <translation>Teknik ayarlar, tanılama ve günlükler</translation>
+    </message>
+    <message>
+        <source>This file is not a Linwas settings file.</source>
+        <translation>Bu dosya bir Linwas ayar dosyası değil.</translation>
+    </message>
+    <message>
+        <source>Tokens used per month and your monthly limits</source>
+        <translation>Aylık kullanılan token ve aylık sınırlarınız</translation>
+    </message>
+    <message>
+        <source>Undo records: {n} (kept by the system, managed under Backups &amp; Rollback)</source>
+        <translation>Geri alma kayıtları: {n} (sistemde tutulur, Yedekler ve geri alma sayfasından yönetilir)</translation>
+    </message>
+    <message>
+        <source>Version</source>
+        <translation>Sürüm</translation>
+    </message>
+    <message>
+        <source>What Linwas changed on this computer</source>
+        <translation>Linwas'ın bu bilgisayarda yaptığı değişiklikler</translation>
+    </message>
+    <message>
+        <source>Which notifications were already shown</source>
+        <translation>Hangi bildirimlerin zaten gösterildiği</translation>
+    </message>
+    <message>
+        <source>Written only when the detailed log is on</source>
+        <translation>Yalnızca ayrıntılı günlük açıkken yazılır</translation>
+    </message>
+    <message>
+        <source>none</source>
+        <translation>yok</translation>
+    </message>
 </context>
 <context>
     <name>TroubleshootPage</name>
@@ -4495,6 +4679,145 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>{n} update(s) can be installed.</source>
         <translation>{n} güncelleme kurulabilir.</translation>
+    </message>
+</context>
+<context>
+    <name>AdvancedPage</name>
+    <message>
+        <source>Advanced settings</source>
+        <translation>Gelişmiş ayarlar</translation>
+    </message>
+    <message>
+        <source>Automatic update service</source>
+        <translation>Otomatik güncelleme hizmeti</translation>
+    </message>
+    <message>
+        <source>Check again</source>
+        <translation>Yeniden denetle</translation>
+    </message>
+    <message>
+        <source>Clean package cache</source>
+        <translation>Paket önbelleğini temizle</translation>
+    </message>
+    <message>
+        <source>Copy results</source>
+        <translation>Sonuçları kopyala</translation>
+    </message>
+    <message>
+        <source>Deletes downloaded package files to free disk space.</source>
+        <translation>Yer açmak için indirilmiş paket dosyalarını siler.</translation>
+    </message>
+    <message>
+        <source>Desktop notifications (gdbus)</source>
+        <translation>Masaüstü bildirimleri (gdbus)</translation>
+    </message>
+    <message>
+        <source>Details and logs</source>
+        <translation>Ayrıntılar ve günlükler</translation>
+    </message>
+    <message>
+        <source>Diagnostics</source>
+        <translation>Tanılama</translation>
+    </message>
+    <message>
+        <source>Downloads the latest package lists (apt-get update).</source>
+        <translation>En güncel paket listelerini indirir (apt-get update).</translation>
+    </message>
+    <message>
+        <source>Finishes interrupted installations and fixes missing dependencies.</source>
+        <translation>Yarım kalan kurulumları tamamlar ve eksik bağımlılıkları düzeltir.</translation>
+    </message>
+    <message>
+        <source>Firmware updates (fwupd)</source>
+        <translation>Firmware güncellemeleri (fwupd)</translation>
+    </message>
+    <message>
+        <source>Flatpak</source>
+        <translation>Flatpak</translation>
+    </message>
+    <message>
+        <source>Free space on the system disk (at least 2 GB)</source>
+        <translation>Sistem diskinde boş alan (en az 2 GB)</translation>
+    </message>
+    <message>
+        <source>Internet connection</source>
+        <translation>İnternet bağlantısı</translation>
+    </message>
+    <message>
+        <source>Linwas permission rule (polkit)</source>
+        <translation>Linwas izin kuralı (polkit)</translation>
+    </message>
+    <message>
+        <source>Linwas system helper</source>
+        <translation>Linwas sistem yardımcısı</translation>
+    </message>
+    <message>
+        <source>Open data folder</source>
+        <translation>Veri klasörünü aç</translation>
+    </message>
+    <message>
+        <source>Open log folder</source>
+        <translation>Günlük klasörünü aç</translation>
+    </message>
+    <message>
+        <source>Open settings folder</source>
+        <translation>Ayar klasörünü aç</translation>
+    </message>
+    <message>
+        <source>Package system maintenance</source>
+        <translation>Paket sistemi bakımı</translation>
+    </message>
+    <message>
+        <source>Password prompt for administrator tasks (pkexec)</source>
+        <translation>Yönetici işlemleri için şifre penceresi (pkexec)</translation>
+    </message>
+    <message>
+        <source>Refresh package index</source>
+        <translation>Paket listesini yenile</translation>
+    </message>
+    <message>
+        <source>Repair broken packages</source>
+        <translation>Bozuk paketleri onar</translation>
+    </message>
+    <message>
+        <source>Run the automatic update now</source>
+        <translation>Otomatik güncellemeyi şimdi çalıştır</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>Ayarlar</translation>
+    </message>
+    <message>
+        <source>Show technical details (command output) while tasks run</source>
+        <translation>İşlemler sürerken teknik ayrıntıları (komut çıktısı) göster</translation>
+    </message>
+    <message>
+        <source>Starts linwas-autoupdate.service (asks for your password).</source>
+        <translation>linwas-autoupdate.service hizmetini başlatır (şifrenizi sorar).</translation>
+    </message>
+    <message>
+        <source>System backups (Timeshift)</source>
+        <translation>Sistem yedekleri (Timeshift)</translation>
+    </message>
+    <message>
+        <source>System keyring for API keys</source>
+        <translation>API anahtarları için sistem anahtarlığı</translation>
+    </message>
+    <message>
+        <source>Technical settings for experienced users. Everyday settings are on the Settings page.</source>
+        <translation>Deneyimli kullanıcılar için teknik ayarlar. Günlük ayarlar Ayarlar sayfasında.</translation>
+    </message>
+    <message>
+        <source>The automatic update timer is not installed (it comes with the package).</source>
+        <translation>Otomatik güncelleme zamanlayıcısı kurulu değil (paketle gelir).</translation>
+    </message>
+    <message>
+        <source>Timer: {status}</source>
+        <translation>Zamanlayıcı: {status}</translation>
+    </message>
+    <message>
+        <source>Write a detailed log file</source>
+        <translation>Ayrıntılı günlük dosyası yaz</translation>
     </message>
 </context>
 </TS>

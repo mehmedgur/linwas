@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+import logging
 import os
 from pathlib import Path
 
@@ -46,6 +47,9 @@ from linwas.ui.theme.stylesheet import build as build_qss
 from linwas.ui.theme.tokens import THEMES, Theme
 
 ICON_PATH = Path(__file__).resolve().parent.parent / "resources" / "linwas.svg"
+
+
+logger = logging.getLogger("linwas.ui")
 
 
 def tr(text: str) -> str:
@@ -418,6 +422,10 @@ class MainWindow(QMainWindow):
             )
         )
         self._add_page("settings", settings_page)
+        # Gelişmiş ayarlar: menüde yok, Ayarlar sayfasındaki bağlantıyla açılır
+        from linwas.ui.pages.advanced import AdvancedPage
+
+        self._add_page("advanced", AdvancedPage(self._stack))
         self._ai_page = AIChatPage(self._stack)
         self._ai_page._panel.settings_changed.connect(self._on_ai_settings_changed)
         self._ai_page._panel.settings_requested.connect(lambda: self.open_settings_section("ai"))
@@ -441,7 +449,7 @@ class MainWindow(QMainWindow):
         page = self._pages.get(page_id)
         if page:
             self._stack.setCurrentWidget(page)
-            self._sidebar.set_active(page_id)
+            self._sidebar.set_active("settings" if page_id == "advanced" else page_id)
 
         # AI sayfasında yan panel gereksiz
         self._check_ai_panel()
@@ -612,6 +620,11 @@ class MainWindow(QMainWindow):
         has_rollback = any(undo_ops(r) for r in self._last_records)
         self._last_tasks = list(self._running_tasks)
         self._last_error = error
+        labels = ", ".join(t.label for t in self._last_tasks)
+        if success:
+            logger.info("Görevler tamamlandı: %s", labels)
+        else:
+            logger.warning("Görev başarısız: %s — %s", labels, error)
         self._record_history()
         result = ResultDialog(success, error, has_rollback=has_rollback, parent=self)
         result.undo_requested.connect(self._on_undo_requested)
