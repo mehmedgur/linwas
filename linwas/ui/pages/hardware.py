@@ -1,4 +1,4 @@
-"""Donanım ve yazıcı sayfası: bilgisayar özeti, yazıcılar, tarayıcılar."""
+"""Donanım ve yazıcı sayfası: bilgisayar özeti, Aygıt Yöneticisi, yazıcılar, tarayıcılar."""
 
 from __future__ import annotations
 
@@ -9,14 +9,17 @@ from PySide6.QtCore import QCoreApplication, QLocale, QProcess, QThread, Signal
 from PySide6.QtWidgets import (
     QFrame,
     QHBoxLayout,
+    QHeaderView,
     QLabel,
     QPushButton,
     QScrollArea,
+    QTreeWidget,
+    QTreeWidgetItem,
     QVBoxLayout,
     QWidget,
 )
 
-from linwas.backend import hardware
+from linwas.backend import devices, hardware
 from linwas.backend.desktop import detect_desktop
 from linwas.core.tasks import Task, TaskStep
 from linwas.ui.pages.base import BasePage
@@ -43,16 +46,39 @@ class _Worker(QThread):
             self.done.emit(None)
 
 
-def _load_printers() -> tuple[list[hardware.Printer], list[str]]:
-    return hardware.list_printers(), hardware.detect_usb_printers()
+def _load_printers() -> tuple[list[hardware.Printer], list[str], list]:
+    from linwas.backend.drivers import _dpkg_installed
+
+    suggestions = [
+        s for s in devices.printer_suggestions(devices.list_usb()) if not _dpkg_installed(s.package)
+    ]
+    return hardware.list_printers(), hardware.detect_usb_printers(), suggestions
 
 
-def _clear(layout: QVBoxLayout) -> None:
+def _group_name(group: str) -> str:
+    return {
+        "display": tr("Display adapters"),
+        "network": tr("Network adapters"),
+        "bluetooth": tr("Bluetooth"),
+        "audio": tr("Sound"),
+        "camera": tr("Cameras"),
+        "printer": tr("Printers and scanners"),
+        "storage": tr("Storage controllers and disks"),
+        "input": tr("Keyboards, mice and other input devices"),
+        "usb": tr("USB controllers and hubs"),
+        "system": tr("System devices"),
+        "other": tr("Other devices"),
+    }.get(group, group)
+
+
+def _clear(layout) -> None:  # noqa: ANN001 - QLayout
     while layout.count():
         item = layout.takeAt(0)
         if item.widget():
             item.widget().hide()
             item.widget().deleteLater()
+        elif item.layout():
+            _clear(item.layout())  # öneri satırları gibi iç içe düzenler
 
 
 class HardwarePage(BasePage):
@@ -81,6 +107,34 @@ class HardwarePage(BasePage):
         self._pc_body = QVBoxLayout()
         self._pc_card.layout.addLayout(self._pc_body)
         outer.addWidget(self._pc_card)
+
+        # Aygıt Yöneticisi
+        self._dev_card = Card(content)
+        head = QHBoxLayout()
+        h = QLabel(tr("Device Manager"), self._dev_card)
+        h.setObjectName("H2")
+        head.addWidget(h)
+        head.addStretch(1)
+        refresh = QPushButton(tr("Refresh"), self._dev_card)
+        refresh.clicked.connect(self._load_devices)
+        head.addWidget(refresh)
+        drivers_btn = QPushButton(tr("Find drivers"), self._dev_card)
+        drivers_btn.clicked.connect(lambda: self.page_requested.emit("drivers"))
+        head.addWidget(drivers_btn)
+        self._dev_card.layout.addLayout(head)
+        self._dev_summary = QLabel(tr("Looking for devices…"), self._dev_card)
+        self._dev_summary.setWordWrap(True)
+        self._dev_card.layout.addWidget(self._dev_summary)
+        self._dev_tree = QTreeWidget(self._dev_card)
+        self._dev_tree.setHeaderLabels([tr("Device"), tr("Driver"), tr("Status")])
+        self._dev_tree.setRootIsDecorated(True)
+        self._dev_tree.setMinimumHeight(320)
+        header = self._dev_tree.header()
+        header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+        self._dev_card.layout.addWidget(self._dev_tree)
+        outer.addWidget(self._dev_card)
 
         # Yazıcılar
         self._printer_card = Card(content)
@@ -142,11 +196,69 @@ class HardwarePage(BasePage):
         if not self._loaded:
             self._loaded = True
             self._start(hardware.hardware_summary, self._on_summary)
+            self._load_devices()
             self._load_printers()
 
     def on_tasks_finished(self) -> None:
         if self._loaded:
+            self._load_devices()
             self._load_printers()
+
+    def _load_devices(self) -> None:
+        self._dev_summary.setText(tr("Looking for devices…"))
+        self._start(devices.list_devices, self._on_devices)
+
+    def _on_devices(self, items: list[devices.Device] | None) -> None:
+        self._dev_tree.clear()
+        items = items or []
+        problems = [d for d in items if d.problem]
+        if not items:
+            self._dev_summary.setText(tr("Device information could not be read."))
+            return
+        if problems:
+            self._dev_summary.setText(
+                tr("{n} device(s) have no driver. Press “Find drivers”.").format(n=len(problems))
+            )
+            self._dev_summary.setObjectName("Warning")
+        else:
+            self._dev_summary.setText(
+                tr("{n} devices found; all important devices have a driver.").format(n=len(items))
+            )
+            self._dev_summary.setObjectName("Secondary")
+        self._dev_summary.style().unpolish(self._dev_summary)
+        self._dev_summary.style().polish(self._dev_summary)
+
+        groups: dict[str, QTreeWidgetItem] = {}
+        if problems:
+            top = QTreeWidgetItem([tr("Devices without a driver"), "", ""])
+            self._dev_tree.addTopLevelItem(top)
+            for d in problems:
+                QTreeWidgetItem(top, self._device_columns(d))
+            top.setExpanded(True)
+        for d in items:
+            if d.problem:
+                continue
+            group = groups.get(d.group)
+            if group is None:
+                group = QTreeWidgetItem([_group_name(d.group), "", ""])
+                self._dev_tree.addTopLevelItem(group)
+                groups[d.group] = group
+            QTreeWidgetItem(group, self._device_columns(d))
+        for group_id, item in groups.items():
+            item.setText(0, f"{_group_name(group_id)} ({item.childCount()})")
+
+    @staticmethod
+    def _device_columns(d: devices.Device) -> list[str]:
+        if d.driver:
+            status = tr("Working")
+        elif d.module:
+            status = tr("Driver available but not loaded")
+        elif d.problem:
+            status = "⚠ " + tr("No driver")
+        else:
+            status = tr("No driver needed")
+        bus = "USB" if d.bus == "usb" else "PCI"
+        return [f"{d.name}  [{bus} {d.ids}]", d.driver or d.module or "—", status]
 
     def _start(self, fn, slot) -> None:  # noqa: ANN001
         worker = _Worker(fn)
@@ -188,9 +300,9 @@ class HardwarePage(BasePage):
             kind = tr("SSD") if disk.ssd else tr("Hard disk")
             self._line(self._pc_body, kind, f"{disk.model or disk.name} — {disk.size}")
 
-    def _on_printers(self, result: tuple[list[hardware.Printer], list[str]] | None) -> None:
+    def _on_printers(self, result: tuple | None) -> None:
         _clear(self._printer_body)
-        printers, usb = result or ([], [])
+        printers, usb, suggestions = result or ([], [], [])
         if not printers:
             msg = tr("No printers are set up yet.")
             lbl = QLabel(msg, self._printer_card)
@@ -217,6 +329,20 @@ class HardwarePage(BasePage):
             warn.setStyleSheet("color:#9d5d00;")
             warn.setWordWrap(True)
             self._printer_body.addWidget(warn)
+        # Takılı aygıtın üreticisine göre önerilen sürücü paketleri
+        for s in suggestions:
+            row = QHBoxLayout()
+            lbl = QLabel(
+                tr("Recommended driver for {device}: {pkg}").format(device=s.device, pkg=s.package),
+                self._printer_card,
+            )
+            lbl.setWordWrap(True)
+            row.addWidget(lbl, 1)
+            btn = QPushButton(tr("Install"), self._printer_card)
+            btn.setProperty("primary", True)
+            btn.clicked.connect(lambda _=False, p=s.package: self._install_package(p))
+            row.addWidget(btn)
+            self._printer_body.addLayout(row)
 
     # --- İşlemler ---
 
@@ -229,6 +355,14 @@ class HardwarePage(BasePage):
         self.task_run_now.emit(
             Task(
                 label=tr("Install printer drivers"),
+                steps=[TaskStep(op_id="package.install", params={"name": pkg})],
+            )
+        )
+
+    def _install_package(self, pkg: str) -> None:
+        self.task_run_now.emit(
+            Task(
+                label=tr("Install {pkg}").format(pkg=pkg),
                 steps=[TaskStep(op_id="package.install", params={"name": pkg})],
             )
         )

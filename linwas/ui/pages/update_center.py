@@ -416,13 +416,15 @@ class UpdateCenterPage(BasePage):
 
         self._system = UpdatesPage()
         self._drivers = DriversPage(
-            categories={DriverCategory.GPU, DriverCategory.NETWORK}, title=tr("Drivers")
+            categories={DriverCategory.GPU, DriverCategory.NETWORK, DriverCategory.PRINTER},
+            title=tr("Drivers"),
         )
         self._firmware = DriversPage(categories={DriverCategory.FIRMWARE}, title=tr("Firmware"))
         for sub in (self._system, self._drivers, self._firmware):
             sub.task_requested.connect(self.task_requested)
             sub.task_run_now.connect(self.task_run_now)
             sub.page_requested.connect(self.page_requested)
+            sub.ai_help_requested.connect(self.ai_help_requested)
         self._history = _HistoryView()
         self._advanced = _AdvancedView()
         self._advanced.configure.connect(self._configure)
@@ -636,7 +638,9 @@ class UpdateCenterPage(BasePage):
         self._rows["system"].set_subtitle(text)
         n = s.pending_drivers(firmware=False)
         self._rows["drivers"].set_subtitle(
-            tr("{n} recommended driver(s)").format(n=n) if n else tr("Graphics, network and Wi-Fi")
+            tr("{n} recommended driver(s)").format(n=n)
+            if n
+            else tr("Graphics, network, Wi-Fi, printers and scanners")
         )
         n = s.pending_drivers(firmware=True)
         self._rows["firmware"].set_subtitle(

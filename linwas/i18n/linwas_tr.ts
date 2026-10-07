@@ -659,6 +659,102 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <source>Firmware Updates</source>
         <translation>Firmware Güncellemeleri</translation>
     </message>
+    <message>
+        <source>Ask the assistant</source>
+        <translation>Asistana sor</translation>
+    </message>
+    <message>
+        <source>At startup choose “Advanced options” in the boot menu and start an older kernel or recovery mode. When Linwas opens, press “Return to the previous driver”. You can also restore the Timeshift backup taken before the change.</source>
+        <translation>Açılışta önyükleme menüsünden “Gelişmiş seçenekler”i seçip eski bir çekirdeği ya da kurtarma kipini başlatın. Linwas açılınca “Önceki sürücüye dön”e basın. Değişiklikten önce alınan Timeshift yedeğini de geri yükleyebilirsiniz.</translation>
+    </message>
+    <message>
+        <source>Black screen or the desktop does not open</source>
+        <translation>Siyah ekran ya da masaüstü açılmıyor</translation>
+    </message>
+    <message>
+        <source>Choose another driver version or the open-source driver.</source>
+        <translation>Başka bir sürücü sürümü ya da açık kaynak sürücüyü seçin.</translation>
+    </message>
+    <message>
+        <source>Driver problem</source>
+        <translation>Sürücü sorunu</translation>
+    </message>
+    <message>
+        <source>Other options…</source>
+        <translation>Diğer seçenekler…</translation>
+    </message>
+    <message>
+        <source>Printers &amp; Scanners</source>
+        <translation>Yazıcılar ve tarayıcılar</translation>
+    </message>
+    <message>
+        <source>Problems after installing a driver?</source>
+        <translation>Sürücü kurduktan sonra sorun mu var?</translation>
+    </message>
+    <message>
+        <source>Register the driver signing key</source>
+        <translation>Sürücü imza anahtarını kaydet</translation>
+    </message>
+    <message>
+        <source>Register the key</source>
+        <translation>Anahtarı kaydet</translation>
+    </message>
+    <message>
+        <source>Restart once. If it stays, choose the resolution under Display &amp; Scaling.</source>
+        <translation>Bir kez yeniden başlatın. Düzelmezse Ekran ve ölçekleme sayfasından çözünürlüğü seçin.</translation>
+    </message>
+    <message>
+        <source>Restart the computer; firmware is loaded only at startup.</source>
+        <translation>Bilgisayarı yeniden başlatın; firmware yalnızca açılışta yüklenir.</translation>
+    </message>
+    <message>
+        <source>Return to the previous driver</source>
+        <translation>Önceki sürücüye dön</translation>
+    </message>
+    <message>
+        <source>Secure Boot is on and the driver does not load</source>
+        <translation>Secure Boot açık ve sürücü yüklenmiyor</translation>
+    </message>
+    <message>
+        <source>Secure Boot is on, so drivers such as NVIDIA load only after their signing key is registered. Linwas gives you a one-time password; type it on the blue screen that appears at the next restart.</source>
+        <translation>Secure Boot açık; bu yüzden NVIDIA gibi sürücüler ancak imza anahtarları kaydedildikten sonra yüklenir. Linwas size tek kullanımlık bir şifre verir; bir sonraki yeniden başlatmada çıkan mavi ekranda bu şifreyi yazın.</translation>
+    </message>
+    <message>
+        <source>Secure Boot: the driver signing key is not registered</source>
+        <translation>Secure Boot: sürücü imza anahtarı kayıtlı değil</translation>
+    </message>
+    <message>
+        <source>Switch to the open-source driver</source>
+        <translation>Açık kaynak sürücüye geç</translation>
+    </message>
+    <message>
+        <source>Switch to {pkg}</source>
+        <translation>{pkg} sürücüsüne geç</translation>
+    </message>
+    <message>
+        <source>System backup (Timeshift)</source>
+        <translation>Sistem yedeği (Timeshift)</translation>
+    </message>
+    <message>
+        <source>The key was probably not registered on the blue screen. Use “Register the key” above and restart.</source>
+        <translation>Anahtar büyük olasılıkla mavi ekranda kaydedilmedi. Yukarıdaki “Anahtarı kaydet”i kullanıp yeniden başlatın.</translation>
+    </message>
+    <message>
+        <source>Wi-Fi stopped working after a firmware or driver install</source>
+        <translation>Firmware ya da sürücü kurduktan sonra Wi-Fi çalışmıyor</translation>
+    </message>
+    <message>
+        <source>Wrong resolution or blurry screen</source>
+        <translation>Yanlış çözünürlük ya da bulanık ekran</translation>
+    </message>
+    <message>
+        <source>{n} device(s)</source>
+        <translation>{n} aygıt</translation>
+    </message>
+    <message>
+        <source>{n} firmware update(s) available (BIOS, SSD, docks…).</source>
+        <translation>{n} firmware güncellemesi var (BIOS, SSD, yerleştirme istasyonu…).</translation>
+    </message>
 </context>
 <context>
     <name>SoftwarePage</name>
@@ -1700,6 +1796,122 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>default</source>
         <translation>varsayılan</translation>
+    </message>
+    <message>
+        <source>Bluetooth</source>
+        <translation>Bluetooth</translation>
+    </message>
+    <message>
+        <source>Cameras</source>
+        <translation>Kameralar</translation>
+    </message>
+    <message>
+        <source>Device</source>
+        <translation>Aygıt</translation>
+    </message>
+    <message>
+        <source>Device Manager</source>
+        <translation>Aygıt Yöneticisi</translation>
+    </message>
+    <message>
+        <source>Device information could not be read.</source>
+        <translation>Aygıt bilgileri okunamadı.</translation>
+    </message>
+    <message>
+        <source>Devices without a driver</source>
+        <translation>Sürücüsü olmayan aygıtlar</translation>
+    </message>
+    <message>
+        <source>Display adapters</source>
+        <translation>Ekran bağdaştırıcıları</translation>
+    </message>
+    <message>
+        <source>Driver</source>
+        <translation>Sürücü</translation>
+    </message>
+    <message>
+        <source>Driver available but not loaded</source>
+        <translation>Sürücü var ama yüklenmemiş</translation>
+    </message>
+    <message>
+        <source>Find drivers</source>
+        <translation>Sürücü bul</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Kur</translation>
+    </message>
+    <message>
+        <source>Install {pkg}</source>
+        <translation>{pkg} kur</translation>
+    </message>
+    <message>
+        <source>Keyboards, mice and other input devices</source>
+        <translation>Klavye, fare ve diğer giriş aygıtları</translation>
+    </message>
+    <message>
+        <source>Looking for devices…</source>
+        <translation>Aygıtlar aranıyor…</translation>
+    </message>
+    <message>
+        <source>Network adapters</source>
+        <translation>Ağ bağdaştırıcıları</translation>
+    </message>
+    <message>
+        <source>No driver</source>
+        <translation>Sürücü yok</translation>
+    </message>
+    <message>
+        <source>No driver needed</source>
+        <translation>Sürücü gerekmiyor</translation>
+    </message>
+    <message>
+        <source>Other devices</source>
+        <translation>Diğer aygıtlar</translation>
+    </message>
+    <message>
+        <source>Printers and scanners</source>
+        <translation>Yazıcılar ve tarayıcılar</translation>
+    </message>
+    <message>
+        <source>Recommended driver for {device}: {pkg}</source>
+        <translation>{device} için önerilen sürücü: {pkg}</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>Yenile</translation>
+    </message>
+    <message>
+        <source>Sound</source>
+        <translation>Ses</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Durum</translation>
+    </message>
+    <message>
+        <source>Storage controllers and disks</source>
+        <translation>Depolama denetleyicileri ve diskler</translation>
+    </message>
+    <message>
+        <source>System devices</source>
+        <translation>Sistem aygıtları</translation>
+    </message>
+    <message>
+        <source>USB controllers and hubs</source>
+        <translation>USB denetleyicileri ve çoklayıcılar</translation>
+    </message>
+    <message>
+        <source>Working</source>
+        <translation>Çalışıyor</translation>
+    </message>
+    <message>
+        <source>{n} device(s) have no driver. Press “Find drivers”.</source>
+        <translation>{n} aygıtın sürücüsü yok. “Sürücü bul”a basın.</translation>
+    </message>
+    <message>
+        <source>{n} devices found; all important devices have a driver.</source>
+        <translation>{n} aygıt bulundu; önemli aygıtların hepsinin sürücüsü var.</translation>
     </message>
 </context>
 <context>
@@ -3561,10 +3773,6 @@ The first time this can take several minutes (Wine is downloaded).</source>
         <translation>Firmware (BIOS, SSD, yerleştirme istasyonu…)</translation>
     </message>
     <message>
-        <source>Graphics, network and Wi-Fi</source>
-        <translation>Ekran kartı, ağ ve Wi-Fi</translation>
-    </message>
-    <message>
         <source>Install all</source>
         <translation>Tümünü kur</translation>
     </message>
@@ -3767,6 +3975,136 @@ The first time this can take several minutes (Wine is downloaded).</source>
     <message>
         <source>{when}: {n} package(s) updated.</source>
         <translation>{when}: {n} paket güncellendi.</translation>
+    </message>
+    <message>
+        <source>Graphics, network, Wi-Fi, printers and scanners</source>
+        <translation>Ekran kartı, ağ, Wi-Fi, yazıcı ve tarayıcılar</translation>
+    </message>
+</context>
+<context>
+    <name>DriverDescriptions</name>
+    <message>
+        <source>AMD GPU firmware — improves stability and performance.</source>
+        <translation>AMD ekran kartı firmware'i — kararlılığı ve başarımı artırır.</translation>
+    </message>
+    <message>
+        <source>Broadcom STA proprietary driver — alternative if firmware fails.</source>
+        <translation>Broadcom STA kapalı kaynak sürücü — firmware işe yaramazsa seçenek.</translation>
+    </message>
+    <message>
+        <source>Broadcom Wi-Fi driver is installed.</source>
+        <translation>Broadcom Wi-Fi sürücüsü kurulu.</translation>
+    </message>
+    <message>
+        <source>Broadcom Wi-Fi firmware — required for wireless to work.</source>
+        <translation>Broadcom Wi-Fi firmware'i — kablosuzun çalışması için gerekli.</translation>
+    </message>
+    <message>
+        <source>Firmware Update Tool</source>
+        <translation>Firmware güncelleme aracı</translation>
+    </message>
+    <message>
+        <source>Intel Wi-Fi firmware — required for some Intel wireless cards.</source>
+        <translation>Intel Wi-Fi firmware'i — bazı Intel kablosuz kartlar için gerekli.</translation>
+    </message>
+    <message>
+        <source>Intel media driver — hardware video decode/encode acceleration.</source>
+        <translation>Intel medya sürücüsü — donanımla video çözme/kodlama hızlandırması.</translation>
+    </message>
+    <message>
+        <source>Lets the computer use printers and scanners that work without a driver over USB (IPP-over-USB).</source>
+        <translation>Bilgisayarın, USB üzerinden sürücüsüz çalışan yazıcı ve tarayıcıları kullanmasını sağlar (IPP-over-USB).</translation>
+    </message>
+    <message>
+        <source>MediaTek Wi-Fi firmware — required for wireless to work.</source>
+        <translation>MediaTek Wi-Fi firmware'i — kablosuzun çalışması için gerekli.</translation>
+    </message>
+    <message>
+        <source>NVIDIA open-source kernel modules (Turing+ only, experimental).</source>
+        <translation>NVIDIA açık kaynak çekirdek modülleri (yalnızca Turing ve sonrası, deneysel).</translation>
+    </message>
+    <message>
+        <source>NVIDIA proprietary driver — better performance and CUDA support.</source>
+        <translation>NVIDIA kapalı kaynak sürücü — daha iyi başarım ve CUDA desteği.</translation>
+    </message>
+    <message>
+        <source>NVIDIA proprietary driver — recommended for full performance.</source>
+        <translation>NVIDIA kapalı kaynak sürücü — tam başarım için önerilir.</translation>
+    </message>
+    <message>
+        <source>Printer driver for this brand, from your system's software sources.</source>
+        <translation>Bu marka için yazıcı sürücüsü, sisteminizin yazılım kaynaklarından.</translation>
+    </message>
+    <message>
+        <source>Realtek network firmware — required for some Realtek cards.</source>
+        <translation>Realtek ağ firmware'i — bazı Realtek kartlar için gerekli.</translation>
+    </message>
+    <message>
+        <source>fwupd — hardware firmware updates (BIOS, SSD, dock, etc.).</source>
+        <translation>fwupd — donanım firmware güncellemeleri (BIOS, SSD, yerleştirme istasyonu vb.).</translation>
+    </message>
+</context>
+<context>
+    <name>DriverOptionsDialog</name>
+    <message>
+        <source>Apply</source>
+        <translation>Uygula</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Choose a driver</source>
+        <translation>Sürücü seçin</translation>
+    </message>
+    <message>
+        <source>For the driver to work, its signing key must be registered. When the computer restarts, a blue screen (MOK management) appears:
+1. Choose “Enroll MOK”, then “Continue” and “Yes”.
+2. Type the password above (the numbers do not appear while typing).
+3. Choose “Reboot”.
+If you miss the screen, the driver will not load; you can register the key again from the Drivers page.</source>
+        <translation>Sürücünün çalışması için imza anahtarının kaydedilmesi gerekiyor. Bilgisayar yeniden başladığında mavi bir ekran (MOK yönetimi) açılır:
+1. “Enroll MOK”, ardından “Continue” ve “Yes”i seçin.
+2. Yukarıdaki şifreyi yazın (yazarken rakamlar görünmez).
+3. “Reboot”u seçin.
+Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfasından yeniden kaydedebilirsiniz.</translation>
+    </message>
+    <message>
+        <source>I wrote it down, continue</source>
+        <translation>Not ettim, devam et</translation>
+    </message>
+    <message>
+        <source>In use</source>
+        <translation>Kullanılıyor</translation>
+    </message>
+    <message>
+        <source>Open-source driver (nouveau)</source>
+        <translation>Açık kaynak sürücü (nouveau)</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Önerilen</translation>
+    </message>
+    <message>
+        <source>Secure Boot</source>
+        <translation>Secure Boot</translation>
+    </message>
+    <message>
+        <source>Secure Boot is on. Write down this one-time password:</source>
+        <translation>Secure Boot açık. Bu tek kullanımlık şifreyi not edin:</translation>
+    </message>
+    <message>
+        <source>The recommended driver suits most computers. Choose another version only if the recommended one causes problems. A system backup is taken first when Timeshift is installed, and you can return to the previous driver later.</source>
+        <translation>Önerilen sürücü çoğu bilgisayar için uygundur. Başka bir sürümü yalnızca önerilen sorun çıkarırsa seçin. Timeshift kuruluysa önce sistem yedeği alınır; daha sonra önceki sürücüye dönebilirsiniz.</translation>
+    </message>
+    <message>
+        <source>only for older cards</source>
+        <translation>yalnızca eski kartlar için</translation>
+    </message>
+    <message>
+        <source>open kernel modules</source>
+        <translation>açık çekirdek modülleri</translation>
     </message>
 </context>
 </TS>

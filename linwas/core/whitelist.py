@@ -52,6 +52,8 @@ class ParamKind(Enum):
     PAUSE_WEEKS = "pause_weeks"
     # Saat (SS:DD, 24 saat), ör. yeniden başlatma zamanı
     CLOCK_TIME = "clock_time"
+    # Secure Boot MOK kaydı için 8 haneli tek kullanımlık şifre
+    MOK_PASSWORD = "mok_password"
 
 
 @dataclass(frozen=True)
@@ -236,6 +238,15 @@ def _validate_clock_time(value: str) -> str:
     return value
 
 
+_RE_MOK_PASSWORD = re.compile(r"^[0-9]{8}$")
+
+
+def _validate_mok_password(value: str) -> str:
+    if not _RE_MOK_PASSWORD.match(value):
+        raise ValidationError("Geçersiz MOK şifresi (8 rakam olmalı)")
+    return value
+
+
 _RE_UUID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 
 
@@ -271,6 +282,7 @@ _VALIDATORS: dict[ParamKind, object] = {
     ParamKind.BOOL: _validate_bool,
     ParamKind.PAUSE_WEEKS: _validate_pause_weeks,
     ParamKind.CLOCK_TIME: _validate_clock_time,
+    ParamKind.MOK_PASSWORD: _validate_mok_password,
 }
 
 
@@ -400,6 +412,16 @@ OPERATIONS: dict[str, OperationSpec] = {
     ),
     "power.cancel_reboot": OperationSpec(
         params=[], risk=RiskLevel.LOW, label="Cancel the scheduled restart"
+    ),
+    "driver.remove_nvidia": OperationSpec(
+        params=[],
+        risk=RiskLevel.HIGH,
+        label="Remove the NVIDIA driver (use the open-source driver)",
+    ),
+    "secureboot.enroll_mok": _op(
+        ("password", ParamKind.MOK_PASSWORD),
+        risk=RiskLevel.MEDIUM,
+        label="Register the driver signing key for Secure Boot",
     ),
     "flatpak.setup": OperationSpec(
         params=[],

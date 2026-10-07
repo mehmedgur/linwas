@@ -28,8 +28,8 @@ Son güncelleme: 7 Ekim 2026
   1. [x] Güncelleme merkezi arayüzü (Güncellemeler + Sürücüler + Firmware tek sayfa) + güncelleme geçmişi.
   2. [x] Otomatik kurulum (Linwas systemd zamanlayıcısı), duraklatma (1–5 hafta), pil/ölçülü bağlantı
      koşulları, kurulum öncesi Timeshift, yeniden başlatma bildirimi.
-  3. [ ] Sürücü sürüm seçimi, önceki sürücüye dönme, Secure Boot (MOK), sorun giderme + AI.
-  4. [ ] Aygıt Yöneticisi (Donanım altında) + yazıcı/tarayıcı sürücüleri.
+  3. [x] Sürücü sürüm seçimi, önceki sürücüye dönme, Secure Boot (MOK), sorun giderme + AI.
+  4. [x] Aygıt Yöneticisi (Donanım altında) + yazıcı/tarayıcı sürücüleri.
   5. [ ] Firmware ayrıntıları (fwupd) + yeni donanım için yeni çekirdek (HWE / backports).
 - **Bottles'a geçiş** (kararlar.md › EXE): kodlandı (7 Ekim 2026), kullanıcının denemesi bekleniyor;
   beğenilmezse `bottles.ENABLED = False` ile dağıtım Wine'ına dönülür.
@@ -79,6 +79,10 @@ Son güncelleme: 7 Ekim 2026
 - [ ] Yayın yeri belli olunca `release.yml`'ye depo yükleme adımı (ör. GitHub Pages).
 
 ## Kodlama sırasında doğrulanacaklar
+- [ ] **Sürücüler (aşama 3–4, denenmedi):** Secure Boot açık bir makinede MOK akışı (mavi ekran,
+  `mokutil --test-key`); Ubuntu'da `ubuntu-drivers devices` çıktısı ve `nvidia-driver-<n>` seçenekleri;
+  `apt-get purge '.*nvidia.*'` sonrası nouveau ile açılış; yazıcı üretici → paket eşlemesinin gerçek
+  aygıtlarla denenmesi (Epson/Brother/Canon modellerinin bir kısmı üreticinin kendi sürücüsünü ister).
 - [ ] **Güncelleme merkezi (aşama 1–2, denenmedi):** `.deb` ile kurulunca zamanlayıcının etkin olması
   (`systemctl list-timers linwas-autoupdate.timer`); `sudo systemctl start linwas-autoupdate.service`
   ile elle çalıştırma ve `/var/lib/linwas-autoupdate/state.json`; `timeshift --list` çıktı biçimi

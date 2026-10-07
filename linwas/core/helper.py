@@ -563,6 +563,49 @@ def _exec_power_cancel_reboot(seq: int, params: dict[str, str]) -> bool:
     return _run(["shutdown", "-c"], seq)
 
 
+def _exec_driver_remove_nvidia(seq: int, params: dict[str, str]) -> bool:
+    """NVIDIA sürücüsünü tamamen kaldırır; açılışta açık kaynak sürücü (nouveau) kullanılır.
+
+    apt-get, eşleşen paket yoksa ve ifadede ".", "?" ya da "*" varsa onu düzenli ifade sayar
+    (apt-get(8)); ".*nvidia.*" adında nvidia geçen kurulu paketleri seçer.
+    """
+    if not _run(["apt-get", "purge", "-y", "--", ".*nvidia.*"], seq, _APT_ENV):
+        return False
+    return _run(["apt-get", "autoremove", "-y"], seq, _APT_ENV)
+
+
+# DKMS modül imza anahtarı: Ubuntu (shim-signed) ve Debian (dkms)
+_MOK_KEYS = ("/var/lib/shim-signed/mok/MOK.der", "/var/lib/dkms/mok.pub")
+
+
+def _exec_secureboot_enroll_mok(seq: int, params: dict[str, str]) -> bool:
+    """İmza anahtarını kayda alır; yeniden başlatmada MOK ekranında aynı şifre istenir.
+
+    mokutil şifreyi terminal yokken standart girdiden iki kez okur (komut satırında görünmez).
+    """
+    key = next((k for k in _MOK_KEYS if Path(k).is_file()), "")
+    if not key:
+        _error(seq, "Sürücü imza anahtarı bulunamadı (sürücü kurulduktan sonra oluşur).")
+        return False
+    password = params["password"]
+    try:
+        r = subprocess.run(
+            ["mokutil", "--import", key],
+            input=f"{password}\n{password}\n",
+            capture_output=True,
+            text=True,
+            timeout=60,
+            shell=False,
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
+        _error(seq, f"mokutil çalıştırılamadı: {exc}")
+        return False
+    if r.returncode != 0:
+        _error(seq, (r.stdout + r.stderr).strip() or "mokutil başarısız oldu")
+        return False
+    return True
+
+
 # Flathub'ın resmi kurulum adresi (flathub.org/setup)
 _FLATHUB_REPO = "https://dl.flathub.org/repo/flathub.flatpakrepo"
 
@@ -744,6 +787,8 @@ _EXECUTORS: dict[str, Any] = {
     "snapshot.timeshift_create": _exec_snapshot_timeshift_create,
     "wine.setup": _exec_wine_setup,
     "flatpak.setup": _exec_flatpak_setup,
+    "driver.remove_nvidia": _exec_driver_remove_nvidia,
+    "secureboot.enroll_mok": _exec_secureboot_enroll_mok,
     "autoupdate.configure": _exec_autoupdate_configure,
     "power.schedule_reboot": _exec_power_schedule_reboot,
     "power.cancel_reboot": _exec_power_cancel_reboot,
