@@ -300,6 +300,7 @@ class MainWindow(QMainWindow):
             page.task_requested.connect(self.add_task)
             page.task_run_now.connect(self._run_task_now)
             page.page_requested.connect(self._show_page)
+            page.ai_help_requested.connect(self._ask_ai_about_page_error)
 
     def _build_pages(self) -> None:
         overview = OverviewPage(self._stack)
@@ -565,7 +566,13 @@ class MainWindow(QMainWindow):
         ]
         return getattr(self, "_last_error", ""), labels
 
-    def _ask_ai_about_error(self) -> None:
+    def _ask_ai_about_page_error(self, label: str, error: str) -> None:
+        """Kuyruk dışı işlemlerin (ör. Bottles) hatası için AI'a sorma akışı."""
+        self._ask_ai_about_error(error, [label])
+
+    def _ask_ai_about_error(
+        self, error: str | None = None, labels: list[str] | None = None
+    ) -> None:
         from PySide6.QtWidgets import QCheckBox, QMessageBox
 
         from linwas.ai.manager import available_providers
@@ -601,11 +608,12 @@ class MainWindow(QMainWindow):
                 self._show_page("troubleshoot")
                 return
 
-        error, labels = self._error_context()
+        if error is None:
+            error, labels = self._error_context()
         question = tr(
             "This Linwas task failed: {tasks}\n\nError output:\n{error}\n\n"
             "What went wrong and how can I fix it?"
-        ).format(tasks=", ".join(labels), error=sanitize(error)[-3000:])
+        ).format(tasks=", ".join(labels or []), error=sanitize(error)[-3000:])
         self._ai_dock.expand()
         if not self._ai_dock.isVisible():
             self._check_ai_panel()

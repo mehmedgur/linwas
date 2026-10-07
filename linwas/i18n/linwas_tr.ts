@@ -830,6 +830,14 @@ Flatpak (Flathub{fp}): genellikle daha yeni sürümdür, sistemden yalıtılmı�
         <source>Discover</source>
         <translation>Keşfet</translation>
     </message>
+    <message>
+        <source>Install Bottles</source>
+        <translation>Bottles'ı kur</translation>
+    </message>
+    <message>
+        <source>Install Flatpak</source>
+        <translation>Flatpak'ı kur</translation>
+    </message>
 </context>
 <context>
     <name>MigratePage</name>
@@ -3157,6 +3165,30 @@ Linux'ta:
         <source>{program} has Linux alternatives ({apps}). They work better than the Windows version under Wine and get updates automatically.</source>
         <translation>{program} için Linux alternatifleri var ({apps}). Wine altındaki Windows sürümünden daha iyi çalışırlar ve otomatik güncellenirler.</translation>
     </message>
+    <message>
+        <source>Install Bottles</source>
+        <translation>Bottles'ı kur</translation>
+    </message>
+    <message>
+        <source>Open with Bottles</source>
+        <translation>Bottles ile aç</translation>
+    </message>
+    <message>
+        <source>Run setup with Bottles</source>
+        <translation>Kurulumu Bottles ile başlat</translation>
+    </message>
+    <message>
+        <source>The program gets its own Windows environment, so it can't affect your other programs and is removed completely with it.</source>
+        <translation>Program kendi Windows ortamını alır; böylece diğer programlarınızı etkileyemez ve silindiğinde tamamen kaldırılır.</translation>
+    </message>
+    <message>
+        <source>This is a game</source>
+        <translation>Bu bir oyun</translation>
+    </message>
+    <message>
+        <source>Windows programs open with Bottles, which is not installed yet. Linwas can install it from Flathub; it brings its own Wine.</source>
+        <translation>Windows programları Bottles ile açılır, Bottles henüz kurulu değil. Linwas onu Flathub'dan kurabilir; Bottles kendi Wine sürümünü getirir.</translation>
+    </message>
 </context>
 <context>
     <name>WindowsAppsView</name>
@@ -3352,6 +3384,114 @@ Linux'ta:
     <message>
         <source>The program list could not be loaded.</source>
         <translation>Program listesi yüklenemedi.</translation>
+    </message>
+</context>
+<context>
+    <name>BottlesAppsView</name>
+    <message>
+        <source>Add or remove programs</source>
+        <translation>Program ekle veya kaldır</translation>
+    </message>
+    <message>
+        <source>Add to menu</source>
+        <translation>Menüye ekle</translation>
+    </message>
+    <message>
+        <source>Application</source>
+        <translation>Uygulama</translation>
+    </message>
+    <message>
+        <source>Bottles is not installed. Linwas installs it from Flathub (and Flatpak too if needed); it brings its own Wine.</source>
+        <translation>Bottles kurulu değil. Linwas onu Flathub'dan kurar (gerekirse Flatpak'ı da); Bottles kendi Wine sürümünü getirir.</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Sil</translation>
+    </message>
+    <message>
+        <source>Delete "{name}" with its Windows environment? All programs and files in it will be removed. This can't be undone.</source>
+        <translation>"{name}" Windows ortamıyla birlikte silinsin mi? İçindeki bütün programlar ve dosyalar silinir. Bu geri alınamaz.</translation>
+    </message>
+    <message>
+        <source>Game</source>
+        <translation>Oyun</translation>
+    </message>
+    <message>
+        <source>Install Bottles</source>
+        <translation>Bottles'ı kur</translation>
+    </message>
+    <message>
+        <source>It could not be deleted.</source>
+        <translation>Silinemedi.</translation>
+    </message>
+    <message>
+        <source>Loading…</source>
+        <translation>Yükleniyor…</translation>
+    </message>
+    <message>
+        <source>No Windows programs yet. Open a setup file (.exe or .msi) to install one.</source>
+        <translation>Henüz Windows programı yok. Kurmak için bir kurulum dosyası (.exe ya da .msi) açın.</translation>
+    </message>
+    <message>
+        <source>No program found in this environment.</source>
+        <translation>Bu ortamda program bulunamadı.</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Aç</translation>
+    </message>
+    <message>
+        <source>Open a Windows program…</source>
+        <translation>Windows programı aç…</translation>
+    </message>
+    <message>
+        <source>Windows programs run with Bottles; each program gets its own Windows environment. Prefer a Linux alternative when there is one; it is faster and gets updates automatically.</source>
+        <translation>Windows programları Bottles ile çalışır; her program kendi Windows ortamını alır. Linux alternatifi varsa onu tercih edin; daha hızlıdır ve kendiliğinden güncellenir.</translation>
+    </message>
+    <message>
+        <source>risky file</source>
+        <translation>riskli dosya</translation>
+    </message>
+</context>
+<context>
+    <name>BottlesRunner</name>
+    <message>
+        <source>Ask the assistant</source>
+        <translation>Asistana sor</translation>
+    </message>
+    <message>
+        <source>Bottles could not be started. Is Bottles installed?</source>
+        <translation>Bottles başlatılamadı. Bottles kurulu mu?</translation>
+    </message>
+    <message>
+        <source>Bottles reported an error.</source>
+        <translation>Bottles bir hata bildirdi.</translation>
+    </message>
+    <message>
+        <source>Preparing a Windows environment for {name}…
+The first time this can take several minutes (Wine is downloaded).</source>
+        <translation>{name} için Windows ortamı hazırlanıyor…
+İlk seferde birkaç dakika sürebilir (Wine indiriliyor).</translation>
+    </message>
+    <message>
+        <source>Setup finished, but no installed program was found. If setup was cancelled you can delete this environment under Windows programs.</source>
+        <translation>Kurulum bitti ama kurulu bir program bulunamadı. Kurulumu iptal ettiyseniz bu ortamı Windows programları sekmesinden silebilirsiniz.</translation>
+    </message>
+    <message>
+        <source>The Windows environment for {name} could not be created.</source>
+        <translation>{name} için Windows ortamı oluşturulamadı.</translation>
+    </message>
+    <message>
+        <source>The programs in this environment could not be read.</source>
+        <translation>Bu ortamdaki programlar okunamadı.</translation>
+    </message>
+    <message>
+        <source>Windows program</source>
+        <translation>Windows programı</translation>
+    </message>
+    <message>
+        <source>{name} could not be added.</source>
+        <translation>{name} eklenemedi.</translation>
     </message>
 </context>
 </TS>

@@ -24,13 +24,16 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from linwas.backend import bottles
 from linwas.backend.apt_search import AptPackage, expand_query, search_apt
 from linwas.backend.flatpak import FlatpakPackage, search_flatpak
 from linwas.backend.flatpak import is_available as flatpak_ok
 from linwas.backend.installed_apps import InstalledApp, is_other_version, match_installed
 from linwas.core.tasks import Task, TaskStep
+from linwas.ui.bottles_runner import BottlesRunner
 from linwas.ui.dialogs.remove_app import RemovalFlow, RemovalRequest
 from linwas.ui.pages.base import BasePage
+from linwas.ui.pages.bottles_apps import BottlesAppsView
 from linwas.ui.pages.discover import DiscoverView
 from linwas.ui.pages.installed_apps import InstalledAppsView, source_badge_text
 from linwas.ui.pages.windows_apps import WindowsAppsView
@@ -278,8 +281,15 @@ class SoftwarePage(BasePage):
         self._tabs = QTabWidget(self)
         self._tabs.addTab(scroll, tr("Discover"))
         self._tabs.addTab(self._installed, tr("Installed programs"))
+        # Windows programları: Bottles (kararlar.md › EXE); kapatılırsa dağıtım Wine'ı
         self._wine_runner = WineRunner(self)
-        self._windows_apps = WindowsAppsView(self._wine_runner, self)
+        self._bottles_runner = BottlesRunner(self)
+        self._bottles_runner.ai_help_requested.connect(self.ai_help_requested)
+        if bottles.ENABLED:
+            self._windows_apps = BottlesAppsView(self._bottles_runner, self)
+            self._windows_apps.install_bottles_requested.connect(self._install_bottles)
+        else:
+            self._windows_apps = WindowsAppsView(self._wine_runner, self)
         self._windows_apps.open_exe_requested.connect(self._pick_exe)
         self._tabs.addTab(self._windows_apps, tr("Windows programs"))
 
@@ -301,6 +311,9 @@ class SoftwarePage(BasePage):
             self._do_search()
         else:
             self._discover.reload()
+        if isinstance(self._windows_apps, BottlesAppsView):
+            self._windows_apps.mark_stale()
+            self._windows_apps.reload()
 
     def _on_text_changed(self, text: str) -> None:
         searching = len(text.strip()) >= 2
@@ -547,12 +560,27 @@ class SoftwarePage(BasePage):
         from linwas.ui.dialogs.exe_open import ExeOpenDialog
 
         self._status_lbl.setText("")
-        dialog = ExeOpenDialog(info, alternative, wine.wine_available(), self)  # type: ignore[arg-type]
+        if bottles.ENABLED:
+            ready = bottles.bottles_available()
+            dialog = ExeOpenDialog(info, alternative, ready, self, engine="bottles")  # type: ignore[arg-type]
+        else:
+            dialog = ExeOpenDialog(info, alternative, wine.wine_available(), self)  # type: ignore[arg-type]
         if dialog.exec() != ExeOpenDialog.DialogCode.Accepted:
             return
         if dialog.action == "alternative":
             self._tabs.setCurrentIndex(0)
             self._search.setText(alternative[0])  # type: ignore[index]
+        elif dialog.action == "install_bottles":
+            self._install_bottles()
+        elif dialog.action == "run" and bottles.ENABLED:
+            self._bottles_runner.install(
+                info.path,  # type: ignore[attr-defined]
+                info.display_name,  # type: ignore[attr-defined]
+                installer=bool(info.installer),  # type: ignore[attr-defined]
+                gaming=dialog.gaming,
+                risky=info.risk == "high",  # type: ignore[attr-defined]
+            )
+            self._tabs.setCurrentWidget(self._windows_apps)
         elif dialog.action == "install_wine":
             self.task_run_now.emit(
                 Task(label=tr("Install Wine"), steps=[TaskStep(op_id="wine.setup", params={})])
@@ -599,6 +627,19 @@ class SoftwarePage(BasePage):
                     steps=[TaskStep(op_id="deb.install", params={"path": info.path})],  # type: ignore[attr-defined]
                 )
             )
+
+    def _install_bottles(self) -> None:
+        steps = []
+        if not bottles.flatpak_available():
+            steps.append(TaskStep(op_id="flatpak.setup", label=tr("Install Flatpak"), params={}))
+        steps.append(
+            TaskStep(
+                op_id="flatpak.install",
+                label=tr("Install Bottles"),
+                params={"app_id": bottles.APP_ID},
+            )
+        )
+        self.task_run_now.emit(Task(label=tr("Install Bottles"), steps=steps))
 
     def _queue_apt(self, name: str) -> None:
         task = Task(

@@ -1,4 +1,4 @@
-"""Windows programı (.exe/.msi) açma: risk analizi, Linux alternatifi, Wine ile açma."""
+"""Windows programı (.exe/.msi) açma: risk analizi, Linux alternatifi, Bottles/Wine ile açma."""
 
 from __future__ import annotations
 
@@ -52,7 +52,8 @@ def _installer_text(info: ExeInfo) -> str:
 
 
 class ExeOpenDialog(QDialog):
-    """Sonuç: `action` ("run" | "install_wine" | "alternative" | ""), `separate`."""
+    """Sonuç: `action` ("run" | "install_wine" | "install_bottles" | "alternative" | ""),
+    `separate` (Wine) ve `gaming` (Bottles oyun profili)."""
 
     def __init__(
         self,
@@ -60,12 +61,14 @@ class ExeOpenDialog(QDialog):
         alternative: tuple[str, dict],
         wine_ok: bool,
         parent: QWidget | None = None,
+        engine: str = "wine",  # "bottles" | "wine"
     ) -> None:
         super().__init__(parent)
         self.setWindowTitle(tr("Open a Windows program"))
         self.setMinimumWidth(560)
         self.action = ""
         self.separate = False
+        self.gaming = False
         self._info = info
         layout = QVBoxLayout(self)
         layout.setSpacing(10)
@@ -165,7 +168,9 @@ class ExeOpenDialog(QDialog):
         buttons = QHBoxLayout()
         buttons.addStretch(1)
 
-        if not wine_ok:
+        if engine == "bottles":
+            self._add_bottles_actions(layout, buttons, wine_ok, blocked, bool(key))
+        elif not wine_ok:
             need = QLabel(
                 tr(
                     "Windows programs open with Wine, which is not installed yet. Linwas can "
@@ -210,6 +215,44 @@ class ExeOpenDialog(QDialog):
 
         self._add_close(layout, buttons)
 
+    def _add_bottles_actions(
+        self, layout: QVBoxLayout, buttons: QHBoxLayout, ready: bool, blocked: bool, alt: bool
+    ) -> None:
+        if not ready:
+            need = QLabel(
+                tr(
+                    "Windows programs open with Bottles, which is not installed yet. Linwas can "
+                    "install it from Flathub; it brings its own Wine."
+                ),
+                self,
+            )
+            need.setWordWrap(True)
+            layout.addWidget(need)
+            btn = QPushButton(tr("Install Bottles"), self)
+            btn.setProperty("primary", not alt)
+            btn.setEnabled(not blocked)
+            btn.clicked.connect(lambda: self._finish("install_bottles"))
+            buttons.addWidget(btn)
+            return
+        self._gaming = QCheckBox(tr("This is a game"), self)
+        layout.addWidget(self._gaming)
+        hint = QLabel(
+            tr(
+                "The program gets its own Windows environment, so it can't affect your other "
+                "programs and is removed completely with it."
+            ),
+            self,
+        )
+        hint.setObjectName("Secondary")
+        hint.setWordWrap(True)
+        layout.addWidget(hint)
+        run_text = tr("Run setup with Bottles") if self._info.installer else tr("Open with Bottles")
+        run_btn = QPushButton(run_text, self)
+        run_btn.setProperty("primary", not alt and self._info.risk != "high")
+        run_btn.setEnabled(not blocked)
+        run_btn.clicked.connect(lambda: self._finish("run"))
+        buttons.addWidget(run_btn)
+
     def _add_close(self, layout: QVBoxLayout, row: QHBoxLayout | None = None) -> None:
         if row is None:
             row = QHBoxLayout()
@@ -223,4 +266,6 @@ class ExeOpenDialog(QDialog):
         self.action = action
         box = getattr(self, "_separate", None)
         self.separate = bool(box and box.isChecked())
+        gaming = getattr(self, "_gaming", None)
+        self.gaming = bool(gaming and gaming.isChecked())
         self.accept()

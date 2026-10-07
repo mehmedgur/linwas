@@ -23,7 +23,8 @@ Son güncelleme: 7 Ekim 2026
 - [ ] **PR #2 — Proje belgelerinin depoya taşınması** (bu klasör) + program kaldırma kararı.
 
 ## Sıradaki aşama
-- **Bottles'a geçiş** (kararlar.md › EXE): kodlanacak; beğenilmezse dağıtım Wine'ına dönülür.
+- **Bottles'a geçiş** (kararlar.md › EXE): kodlandı (7 Ekim 2026), kullanıcının denemesi bekleniyor;
+  beğenilmezse `bottles.ENABLED = False` ile dağıtım Wine'ına dönülür.
 - Kodlama özellikleri tamam; kalanlar: kullanıcı denemeleri, yayın öncesi kararlar,
   doğrulanacaklar. (Testler kullanıcı yeni emir verene kadar yazılmıyor.)
 
@@ -73,6 +74,9 @@ Son güncelleme: 7 Ekim 2026
 - [ ] **Bottles (bottles-cli):** Flatpak Bottles'ın Pardus 23 ve Ubuntu 22.04'te çalışması; Flatpak
   kum havuzunda dosya erişimi (İndirilenler'deki EXE'ye erişebiliyor mu); `bottles-cli` komutları ve
   JSON çıktısı resmi belgeden (docs.usebottles.com/advanced/cli); Office 2016 ve 365'in gerçek durumu.
+  Ayrıca: `bottles-cli run -e` kurulum bitene kadar bekliyor mu (beklemezse menü kısayolları
+  "Menüye ekle" düğmesiyle eklenir); şişe klasör adının şişe adıyla aynı olması; `--json programs`
+  alan adları; ilk `new` çağrısında Wine/DXVK indirme süresi.
 - [ ] Windows NTUSER.DAT değer yolları (klavye Preload, AppsUseLightTheme, SwapMouseButtons,
   LocaleName, LogPixels, Devices) gerçek bir Windows diskiyle denenmeli (`hivexsh` + `lsval`).
 - [ ] Ubuntu'da Microsoft font paketinin debconf sorusu (`msttcorefonts/accepted-mscorefonts-eula`)

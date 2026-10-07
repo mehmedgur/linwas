@@ -537,6 +537,22 @@ def _exec_fonts_install_microsoft(seq: int, params: dict[str, str]) -> bool:
     return _run(cmd, seq, {"DEBIAN_FRONTEND": "noninteractive"})
 
 
+# Flathub'ın resmi kurulum adresi (flathub.org/setup)
+_FLATHUB_REPO = "https://dl.flathub.org/repo/flathub.flatpakrepo"
+
+
+def _exec_flatpak_setup(seq: int, params: dict[str, str]) -> bool:
+    """Flatpak'ı dağıtım deposundan kurar ve Flathub deposunu sistem geneline ekler."""
+    new = not _apt_installed("flatpak")
+    if new and not _run(["apt-get", "install", "-y", "--", "flatpak"], seq, _APT_ENV):
+        return False
+    if new:
+        _save_rollback(RollbackRecord(task_label="Flatpak", packages_to_install=["flatpak"]), seq)
+    return _run(
+        ["flatpak", "remote-add", "--if-not-exists", "--system", "flathub", _FLATHUB_REPO], seq
+    )
+
+
 def _exec_wine_setup(seq: int, params: dict[str, str]) -> bool:
     """Wine'ı dağıtım deposundan kurar. 32 bit Windows programları için i386 mimarisi
     etkinleştirilir (dpkg --add-architecture) ve wine32:i386 kurulur."""
@@ -701,6 +717,7 @@ _EXECUTORS: dict[str, Any] = {
     "rollback.restore_files": _exec_rollback_restore_files,
     "snapshot.timeshift_create": _exec_snapshot_timeshift_create,
     "wine.setup": _exec_wine_setup,
+    "flatpak.setup": _exec_flatpak_setup,
     "snapshot.timeshift_restore": _exec_snapshot_timeshift_restore,
     "snapshot.timeshift_delete": _exec_snapshot_timeshift_delete,
     "firmware.fwupd_update": _exec_firmware_fwupd_update,

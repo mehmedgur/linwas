@@ -356,6 +356,11 @@ OPERATIONS: dict[str, OperationSpec] = {
         risk=RiskLevel.MEDIUM,
         label="Restore files to how they were before",
     ),
+    "flatpak.setup": OperationSpec(
+        params=[],
+        risk=RiskLevel.MEDIUM,
+        label="Install Flatpak and add Flathub",
+    ),
     "wine.setup": OperationSpec(
         params=[],
         risk=RiskLevel.MEDIUM,
