@@ -3,7 +3,7 @@
 > **Kural:** Her kodlama aşamasına geçmeden önce Claude bu listeyi okur ve bekleyen fikirleri
 > kullanıcıya hatırlatır.
 
-Son güncelleme: 6 Ekim 2026
+Son güncelleme: 7 Ekim 2026
 
 ## Notlar
 - Kullanıcının Pardus 23 bilgisayarında hem **GNOME** hem **KDE Plasma** oturumu var. Testler
@@ -29,6 +29,8 @@ Son güncelleme: 6 Ekim 2026
 ## Aşama 4'ün en sonunda yapılacaklar (kullanıcı kararı, 6 Ekim 2026)
 - Oyun sekmesi sonraki sürüme ertelendi (kullanıcı kararı, 7 Ekim 2026; bkz. Bekleyen fikirler).
 - [x] **EXE ve Wine:** kodlandı (feat/asama-5-paketleme), kullanıcının denemesi bekleniyor.
+- [x] **Programlar › Keşfet:** kategorili öne çıkan programlar (kart ızgarası) ve kartlı arama
+  sonuçları kodlandı (7 Ekim 2026), kullanıcının denemesi bekleniyor.
 
 ## Aşama 5 sonuna ertelenenler (token tasarrufu, 6 Ekim 2026)
 - [ ] Yeni yazılan modüllerin birim testleri (ör. settings_launcher, appearance, troubleshoot,

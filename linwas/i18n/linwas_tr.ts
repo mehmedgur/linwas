@@ -703,10 +703,6 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Flatpak kurulu değil. Yalnızca APT paketleri gösterilecek.</translation>
     </message>
     <message>
-        <source>Type to search…</source>
-        <translation>Aramak için yazın…</translation>
-    </message>
-    <message>
         <source>Searching…</source>
         <translation>Aranıyor…</translation>
     </message>
@@ -719,16 +715,8 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Flatpak (Flathub)</translation>
     </message>
     <message>
-        <source>3rd Party</source>
-        <translation>3. Taraf</translation>
-    </message>
-    <message>
         <source>Installed</source>
         <translation>Kurulu</translation>
-    </message>
-    <message>
-        <source>Install</source>
-        <translation>Kur</translation>
     </message>
     <message>
         <source>No results for &quot;{q}&quot;</source>
@@ -773,10 +761,6 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     <message>
         <source>Remove {name}</source>
         <translation>{name} programını kaldır</translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation>Arama</translation>
     </message>
     <message>
         <source>Already installed</source>
@@ -841,6 +825,10 @@ Flatpak (Flathub{fp}): genellikle daha yeni sürümdür, sistemden yalıtılmı�
     <message>
         <source>{name} is available from two sources.</source>
         <translation>{name} iki farklı kaynakta var.</translation>
+    </message>
+    <message>
+        <source>Discover</source>
+        <translation>Keşfet</translation>
     </message>
 </context>
 <context>
@@ -3274,6 +3262,96 @@ Linux'ta:
     <message>
         <source>{name} closed unexpectedly. Some programs only work in their own environment. Try again in a separate environment?</source>
         <translation>{name} beklenmedik şekilde kapandı. Bazı programlar yalnızca kendi ortamlarında çalışır. Ayrı bir ortamda yeniden denensin mi?</translation>
+    </message>
+</context>
+<context>
+    <name>AppCard</name>
+    <message>
+        <source>From Flathub</source>
+        <translation>Flathub'dan</translation>
+    </message>
+    <message>
+        <source>From the maker's official repository</source>
+        <translation>Üreticinin resmi deposundan</translation>
+    </message>
+    <message>
+        <source>From your system's software sources</source>
+        <translation>Sisteminizin yazılım kaynaklarından</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Kur</translation>
+    </message>
+    <message>
+        <source>Installed</source>
+        <translation>Kurulu</translation>
+    </message>
+    <message>
+        <source>Not available for this system (Flatpak may be needed).</source>
+        <translation>Bu sistem için bulunamadı (Flatpak gerekebilir).</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Önerilen</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Kaldır</translation>
+    </message>
+    <message>
+        <source>Unavailable</source>
+        <translation>Bulunamadı</translation>
+    </message>
+    <message>
+        <source>Version {version}</source>
+        <translation>Sürüm {version}</translation>
+    </message>
+</context>
+<context>
+    <name>DiscoverView</name>
+    <message>
+        <source>All</source>
+        <translation>Tümü</translation>
+    </message>
+    <message>
+        <source>Internet</source>
+        <translation>İnternet</translation>
+    </message>
+    <message>
+        <source>Office</source>
+        <translation>Ofis</translation>
+    </message>
+    <message>
+        <source>Graphics &amp; Photo</source>
+        <translation>Grafik ve Fotoğraf</translation>
+    </message>
+    <message>
+        <source>Music &amp; Video</source>
+        <translation>Müzik ve Video</translation>
+    </message>
+    <message>
+        <source>Communication</source>
+        <translation>İletişim</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>Araçlar</translation>
+    </message>
+    <message>
+        <source>Education</source>
+        <translation>Eğitim</translation>
+    </message>
+    <message>
+        <source>Loading…</source>
+        <translation>Yükleniyor…</translation>
+    </message>
+    <message>
+        <source>Popular programs</source>
+        <translation>Popüler programlar</translation>
+    </message>
+    <message>
+        <source>The program list could not be loaded.</source>
+        <translation>Program listesi yüklenemedi.</translation>
     </message>
 </context>
 </TS>

@@ -31,8 +31,10 @@ from linwas.backend.installed_apps import InstalledApp, is_other_version, match_
 from linwas.core.tasks import Task, TaskStep
 from linwas.ui.dialogs.remove_app import RemovalFlow, RemovalRequest
 from linwas.ui.pages.base import BasePage
+from linwas.ui.pages.discover import DiscoverView
 from linwas.ui.pages.installed_apps import InstalledAppsView, source_badge_text
 from linwas.ui.pages.windows_apps import WindowsAppsView
+from linwas.ui.widgets.app_card import ResultCard
 from linwas.ui.widgets.card import Card
 from linwas.ui.wine_runner import WineRunner
 
@@ -137,98 +139,6 @@ class _SearchWorker(QThread):
         # Masaüstü uygulamaları önce
         apt.sort(key=lambda p: p.graphical is not True)
         self.done.emit(_SearchResult(apt=apt[:40], flatpak=flatpak[:20], extra_terms=terms))
-
-
-# --- Paket satırı ---
-
-
-class _ResultRow(QWidget):
-    install_apt = Signal(str)  # package name
-    install_flatpak = Signal(str)  # app_id
-    install_third_party = Signal(str)  # third_party id
-    remove_clicked = Signal(str, str, str)  # (kaynak, kimlik, görünen ad)
-
-    def __init__(
-        self,
-        name: str,
-        description: str,
-        version: str,
-        source: str,  # "apt" | "flatpak" | "third-party"
-        installed: bool,
-        pkg_id: str,  # apt name veya flatpak app_id
-        parent: QWidget | None = None,
-        other_version: str = "",  # kurulu başka sürümün görünen adı
-    ) -> None:
-        super().__init__(parent)
-        row = QHBoxLayout(self)
-        row.setContentsMargins(0, 6, 0, 6)
-        row.setSpacing(8)
-
-        # Sol: isim + açıklama
-        info = QVBoxLayout()
-        name_lbl = QLabel(name, self)
-        name_lbl.setStyleSheet("font-weight: bold;")
-        info.addWidget(name_lbl)
-        if description:
-            desc_lbl = QLabel(description, self)
-            desc_lbl.setObjectName("Secondary")
-            desc_lbl.setWordWrap(True)
-            info.addWidget(desc_lbl)
-        if other_version:
-            note = QLabel(
-                tr("Another version of this program is already installed: {name}").format(
-                    name=other_version
-                ),
-                self,
-            )
-            note.setStyleSheet("color:#9d5d00;")
-            note.setWordWrap(True)
-            info.addWidget(note)
-        row.addLayout(info, 1)
-
-        # Kaynak rozeti
-        source_colors = {
-            "apt": ("#0067c0", "#e3f2fd", "APT"),
-            "flatpak": ("#5c35cc", "#ede7f6", "Flatpak"),
-            "third-party": ("#9d5d00", "#fff3cc", tr("3rd Party")),
-        }
-        if source in source_colors:
-            fg, bg, label = source_colors[source]
-            badge = QLabel(label, self)
-            badge.setStyleSheet(
-                f"background-color:{bg}; color:{fg}; border-radius:4px;"
-                " padding:1px 7px; font-size:11px; font-weight:bold;"
-            )
-            row.addWidget(badge)
-
-        # Versiyon
-        if version:
-            ver_lbl = QLabel(version, self)
-            ver_lbl.setObjectName("Secondary")
-            row.addWidget(ver_lbl)
-
-        # Buton: kurulu programda "Kur" yerine "Kaldır"
-        if installed:
-            lbl = QLabel("✓ " + tr("Installed"), self)
-            lbl.setStyleSheet("color:#0e7a0e; font-weight:bold;")
-            row.addWidget(lbl)
-            if source in ("apt", "flatpak"):
-                remove = QPushButton(tr("Remove"), self)
-                remove.setAccessibleName(tr("Remove {name}").format(name=name))
-                remove.setFixedWidth(80)
-                remove.clicked.connect(lambda: self.remove_clicked.emit(source, pkg_id, name))
-                row.addWidget(remove)
-        else:
-            btn = QPushButton(tr("Install"), self)
-            btn.setProperty("primary", True)
-            btn.setFixedWidth(80)
-            if source == "apt":
-                btn.clicked.connect(lambda: self.install_apt.emit(pkg_id))
-            elif source == "flatpak":
-                btn.clicked.connect(lambda: self.install_flatpak.emit(pkg_id))
-            elif source == "third-party":
-                btn.clicked.connect(lambda: self.install_third_party.emit(pkg_id))
-            row.addWidget(btn)
 
 
 # --- Windows alternatif banner ---
@@ -339,16 +249,22 @@ class SoftwarePage(BasePage):
             info.setObjectName("Secondary")
             outer.addWidget(info)
 
+        # Arama kutusu boşken öne çıkan programlar
+        self._discover = DiscoverView(content)
+        self._discover.install_requested.connect(self._on_discover_install)
+        outer.addWidget(self._discover)
+
         # Durum / sonuç alanı
-        self._status_lbl = QLabel(tr("Type to search…"), content)
+        self._status_lbl = QLabel("", content)
         self._status_lbl.setObjectName("Secondary")
+        self._status_lbl.hide()
         outer.addWidget(self._status_lbl)
 
         # Sonuç kapsayıcısı
         self._results_widget = QWidget(content)
         self._results_layout = QVBoxLayout(self._results_widget)
         self._results_layout.setContentsMargins(0, 0, 0, 0)
-        self._results_layout.setSpacing(0)
+        self._results_layout.setSpacing(8)
         outer.addWidget(self._results_widget)
 
         outer.addStretch(1)
@@ -360,7 +276,7 @@ class SoftwarePage(BasePage):
         self._installed.apps_loaded.connect(self._rerender_results)
 
         self._tabs = QTabWidget(self)
-        self._tabs.addTab(scroll, tr("Search"))
+        self._tabs.addTab(scroll, tr("Discover"))
         self._tabs.addTab(self._installed, tr("Installed programs"))
         self._wine_runner = WineRunner(self)
         self._windows_apps = WindowsAppsView(self._wine_runner, self)
@@ -383,14 +299,27 @@ class SoftwarePage(BasePage):
             self._installed.mark_stale()
         if len(self._search.text().strip()) >= 2:
             self._do_search()
+        else:
+            self._discover.reload()
 
     def _on_text_changed(self, text: str) -> None:
-        if len(text.strip()) < 2:
+        searching = len(text.strip()) >= 2
+        self._discover.setVisible(not searching)
+        self._status_lbl.setVisible(searching)
+        if not searching:
+            self._debounce.stop()
             self._clear_results()
-            self._status_lbl.setText(tr("Type to search…"))
             return
         self._status_lbl.setText(tr("Searching…"))
         self._debounce.start()
+
+    def _on_discover_install(self, source: str, package: str, name: str) -> None:
+        if source == "apt":
+            self._queue_apt(package)
+        elif source == "flatpak":
+            self._queue_flatpak(package)
+        elif source == "third-party":
+            self._queue_third_party(package)
 
     def _do_search(self) -> None:
         query = self._search.text().strip()
@@ -454,56 +383,58 @@ class SoftwarePage(BasePage):
             sep = _SectionSep(tr("APT Packages"), self._results_widget)
             self._results_layout.addWidget(sep)
             for pkg in result.apt:
-                row = _ResultRow(
+                other = self._other_version_name(pkg, installed_apps)
+                row = ResultCard(
                     name=pkg.name,
                     description=pkg.description,
-                    version=pkg.version,
                     source="apt",
                     installed=pkg.installed,
-                    pkg_id=pkg.name,
                     parent=self._results_widget,
-                    other_version=self._other_version_name(pkg, installed_apps),
+                    icon=pkg.name,
+                    note=tr("Another version of this program is already installed: {name}").format(
+                        name=other
+                    )
+                    if other
+                    else "",
+                    version=pkg.version,
                 )
-                row.install_apt.connect(self._install_apt_clicked)
-                row.remove_clicked.connect(self._on_remove)
+                row.install_clicked.connect(lambda n=pkg.name: self._install_apt_clicked(n))
+                row.remove_clicked.connect(lambda n=pkg.name: self._on_remove("apt", n, n))
                 self._results_layout.addWidget(row)
-                self._add_separator()
 
         # Flatpak sonuçları
         if result.flatpak:
             sep = _SectionSep(tr("Flatpak (Flathub)"), self._results_widget)
             self._results_layout.addWidget(sep)
             for pkg in result.flatpak:
-                row = _ResultRow(
+                row = ResultCard(
                     name=pkg.name,
                     description=pkg.description,
-                    version=pkg.version,
                     source="flatpak",
                     installed=pkg.installed,
-                    pkg_id=pkg.app_id,
                     parent=self._results_widget,
+                    icon=pkg.app_id,
+                    version=pkg.version,
                 )
-                row.install_flatpak.connect(self._install_flatpak_clicked)
-                row.remove_clicked.connect(self._on_remove)
+                row.install_clicked.connect(lambda a=pkg.app_id: self._install_flatpak_clicked(a))
+                row.remove_clicked.connect(
+                    lambda a=pkg.app_id, n=pkg.name: self._on_remove("flatpak", a, n)
+                )
                 self._results_layout.addWidget(row)
-                self._add_separator()
 
         # Üçüncü taraf listesinde eşleşme var mı?
         q_lower = query.lower()
         for app in self._third_party:
             if q_lower in app.name.lower() or q_lower in app.id:
-                row = _ResultRow(
+                row = ResultCard(
                     name=app.name,
                     description=app.description,
-                    version="",
                     source="third-party",
                     installed=False,
-                    pkg_id=app.id,
                     parent=self._results_widget,
                 )
-                row.install_third_party.connect(self._queue_third_party)
+                row.install_clicked.connect(lambda i=app.id: self._queue_third_party(i))
                 self._results_layout.addWidget(row)
-                self._add_separator()
                 total += 1
 
         if total == 0 and not alt:
@@ -513,11 +444,6 @@ class SoftwarePage(BasePage):
         if result.extra_terms:
             text += " · " + tr("also searched: {terms}").format(terms=", ".join(result.extra_terms))
         self._status_lbl.setText(text)
-
-    def _add_separator(self) -> None:
-        sep = QFrame(self._results_widget)
-        sep.setFrameShape(QFrame.Shape.HLine)
-        self._results_layout.addWidget(sep)
 
     # --- Görev oluşturma ---
 

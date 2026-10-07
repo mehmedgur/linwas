@@ -209,6 +209,42 @@ QLabel#Secondary {{
     font-size: 12px;
 }}
 
+/* === Program kartları (Programlar › Keşfet / arama) === */
+QLabel#AppName {{
+    font-size: 14px;
+    font-weight: bold;
+}}
+QLabel#Caption {{
+    color: {c.text_secondary};
+    font-size: 11px;
+}}
+QLabel#Success {{
+    color: {c.success};
+    font-weight: bold;
+}}
+QLabel#Warning {{
+    color: {c.warning};
+    font-size: 12px;
+}}
+QLabel#Pill {{
+    background-color: {c.accent};
+    color: {c.text_on_accent};
+    border-radius: 8px;
+    padding: 1px 8px;
+    font-size: 11px;
+    font-weight: bold;
+}}
+QPushButton#Chip {{
+    border-radius: 14px;
+    padding: 4px 14px;
+    min-height: 20px;
+}}
+QPushButton#Chip:checked {{
+    background-color: {c.accent};
+    color: {c.text_on_accent};
+    border-color: {c.accent};
+}}
+
 /* === Metin alanları, açılır listeler, sayı kutuları === */
 QTextEdit, QPlainTextEdit, QTextBrowser, QSpinBox, QDoubleSpinBox, QComboBox {{
     background-color: {c.surface};
