@@ -6,10 +6,12 @@ Hata durumunda boş liste döner — exception asla dışarıya çıkmaz.
 
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 from dataclasses import dataclass, field
 from enum import Enum
+from pathlib import Path
 
 
 class DriverCategory(Enum):
@@ -38,8 +40,12 @@ class DriverCandidate:
 
 
 def _run(cmd: list[str], timeout: int = 20) -> str:
+    # Çıktılar İngilizce ayrıştırılır (Pardus Türkçe çıktı verir: "Kurulu:" vb.)
+    env = {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8"}
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, shell=False)
+        r = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=timeout, shell=False, env=env
+        )
         return r.stdout
     except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
         return ""
@@ -196,38 +202,122 @@ def _gpu_candidates(dev: _PciDevice) -> list[DriverCandidate]:
             )
 
     elif _AMD.search(name):
-        pkg, inst = _dpkg_installed_any("firmware-amd-graphics", "amd64-microcode")
-        results.append(
-            DriverCandidate(
-                package="firmware-amd-graphics",
-                device_name=name,
-                current_driver=dev.current_driver,
-                category=DriverCategory.GPU,
-                description="AMD GPU firmware — improves stability and performance.",
-                driver_type="firmware",
-                recommended=not _dpkg_installed("firmware-amd-graphics"),
-                installed=_dpkg_installed("firmware-amd-graphics"),
+        # amdgpu/radeon çekirdekte hazır gelir; eksik olabilenler firmware ve Mesa bileşenleri
+        results += [
+            _package_candidate(
+                "firmware-amd-graphics",
+                name,
+                dev.current_driver,
+                DriverCategory.GPU,
+                "AMD GPU firmware — improves stability and performance.",
+                "firmware",
                 needs_reboot=True,
-            )
-        )
+            ),
+            _package_candidate(
+                "mesa-vulkan-drivers",
+                name,
+                dev.current_driver,
+                DriverCategory.GPU,
+                "Vulkan graphics for AMD and Intel — needed by most games (and Proton).",
+                "open-source",
+            ),
+            _package_candidate(
+                "mesa-va-drivers",
+                name,
+                dev.current_driver,
+                DriverCategory.GPU,
+                "AMD video acceleration — smoother video with less CPU use.",
+                "open-source",
+            ),
+        ]
 
-    elif _INTEL_GPU.search(name):
-        # Intel GPU genelde kutudan çalışır; bilgi kartı göster
-        results.append(
-            DriverCandidate(
-                package="intel-media-va-driver",
-                device_name=name,
-                current_driver=dev.current_driver,
-                category=DriverCategory.GPU,
-                description="Intel media driver — hardware video decode/encode acceleration.",
-                driver_type="open-source",
-                recommended=not _dpkg_installed("intel-media-va-driver"),
-                installed=_dpkg_installed("intel-media-va-driver"),
-                needs_reboot=False,
-            )
-        )
+    elif _INTEL_GPU.search(name) or "intel" in name.lower():
+        results += [
+            _package_candidate(
+                "intel-media-va-driver",
+                name,
+                dev.current_driver,
+                DriverCategory.GPU,
+                "Intel media driver — hardware video decode/encode acceleration.",
+                "open-source",
+            ),
+            _package_candidate(
+                "mesa-vulkan-drivers",
+                name,
+                dev.current_driver,
+                DriverCategory.GPU,
+                "Vulkan graphics for AMD and Intel — needed by most games (and Proton).",
+                "open-source",
+            ),
+        ]
 
     return results
+
+
+def _package_candidate(
+    package: str,
+    device: str,
+    current: str,
+    category: DriverCategory,
+    description: str,
+    driver_type: str,
+    needs_reboot: bool = False,
+) -> DriverCandidate:
+    installed = _dpkg_installed(package)
+    return DriverCandidate(
+        package=package,
+        device_name=device,
+        current_driver=current,
+        category=category,
+        description=description,
+        driver_type=driver_type,
+        recommended=not installed,
+        installed=installed,
+        needs_reboot=needs_reboot and not installed,
+    )
+
+
+# --- İşlemci mikrokodu ---
+
+
+def _cpu_vendor(cpuinfo: Path = Path("/proc/cpuinfo")) -> str:
+    try:
+        for line in cpuinfo.read_text(encoding="utf-8", errors="replace").splitlines():
+            if line.startswith("vendor_id"):
+                return line.split(":", 1)[1].strip()
+    except OSError:
+        pass
+    return ""
+
+
+def _microcode_candidates() -> list[DriverCandidate]:
+    """İşlemci üreticisinin güvenlik ve kararlılık düzeltmeleri (açılışta yüklenir)."""
+    package = {"GenuineIntel": "intel-microcode", "AuthenticAMD": "amd64-microcode"}.get(
+        _cpu_vendor(), ""
+    )
+    if not package:
+        return []
+    return [
+        _package_candidate(
+            package,
+            "Processor (CPU)",
+            "",
+            DriverCategory.FIRMWARE,
+            "Processor microcode — security and stability fixes from the CPU maker.",
+            "firmware",
+            needs_reboot=True,
+        )
+    ]
+
+
+def _available_in_repo(packages: list[str]) -> set[str]:
+    """Depoda kurulabilir (aday sürümü olan) ya da zaten kurulu paketler."""
+    from linwas.backend.featured import parse_policy
+
+    if not packages:
+        return set()
+    policy = parse_policy(_run(["apt-cache", "policy", "--", *packages], timeout=30))
+    return {name for name, (installed, candidate) in policy.items() if installed or candidate}
 
 
 # --- Ağ/Wi-Fi algılama ---
@@ -449,6 +539,19 @@ def list_drivers() -> list[DriverCandidate]:
                 candidates.extend(_network_candidates(dev))
 
         candidates.extend(_printer_candidates())
+        candidates.extend(_microcode_candidates())
+
+        # Paket adları dağıtıma göre değişir (ör. Ubuntu'da firmware-* yok, linux-firmware
+        # içinde gelir): depoda olmayan öneri gösterilmez
+        names = sorted({c.package for c in candidates if not c.options})
+        available = _available_in_repo(names)
+        candidates = [c for c in candidates if c.options or c.package in available]
+        # Aynı paket birden çok aygıt için önerildiyse (ör. Mesa) bir kez gösterilir
+        unique: dict[str, DriverCandidate] = {}
+        for c in candidates:
+            unique.setdefault(c.package, c)
+        candidates = list(unique.values())
+
         candidates.extend(_fwupd_candidates())
 
         # Sıralama: önerilen önce, kurulmamış önce

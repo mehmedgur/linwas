@@ -103,6 +103,18 @@ def _description_markers() -> None:
         "DriverDescriptions", "fwupd — hardware firmware updates (BIOS, SSD, dock, etc.)."
     )
     QCoreApplication.translate("DriverDescriptions", "Firmware Update Tool")
+    QCoreApplication.translate(
+        "DriverDescriptions",
+        "Vulkan graphics for AMD and Intel — needed by most games (and Proton).",
+    )
+    QCoreApplication.translate(
+        "DriverDescriptions", "AMD video acceleration — smoother video with less CPU use."
+    )
+    QCoreApplication.translate(
+        "DriverDescriptions",
+        "Processor microcode — security and stability fixes from the CPU maker.",
+    )
+    QCoreApplication.translate("DriverDescriptions", "Processor (CPU)")
 
 
 # --- Worker ---

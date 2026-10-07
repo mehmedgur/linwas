@@ -3717,14 +3717,6 @@ The first time this can take several minutes (Wine is downloaded).</source>
         <translation>Otomatik güncellemeler</translation>
     </message>
     <message>
-        <source>Automatic updates are off.</source>
-        <translation>Otomatik güncellemeler kapalı.</translation>
-    </message>
-    <message>
-        <source>Automatic updates are on.</source>
-        <translation>Otomatik güncellemeler açık.</translation>
-    </message>
-    <message>
         <source>Backup taken: {name}</source>
         <translation>Alınan yedek: {name}</translation>
     </message>
@@ -3769,10 +3761,6 @@ The first time this can take several minutes (Wine is downloaded).</source>
         <translation>Firmware</translation>
     </message>
     <message>
-        <source>Firmware (BIOS, SSD, docks…)</source>
-        <translation>Firmware (BIOS, SSD, yerleştirme istasyonu…)</translation>
-    </message>
-    <message>
         <source>Install all</source>
         <translation>Tümünü kur</translation>
     </message>
@@ -3783,10 +3771,6 @@ The first time this can take several minutes (Wine is downloaded).</source>
     <message>
         <source>Install updates</source>
         <translation>Güncellemeleri kur</translation>
-    </message>
-    <message>
-        <source>Installed, updated and removed packages</source>
-        <translation>Kurulan, güncellenen ve kaldırılan paketler</translation>
     </message>
     <message>
         <source>Last automatic check</source>
@@ -3817,24 +3801,12 @@ The first time this can take several minutes (Wine is downloaded).</source>
         <translation>Yükleniyor…</translation>
     </message>
     <message>
-        <source>No firmware updates</source>
-        <translation>Firmware güncellemesi yok</translation>
-    </message>
-    <message>
         <source>No updates have been installed yet.</source>
         <translation>Henüz güncelleme kurulmadı.</translation>
     </message>
     <message>
         <source>Not run yet.</source>
         <translation>Henüz çalışmadı.</translation>
-    </message>
-    <message>
-        <source>Pause for 1 week</source>
-        <translation>1 hafta duraklat</translation>
-    </message>
-    <message>
-        <source>Pause for longer</source>
-        <translation>Daha uzun duraklat</translation>
     </message>
     <message>
         <source>Pause for {n} week(s)</source>
@@ -3857,24 +3829,12 @@ The first time this can take several minutes (Wine is downloaded).</source>
         <translation>Yeniden başlatma gerekiyor</translation>
     </message>
     <message>
-        <source>Resume updates</source>
-        <translation>Güncellemelere devam et</translation>
-    </message>
-    <message>
         <source>Save</source>
         <translation>Kaydet</translation>
     </message>
     <message>
         <source>Save your work and close your programs. Restart the computer now?</source>
         <translation>Çalışmalarınızı kaydedip programlarınızı kapatın. Bilgisayar şimdi yeniden başlatılsın mı?</translation>
-    </message>
-    <message>
-        <source>Some updates (e.g. a new kernel) take effect after a restart.</source>
-        <translation>Bazı güncellemeler (ör. yeni çekirdek) yeniden başlatmadan sonra etkinleşir.</translation>
-    </message>
-    <message>
-        <source>System updates</source>
-        <translation>Sistem güncellemeleri</translation>
     </message>
     <message>
         <source>Take a quick system backup (Timeshift) before installing</source>
@@ -3893,20 +3853,12 @@ The first time this can take several minutes (Wine is downloaded).</source>
         <translation>Timeshift kurulu olmadığı için yedek alınmaz.</translation>
     </message>
     <message>
-        <source>Up to date</source>
-        <translation>Güncel</translation>
-    </message>
-    <message>
         <source>Update center</source>
         <translation>Güncelleme merkezi</translation>
     </message>
     <message>
         <source>Update history</source>
         <translation>Güncelleme geçmişi</translation>
-    </message>
-    <message>
-        <source>Updates are paused until {date}</source>
-        <translation>Güncellemeler {date} tarihine kadar duraklatıldı</translation>
     </message>
     <message>
         <source>You're up to date</source>
@@ -3929,10 +3881,6 @@ The first time this can take several minutes (Wine is downloaded).</source>
         <translation>güncellemeler duraklatılmış</translation>
     </message>
     <message>
-        <source>{n} firmware update(s)</source>
-        <translation>{n} firmware güncellemesi</translation>
-    </message>
-    <message>
         <source>{n} package(s) installed</source>
         <translation>{n} paket kuruldu</translation>
     </message>
@@ -3945,19 +3893,11 @@ The first time this can take several minutes (Wine is downloaded).</source>
         <translation>{n} paket güncellendi</translation>
     </message>
     <message>
-        <source>{n} recommended driver(s)</source>
-        <translation>{n} önerilen sürücü</translation>
-    </message>
-    <message>
         <source>{n} security</source>
         <translation>{n} güvenlik</translation>
     </message>
     <message>
         <source>{n} update(s) available</source>
-        <translation>{n} güncelleme hazır</translation>
-    </message>
-    <message>
-        <source>{n} update(s) ready</source>
         <translation>{n} güncelleme hazır</translation>
     </message>
     <message>
@@ -3977,8 +3917,64 @@ The first time this can take several minutes (Wine is downloaded).</source>
         <translation>{when}: {n} paket güncellendi.</translation>
     </message>
     <message>
-        <source>Graphics, network, Wi-Fi, printers and scanners</source>
-        <translation>Ekran kartı, ağ, Wi-Fi, yazıcı ve tarayıcılar</translation>
+        <source>All history</source>
+        <translation>Tüm geçmiş</translation>
+    </message>
+    <message>
+        <source>BIOS, SSD, processor</source>
+        <translation>BIOS, SSD, işlemci</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>Kapalı</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>Açık</translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translation>Duraklat</translation>
+    </message>
+    <message>
+        <source>Paused until {date}</source>
+        <translation>{date} tarihine kadar duraklatıldı</translation>
+    </message>
+    <message>
+        <source>Recent changes</source>
+        <translation>Son değişiklikler</translation>
+    </message>
+    <message>
+        <source>Restart required: some updates (e.g. a new kernel) take effect after a restart.</source>
+        <translation>Yeniden başlatma gerekiyor: bazı güncellemeler (ör. yeni çekirdek) yeniden başlatmadan sonra etkinleşir.</translation>
+    </message>
+    <message>
+        <source>Resume</source>
+        <translation>Devam et</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>Ayarlar</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>Sistem</translation>
+    </message>
+    <message>
+        <source>graphics, network, printers</source>
+        <translation>ekran kartı, ağ, yazıcı</translation>
+    </message>
+    <message>
+        <source>recommended</source>
+        <translation>önerilen</translation>
+    </message>
+    <message>
+        <source>up to date</source>
+        <translation>güncel</translation>
+    </message>
+    <message>
+        <source>updates waiting</source>
+        <translation>güncelleme bekliyor</translation>
     </message>
 </context>
 <context>
@@ -4042,6 +4038,22 @@ The first time this can take several minutes (Wine is downloaded).</source>
     <message>
         <source>fwupd — hardware firmware updates (BIOS, SSD, dock, etc.).</source>
         <translation>fwupd — donanım firmware güncellemeleri (BIOS, SSD, yerleştirme istasyonu vb.).</translation>
+    </message>
+    <message>
+        <source>Vulkan graphics for AMD and Intel — needed by most games (and Proton).</source>
+        <translation>AMD ve Intel için Vulkan grafik desteği — çoğu oyun (ve Proton) için gerekli.</translation>
+    </message>
+    <message>
+        <source>AMD video acceleration — smoother video with less CPU use.</source>
+        <translation>AMD video hızlandırma — daha az işlemci kullanımıyla daha akıcı video.</translation>
+    </message>
+    <message>
+        <source>Processor microcode — security and stability fixes from the CPU maker.</source>
+        <translation>İşlemci mikrokodu — işlemci üreticisinden güvenlik ve kararlılık düzeltmeleri.</translation>
+    </message>
+    <message>
+        <source>Processor (CPU)</source>
+        <translation>İşlemci (CPU)</translation>
     </message>
 </context>
 <context>

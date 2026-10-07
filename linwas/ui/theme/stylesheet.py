@@ -234,6 +234,14 @@ QLabel#Pill {{
     font-size: 11px;
     font-weight: bold;
 }}
+QLabel#TileNumber {{
+    font-size: 30px;
+    font-weight: bold;
+    color: {c.success};
+}}
+QLabel#TileNumber[attention="true"] {{
+    color: {c.accent};
+}}
 QPushButton#Chip {{
     border-radius: 14px;
     padding: 4px 14px;

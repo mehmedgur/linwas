@@ -15,6 +15,7 @@ from PySide6.QtCore import (
     QCoreApplication,
     QDateTime,
     QLocale,
+    QObject,
     QProcess,
     Qt,
     QThread,
@@ -114,9 +115,13 @@ class _SummaryWorker(QThread):
 class _HistoryWorker(QThread):
     done = Signal(list)  # list[HistoryRecord]
 
+    def __init__(self, parent: QObject | None = None, limit: int = 200) -> None:
+        super().__init__(parent)
+        self._limit = limit
+
     def run(self) -> None:
         try:
-            self.done.emit(load_history())
+            self.done.emit(load_history(limit=self._limit))
         except Exception:
             self.done.emit([])
 
@@ -124,8 +129,8 @@ class _HistoryWorker(QThread):
 # --- Yardımcı bileşenler ---
 
 
-class _NavRow(Card):
-    """Ana görünümdeki tıklanabilir bölüm satırı (simge, başlık, alt metin, ›)."""
+class _Tile(Card):
+    """Ana görünümdeki tıklanabilir kutucuk: simge + başlık, büyük sayı, kısa açıklama."""
 
     clicked = Signal()
 
@@ -133,30 +138,33 @@ class _NavRow(Card):
         super().__init__(parent)
         self.setProperty("clickable", True)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.layout.setContentsMargins(16, 10, 16, 10)
-        row = QHBoxLayout()
-        row.setSpacing(12)
-        ic = QLabel(self)
-        icons.bind(ic, icon, "accent", 22)
-        row.addWidget(ic)
-        texts = QVBoxLayout()
-        texts.setSpacing(0)
-        self._title = QLabel(title, self)
-        self._title.setObjectName("AppName")
-        texts.addWidget(self._title)
-        self._sub = QLabel("", self)
-        self._sub.setObjectName("Secondary")
-        self._sub.setWordWrap(True)
-        texts.addWidget(self._sub)
-        row.addLayout(texts, 1)
-        chevron = QLabel(self)
-        icons.bind(chevron, "chevron_right", "secondary", 16)
-        row.addWidget(chevron)
-        self.layout.addLayout(row)
         self.setAccessibleName(title)
+        top = QHBoxLayout()
+        ic = QLabel(self)
+        icons.bind(ic, icon, "accent", 18)
+        top.addWidget(ic)
+        name = QLabel(title, self)
+        name.setObjectName("AppName")
+        top.addWidget(name)
+        top.addStretch(1)
+        chevron = QLabel(self)
+        icons.bind(chevron, "chevron_right", "secondary", 14)
+        top.addWidget(chevron)
+        self.layout.addLayout(top)
+        self._number = QLabel("–", self)
+        self._number.setObjectName("TileNumber")
+        self.layout.addWidget(self._number)
+        self._caption = QLabel("", self)
+        self._caption.setObjectName("Secondary")
+        self._caption.setWordWrap(True)
+        self.layout.addWidget(self._caption)
 
-    def set_subtitle(self, text: str) -> None:
-        self._sub.setText(text)
+    def set_value(self, number: int, caption: str) -> None:
+        self._number.setText(str(number) if number else "✓")
+        self._number.setProperty("attention", bool(number))
+        self._number.style().unpolish(self._number)
+        self._number.style().polish(self._number)
+        self._caption.setText(caption)
 
     def mouseReleaseEvent(self, event) -> None:  # noqa: ANN001
         if event.button() == Qt.MouseButton.LeftButton:
@@ -448,75 +456,58 @@ class UpdateCenterPage(BasePage):
         content = QWidget()
         outer = QVBoxLayout(content)
         outer.setContentsMargins(24, 20, 24, 20)
-        outer.setSpacing(12)
-        title = QLabel(tr("Update center"), content)
-        title.setObjectName("H1")
-        outer.addWidget(title)
+        outer.setSpacing(14)
 
-        # Durum kartı
-        status = Card(content)
-        top = QHBoxLayout()
-        top.setSpacing(16)
-        self._status_icon = QLabel(status)
-        icons.bind(self._status_icon, "updates", "accent", 44)
-        top.addWidget(self._status_icon, 0, Qt.AlignmentFlag.AlignTop)
+        # Başlık satırı: başlık + durum cümlesi solda, işlemler sağda
+        head = QHBoxLayout()
         texts = QVBoxLayout()
         texts.setSpacing(2)
-        self._status_title = QLabel(tr("Checking for updates…"), status)
-        self._status_title.setObjectName("H2")
-        texts.addWidget(self._status_title)
-        self._status_sub = QLabel("", status)
+        title = QLabel(tr("Update center"), content)
+        title.setObjectName("H1")
+        texts.addWidget(title)
+        status_row = QHBoxLayout()
+        status_row.setSpacing(6)
+        self._status_icon = QLabel(content)
+        icons.bind(self._status_icon, "updates", "accent", 16)
+        status_row.addWidget(self._status_icon)
+        self._status_title = QLabel(tr("Checking for updates…"), content)
+        self._status_title.setObjectName("AppName")
+        status_row.addWidget(self._status_title)
+        self._status_sub = QLabel("", content)
         self._status_sub.setObjectName("Secondary")
-        self._status_sub.setWordWrap(True)
-        texts.addWidget(self._status_sub)
-        top.addLayout(texts, 1)
-        status.layout.addLayout(top)
-
-        buttons = QHBoxLayout()
-        self._check_btn = QPushButton(tr("Check for updates"), status)
-        self._check_btn.setProperty("primary", True)
+        status_row.addWidget(self._status_sub)
+        status_row.addStretch(1)
+        texts.addLayout(status_row)
+        head.addLayout(texts, 1)
+        self._check_btn = QPushButton(tr("Check for updates"), content)
         self._check_btn.setToolTip(
             tr("Downloads the latest package information (asks for your password).")
         )
         self._check_btn.clicked.connect(self._check_now)
-        buttons.addWidget(self._check_btn)
-        self._install_btn = QPushButton(tr("Install all"), status)
+        head.addWidget(self._check_btn, 0, Qt.AlignmentFlag.AlignBottom)
+        self._install_btn = QPushButton(tr("Install all"), content)
+        self._install_btn.setProperty("primary", True)
         self._install_btn.clicked.connect(self._install_all)
         self._install_btn.hide()
-        buttons.addWidget(self._install_btn)
-        buttons.addStretch(1)
-        self._pause_btn = QPushButton(tr("Pause for 1 week"), status)
-        pause_menu = QMenu(self._pause_btn)
-        for weeks in range(1, autoupdate.MAX_PAUSE_WEEKS + 1):
-            action = pause_menu.addAction(tr("Pause for {n} week(s)").format(n=weeks))
-            action.triggered.connect(lambda _=False, w=weeks: self._pause(w))
-        self._pause_menu = pause_menu
-        self._pause_btn.clicked.connect(self._on_pause_clicked)
-        buttons.addWidget(self._pause_btn)
-        self._more_pause = QPushButton("▾", status)
-        self._more_pause.setFixedWidth(36)
-        self._more_pause.setToolTip(tr("Pause for longer"))
-        self._more_pause.setMenu(pause_menu)
-        buttons.addWidget(self._more_pause)
-        status.layout.addLayout(buttons)
-        outer.addWidget(status)
+        head.addWidget(self._install_btn, 0, Qt.AlignmentFlag.AlignBottom)
+        outer.addLayout(head)
 
-        # Yeniden başlatma kartı
+        # Yeniden başlatma şeridi
         self._reboot_card = Card(content)
-        rh = QLabel(tr("Restart required"), self._reboot_card)
-        rh.setObjectName("H2")
-        self._reboot_card.layout.addWidget(rh)
+        rrow = QHBoxLayout()
+        ric = QLabel(self._reboot_card)
+        icons.bind(ric, "power", "accent", 22)
+        rrow.addWidget(ric)
         self._reboot_lbl = QLabel(
-            tr("Some updates (e.g. a new kernel) take effect after a restart."), self._reboot_card
+            tr("Restart required: some updates (e.g. a new kernel) take effect after a restart."),
+            self._reboot_card,
         )
         self._reboot_lbl.setWordWrap(True)
-        self._reboot_card.layout.addWidget(self._reboot_lbl)
-        rrow = QHBoxLayout()
+        rrow.addWidget(self._reboot_lbl, 1)
         now_btn = QPushButton(tr("Restart now"), self._reboot_card)
         now_btn.setProperty("primary", True)
         now_btn.clicked.connect(self._restart_now)
         rrow.addWidget(now_btn)
-        rrow.addSpacing(12)
         self._reboot_time = QTimeEdit(QTime(3, 0), self._reboot_card)
         self._reboot_time.setDisplayFormat("HH:mm")
         rrow.addWidget(self._reboot_time)
@@ -526,25 +517,74 @@ class UpdateCenterPage(BasePage):
         self._cancel_btn = QPushButton(tr("Cancel the planned restart"), self._reboot_card)
         self._cancel_btn.clicked.connect(self._cancel_restart)
         rrow.addWidget(self._cancel_btn)
-        rrow.addStretch(1)
         self._reboot_card.layout.addLayout(rrow)
         self._reboot_card.hide()
         outer.addWidget(self._reboot_card)
 
-        # Bölümler
-        self._rows: dict[str, _NavRow] = {}
+        # Kutucuklar: bekleyen sayıları büyük gösterir
+        tiles = QHBoxLayout()
+        tiles.setSpacing(12)
+        self._tiles: dict[str, _Tile] = {}
         for section, icon, text in (
-            ("system", "updates", tr("System updates")),
+            ("system", "updates", tr("System")),
             ("drivers", "drivers", tr("Drivers")),
-            ("firmware", "hardware", tr("Firmware (BIOS, SSD, docks…)")),
-            ("history", "backups", tr("Update history")),
-            ("advanced", "settings", tr("Advanced options")),
+            ("firmware", "hardware", tr("Firmware")),
         ):
-            row = _NavRow(icon, text, content)
-            row.clicked.connect(lambda s=section: self.open_section(s))
-            self._rows[section] = row
-            outer.addWidget(row)
-        self._rows["history"].set_subtitle(tr("Installed, updated and removed packages"))
+            tile = _Tile(icon, text, content)
+            tile.clicked.connect(lambda s=section: self.open_section(s))
+            self._tiles[section] = tile
+            tiles.addWidget(tile, 1)
+        outer.addLayout(tiles)
+
+        # Alt satır: son değişiklikler + otomatik güncelleme
+        bottom = QHBoxLayout()
+        bottom.setSpacing(12)
+        recent = Card(content)
+        rhead = QHBoxLayout()
+        rt = QLabel(tr("Recent changes"), recent)
+        rt.setObjectName("H2")
+        rhead.addWidget(rt)
+        rhead.addStretch(1)
+        all_btn = QPushButton(tr("All history") + " ›", recent)
+        all_btn.setFlat(True)
+        all_btn.clicked.connect(lambda: self.open_section("history"))
+        rhead.addWidget(all_btn)
+        recent.layout.addLayout(rhead)
+        self._recent = QVBoxLayout()
+        self._recent.setSpacing(6)
+        recent.layout.addLayout(self._recent)
+        recent.layout.addStretch(1)
+        bottom.addWidget(recent, 3)
+
+        auto = Card(content)
+        at = QLabel(tr("Automatic updates"), auto)
+        at.setObjectName("H2")
+        auto.layout.addWidget(at)
+        self._auto_state = QLabel("", auto)
+        self._auto_state.setObjectName("AppName")
+        auto.layout.addWidget(self._auto_state)
+        self._auto_detail = QLabel("", auto)
+        self._auto_detail.setObjectName("Secondary")
+        self._auto_detail.setWordWrap(True)
+        auto.layout.addWidget(self._auto_detail)
+        auto.layout.addStretch(1)
+        arow = QHBoxLayout()
+        self._pause_btn = QPushButton(tr("Pause"), auto)
+        pause_menu = QMenu(self._pause_btn)
+        for weeks in range(1, autoupdate.MAX_PAUSE_WEEKS + 1):
+            action = pause_menu.addAction(tr("Pause for {n} week(s)").format(n=weeks))
+            action.triggered.connect(lambda _=False, w=weeks: self._pause(w))
+        self._pause_menu = pause_menu
+        self._pause_btn.clicked.connect(self._on_pause_clicked)
+        arow.addWidget(self._pause_btn)
+        settings_btn = QPushButton(tr("Settings"), auto)
+        settings_btn.clicked.connect(lambda: self.open_section("advanced"))
+        arow.addWidget(settings_btn)
+        arow.addStretch(1)
+        auto.layout.addLayout(arow)
+        bottom.addWidget(auto, 2)
+        outer.addLayout(bottom)
+
         outer.addStretch(1)
         return _scroll(content, self)
 
@@ -591,34 +631,16 @@ class UpdateCenterPage(BasePage):
     def _on_summary(self, s: _Summary) -> None:
         self._summary = s
         paused = autoupdate.paused_until(s.config)
-        if paused:
-            title = tr("Updates are paused until {date}").format(date=_local(paused))
-            icon = "updates"
-        elif s.reboot:
-            title = tr("Restart required")
-            icon = "power"
+        if s.reboot:
+            title, icon = tr("Restart required"), "power"
         elif s.updates:
-            title = tr("{n} update(s) available").format(n=s.updates)
-            icon = "updates"
+            title, icon = tr("{n} update(s) available").format(n=s.updates), "updates"
         else:
-            title = tr("You're up to date")
-            icon = "check"
+            title, icon = tr("You're up to date"), "check"
         self._status_title.setText(title)
-        icons.bind(self._status_icon, icon, "accent", 44)
-        auto = (
-            tr("Automatic updates are on.")
-            if s.config.enabled and autoupdate.timer_installed()
-            else tr("Automatic updates are off.")
-        )
-        self._status_sub.setText(_last_check_text() + " · " + auto)
+        icons.bind(self._status_icon, icon, "accent", 16)
+        self._status_sub.setText("· " + _last_check_text())
         self._install_btn.setVisible(bool(s.updates))
-        self._install_btn.setProperty("primary", bool(s.updates))
-        self._check_btn.setProperty("primary", not s.updates)
-        for btn in (self._install_btn, self._check_btn):
-            btn.style().unpolish(btn)
-            btn.style().polish(btn)
-        self._pause_btn.setText(tr("Resume updates") if paused else tr("Pause for 1 week"))
-        self._more_pause.setVisible(not paused)
 
         self._reboot_card.setVisible(s.reboot or s.scheduled is not None)
         if s.scheduled:
@@ -629,25 +651,62 @@ class UpdateCenterPage(BasePage):
         self._reboot_time.setVisible(s.scheduled is None)
         self._cancel_btn.setVisible(s.scheduled is not None)
 
-        if s.updates:
-            text = tr("{n} update(s) ready").format(n=s.updates)
-            if s.security:
-                text += " · " + tr("{n} security").format(n=s.security)
-        else:
-            text = tr("Up to date")
-        self._rows["system"].set_subtitle(text)
+        sec = " · " + tr("{n} security").format(n=s.security) if s.security else ""
+        self._tiles["system"].set_value(
+            s.updates, (tr("updates waiting") + sec) if s.updates else tr("up to date")
+        )
         n = s.pending_drivers(firmware=False)
-        self._rows["drivers"].set_subtitle(
-            tr("{n} recommended driver(s)").format(n=n)
-            if n
-            else tr("Graphics, network, Wi-Fi, printers and scanners")
+        self._tiles["drivers"].set_value(
+            n, tr("recommended") if n else tr("graphics, network, printers")
         )
         n = s.pending_drivers(firmware=True)
-        self._rows["firmware"].set_subtitle(
-            tr("{n} firmware update(s)").format(n=n) if n else tr("No firmware updates")
+        self._tiles["firmware"].set_value(
+            n, tr("updates waiting") if n else tr("BIOS, SSD, processor")
         )
-        self._rows["advanced"].set_subtitle(auto)
+
+        on = s.config.enabled and autoupdate.timer_installed()
+        if paused:
+            state = tr("Paused until {date}").format(date=_local(paused))
+        else:
+            state = tr("On") if on else tr("Off")
+        self._auto_state.setText(state)
+        self._auto_detail.setText(_AdvancedView._state_text(s.state))
+        self._pause_btn.setText(tr("Resume") if paused else tr("Pause"))
+        self._pause_btn.setMenu(None if paused else self._pause_menu)
+        self._pause_btn.setEnabled(on or bool(paused))
         self._advanced.set_data(s)
+        self._load_recent()
+
+    def _load_recent(self) -> None:
+        worker = _HistoryWorker(self, limit=3)
+        worker.done.connect(self._on_recent)
+        self._recent_worker = worker
+        worker.start()
+
+    def _on_recent(self, records: list) -> None:
+        while self._recent.count():
+            item = self._recent.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+        if not records:
+            empty = QLabel(tr("No updates have been installed yet."), self)
+            empty.setObjectName("Secondary")
+            self._recent.addWidget(empty)
+        for record in records[:3]:
+            when = QDateTime.fromString(record.start, "yyyy-MM-dd HH:mm:ss")
+            names = [p.name for p in record.upgraded + record.installed + record.removed]
+            text = ", ".join(names[:3]) + (f" +{len(names) - 3}" if len(names) > 3 else "")
+            mark = "↑" if record.kind == "upgrade" else "+" if record.kind == "install" else "−"
+            lbl = QLabel(
+                f"<b>{mark}</b> {html.escape(text)}<br><span style='font-size:11px'>"
+                f"{html.escape(QLocale().toString(when, QLocale.FormatType.ShortFormat))}"
+                + (" · " + html.escape(tr("Automatic")) if record.automatic else "")
+                + "</span>",
+                self,
+            )
+            lbl.setTextFormat(Qt.TextFormat.RichText)
+            lbl.setWordWrap(True)
+            self._recent.addWidget(lbl)
 
     # --- İşlemler ---
 
