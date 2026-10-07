@@ -23,6 +23,7 @@ Son güncelleme: 7 Ekim 2026
 - [ ] **PR #2 — Proje belgelerinin depoya taşınması** (bu klasör) + program kaldırma kararı.
 
 ## Sıradaki aşama
+- **Bottles'a geçiş** (kararlar.md › EXE): kodlanacak; beğenilmezse dağıtım Wine'ına dönülür.
 - Kodlama özellikleri tamam; kalanlar: kullanıcı denemeleri, yayın öncesi kararlar,
   doğrulanacaklar. (Testler kullanıcı yeni emir verene kadar yazılmıyor.)
 
@@ -43,6 +44,9 @@ Son güncelleme: 7 Ekim 2026
 - [ ] **"Linwas Hazırlık" Windows aracı:** Geçişten önce Windows'ta çalışan küçük bir araç.
   Chrome/Edge şifrelerini, Wi-Fi şifrelerini ve Outlook verisini güvenli bir pakete aktarır; Linwas
   bu paketi içeri alır. (Ayrı Windows uygulaması gerektirir.)
+- [ ] **LibreOffice'i Microsoft Office gibi göstermek:** ilk adım, LibreOffice kurulurken "Sekmeli"
+  (Tabbed, şerit benzeri) arayüz kipinin ve Office uyumlu fontların otomatik açılması; daha ileri
+  Office görünümü ayrı bir gelecek projesi.
 - [ ] **Windows Uygulamaları eklentisi:** Wine tabanlı ayrı alan. Bottles gibi mevcut açık kaynak
   araçlarla entegrasyon araştırılacak. Mevcut EXE/Wine desteği buraya taşınabilir.
 - [ ] **KDE desteği** (masaüstü eklentisi). Kullanıcının bilgisayarında KDE oturumu olduğu için
@@ -66,6 +70,9 @@ Son güncelleme: 7 Ekim 2026
 - [ ] Yayın yeri belli olunca `release.yml`'ye depo yükleme adımı (ör. GitHub Pages).
 
 ## Kodlama sırasında doğrulanacaklar
+- [ ] **Bottles (bottles-cli):** Flatpak Bottles'ın Pardus 23 ve Ubuntu 22.04'te çalışması; Flatpak
+  kum havuzunda dosya erişimi (İndirilenler'deki EXE'ye erişebiliyor mu); `bottles-cli` komutları ve
+  JSON çıktısı resmi belgeden (docs.usebottles.com/advanced/cli); Office 2016 ve 365'in gerçek durumu.
 - [ ] Windows NTUSER.DAT değer yolları (klavye Preload, AppsUseLightTheme, SwapMouseButtons,
   LocaleName, LogPixels, Devices) gerçek bir Windows diskiyle denenmeli (`hivexsh` + `lsval`).
 - [ ] Ubuntu'da Microsoft font paketinin debconf sorusu (`msttcorefonts/accepted-mscorefonts-eula`)

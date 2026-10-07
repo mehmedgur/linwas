@@ -2,7 +2,7 @@
 
 (Önceki çalışma adı: v1.1. Kod sıfırdan yazıldığı için sürüm adı **Linwas 2.0** oldu.)
 
-Son güncelleme: 6 Ekim 2026
+Son güncelleme: 7 Ekim 2026
 Depo (2.0): github.com/mehmedgur/linwas2 (geliştirme süresince private; kod düz dosyalar halinde)
 Eski depo (v1.0, yalnızca referans): github.com/mehmedgur/linwas
 Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyruk senaryosu)
@@ -147,6 +147,8 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
   - **Virüs taraması:** yalnızca "VirusTotal'da denetle" düğmesi (tarayıcıda, yalnızca SHA256 ile; dosya gönderilmez). ClamAV yok.
   - **Wine:** dağıtım deposundan; yeni root işlemi `wine.setup` (i386 mimarisi + `wine wine64 wine32:i386`).
   - **Ortam (WINEPREFIX) — karma:** varsayılan tek ortak ortam (`~/.local/share/linwas/wine/shared`); yüksek riskli dosya her zaman ayrı ortamda; kullanıcı "Ayrı ortamda aç" seçebilir; ortak ortamda 60 sn içinde hata koduyla kapanan program için "ayrı ortamda yeniden dene" önerilir. Ayrı ortam silinince kısayolları da silinir; ortak ortamdaki program Wine'ın "Program Ekle/Kaldır" penceresiyle kaldırılır.
+  - **Bottles'a geçiş (7 Ekim 2026 kararı, henüz kodlanmadı):** Windows programları Bottles üzerinden çalıştırılacak; Linwas Bottles'ı arka planda resmi komut satırı aracıyla (`bottles-cli`, Flatpak'ta `flatpak run --command=bottles-cli com.usebottles.bottles …`) yönetir, kullanıcı Bottles penceresini görmez. Akış: Bottles yoksa Flatpak olarak kurulur (kuyrukta adım) → programa özel şişe (uygulama/oyun profili, 64 bit + 32 bit desteği) → kurulum dosyası şişede çalışır → program şişeye kaydedilir, menüye kısayol eklenir → çıktı JSON olarak okunur, hata AI'a iletilip sade dille gösterilir. Kabuk yok, sabit komutlar, kullanıcı yetkisiyle (şifre yok); Bottles kendi Wine sürümünü getirir. Bottles beğenilmezse yukarıdaki dağıtım Wine'ı yoluna geri dönülür (mevcut kod şimdilik korunur).
+  - **Microsoft Office:** Wine/Bottles'ta çalışması garanti değil (Office 2016 gibi kurulum dosyalı sürümler kısmen/tamamen çalışabilir; Microsoft 365 genellikle kurulum/etkinleştirmede sorun çıkarır). Linwas kurmayı **dener**, söz "deneyebilirsin" düzeyindedir; çalışmazsa Office web sürümü ve LibreOffice önerilir.
 - **Program kaldırma** (6 Ekim 2026 kararı):
   - **İki yerden:** Program › **Kurulu programlar** sekmesi (Windows'taki "Programlar ve Özellikler" gibi) ve arama sonuçları (kurulu programda "Kur" yerine "Kaldır" butonu).
   - **Kurulu programlar listesi:** yalnızca kullanıcıya yönelik uygulamalar (AppStream); arama ve sıralama. Sütunlar: ad + simge, **kapladığı alan**, **kaynak rozeti** (APT / Flatpak / Snap / üçüncü taraf), **güncelleme var mı** (programa özel "Güncelle" butonu), **kurulma tarihi**.
