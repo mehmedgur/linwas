@@ -11,7 +11,7 @@ import uuid
 from collections.abc import Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from linwas.ai.base import Message
@@ -152,6 +152,18 @@ class ChatHistoryDB:
         """Tüm geçmişi siler."""
         with self._connect() as con:
             con.execute("DELETE FROM conversations")
+
+    def delete_older_than(self, days: int) -> None:
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+        with self._connect() as con:
+            con.execute("DELETE FROM conversations WHERE updated_at < ?", (cutoff,))
+
+    def apply_retention(self, retention: str) -> None:
+        """Ayarlar › Yapay zekâ › saklama süresi: "never" | "7" | "30" | "forever"."""
+        if retention == "never":
+            self.clear_all()
+        elif retention.isdigit():
+            self.delete_older_than(int(retention))
 
 
 def _title(first_user_message: str, length: int = 60) -> str:

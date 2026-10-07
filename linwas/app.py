@@ -64,17 +64,34 @@ def main(argv: list[str] | None = None) -> int:
     lang = selected_language() if "LINWAS_LANG" in os.environ else app_settings.load().language
     install_translator(app, lang)
 
-    window = MainWindow()
-    window.show()
-    # "Linwas ile aç": .deb dosyası verildiyse risk analizi penceresi açılır
+    # "Linwas ile aç": .deb ya da .exe/.msi verildiyse risk analizi penceresi açılır
     deb = next((a for a in argv[1:] if a.endswith(".deb") and os.path.isfile(a)), None)
-    if deb:
-        window.open_deb(os.path.abspath(deb))
-    # .exe/.msi: risk analizi, Linux alternatifi, Wine ile açma
     exe = next(
         (a for a in argv[1:] if a.lower().endswith((".exe", ".msi")) and os.path.isfile(a)),
         None,
     )
+    background = "--background" in argv[1:]
+    if deb:
+        message = "deb:" + os.path.abspath(deb)
+    elif exe:
+        message = "exe:" + os.path.abspath(exe)
+    else:
+        message = "background" if background else "show"
+
+    # Tek kopya: Linwas zaten çalışıyorsa (ör. arka planda) iletiyi ona gönderip çık
+    from linwas.ui.single_instance import SingleInstance
+
+    instance = SingleInstance()
+    if instance.send_to_running(message):
+        return 0
+    instance.listen()
+
+    window = MainWindow(background=background and not (deb or exe))
+    instance.message_received.connect(window.on_instance_message)
+    if not window.is_background:
+        window.show()
+    if deb:
+        window.open_deb(os.path.abspath(deb))
     if exe:
         window.open_exe(os.path.abspath(exe))
     return app.exec()

@@ -157,7 +157,7 @@ class OnboardingWizard(QWizard):
             self.open_page = self.open_page or "troubleshoot"
 
     def _open_ai_settings(self) -> None:
-        from linwas.ui.dialogs.ai_settings import AISettingsDialog
+        from linwas.ui.pages.settings_ai import AISettingsDialog
 
         AISettingsDialog(self).exec()
 

@@ -114,7 +114,10 @@ class AISession:
             )
 
         content = text
-        if include_system_context:
+        from linwas.core import app_settings
+
+        # Ayarlar › Yapay zekâ › "sistem bilgisi eklenebilsin" kapalıysa eklenmez
+        if include_system_context and app_settings.load().ai_allow_system_info:
             context = build_context()
             content = f"{text}{CONTEXT_MARKER}{context}"
 
@@ -143,8 +146,11 @@ class AISession:
             response.output_tokens,
         )
 
-        # Geçmiş kaydet
-        self._history_db.save(self._conversation)
+        # Geçmiş kaydet (Ayarlar › Yapay zekâ › "Saklama" kapalıysa kaydedilmez)
+        from linwas.core import app_settings
+
+        if app_settings.load().ai_retention != "never":
+            self._history_db.save(self._conversation)
 
         return response
 

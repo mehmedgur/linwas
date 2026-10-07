@@ -24,9 +24,9 @@ Son güncelleme: 7 Ekim 2026
 
 ## Sıradaki aşama
 - **Ayarlar** (kararlar.md › Ayarlar, 7 Ekim 2026), aşamalar:
-  1. [ ] İskelet: solda kategoriler + arama, anında kaydetme; mevcut Genel/tema/eklentiler/geçmiş taşınır.
-  2. [ ] Yapay zekâ bölümü (AI penceresi taşınır, token sınırı, sohbet saklama süresi, erişim izinleri).
-  3. [ ] Bildirimler ve başlangıç (oturumla tepside başlama, masaüstü bildirimleri, sessiz saatler).
+  1. [x] İskelet: solda kategoriler + arama, anında kaydetme; mevcut Genel/tema/eklentiler/geçmiş taşınır.
+  2. [x] Yapay zekâ bölümü (AI penceresi taşınır, token sınırı, sohbet saklama süresi, erişim izinleri).
+  3. [x] Bildirimler ve başlangıç (oturumla tepside başlama, masaüstü bildirimleri, sessiz saatler).
   4. [ ] Gizlilik ve veriler, Yedekleme ve sıfırlama, Hakkında.
   5. [ ] Ayrı "Gelişmiş" sayfası (teknik ayarlar).
 - **Güncelleme merkezi** (kararlar.md › Güncelleme merkezi), aşamalar — her biri ayrı commit, aralarda
@@ -85,6 +85,9 @@ Son güncelleme: 7 Ekim 2026
 - [ ] Yayın yeri belli olunca `release.yml`'ye depo yükleme adımı (ör. GitHub Pages).
 
 ## Kodlama sırasında doğrulanacaklar
+- [ ] **Ayarlar (aşama 1–3, denenmedi):** `gdbus call … Notify` bildiriminin GNOME/Cinnamon/XFCE'de
+  görünmesi ve "Aç" düğmesinin `gdbus monitor` ile yakalanması; oturum açılışında `--background`
+  başlatma; tek kopya (menüden ikinci açılışta pencerenin öne gelmesi); KDE/Cinnamon'da tepsi simgesi.
 - [ ] **Firmware ve çekirdek (aşama 5, denenmedi):** gerçek bir fwupd güncellemesiyle `get-updates --json`
   alanları (Releases, Urgency) ve `fwupdmgr update <id> -y`; Ubuntu 22.04'te HWE önerisi; saf Debian 12'de
   backports etkinleştirme + `apt-get install -t bookworm-backports linux-image-amd64`.

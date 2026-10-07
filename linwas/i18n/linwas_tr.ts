@@ -85,6 +85,22 @@ Hata çıktısı:
 
 Ne ters gitti ve nasıl düzeltebilirim?</translation>
     </message>
+    <message>
+        <source>It will notify you about updates and problems. Open it again from the application menu, or quit it in Settings › General.</source>
+        <translation>Güncellemeler ve sorunlar için size bildirim gönderecek. Uygulama menüsünden yeniden açabilir ya da Ayarlar › Genel'den tamamen kapatabilirsiniz.</translation>
+    </message>
+    <message>
+        <source>Linwas is still running</source>
+        <translation>Linwas çalışmaya devam ediyor</translation>
+    </message>
+    <message>
+        <source>Linwas notifications work</source>
+        <translation>Linwas bildirimleri çalışıyor</translation>
+    </message>
+    <message>
+        <source>This is how Linwas tells you about updates and problems.</source>
+        <translation>Linwas güncellemeleri ve sorunları size böyle bildirir.</translation>
+    </message>
 </context>
 <context>
     <name>Sidebar</name>
@@ -480,6 +496,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     <message>
         <source>paid</source>
         <translation>ücretli</translation>
+    </message>
+    <message>
+        <source>close to your monthly limit</source>
+        <translation>aylık sınıra yaklaşıldı</translation>
     </message>
 </context>
 <context>
@@ -2211,16 +2231,8 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
 <context>
     <name>AISettingsDialog</name>
     <message>
-        <source>AI Settings</source>
-        <translation>AI ayarları</translation>
-    </message>
-    <message>
         <source>API key:</source>
         <translation>API anahtarı:</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Vazgeç</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -2245,10 +2257,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>Paste API key here</source>
         <translation>API anahtarını buraya yapıştırın</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation>Kaydet</translation>
     </message>
     <message>
         <source>Show</source>
@@ -2285,6 +2293,78 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>✗ Key doesn't work: {error}</source>
         <translation>✗ Anahtar çalışmıyor: {error}</translation>
+    </message>
+    <message>
+        <source>30 days</source>
+        <translation>30 gün</translation>
+    </message>
+    <message>
+        <source>7 days</source>
+        <translation>7 gün</translation>
+    </message>
+    <message>
+        <source>Allow adding my system information (distribution, desktop, hardware)</source>
+        <translation>Sistem bilgimin eklenmesine izin ver (dağıtım, masaüstü, donanım)</translation>
+    </message>
+    <message>
+        <source>Always</source>
+        <translation>Her zaman</translation>
+    </message>
+    <message>
+        <source>Ask every time</source>
+        <translation>Her seferinde sor</translation>
+    </message>
+    <message>
+        <source>Conversations</source>
+        <translation>Sohbetler</translation>
+    </message>
+    <message>
+        <source>Delete all conversations</source>
+        <translation>Tüm sohbetleri sil</translation>
+    </message>
+    <message>
+        <source>Delete all saved conversations?</source>
+        <translation>Kayıtlı bütün sohbetler silinsin mi?</translation>
+    </message>
+    <message>
+        <source>Don't keep</source>
+        <translation>Saklama</translation>
+    </message>
+    <message>
+        <source>Keep conversations:</source>
+        <translation>Sohbetleri sakla:</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>Hayır</translation>
+    </message>
+    <message>
+        <source>Personal information such as user names and addresses is hidden before sending.</source>
+        <translation>Kullanıcı adları ve adresler gibi kişisel bilgiler gönderilmeden önce gizlenir.</translation>
+    </message>
+    <message>
+        <source>Saved.</source>
+        <translation>Kaydedildi.</translation>
+    </message>
+    <message>
+        <source>Send error details to the assistant:</source>
+        <translation>Hata ayrıntılarını asistana gönder:</translation>
+    </message>
+    <message>
+        <source>What the assistant can see</source>
+        <translation>Asistanın görebildikleri</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>Evet</translation>
+    </message>
+    <message>
+        <source>AI assistant</source>
+        <translation>Yapay zekâ</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Kapat</translation>
     </message>
 </context>
 <context>
@@ -2607,10 +2687,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>İşlem geçmişi</translation>
     </message>
     <message>
-        <source>Automatic (tray if available, otherwise quit)</source>
-        <translation>Otomatik (varsa sistem tepsisine, yoksa kapat)</translation>
-    </message>
-    <message>
         <source>Cancel</source>
         <translation>Vazgeç</translation>
     </message>
@@ -2645,10 +2721,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>High contrast</source>
         <translation>Yüksek karşıtlık</translation>
-    </message>
-    <message>
-        <source>Keep running in the system tray</source>
-        <translation>Sistem tepsisinde çalışmaya devam et</translation>
     </message>
     <message>
         <source>Language:</source>
@@ -2699,24 +2771,112 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Pencereyi kapattığımda:</translation>
     </message>
     <message>
-        <source>Ask every time</source>
-        <translation>Her seferinde sor</translation>
-    </message>
-    <message>
-        <source>No</source>
-        <translation>Hayır</translation>
-    </message>
-    <message>
-        <source>Send error details to the assistant:</source>
-        <translation>Hata ayrıntılarını yardımcıya gönder:</translation>
-    </message>
-    <message>
         <source>Show the welcome tour again</source>
         <translation>Tanıtım turunu yeniden göster</translation>
     </message>
     <message>
-        <source>Yes</source>
-        <translation>Evet</translation>
+        <source>A device has no driver</source>
+        <translation>Bir aygıtın sürücüsü yok</translation>
+    </message>
+    <message>
+        <source>A restart is required</source>
+        <translation>Yeniden başlatma gerekiyor</translation>
+    </message>
+    <message>
+        <source>AI assistant</source>
+        <translation>Yapay zekâ</translation>
+    </message>
+    <message>
+        <source>Appearance</source>
+        <translation>Görünüm</translation>
+    </message>
+    <message>
+        <source>Automatic updates were installed or failed</source>
+        <translation>Otomatik güncellemeler kuruldu ya da başarısız oldu</translation>
+    </message>
+    <message>
+        <source>Desktop notifications are not available on this system (gdbus is missing).</source>
+        <translation>Bu sistemde masaüstü bildirimleri kullanılamıyor (gdbus yok).</translation>
+    </message>
+    <message>
+        <source>Don't show notifications between these times</source>
+        <translation>Bu saatler arasında bildirim gösterme</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>Yardım</translation>
+    </message>
+    <message>
+        <source>In the background Linwas shows notifications about updates and problems. Open it again from the application menu.</source>
+        <translation>Linwas arka planda güncellemeler ve sorunlar hakkında bildirim gösterir. Uygulama menüsünden yeniden açabilirsiniz.</translation>
+    </message>
+    <message>
+        <source>Installed plugins</source>
+        <translation>Kurulu eklentiler</translation>
+    </message>
+    <message>
+        <source>Keep running in the background</source>
+        <translation>Arka planda çalışmaya devam et</translation>
+    </message>
+    <message>
+        <source>Language and window</source>
+        <translation>Dil ve pencere</translation>
+    </message>
+    <message>
+        <source>Notifications</source>
+        <translation>Bildirimler</translation>
+    </message>
+    <message>
+        <source>Notifications and startup</source>
+        <translation>Bildirimler ve başlangıç</translation>
+    </message>
+    <message>
+        <source>Privacy and data</source>
+        <translation>Gizlilik ve veriler</translation>
+    </message>
+    <message>
+        <source>Quiet hours</source>
+        <translation>Sessiz saatler</translation>
+    </message>
+    <message>
+        <source>Quit Linwas completely</source>
+        <translation>Linwas'ı tamamen kapat</translation>
+    </message>
+    <message>
+        <source>Search settings…</source>
+        <translation>Ayarlarda ara…</translation>
+    </message>
+    <message>
+        <source>Send a test notification</source>
+        <translation>Deneme bildirimi gönder</translation>
+    </message>
+    <message>
+        <source>Start Linwas in the background when I log in (for notifications)</source>
+        <translation>Oturum açtığımda Linwas arka planda başlasın (bildirimler için)</translation>
+    </message>
+    <message>
+        <source>Startup</source>
+        <translation>Başlangıç</translation>
+    </message>
+    <message>
+        <source>Stops Linwas, including the background notifications.</source>
+        <translation>Arka plan bildirimleri dahil Linwas'ı durdurur.</translation>
+    </message>
+    <message>
+        <source>The desktop's own theme and wallpaper are under Interface › Theme &amp; Wallpaper.</source>
+        <translation>Masaüstünün kendi teması ve duvar kâğıdı Arayüz › Tema ve duvar kâğıdı altında.</translation>
+    </message>
+    <message>
+        <source>The startup setting could not be changed.</source>
+        <translation>Başlangıç ayarı değiştirilemedi.</translation>
+    </message>
+    <message>
+        <source>Theme</source>
+        <translation>Tema</translation>
+    </message>
+    <message>
+        <source>Updates are ready</source>
+        <translation>Güncellemeler hazır</translation>
     </message>
 </context>
 <context>
@@ -4288,6 +4448,53 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>{vendor} · version {old} → {new}</source>
         <translation>{vendor} · sürüm {old} → {new}</translation>
+    </message>
+</context>
+<context>
+    <name>Notifier</name>
+    <message>
+        <source>A device has no driver</source>
+        <translation>Bir aygıtın sürücüsü yok</translation>
+    </message>
+    <message>
+        <source>Automatic update failed</source>
+        <translation>Otomatik güncelleme başarısız oldu</translation>
+    </message>
+    <message>
+        <source>Automatic updates installed</source>
+        <translation>Otomatik güncellemeler kuruldu</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Aç</translation>
+    </message>
+    <message>
+        <source>Open the Update center to see what went wrong.</source>
+        <translation>Neyin ters gittiğini görmek için Güncelleme merkezini açın.</translation>
+    </message>
+    <message>
+        <source>Restart required</source>
+        <translation>Yeniden başlatma gerekiyor</translation>
+    </message>
+    <message>
+        <source>Restart the computer to finish installing updates.</source>
+        <translation>Güncellemelerin kurulumunu tamamlamak için bilgisayarı yeniden başlatın.</translation>
+    </message>
+    <message>
+        <source>Updates are ready</source>
+        <translation>Güncellemeler hazır</translation>
+    </message>
+    <message>
+        <source>{n} device(s) have no driver. Linwas can look for one.</source>
+        <translation>{n} aygıtın sürücüsü yok. Linwas sürücü arayabilir.</translation>
+    </message>
+    <message>
+        <source>{n} package(s) were updated.</source>
+        <translation>{n} paket güncellendi.</translation>
+    </message>
+    <message>
+        <source>{n} update(s) can be installed.</source>
+        <translation>{n} güncelleme kurulabilir.</translation>
     </message>
 </context>
 </TS>

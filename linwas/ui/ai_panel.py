@@ -28,7 +28,6 @@ from linwas.ai.keystore import get_key
 from linwas.ai.manager import AISession, available_providers, get_provider
 from linwas.ai.model_catalog import available_curated
 from linwas.ai.usage import UsageDB
-from linwas.ui.dialogs.ai_settings import AISettingsDialog
 
 
 def tr(text: str) -> str:
@@ -167,6 +166,7 @@ class AIPanel(QWidget):
     conversation_saved = Signal()  # yanıt geldi, geçmiş güncellendi
     collapse_requested = Signal()  # başlıktaki "»" düğmesi
     settings_changed = Signal()  # anahtarlar/sınırlar değişti
+    settings_requested = Signal()  # ⚙ → Ayarlar › Yapay zekâ açılsın
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -268,6 +268,10 @@ class AIPanel(QWidget):
 
         opts_row = QHBoxLayout()
         self._ctx_check = QCheckBox(tr("Add my system info"), self)
+        # Ayarlar › Yapay zekâ'da izin kapalıysa kullanılamaz
+        from linwas.core import app_settings
+
+        self._ctx_check.setEnabled(app_settings.load().ai_allow_system_info)
         opts_row.addWidget(self._ctx_check)
         opts_row.addStretch(1)
         input_layout.addLayout(opts_row)
@@ -444,19 +448,19 @@ class AIPanel(QWidget):
             return
         usage = UsageDB().get(provider_id)
         if usage.limit > 0:
-            self._usage_lbl.setText(
-                tr("{used:,} / {limit:,} tokens this month").format(
-                    used=usage.total, limit=usage.limit
-                )
+            text = tr("{used:,} / {limit:,} tokens this month").format(
+                used=usage.total, limit=usage.limit
             )
+            # Sınırın %80'ine gelince uyarı (aşılınca AISession göndermeyi durdurur)
+            if usage.total >= usage.limit * 0.8:
+                text = "⚠ " + text + " · " + tr("close to your monthly limit")
+            self._usage_lbl.setText(text)
         else:
             self._usage_lbl.setText(tr("{used:,} tokens this month").format(used=usage.total))
 
     def open_settings(self) -> None:
-        if AISettingsDialog(self).exec():
-            self._models.clear()  # anahtar değişmiş olabilir
-            self._refresh_providers()
-            self.settings_changed.emit()
+        # AI ayarları Ayarlar sayfasında (Ayarlar › Yapay zekâ); ana pencere oraya götürür
+        self.settings_requested.emit()
 
     _open_settings = open_settings
 
@@ -546,6 +550,13 @@ class AIPanel(QWidget):
         return True
 
     def refresh(self) -> None:
-        """Anahtarlar değiştikten sonra paneli günceller."""
+        """Anahtarlar ya da AI ayarları değiştikten sonra paneli günceller."""
+        from linwas.core import app_settings
+
         self._models.clear()
         self._refresh_providers()
+        allowed = app_settings.load().ai_allow_system_info
+        self._ctx_check.setEnabled(allowed)
+        if not allowed:
+            self._ctx_check.setChecked(False)
+        self._update_usage()

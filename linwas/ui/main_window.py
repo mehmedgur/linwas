@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import os
 from pathlib import Path
 
@@ -106,8 +107,10 @@ _STUB_PAGES = {
 class MainWindow(QMainWindow):
     """Linwas ana penceresi."""
 
-    def __init__(self) -> None:
+    def __init__(self, background: bool = False) -> None:
         super().__init__()
+        # background: oturum açılışında penceresiz başlatıldı (yalnızca bildirimler)
+        self._background = background
         self.setWindowTitle("Linwas")
         self.setWindowIcon(QIcon.fromTheme("linwas", QIcon(str(ICON_PATH))))
         self.setMinimumSize(900, 600)
@@ -177,6 +180,7 @@ class MainWindow(QMainWindow):
         self._ai_panel = self._ai_dock.panel
         self._ai_panel.task_add_requested.connect(self._on_ai_task_requested)
         self._ai_panel.settings_changed.connect(self._on_ai_settings_changed)
+        self._ai_panel.settings_requested.connect(lambda: self.open_settings_section("ai"))
         self._ai_dock.setVisible(False)  # _check_ai_panel() görünürlüğü ayarlar
 
         main_layout.addLayout(content_row, 1)
@@ -196,8 +200,9 @@ class MainWindow(QMainWindow):
         # Başlangıç sayfası
         self._show_page("overview")
 
-        # İlk açılış sihirbazı (pencere göründükten sonra)
-        if not self._settings.onboarding_done:
+        # İlk açılış sihirbazı (pencere göründükten sonra; arka planda başlatıldıysa
+        # pencere ilk açıldığında)
+        if not self._settings.onboarding_done and not background:
             from PySide6.QtCore import QTimer
 
             QTimer.singleShot(300, self.run_onboarding)
@@ -207,8 +212,25 @@ class MainWindow(QMainWindow):
             from linwas.backend.wine import set_default_exe_handler
 
             if set_default_exe_handler():
-                self._settings.exe_handler_set = True
-                app_settings.save(self._settings)
+                self._update_settings(exe_handler_set=True)
+
+        # Oturumla başlatma dosyası ayara uyar (varsayılan: açık); eski AI sohbetleri silinir
+        from linwas.ai.chat_history import ChatHistoryDB
+        from linwas.backend import autostart
+
+        if autostart.is_enabled() != self._settings.autostart:
+            autostart.set_enabled(self._settings.autostart)
+        with contextlib.suppress(Exception):
+            ChatHistoryDB().apply_retention(self._settings.ai_retention)
+
+        # Arka plan bildirimleri (pencere açıkken de çalışır)
+        from linwas.ui.notifier import Notifier
+
+        self._notifier = Notifier(self)
+        self._notifier.open_requested.connect(self._open_from_notification)
+        self._notifier.start()
+        if background:
+            self._ensure_background()
 
         # Sistem uyarısı (EOL veya desteklenmiyor)
         self._check_support()
@@ -233,15 +255,65 @@ class MainWindow(QMainWindow):
         icons.set_palette(THEMES[self._current_theme])
         self.setStyleSheet(build_qss(self._current_theme))
 
-    # --- Pencere kapatma ve sistem tepsisi ---
+    def _update_settings(self, **changes: object) -> None:
+        """Ayarları diskten yeniden okuyup yalnızca verilen alanları yazar.
+
+        Ayarlar sayfası da aynı dosyaya yazar; eski kopyayla üzerine yazılmasın.
+        """
+        current = app_settings.load()
+        for name, value in changes.items():
+            setattr(current, name, value)
+        app_settings.save(current)
+        self._settings = current
+
+    # --- Pencere kapatma, arka plan ve sistem tepsisi ---
 
     def _tray_wanted(self) -> bool:
         from PySide6.QtWidgets import QSystemTrayIcon
 
-        action = self._settings.close_action
-        if action == "quit":
-            return False
-        return QSystemTrayIcon.isSystemTrayAvailable()
+        return self._settings.keep_running and QSystemTrayIcon.isSystemTrayAvailable()
+
+    def _ensure_background(self) -> None:
+        """Pencere gizliyken uygulama çalışmayı sürdürür; tepsi varsa simge gösterilir."""
+        from PySide6.QtWidgets import QApplication
+
+        QApplication.instance().setQuitOnLastWindowClosed(False)
+        if self._tray_wanted():
+            self._ensure_tray()
+            self._tray.show()
+
+    def _open_from_notification(self, page_id: str) -> None:
+        self._show_from_tray()
+        if page_id:
+            self._show_page(page_id)
+
+    @property
+    def is_background(self) -> bool:
+        return self._background
+
+    def show_window(self) -> None:
+        """İkinci kez başlatılınca (tek kopya) ya da bildirimden: pencereyi öne getirir."""
+        self._show_from_tray()
+        if not self._settings.onboarding_done:
+            from PySide6.QtCore import QTimer
+
+            QTimer.singleShot(300, self.run_onboarding)
+
+    def on_instance_message(self, message: str) -> None:
+        """Tek kopya iletileri: "show", "deb:<yol>", "exe:<yol>"."""
+        if message == "background":
+            return
+        self.show_window()
+        if message.startswith("deb:"):
+            self.open_deb(message[4:])
+        elif message.startswith("exe:"):
+            self.open_exe(message[4:])
+
+    def open_settings_section(self, key: str) -> None:
+        self._show_page("settings")
+        page = self._pages.get("settings")
+        if page is not None and hasattr(page, "open_section"):
+            page.open_section(key)
 
     def _ensure_tray(self) -> None:
         from PySide6.QtWidgets import QApplication, QMenu, QSystemTrayIcon
@@ -270,10 +342,11 @@ class MainWindow(QMainWindow):
         self._quitting = True
         if self._tray is not None:
             self._tray.hide()
+        self._notifier.stop()
         QApplication.instance().quit()
 
     def _on_close_action_changed(self, action: str) -> None:
-        self._settings.close_action = action
+        self._settings = app_settings.load()
         if not self._tray_wanted() and self._tray is not None:
             from PySide6.QtWidgets import QApplication
 
@@ -282,10 +355,19 @@ class MainWindow(QMainWindow):
             QApplication.instance().setQuitOnLastWindowClosed(True)
 
     def closeEvent(self, event: object) -> None:  # type: ignore[override]
-        if not self._quitting and self._tray_wanted():
-            self._ensure_tray()
-            self._tray.show()
+        self._settings = app_settings.load()
+        if not self._quitting and self._settings.keep_running:
+            # Tepsi olmasa da arka planda kalır (bildirimler); menüden yeniden açılır
+            self._ensure_background()
             self.hide()
+            if not self._tray_wanted():
+                self._notifier.send(
+                    tr("Linwas is still running"),
+                    tr(
+                        "It will notify you about updates and problems. Open it again from the "
+                        "application menu, or quit it in Settings › General."
+                    ),
+                )
             event.ignore()  # type: ignore[attr-defined]
             return
         super().closeEvent(event)  # type: ignore[arg-type]
@@ -326,12 +408,19 @@ class MainWindow(QMainWindow):
         settings_page.theme_changed.connect(self.apply_theme)
         settings_page.close_action_changed.connect(self._on_close_action_changed)
         settings_page.onboarding_requested.connect(self.run_onboarding)
-        settings_page.consent_changed.connect(
-            lambda v: setattr(self._settings, "send_errors_to_ai", v)
+        settings_page.ai_settings_changed.connect(self._on_ai_settings_changed)
+        settings_page.quit_requested.connect(self._quit)
+        settings_page.notifications_test_requested.connect(
+            lambda: self._notifier.send(
+                tr("Linwas notifications work"),
+                tr("This is how Linwas tells you about updates and problems."),
+                "settings",
+            )
         )
         self._add_page("settings", settings_page)
         self._ai_page = AIChatPage(self._stack)
         self._ai_page._panel.settings_changed.connect(self._on_ai_settings_changed)
+        self._ai_page._panel.settings_requested.connect(lambda: self.open_settings_section("ai"))
         self._add_page("ai_chat", self._ai_page)
         # Eklenti sayfaları: yerleşik özellikler + kurulu resmi eklentiler
         self._load_plugins()
@@ -454,8 +543,7 @@ class MainWindow(QMainWindow):
         wizard = OnboardingWizard(self)
         finished = wizard.exec() == OnboardingWizard.DialogCode.Accepted
         # Atlansa da bir daha kendiliğinden açılmaz (Ayarlar'dan yeniden açılabilir)
-        self._settings.onboarding_done = True
-        app_settings.save(self._settings)
+        self._update_settings(onboarding_done=True)
         self._on_ai_settings_changed()
         if not finished:
             return
@@ -585,6 +673,7 @@ class MainWindow(QMainWindow):
         if not available_providers():
             self._show_page("troubleshoot")
             return
+        self._settings = app_settings.load()  # Ayarlar sayfasında değişmiş olabilir
         if self._settings.send_errors_to_ai == "no":
             self._show_page("troubleshoot")
             return
@@ -605,8 +694,7 @@ class MainWindow(QMainWindow):
             box.exec()
             allowed = box.clickedButton() is yes
             if remember.isChecked():
-                self._settings.send_errors_to_ai = "yes" if allowed else "no"
-                app_settings.save(self._settings)
+                self._update_settings(send_errors_to_ai="yes" if allowed else "no")
             if not allowed:
                 self._show_page("troubleshoot")
                 return

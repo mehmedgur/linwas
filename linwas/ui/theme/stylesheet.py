@@ -234,6 +234,25 @@ QLabel#Pill {{
     font-size: 11px;
     font-weight: bold;
 }}
+QListWidget#SettingsNav {{
+    background: transparent;
+    border: none;
+    outline: none;
+}}
+QListWidget#SettingsNav::item {{
+    padding: 8px 12px;
+    margin: 1px 8px 1px 0;
+    border-radius: 6px;
+}}
+QListWidget#SettingsNav::item:hover {{
+    background-color: {c.surface_hover};
+}}
+QListWidget#SettingsNav::item:selected {{
+    background-color: {c.surface};
+    color: {c.accent};
+    font-weight: bold;
+    border-left: 3px solid {c.accent};
+}}
 QLabel#TileNumber {{
     font-size: 30px;
     font-weight: bold;
