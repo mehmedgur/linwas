@@ -22,6 +22,15 @@ def selected_language(env: dict[str, str] | None = None) -> str:
     return lang if lang in SUPPORTED_LANGUAGES else DEFAULT_LANGUAGE
 
 
+def ui_language() -> str:
+    """Arayüzün çalışan dili: LINWAS_LANG verilmişse o, yoksa Ayarlar'daki dil."""
+    if "LINWAS_LANG" in os.environ:
+        return selected_language()
+    from linwas.core import app_settings
+
+    return app_settings.load().language
+
+
 def qm_path(lang: str) -> Path:
     """Dilin derlenmiş çeviri dosyasının yolu."""
     return I18N_DIR / f"linwas_{lang}.qm"

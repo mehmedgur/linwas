@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (
 
 from linwas.backend.process_list import ProcessInfo, kill_process, list_processes
 from linwas.backend.startup import StartupApp, list_startup_apps, set_enabled
+from linwas.translations import ui_language
 from linwas.ui.pages.base import BasePage
 
 _DATA = Path(__file__).resolve().parent.parent.parent / "data"
@@ -31,7 +32,7 @@ _startup_db: dict | None = None
 
 
 def _get_app_info(app: StartupApp) -> dict | None:
-    """startup_apps.json'dan uygulama bilgisini döner."""
+    """startup_apps.json'dan uygulama bilgisini döner (arayüz dilinde)."""
     global _startup_db
     if _startup_db is None:
         try:
@@ -40,7 +41,13 @@ def _get_app_info(app: StartupApp) -> dict | None:
             _startup_db = {}
     # Desktop dosya adıyla eşleş (uzantısız)
     key = app.desktop_file.stem.lower()
-    return _startup_db.get(key) or _startup_db.get(app.name.lower())
+    info = _startup_db.get(key) or next(
+        (v for k, v in _startup_db.items() if k.endswith(".") and key.startswith(k)), None
+    )
+    if not isinstance(info, dict):
+        return None
+    localized = info.get(ui_language())
+    return {**info, **localized} if isinstance(localized, dict) else info
 
 
 def tr(text: str) -> str:
@@ -236,7 +243,7 @@ class _StartupTab(QWidget):
             if item.widget():
                 item.widget().deleteLater()
 
-        self._apps = list_startup_apps()
+        self._apps = list_startup_apps(ui_language())
         for app in self._apps:
             row = _StartupRow(app, self)
             row.toggled.connect(self._on_toggle)
@@ -286,17 +293,16 @@ class _StartupRow(QWidget):
             sys_lbl.setObjectName("Secondary")
             row.addWidget(sys_lbl)
 
-        # Bilgi butonu (veri varsa göster)
-        if self._info_data:
-            self._info_btn = QPushButton("ⓘ", row_widget)
-            self._info_btn.setFixedSize(28, 28)
-            self._info_btn.setStyleSheet(
-                "QPushButton { border: none; color: #0067c0; font-size: 16px; }"
-                "QPushButton:hover { color: #005ba6; }"
-            )
-            self._info_btn.setToolTip(tr("Show info"))
-            self._info_btn.clicked.connect(self._toggle_info)
-            row.addWidget(self._info_btn)
+        # Bilgi butonu (her satırda; veri yoksa .desktop açıklaması gösterilir)
+        self._info_btn = QPushButton("ⓘ", row_widget)
+        self._info_btn.setFixedSize(28, 28)
+        self._info_btn.setStyleSheet(
+            "QPushButton { border: none; color: #0067c0; font-size: 16px; }"
+            "QPushButton:hover { color: #005ba6; }"
+        )
+        self._info_btn.setToolTip(tr("Show info"))
+        self._info_btn.clicked.connect(self._toggle_info)
+        row.addWidget(self._info_btn)
 
         self._toggle_btn = QPushButton(tr("Enabled") if app.enabled else tr("Disabled"), row_widget)
         self._toggle_btn.setProperty("primary", app.enabled)
@@ -305,6 +311,8 @@ class _StartupRow(QWidget):
         row.addWidget(self._toggle_btn)
 
         outer.addWidget(row_widget)
+        # Satıra tıklamak da bilgi kartını açar/kapatır
+        row_widget.mousePressEvent = lambda _e: self._toggle_info()  # type: ignore[method-assign]
 
         # Info kartı (başta gizli)
         self._info_card = self._build_info_card()
@@ -332,8 +340,9 @@ class _StartupRow(QWidget):
                 impact_lbl.setStyleSheet(f"color: {color};")
                 layout.addWidget(impact_lbl)
         else:
-            comment = self._app.comment or tr("No description available.")
-            layout.addWidget(QLabel(comment, card))
+            comment = QLabel(self._app.comment or tr("No description available."), card)
+            comment.setWordWrap(True)
+            layout.addWidget(comment)
 
         return card
 

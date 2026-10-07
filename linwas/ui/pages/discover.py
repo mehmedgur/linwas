@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import os
-
 from PySide6.QtCore import QCoreApplication, QThread, Signal
 from PySide6.QtWidgets import (
     QButtonGroup,
@@ -17,6 +15,7 @@ from PySide6.QtWidgets import (
 
 from linwas.backend import featured
 from linwas.backend.flatpak import is_available as flatpak_ok
+from linwas.translations import ui_language
 from linwas.ui.widgets.app_card import FeaturedCard
 
 
@@ -36,13 +35,6 @@ def _category_name(cat_id: str) -> str:
         "tools": tr("Tools"),
         "education": tr("Education"),
     }.get(cat_id, cat_id)
-
-
-def _ui_language() -> str:
-    from linwas.core import app_settings
-    from linwas.translations import selected_language
-
-    return selected_language() if "LINWAS_LANG" in os.environ else app_settings.load().language
 
 
 class _ResolveWorker(QThread):
@@ -68,7 +60,7 @@ class DiscoverView(QWidget):
         self._category = "all"
         self._columns = 0
         self._worker: _ResolveWorker | None = None
-        self._lang = _ui_language()
+        self._lang = ui_language()
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
