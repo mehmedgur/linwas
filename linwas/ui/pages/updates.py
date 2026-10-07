@@ -1,4 +1,4 @@
-"""Güncellemeler sayfası."""
+"""Sistem güncellemeleri görünümü (Güncelleme merkezi altında)."""
 
 from __future__ import annotations
 
@@ -91,7 +91,7 @@ class UpdatesPage(BasePage):
         outer.setSpacing(12)
 
         # Başlık
-        title = QLabel(tr("Updates"), content)
+        title = QLabel(tr("System updates"), content)
         title.setObjectName("H1")
         outer.addWidget(title)
 
@@ -174,8 +174,15 @@ class UpdatesPage(BasePage):
         page_layout.setContentsMargins(0, 0, 0, 0)
         page_layout.addWidget(scroll)
 
-        self._update_cache_label()
-        self._check()
+        self._checked = False
+
+    def showEvent(self, event: object) -> None:  # type: ignore[override]
+        super().showEvent(event)  # type: ignore[arg-type]
+        # İlk açılışta denetlenir; sonra "Şimdi denetle" ya da görev bitince
+        if not self._checked:
+            self._checked = True
+            self._update_cache_label()
+            self._check()
 
     def _update_cache_label(self) -> None:
         age = apt_cache_age_hours()
@@ -273,7 +280,9 @@ class UpdatesPage(BasePage):
             self.task_requested.emit(Task(label=tr("Update apps"), steps=steps))
 
     def on_tasks_finished(self) -> None:
-        self._check_apps()
+        if self._checked:
+            self._update_cache_label()
+            self._check()
 
     def _queue_update(self) -> None:
         task = Task(

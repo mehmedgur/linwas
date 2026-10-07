@@ -46,6 +46,12 @@ class ParamKind(Enum):
     CHARGE_LIMIT = "charge_limit"
     # Geri alma kaydı kimliği (uuid4)
     RECORD_ID = "record_id"
+    # "true" | "false"
+    BOOL = "bool"
+    # Otomatik güncelleme duraklatma: "-1" (değiştirme), "0" (devam), "1"–"5" hafta
+    PAUSE_WEEKS = "pause_weeks"
+    # Saat (SS:DD, 24 saat), ör. yeniden başlatma zamanı
+    CLOCK_TIME = "clock_time"
 
 
 @dataclass(frozen=True)
@@ -209,6 +215,27 @@ def _validate_charge_limit(value: str) -> str:
     return value
 
 
+def _validate_bool(value: str) -> str:
+    if value not in ("true", "false"):
+        raise ValidationError(f"Geçersiz doğru/yanlış değeri: {value!r}")
+    return value
+
+
+def _validate_pause_weeks(value: str) -> str:
+    if value not in ("-1", "0", "1", "2", "3", "4", "5"):
+        raise ValidationError(f"Geçersiz duraklatma süresi: {value!r}")
+    return value
+
+
+_RE_CLOCK = re.compile(r"^([01][0-9]|2[0-3]):[0-5][0-9]$")
+
+
+def _validate_clock_time(value: str) -> str:
+    if not _RE_CLOCK.match(value):
+        raise ValidationError(f"Geçersiz saat: {value!r}")
+    return value
+
+
 _RE_UUID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 
 
@@ -241,6 +268,9 @@ _VALIDATORS: dict[ParamKind, object] = {
     ParamKind.BATTERY_NAME: _validate_battery_name,
     ParamKind.CHARGE_LIMIT: _validate_charge_limit,
     ParamKind.RECORD_ID: _validate_record_id,
+    ParamKind.BOOL: _validate_bool,
+    ParamKind.PAUSE_WEEKS: _validate_pause_weeks,
+    ParamKind.CLOCK_TIME: _validate_clock_time,
 }
 
 
@@ -355,6 +385,21 @@ OPERATIONS: dict[str, OperationSpec] = {
         ("record_id", ParamKind.RECORD_ID),
         risk=RiskLevel.MEDIUM,
         label="Restore files to how they were before",
+    ),
+    "autoupdate.configure": _op(
+        ("enabled", ParamKind.BOOL),
+        ("snapshot", ParamKind.BOOL),
+        ("pause_weeks", ParamKind.PAUSE_WEEKS),
+        risk=RiskLevel.LOW,
+        label="Change automatic update settings",
+    ),
+    "power.schedule_reboot": _op(
+        ("time", ParamKind.CLOCK_TIME),
+        risk=RiskLevel.LOW,
+        label="Schedule a restart",
+    ),
+    "power.cancel_reboot": OperationSpec(
+        params=[], risk=RiskLevel.LOW, label="Cancel the scheduled restart"
     ),
     "flatpak.setup": OperationSpec(
         params=[],

@@ -537,6 +537,32 @@ def _exec_fonts_install_microsoft(seq: int, params: dict[str, str]) -> bool:
     return _run(cmd, seq, {"DEBIAN_FRONTEND": "noninteractive"})
 
 
+def _exec_autoupdate_configure(seq: int, params: dict[str, str]) -> bool:
+    """Otomatik güncelleme ayarını yazar (/etc/linwas/autoupdate.json; zamanlayıcı okur)."""
+    from linwas.core import autoupdate
+
+    cfg = autoupdate.config_with(
+        autoupdate.load_config(),
+        enabled=params["enabled"] == "true",
+        snapshot=params["snapshot"] == "true",
+        pause_weeks=int(params["pause_weeks"]),
+    )
+    try:
+        autoupdate.write_config(cfg)
+    except OSError as exc:
+        _error(seq, f"Ayar yazılamadı: {exc}")
+        return False
+    return True
+
+
+def _exec_power_schedule_reboot(seq: int, params: dict[str, str]) -> bool:
+    return _run(["shutdown", "-r", params["time"]], seq)
+
+
+def _exec_power_cancel_reboot(seq: int, params: dict[str, str]) -> bool:
+    return _run(["shutdown", "-c"], seq)
+
+
 # Flathub'ın resmi kurulum adresi (flathub.org/setup)
 _FLATHUB_REPO = "https://dl.flathub.org/repo/flathub.flatpakrepo"
 
@@ -718,6 +744,9 @@ _EXECUTORS: dict[str, Any] = {
     "snapshot.timeshift_create": _exec_snapshot_timeshift_create,
     "wine.setup": _exec_wine_setup,
     "flatpak.setup": _exec_flatpak_setup,
+    "autoupdate.configure": _exec_autoupdate_configure,
+    "power.schedule_reboot": _exec_power_schedule_reboot,
+    "power.cancel_reboot": _exec_power_cancel_reboot,
     "snapshot.timeshift_restore": _exec_snapshot_timeshift_restore,
     "snapshot.timeshift_delete": _exec_snapshot_timeshift_delete,
     "firmware.fwupd_update": _exec_firmware_fwupd_update,

@@ -25,8 +25,8 @@ Son güncelleme: 7 Ekim 2026
 ## Sıradaki aşama
 - **Güncelleme merkezi** (kararlar.md › Güncelleme merkezi), aşamalar — her biri ayrı commit, aralarda
   kullanıcı dener:
-  1. [ ] Güncelleme merkezi arayüzü (Güncellemeler + Sürücüler + Firmware tek sayfa) + güncelleme geçmişi.
-  2. [ ] Otomatik kurulum (Linwas systemd zamanlayıcısı), duraklatma (1–5 hafta), pil/ölçülü bağlantı
+  1. [x] Güncelleme merkezi arayüzü (Güncellemeler + Sürücüler + Firmware tek sayfa) + güncelleme geçmişi.
+  2. [x] Otomatik kurulum (Linwas systemd zamanlayıcısı), duraklatma (1–5 hafta), pil/ölçülü bağlantı
      koşulları, kurulum öncesi Timeshift, yeniden başlatma bildirimi.
   3. [ ] Sürücü sürüm seçimi, önceki sürücüye dönme, Secure Boot (MOK), sorun giderme + AI.
   4. [ ] Aygıt Yöneticisi (Donanım altında) + yazıcı/tarayıcı sürücüleri.
@@ -79,6 +79,11 @@ Son güncelleme: 7 Ekim 2026
 - [ ] Yayın yeri belli olunca `release.yml`'ye depo yükleme adımı (ör. GitHub Pages).
 
 ## Kodlama sırasında doğrulanacaklar
+- [ ] **Güncelleme merkezi (aşama 1–2, denenmedi):** `.deb` ile kurulunca zamanlayıcının etkin olması
+  (`systemctl list-timers linwas-autoupdate.timer`); `sudo systemctl start linwas-autoupdate.service`
+  ile elle çalıştırma ve `/var/lib/linwas-autoupdate/state.json`; `timeshift --list` çıktı biçimi
+  (eski yedeklerin silinmesi); `shutdown -r SS:DD` sonrası `/run/systemd/shutdown/scheduled` dosyası;
+  apt geçmişinde `Linwas::Auto=1` işaretinin görünmesi.
 - [ ] **Bottles (bottles-cli):** Flatpak Bottles'ın Pardus 23 ve Ubuntu 22.04'te çalışması; Flatpak
   kum havuzunda dosya erişimi (İndirilenler'deki EXE'ye erişebiliyor mu); `bottles-cli` komutları ve
   JSON çıktısı resmi belgeden (docs.usebottles.com/advanced/cli); Office 2016 ve 365'in gerçek durumu.

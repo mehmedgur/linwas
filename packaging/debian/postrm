@@ -5,7 +5,12 @@ set -e
 if [ "$1" = "purge" ]; then
     # Linwas'ın eklediği depo ve root'a ait geri alma kayıtları
     rm -f /etc/apt/sources.list.d/linwas.sources /etc/apt/sources.list.d/linwas.sources.disabled
-    rm -rf /var/lib/linwas
+    rm -rf /var/lib/linwas /var/lib/linwas-autoupdate
+    rm -f /etc/linwas/autoupdate.json
+fi
+
+if [ -d /run/systemd/system ]; then
+    systemctl daemon-reload >/dev/null 2>&1 || true
 fi
 
 exit 0

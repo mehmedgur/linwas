@@ -105,14 +105,6 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Genel Bakış</translation>
     </message>
     <message>
-        <source>Updates</source>
-        <translation>Güncellemeler</translation>
-    </message>
-    <message>
-        <source>Drivers</source>
-        <translation>Sürücüler</translation>
-    </message>
-    <message>
         <source>Wi-Fi &amp; Bluetooth</source>
         <translation>Wi-Fi ve Bluetooth</translation>
     </message>
@@ -187,6 +179,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     <message>
         <source>Press Enter to look up a Windows term</source>
         <translation>Bir Windows terimini aramak için Enter'a basın</translation>
+    </message>
+    <message>
+        <source>Update center</source>
+        <translation>Güncelleme merkezi</translation>
     </message>
 </context>
 <context>
@@ -489,10 +485,6 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
 <context>
     <name>UpdatesPage</name>
     <message>
-        <source>Updates</source>
-        <translation>Güncellemeler</translation>
-    </message>
-    <message>
         <source>Check now</source>
         <translation>Şimdi kontrol et</translation>
     </message>
@@ -575,6 +567,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     <message>
         <source>{n} app update(s): {names}</source>
         <translation>{n} uygulama güncellemesi: {names}</translation>
+    </message>
+    <message>
+        <source>System updates</source>
+        <translation>Sistem güncellemeleri</translation>
     </message>
 </context>
 <context>
@@ -3492,6 +3488,285 @@ The first time this can take several minutes (Wine is downloaded).</source>
     <message>
         <source>{name} could not be added.</source>
         <translation>{name} eklenemedi.</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateCenterPage</name>
+    <message>
+        <source>Advanced options</source>
+        <translation>Gelişmiş seçenekler</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Otomatik</translation>
+    </message>
+    <message>
+        <source>Automatic updates</source>
+        <translation>Otomatik güncellemeler</translation>
+    </message>
+    <message>
+        <source>Automatic updates are off.</source>
+        <translation>Otomatik güncellemeler kapalı.</translation>
+    </message>
+    <message>
+        <source>Automatic updates are on.</source>
+        <translation>Otomatik güncellemeler açık.</translation>
+    </message>
+    <message>
+        <source>Backup taken: {name}</source>
+        <translation>Alınan yedek: {name}</translation>
+    </message>
+    <message>
+        <source>Cancel the planned restart</source>
+        <translation>Planlanan yeniden başlatmayı iptal et</translation>
+    </message>
+    <message>
+        <source>Change automatic update settings</source>
+        <translation>Otomatik güncelleme ayarlarını değiştir</translation>
+    </message>
+    <message>
+        <source>Check for updates</source>
+        <translation>Güncellemeleri denetle</translation>
+    </message>
+    <message>
+        <source>Checking for updates…</source>
+        <translation>Güncellemeler denetleniyor…</translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>Ayrıntılar</translation>
+    </message>
+    <message>
+        <source>Downloads the latest package information (asks for your password).</source>
+        <translation>En güncel paket bilgilerini indirir (şifrenizi sorar).</translation>
+    </message>
+    <message>
+        <source>Drivers</source>
+        <translation>Sürücüler</translation>
+    </message>
+    <message>
+        <source>Error: {error}</source>
+        <translation>Hata: {error}</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Başarısız</translation>
+    </message>
+    <message>
+        <source>Firmware</source>
+        <translation>Firmware</translation>
+    </message>
+    <message>
+        <source>Firmware (BIOS, SSD, docks…)</source>
+        <translation>Firmware (BIOS, SSD, yerleştirme istasyonu…)</translation>
+    </message>
+    <message>
+        <source>Graphics, network and Wi-Fi</source>
+        <translation>Ekran kartı, ağ ve Wi-Fi</translation>
+    </message>
+    <message>
+        <source>Install all</source>
+        <translation>Tümünü kur</translation>
+    </message>
+    <message>
+        <source>Install system and security updates automatically</source>
+        <translation>Sistem ve güvenlik güncellemelerini otomatik kur</translation>
+    </message>
+    <message>
+        <source>Install updates</source>
+        <translation>Güncellemeleri kur</translation>
+    </message>
+    <message>
+        <source>Installed, updated and removed packages</source>
+        <translation>Kurulan, güncellenen ve kaldırılan paketler</translation>
+    </message>
+    <message>
+        <source>Last automatic check</source>
+        <translation>Son otomatik denetim</translation>
+    </message>
+    <message>
+        <source>Last checked: less than an hour ago</source>
+        <translation>Son denetim: bir saatten kısa süre önce</translation>
+    </message>
+    <message>
+        <source>Last checked: unknown</source>
+        <translation>Son denetim: bilinmiyor</translation>
+    </message>
+    <message>
+        <source>Last checked: {d} day(s) ago</source>
+        <translation>Son denetim: {d} gün önce</translation>
+    </message>
+    <message>
+        <source>Last checked: {h} hour(s) ago</source>
+        <translation>Son denetim: {h} saat önce</translation>
+    </message>
+    <message>
+        <source>Linwas checks once a day. It waits while the laptop runs on battery and on metered connections (e.g. a phone hotspot). Driver changes, a new kernel series and firmware are never installed without you. Linwas never restarts the computer by itself.</source>
+        <translation>Linwas günde bir kez denetler. Dizüstü bilgisayar pille çalışırken ve ölçülü bağlantılarda (ör. telefondan paylaşılan internet) bekler. Sürücü değişiklikleri, yeni çekirdek serisi ve firmware sizin onayınız olmadan asla kurulmaz. Linwas bilgisayarı kendiliğinden yeniden başlatmaz.</translation>
+    </message>
+    <message>
+        <source>Loading…</source>
+        <translation>Yükleniyor…</translation>
+    </message>
+    <message>
+        <source>No firmware updates</source>
+        <translation>Firmware güncellemesi yok</translation>
+    </message>
+    <message>
+        <source>No updates have been installed yet.</source>
+        <translation>Henüz güncelleme kurulmadı.</translation>
+    </message>
+    <message>
+        <source>Not run yet.</source>
+        <translation>Henüz çalışmadı.</translation>
+    </message>
+    <message>
+        <source>Pause for 1 week</source>
+        <translation>1 hafta duraklat</translation>
+    </message>
+    <message>
+        <source>Pause for longer</source>
+        <translation>Daha uzun duraklat</translation>
+    </message>
+    <message>
+        <source>Pause for {n} week(s)</source>
+        <translation>{n} hafta duraklat</translation>
+    </message>
+    <message>
+        <source>Restart at this time</source>
+        <translation>Bu saatte yeniden başlat</translation>
+    </message>
+    <message>
+        <source>Restart at {time}</source>
+        <translation>Saat {time} yeniden başlat</translation>
+    </message>
+    <message>
+        <source>Restart now</source>
+        <translation>Şimdi yeniden başlat</translation>
+    </message>
+    <message>
+        <source>Restart required</source>
+        <translation>Yeniden başlatma gerekiyor</translation>
+    </message>
+    <message>
+        <source>Resume updates</source>
+        <translation>Güncellemelere devam et</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Kaydet</translation>
+    </message>
+    <message>
+        <source>Save your work and close your programs. Restart the computer now?</source>
+        <translation>Çalışmalarınızı kaydedip programlarınızı kapatın. Bilgisayar şimdi yeniden başlatılsın mı?</translation>
+    </message>
+    <message>
+        <source>Some updates (e.g. a new kernel) take effect after a restart.</source>
+        <translation>Bazı güncellemeler (ör. yeni çekirdek) yeniden başlatmadan sonra etkinleşir.</translation>
+    </message>
+    <message>
+        <source>System updates</source>
+        <translation>Sistem güncellemeleri</translation>
+    </message>
+    <message>
+        <source>Take a quick system backup (Timeshift) before installing</source>
+        <translation>Kurmadan önce hızlı sistem yedeği al (Timeshift)</translation>
+    </message>
+    <message>
+        <source>The automatic update service is not installed. It comes with the Linwas package (not when running from source).</source>
+        <translation>Otomatik güncelleme hizmeti kurulu değil. Linwas paketiyle gelir (kaynak koddan çalıştırırken yoktur).</translation>
+    </message>
+    <message>
+        <source>The computer will restart at {time}.</source>
+        <translation>Bilgisayar {time} zamanında yeniden başlatılacak.</translation>
+    </message>
+    <message>
+        <source>Timeshift is not installed, so no backup is taken.</source>
+        <translation>Timeshift kurulu olmadığı için yedek alınmaz.</translation>
+    </message>
+    <message>
+        <source>Up to date</source>
+        <translation>Güncel</translation>
+    </message>
+    <message>
+        <source>Update center</source>
+        <translation>Güncelleme merkezi</translation>
+    </message>
+    <message>
+        <source>Update history</source>
+        <translation>Güncelleme geçmişi</translation>
+    </message>
+    <message>
+        <source>Updates are paused until {date}</source>
+        <translation>Güncellemeler {date} tarihine kadar duraklatıldı</translation>
+    </message>
+    <message>
+        <source>You're up to date</source>
+        <translation>Güncelsiniz</translation>
+    </message>
+    <message>
+        <source>automatic updates are off</source>
+        <translation>otomatik güncellemeler kapalı</translation>
+    </message>
+    <message>
+        <source>the computer was on battery</source>
+        <translation>bilgisayar pille çalışıyordu</translation>
+    </message>
+    <message>
+        <source>the connection was metered</source>
+        <translation>bağlantı ölçülüydü</translation>
+    </message>
+    <message>
+        <source>updates are paused</source>
+        <translation>güncellemeler duraklatılmış</translation>
+    </message>
+    <message>
+        <source>{n} firmware update(s)</source>
+        <translation>{n} firmware güncellemesi</translation>
+    </message>
+    <message>
+        <source>{n} package(s) installed</source>
+        <translation>{n} paket kuruldu</translation>
+    </message>
+    <message>
+        <source>{n} package(s) removed</source>
+        <translation>{n} paket kaldırıldı</translation>
+    </message>
+    <message>
+        <source>{n} package(s) updated</source>
+        <translation>{n} paket güncellendi</translation>
+    </message>
+    <message>
+        <source>{n} recommended driver(s)</source>
+        <translation>{n} önerilen sürücü</translation>
+    </message>
+    <message>
+        <source>{n} security</source>
+        <translation>{n} güvenlik</translation>
+    </message>
+    <message>
+        <source>{n} update(s) available</source>
+        <translation>{n} güncelleme hazır</translation>
+    </message>
+    <message>
+        <source>{n} update(s) ready</source>
+        <translation>{n} güncelleme hazır</translation>
+    </message>
+    <message>
+        <source>{when}: skipped because {why}.</source>
+        <translation>{when}: atlandı, çünkü {why}.</translation>
+    </message>
+    <message>
+        <source>{when}: the system was up to date.</source>
+        <translation>{when}: sistem güncel.</translation>
+    </message>
+    <message>
+        <source>{when}: the update failed.</source>
+        <translation>{when}: güncelleme başarısız oldu.</translation>
+    </message>
+    <message>
+        <source>{when}: {n} package(s) updated.</source>
+        <translation>{when}: {n} paket güncellendi.</translation>
     </message>
 </context>
 </TS>

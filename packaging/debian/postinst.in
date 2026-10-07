@@ -22,4 +22,10 @@ SRC
     fi
 fi
 
+# Otomatik güncelleme zamanlayıcısı (ayar yoksa varsayılan: açık; bkz. linwas/core/autoupdate.py)
+if [ "$1" = "configure" ] && [ -d /run/systemd/system ]; then
+    systemctl daemon-reload >/dev/null 2>&1 || true
+    systemctl enable --now linwas-autoupdate.timer >/dev/null 2>&1 || true
+fi
+
 exit 0

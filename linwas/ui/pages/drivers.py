@@ -1,4 +1,4 @@
-"""Sürücüler sayfası — GPU, Ağ/Wi-Fi ve Firmware güncellemeleri."""
+"""Sürücüler / Firmware görünümü (Güncelleme merkezi altında) — GPU, Ağ/Wi-Fi, Firmware."""
 
 from __future__ import annotations
 
@@ -151,9 +151,16 @@ class _SectionHeader(QWidget):
 class DriversPage(BasePage):
     """Sürücüler sayfası."""
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        parent: QWidget | None = None,
+        categories: set[DriverCategory] | None = None,  # None = hepsi
+        title: str = "",
+    ) -> None:
         super().__init__(parent)
         self._worker: _ScanWorker | None = None
+        self._categories = categories
+        self._scanned = False
 
         scroll = QScrollArea(self)
         scroll.setWidgetResizable(True)
@@ -166,7 +173,7 @@ class DriversPage(BasePage):
 
         # Başlık + Yeniden tara butonu
         title_row = QHBoxLayout()
-        title = QLabel(tr("Drivers"), self._content)
+        title = QLabel(title or tr("Drivers"), self._content)
         title.setObjectName("H1")
         title_row.addWidget(title)
         title_row.addStretch(1)
@@ -198,7 +205,11 @@ class DriversPage(BasePage):
         page_layout.setContentsMargins(0, 0, 0, 0)
         page_layout.addWidget(scroll)
 
-        self._scan()
+    def showEvent(self, event: object) -> None:  # type: ignore[override]
+        super().showEvent(event)  # type: ignore[arg-type]
+        # İlk açılışta taranır (Güncelleme merkezi açılırken gereksiz tarama olmasın)
+        if not self._scanned:
+            self._scan()
 
     def _clear_cards(self) -> None:
         """status_lbl sonrasındaki tüm widget'ları temizler (stretch dahil)."""
@@ -208,6 +219,7 @@ class DriversPage(BasePage):
                 item.widget().deleteLater()
 
     def _scan(self) -> None:
+        self._scanned = True
         self._refresh_btn.setEnabled(False)
         self._status_lbl.setText(tr("Scanning hardware…"))
         self._clear_cards()
@@ -224,6 +236,8 @@ class DriversPage(BasePage):
 
     def _on_done(self, candidates: list) -> None:
         self._clear_cards()
+        if self._categories is not None:
+            candidates = [c for c in candidates if c.category in self._categories]
 
         if not candidates:
             self._status_lbl.setText(

@@ -52,8 +52,7 @@ MENU: list[MenuItem] = [
         "System",
         children=[
             MenuItem("overview", "Overview"),
-            MenuItem("updates", "Updates"),
-            MenuItem("drivers", "Drivers"),
+            MenuItem("updates", "Update center"),
             MenuItem("network", "Wi-Fi & Bluetooth"),
             MenuItem("backups", "Backups & Rollback"),
             MenuItem("hardware", "Hardware & Printers"),
@@ -327,8 +326,7 @@ def _translation_markers() -> None:
     tr("AI Question")
     tr("System")
     tr("Overview")
-    tr("Updates")
-    tr("Drivers")
+    tr("Update center")
     tr("Wi-Fi & Bluetooth")
     tr("Backups & Rollback")
     tr("Hardware & Printers")

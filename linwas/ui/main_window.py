@@ -30,7 +30,6 @@ from linwas.ui.pages.ai_chat import AIChatPage
 from linwas.ui.pages.all_settings import AllSettingsPage
 from linwas.ui.pages.backups import BackupsPage
 from linwas.ui.pages.base import BasePage
-from linwas.ui.pages.drivers import DriversPage
 from linwas.ui.pages.guide import GuidePage
 from linwas.ui.pages.interface import DisplayPage, FontsPage, ThemePage, WindowsAppearancePage
 from linwas.ui.pages.network import NetworkPage
@@ -39,7 +38,7 @@ from linwas.ui.pages.settings import SettingsPage
 from linwas.ui.pages.software import SoftwarePage
 from linwas.ui.pages.stub import StubPage
 from linwas.ui.pages.troubleshoot import TroubleshootPage
-from linwas.ui.pages.updates import UpdatesPage
+from linwas.ui.pages.update_center import UpdateCenterPage
 from linwas.ui.sidebar import Sidebar
 from linwas.ui.status_bar import StatusBar
 from linwas.ui.theme.stylesheet import build as build_qss
@@ -85,7 +84,6 @@ def desktop_label(desktop: Desktop) -> str:
 _STUB_PAGES = {
     "ai_chat": "AI Question",
     "updates": "Updates",
-    "drivers": "Drivers",
     "network": "Wi-Fi & Bluetooth",
     "backups": "Backups & Rollback",
     "hardware": "Hardware & Printers",
@@ -309,8 +307,8 @@ class MainWindow(QMainWindow):
         self._pages["overview"] = overview
 
         # Aşama 4a + 4b + 4c: gerçek sayfalar
-        self._add_page("updates", UpdatesPage(self._stack))
-        self._add_page("drivers", DriversPage(self._stack))
+        # Güncelleme merkezi: Güncellemeler + Sürücüler + Firmware ("drivers" bölüme yönlenir)
+        self._add_page("updates", UpdateCenterPage(self._stack))
         self._add_page("software", SoftwarePage(self._stack))
         self._add_page("backups", BackupsPage(self._stack))
         self._add_page("network", NetworkPage(self._stack))
@@ -346,6 +344,11 @@ class MainWindow(QMainWindow):
             self._pages[page_id] = stub
 
     def _show_page(self, page_id: str) -> None:
+        if page_id == "drivers":
+            page_id = "updates"
+            center = self._pages.get("updates")
+            if isinstance(center, UpdateCenterPage):
+                center.open_section("drivers")
         page = self._pages.get(page_id)
         if page:
             self._stack.setCurrentWidget(page)
