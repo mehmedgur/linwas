@@ -25,7 +25,7 @@ Son güncelleme: 8 Ekim 2026
 ## Sıradaki aşama
 - **Kullanıcı "kodlamaya hazırız" deyince başlanacak (8 Ekim 2026, ayrıntı kararlar.md):**
   1. [ ] **Ayarlar › Hakkında › Geliştirici kartı** (kararlar.md › Ayarlar › Uygulama aşama 4–5).
-  2. [ ] **Tüm Ayarlar sayfası yeniden tasarım:** klasik Denetim Masası kategori görünümü
+  2. [x] **Tüm Ayarlar sayfası yeniden tasarım** (kodlandı 8 Ekim 2026, kullanıcının denemesi bekleniyor): klasik Denetim Masası kategori görünümü
      (kararlar.md › Sistem ayarlarına yönlendirme). Yeni metinlerin Türkçeleri `linwas_tr.ts`'e.
   1. [ ] Donanım denetimi ve öneri ekranı (KVM, bellek, disk) + web Office'i uygulama olarak ekleme.
   2. [ ] Kurulum (root işlemleri: Podman/Docker, FreeRDP; Windows'un gözetimsiz kurulumu, ilerleme).

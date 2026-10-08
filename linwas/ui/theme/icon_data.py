@@ -95,6 +95,14 @@ PATHS: dict[str, str] = {
         '<path stroke-width="3" d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4'
         'M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>'
     ),
+    "accessibility": (
+        '<circle cx="12" cy="4.5" r="1.8"/><path d="M4 8.5l8 1.5 8-1.5"/>'
+        '<path d="M12 10v5l-3.5 6.5M12 15l3.5 6.5"/>'
+    ),
+    "privacy": (
+        '<path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/>'
+        '<rect x="9" y="11" width="6" height="5" rx="1"/><path d="M10 11V9.5a2 2 0 0 1 4 0V11"/>'
+    ),
     "plugin": '<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 12h6M12 9v6"/>',
     "chevron_right": '<path d="M9 6l6 6-6 6"/>',
     "chevron_down": '<path d="M6 9l6 6 6-6"/>',

@@ -2389,6 +2389,10 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Tüm Ayarlar</translation>
     </message>
     <message>
+        <source>Appearance &amp; personalization</source>
+        <translation>Görünüm ve kişiselleştirme</translation>
+    </message>
+    <message>
         <source>Bluetooth</source>
         <translation>Bluetooth</translation>
     </message>
@@ -2405,16 +2409,20 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Varsayılan uygulamalar</translation>
     </message>
     <message>
-        <source>Devices</source>
-        <translation>Aygıtlar</translation>
-    </message>
-    <message>
         <source>Display</source>
         <translation>Ekran</translation>
     </message>
     <message>
+        <source>Ease of access</source>
+        <translation>Erişim kolaylığı</translation>
+    </message>
+    <message>
         <source>Fonts</source>
         <translation>Yazı Tipleri</translation>
+    </message>
+    <message>
+        <source>Hardware &amp; sound</source>
+        <translation>Donanım ve ses</translation>
     </message>
     <message>
         <source>Keyboard</source>
@@ -2425,8 +2433,12 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Dil ve bölge</translation>
     </message>
     <message>
-        <source>Like the Windows Control Panel. Where Linwas can do the job itself, its own page opens; everything else opens in your system settings.</source>
-        <translation>Windows'taki Denetim Masası gibi. Linwas'ın kendi yapabildiği ayarlarda Linwas sayfası açılır; diğerleri sistem ayarlarında açılır.</translation>
+        <source>Like the Windows Control Panel. Settings marked Linwas open in Linwas; right-click them to open the same setting in your system settings.</source>
+        <translation>Windows'taki Denetim Masası gibi. Linwas etiketli ayarlar Linwas'ta açılır; aynı ayarı sistem ayarlarında açmak için sağ tıklayın.</translation>
+    </message>
+    <message>
+        <source>Linwas</source>
+        <translation>Linwas</translation>
     </message>
     <message>
         <source>Mouse &amp; touchpad</source>
@@ -2441,28 +2453,24 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Ağ bağlantıları</translation>
     </message>
     <message>
+        <source>No settings match your search.</source>
+        <translation>Aramanıza uyan ayar yok.</translation>
+    </message>
+    <message>
         <source>Notifications</source>
         <translation>Bildirimler</translation>
     </message>
     <message>
+        <source>Open in Linwas</source>
+        <translation>Linwas'ta aç</translation>
+    </message>
+    <message>
+        <source>Open in system settings</source>
+        <translation>Sistem ayarlarında aç</translation>
+    </message>
+    <message>
         <source>Open system settings</source>
         <translation>Sistem ayarlarını aç</translation>
-    </message>
-    <message>
-        <source>Open the same setting in your system settings</source>
-        <translation>Aynı ayarı sistem ayarlarında aç</translation>
-    </message>
-    <message>
-        <source>Opens in Linwas</source>
-        <translation>Linwas'ta açılır</translation>
-    </message>
-    <message>
-        <source>Opens in your system settings</source>
-        <translation>Sistem ayarlarında açılır</translation>
-    </message>
-    <message>
-        <source>Personalization</source>
-        <translation>Kişiselleştirme</translation>
     </message>
     <message>
         <source>Power</source>
@@ -2475,6 +2483,14 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>Privacy</source>
         <translation>Gizlilik</translation>
+    </message>
+    <message>
+        <source>Privacy &amp; notifications</source>
+        <translation>Gizlilik ve bildirimler</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>Ayarlarda ara</translation>
     </message>
     <message>
         <source>Sound</source>
@@ -2495,10 +2511,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>Wi-Fi</source>
         <translation>Wi-Fi</translation>
-    </message>
-    <message>
-        <source>{name} in system settings</source>
-        <translation>Sistem ayarlarında {name}</translation>
     </message>
 </context>
 <context>
