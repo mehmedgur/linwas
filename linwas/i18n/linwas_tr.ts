@@ -660,8 +660,8 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Sürücüler denetleniyor…</translation>
     </message>
     <message>
-        <source>Checks that installed drivers are really working: loaded, built for the running kernel and drawing your desktop.</source>
-        <translation>Kurulu sürücülerin gerçekten çalışıp çalışmadığını denetler: yüklenmiş mi, çalışan çekirdek için hazırlanmış mı, masaüstünüzü çiziyor mu.</translation>
+        <source>Checks that installed drivers are really working: loaded, built for the running kernel, drawing your desktop and not missing firmware.</source>
+        <translation>Kurulu sürücülerin gerçekten çalışıp çalışmadığını denetler: yüklenmiş mi, çalışan çekirdek için hazırlanmış mı, masaüstünüzü çiziyor mu, eksik firmware var mı.</translation>
     </message>
     <message>
         <source>Choose another driver version or the open-source driver.</source>
@@ -674,6 +674,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     <message>
         <source>Device ID</source>
         <translation>Aygıt kimliği</translation>
+    </message>
+    <message>
+        <source>Devices have the firmware files they need.</source>
+        <translation>Aygıtların ihtiyaç duyduğu firmware dosyaları kurulu.</translation>
     </message>
     <message>
         <source>Driver health check</source>
@@ -700,6 +704,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>{suite} deposunu etkinleştir</translation>
     </message>
     <message>
+        <source>Firmware installed: restart needed ({driver})</source>
+        <translation>Firmware kuruldu: yeniden başlatma gerekli ({driver})</translation>
+    </message>
+    <message>
         <source>Full name</source>
         <translation>Tam ad</translation>
     </message>
@@ -718,6 +726,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     <message>
         <source>Install</source>
         <translation>Kur</translation>
+    </message>
+    <message>
+        <source>Install firmware</source>
+        <translation>Firmware'i kur</translation>
     </message>
     <message>
         <source>Install it only if something does not work. A full system backup is taken first; the old kernel stays and can be chosen at startup. A restart is required.</source>
@@ -744,6 +756,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Linwas donanımınızı tarar ve sürücü ile firmware güncellemelerini önerir.</translation>
     </message>
     <message>
+        <source>Missing firmware: {driver}</source>
+        <translation>Eksik firmware: {driver}</translation>
+    </message>
+    <message>
         <source>Newer kernel for new hardware</source>
         <translation>Yeni donanım için yeni çekirdek</translation>
     </message>
@@ -758,6 +774,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     <message>
         <source>No graphics acceleration</source>
         <translation>Grafik hızlandırma yok</translation>
+    </message>
+    <message>
+        <source>No missing firmware found</source>
+        <translation>Eksik firmware bulunamadı</translation>
     </message>
     <message>
         <source>Not connected right now</source>
@@ -920,12 +940,24 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Masaüstünü işlemci çiziyor ({renderer}), bu yüzden yavaş olabilir. Ekran kartı sürücüsü çalışmıyor.</translation>
     </message>
     <message>
+        <source>The firmware ({files}) is installed now; it is loaded at the next restart.</source>
+        <translation>Firmware ({files}) artık kurulu; bir sonraki açılışta yüklenir.</translation>
+    </message>
+    <message>
         <source>The key was probably not registered on the blue screen. Use “Register the key” above and restart.</source>
         <translation>Anahtar büyük olasılıkla mavi ekranda kaydedilmedi. Yukarıdaki “Anahtarı kaydet”i kullanıp yeniden başlatın.</translation>
     </message>
     <message>
         <source>The open-source driver is still in use</source>
         <translation>Hâlâ açık kaynak sürücü kullanılıyor</translation>
+    </message>
+    <message>
+        <source>This device needs firmware ({files}) that Linwas could not find in your software sources.</source>
+        <translation>Bu aygıtın ihtiyaç duyduğu firmware ({files}) yazılım kaynaklarınızda bulunamadı.</translation>
+    </message>
+    <message>
+        <source>This device needs firmware that is not installed ({files}). Linwas can install it from the {package} package; restart afterwards.</source>
+        <translation>Bu aygıtın ihtiyaç duyduğu firmware kurulu değil ({files}). Linwas bunu {package} paketinden kurabilir; ardından yeniden başlatın.</translation>
     </message>
     <message>
         <source>Ubuntu's hardware enablement (HWE) kernel</source>

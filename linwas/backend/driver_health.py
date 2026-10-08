@@ -6,6 +6,7 @@ Kurulu sürücü gerçekten çalışıyor mu:
   farklı (güncellemeden sonra yeniden başlatılmamış).
 - DKMS: bir modül çalışan çekirdek için kurulmamış (çoğunlukla çekirdek başlık paketi eksik).
 - Çizim: masaüstünü hangi kartın çizdiği (`glxinfo -B`); yazılımla çizim (llvmpipe) sorun.
+- Eksik firmware (`firmware_missing.py`).
 
 Modül adları dağıtıma göre değişir: Ubuntu `nvidia`, Debian/Pardus DKMS `nvidia-current`
 (yüklenince yine `nvidia` adıyla görünür). `dkms` ve `modinfo` /usr/sbin altındadır.
@@ -32,7 +33,7 @@ _SOFTWARE_RENDERERS = ("llvmpipe", "softpipe", "swrast")
 class HealthItem:
     key: str  # kimlik (arayüz metni buna göre seçilir)
     ok: bool
-    # Düzeltme: "" | "reboot" | "rebuild_modules" | "secure_boot" | "ask_ai"
+    # Düzeltme: "" | "reboot" | "rebuild_modules" | "secure_boot" | "install_package" | "ask_ai"
     fix: str = ""
     # Metne eklenecek değerler (sürüm, çizen kart adı, modül listesi…)
     values: dict[str, str] = field(default_factory=dict)
@@ -210,12 +211,39 @@ def check_renderer() -> HealthItem | None:
     return HealthItem("render_ok", True, values={"renderer": renderer})
 
 
+def check_firmware(devices: list[Device]) -> list[HealthItem]:
+    from linwas.backend.firmware_missing import find_missing
+
+    missing = find_missing(devices)
+    if not missing:
+        return [HealthItem("firmware_ok", True)]
+    items = []
+    for m in missing:
+        values = {"driver": m.driver, "files": ", ".join(m.files[:3]), "package": m.package}
+        if not m.package:
+            items.append(HealthItem("firmware_unknown", False, fix="ask_ai", values=values))
+        elif m.installed:
+            items.append(HealthItem("firmware_restart", False, fix="reboot", values=values))
+        else:
+            items.append(
+                HealthItem(
+                    "firmware_missing",
+                    False,
+                    fix="install_package",
+                    values=values,
+                    package=m.package,
+                )
+            )
+    return items
+
+
 def check_all(devices: list[Device], secure_boot: bool, mok: bool | None) -> list[HealthItem]:
     """Bütün denetimler; sorunlar önce."""
     items = [
         check_nvidia(devices, secure_boot, mok),
         check_dkms(),
         check_renderer(),
+        *check_firmware(devices),
     ]
     found = [i for i in items if i is not None]
     return sorted(found, key=lambda i: i.ok)

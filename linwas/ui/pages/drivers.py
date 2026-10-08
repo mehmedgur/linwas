@@ -190,6 +190,28 @@ def _health_texts(item: driver_health.HealthItem) -> tuple[str, str]:
                 "a kernel update. Linwas can prepare them again."
             ),
         ),
+        "firmware_ok": (
+            tr("No missing firmware found"),
+            tr("Devices have the firmware files they need."),
+        ),
+        "firmware_missing": (
+            tr("Missing firmware: {driver}"),
+            tr(
+                "This device needs firmware that is not installed ({files}). Linwas can "
+                "install it from the {package} package; restart afterwards."
+            ),
+        ),
+        "firmware_restart": (
+            tr("Firmware installed: restart needed ({driver})"),
+            tr("The firmware ({files}) is installed now; it is loaded at the next restart."),
+        ),
+        "firmware_unknown": (
+            tr("Missing firmware: {driver}"),
+            tr(
+                "This device needs firmware ({files}) that Linwas could not find in your "
+                "software sources."
+            ),
+        ),
         "render_ok": (
             tr("Graphics acceleration is working"),
             tr("Your desktop is drawn by: {renderer}."),
@@ -586,7 +608,7 @@ class DriversPage(BasePage):
         hint = QLabel(
             tr(
                 "Checks that installed drivers are really working: loaded, built for the "
-                "running kernel and drawing your desktop."
+                "running kernel, drawing your desktop and not missing firmware."
             ),
             card,
         )
@@ -669,6 +691,9 @@ class DriversPage(BasePage):
         elif item.fix == "rebuild_modules":
             btn = QPushButton(tr("Prepare drivers again"), parent)
             btn.clicked.connect(lambda: self._rebuild_modules(item.package))
+        elif item.fix == "install_package":
+            btn = QPushButton(tr("Install firmware"), parent)
+            btn.clicked.connect(lambda: self._install_firmware(item.package))
         elif item.fix == "secure_boot":
             btn = QPushButton(tr("Register the key"), parent)
             btn.clicked.connect(self._enroll_key)
@@ -692,6 +717,20 @@ class DriversPage(BasePage):
         )
         if answer == QMessageBox.StandardButton.Yes:
             QProcess.startDetached("systemctl", ["reboot"])
+
+    def _install_firmware(self, package: str) -> None:
+        self.task_run_now.emit(
+            Task(
+                label=tr("Install firmware"),
+                steps=[
+                    TaskStep(
+                        op_id="package.install",
+                        label=tr("Install {pkg}").format(pkg=package),
+                        params={"name": package},
+                    )
+                ],
+            )
+        )
 
     def _rebuild_modules(self, headers: str) -> None:
         steps: list[TaskStep] = []

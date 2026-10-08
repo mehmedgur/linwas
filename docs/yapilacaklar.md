@@ -35,7 +35,7 @@ Son güncelleme: 8 Ekim 2026
   aşamalar — her biri ayrı commit, aralarda kullanıcı dener:
   1. [x] Donanım kartları görünümü (durum rozeti, sade metin + "Ayrıntılar") — 8 Ekim 2026, deneme bekliyor.
   2. [x] Sürücü sağlık kontrolü (modül, çizen kart, sürüm uyuşmazlığı, DKMS) — elle "Denetle". 8 Ekim 2026, deneme bekliyor.
-  3. [ ] Eksik firmware tespiti (çekirdek günlüğü → depoda doğrulanmış paket).
+  3. [x] Eksik firmware tespiti (çekirdek günlüğü → depoda doğrulanmış paket). 8 Ekim 2026, deneme bekliyor.
   4. [ ] Hibrit grafik (PRIME): Dengeli + programı güçlü kartla açma; Ubuntu'da prime-select modları.
   5. [ ] Yeni NVIDIA sürümü bildirimi.
 - **Ayarlar** (kararlar.md › Ayarlar, 7 Ekim 2026), aşamalar:
