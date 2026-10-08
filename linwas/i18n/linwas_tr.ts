@@ -4925,12 +4925,20 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
         <translation>Bir aygıtın sürücüsü yok</translation>
     </message>
     <message>
+        <source>A newer NVIDIA driver is available</source>
+        <translation>Daha yeni bir NVIDIA sürücüsü var</translation>
+    </message>
+    <message>
         <source>Automatic update failed</source>
         <translation>Otomatik güncelleme başarısız oldu</translation>
     </message>
     <message>
         <source>Automatic updates installed</source>
         <translation>Otomatik güncellemeler kuruldu</translation>
+    </message>
+    <message>
+        <source>NVIDIA driver {new} is available; you use {current}. Open Drivers to switch; a system backup is taken first.</source>
+        <translation>NVIDIA {new} sürücüsü çıktı; siz {current} kullanıyorsunuz. Geçmek için Sürücüler'i açın; önce sistem yedeği alınır.</translation>
     </message>
     <message>
         <source>Open</source>

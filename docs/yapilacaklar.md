@@ -37,7 +37,7 @@ Son güncelleme: 8 Ekim 2026
   2. [x] Sürücü sağlık kontrolü (modül, çizen kart, sürüm uyuşmazlığı, DKMS) — elle "Denetle". 8 Ekim 2026, deneme bekliyor.
   3. [x] Eksik firmware tespiti (çekirdek günlüğü → depoda doğrulanmış paket). 8 Ekim 2026, deneme bekliyor.
   4. [x] Hibrit grafik (PRIME): Dengeli + programı güçlü kartla açma; Ubuntu'da prime-select modları. 8 Ekim 2026, deneme bekliyor.
-  5. [ ] Yeni NVIDIA sürümü bildirimi.
+  5. [x] Yeni NVIDIA sürümü bildirimi. 8 Ekim 2026, deneme bekliyor (Ubuntu sanal makinesinde: daha yeni `nvidia-driver-<n>` serisi varken bildirim).
 - **Ayarlar** (kararlar.md › Ayarlar, 7 Ekim 2026), aşamalar:
   1. [x] İskelet: solda kategoriler + arama, anında kaydetme; mevcut Genel/tema/eklentiler/geçmiş taşınır.
   2. [x] Yapay zekâ bölümü (AI penceresi taşınır, token sınırı, sohbet saklama süresi, erişim izinleri).

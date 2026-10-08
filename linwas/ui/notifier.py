@@ -61,6 +61,8 @@ class _Facts:
     auto_result: str = ""
     auto_count: int = 0
     device_problems: int = 0
+    nvidia_current: int = 0  # kurulu NVIDIA serisi (ör. 535)
+    nvidia_newer: int = 0  # depodaki daha yeni seri; 0 = yok
 
 
 class _CheckWorker(QThread):
@@ -78,10 +80,27 @@ class _CheckWorker(QThread):
             state = autoupdate.load_state()
             facts.auto_run, facts.auto_result = state.last_run, state.result
             facts.auto_count = len(state.packages)
-            facts.device_problems = sum(1 for d in list_devices() if d.problem)
+            devices = list_devices()
+            facts.device_problems = sum(1 for d in devices if d.problem)
+            self._check_nvidia(facts, devices)
         except Exception:
             pass
         self.done.emit(facts)
+
+    @staticmethod
+    def _check_nvidia(facts: _Facts, devices: list) -> None:
+        """Yeni NVIDIA serisi: günde en çok bir kez (ubuntu-drivers yavaş)."""
+        if not any(d.group == "display" and d.vendor == "10de" for d in devices):
+            return
+        today = datetime.now().strftime("%Y-%m-%d")
+        if _load_state().get("nvidia_checked") == today:
+            facts.nvidia_current = -1  # bugün denetlendi; durum değişmez
+            return
+        from linwas.backend import driver_options
+
+        facts.nvidia_current, facts.nvidia_newer = driver_options.newer_series(
+            driver_options.nvidia_options()
+        )
 
 
 class Notifier(QObject):
@@ -211,4 +230,23 @@ class Notifier(QObject):
                 "hardware",
             )
         state["device_problems"] = problems
+
+        if facts.nvidia_current >= 0:
+            state["nvidia_checked"] = datetime.now().strftime("%Y-%m-%d")
+            newer = facts.nvidia_newer
+            if (
+                settings.notify_updates
+                and facts.nvidia_current
+                and newer
+                and newer != state.get("nvidia_notified")
+            ):
+                self.send(
+                    tr("A newer NVIDIA driver is available"),
+                    tr(
+                        "NVIDIA driver {new} is available; you use {current}. Open Drivers to "
+                        "switch; a system backup is taken first."
+                    ).format(new=newer, current=facts.nvidia_current),
+                    "drivers",
+                )
+                state["nvidia_notified"] = newer
         _save_state(state)

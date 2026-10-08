@@ -122,6 +122,29 @@ def nvidia_options() -> list[DriverOption]:
     return options
 
 
+def newer_series(options: list[DriverOption]) -> tuple[int, int]:
+    """(kurulu NVIDIA serisi, depodaki daha yeni seri); yeni yoksa ikincisi 0.
+
+    Yalnızca seri numaralı paketler karşılaştırılır (Ubuntu `nvidia-driver-<n>`); Debian/Pardus
+    `nvidia-driver` tek pakettir, yeni sürümü normal güncellemeyle gelir. Eski kartlara özel
+    (legacy/tesla) paketler önerilmez.
+    """
+    numbered = [
+        o
+        for o in options
+        if o.package
+        and _series(o.package)
+        and not (o.open_kernel or o.package.endswith("-open"))
+        and "legacy" not in o.package
+        and "tesla" not in o.package
+    ]
+    current = max((_series(o.package) for o in numbered if o.installed), default=0)
+    if not current:
+        return 0, 0
+    newer = max((_series(o.package) for o in numbered if _series(o.package) > current), default=0)
+    return current, newer
+
+
 # --- Sürücü değişikliği geçmişi ("Önceki sürücüye dön") ---
 
 
