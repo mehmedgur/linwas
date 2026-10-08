@@ -103,6 +103,39 @@ PATHS: dict[str, str] = {
         '<path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/>'
         '<rect x="9" y="11" width="6" height="5" rx="1"/><path d="M10 11V9.5a2 2 0 0 1 4 0V11"/>'
     ),
+    # Tüm Ayarlar bağlantı simgeleri
+    "clock": '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+    "globe": (
+        '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/>'
+        '<path d="M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9'
+        'c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/>'
+    ),
+    "user": '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+    "default_apps": (
+        '<rect x="3" y="3" width="7" height="7" rx="1.5"/>'
+        '<rect x="14" y="3" width="7" height="7" rx="1.5"/>'
+        '<rect x="3" y="14" width="7" height="7" rx="1.5"/>'
+        '<path d="M17.5 13.5l1.1 2.3 2.4.3-1.8 1.7.5 2.4-2.2-1.2-2.2 1.2.5-2.4-1.8-1.7 2.4-.3z"/>'
+    ),
+    "sound": (
+        '<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 9a4 4 0 0 1 0 6"/>'
+        '<path d="M19 6.5a7.5 7.5 0 0 1 0 11"/>'
+    ),
+    "mouse": '<rect x="6" y="3" width="12" height="18" rx="6"/><path d="M12 7v4"/>',
+    "keyboard": (
+        '<rect x="2" y="6" width="20" height="12" rx="2"/>'
+        '<path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>'
+    ),
+    "bluetooth": '<path d="M7 7l10 10-5 4V3l5 4L7 17"/>',
+    "ethernet": (
+        '<rect x="4" y="8" width="16" height="12" rx="2"/><path d="M8 8V5h8v3"/>'
+        '<path d="M8 13v3M12 13v3M16 13v3"/>'
+    ),
+    "wallpaper": (
+        '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9.5" r="1.8"/>'
+        '<path d="M3 17l5-5 4 4 3-3 6 6"/>'
+    ),
+    "bell": ('<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>'),
     "plugin": '<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 12h6M12 9v6"/>',
     "chevron_right": '<path d="M9 6l6 6-6 6"/>',
     "chevron_down": '<path d="M6 9l6 6 6-6"/>',

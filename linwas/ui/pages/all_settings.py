@@ -1,17 +1,18 @@
 """Tüm Ayarlar (Denetim Masası): klasik "Kategori görünümü".
 
-Her kategori bir satır: solda büyük simge, sağda kalın başlık ve altında tıklanabilir
-bağlantılar. Linwas'ın kendi sayfası olan ayarlarda önce Linwas sayfası açılır (Linwas
-öncelikli) ve bağlantının yanında küçük "Linwas" etiketi durur; sistemdeki karşılığı
-sağ tık menüsündeki "Sistem ayarlarında aç" ile açılır.
+Her kategori bir kart: solda büyük renkli simge, sağda kalın başlık ve kısa açıklama;
+altında her ayar kendi simgesiyle tıklanabilir bağlantı. Linwas'ın kendi sayfası olan
+ayarlarda önce Linwas sayfası açılır (Linwas öncelikli) ve bağlantının yanında küçük
+"Linwas" etiketi durur; sistemdeki karşılığı sağ tık menüsündeki "Sistem ayarlarında aç"
+ile açılır.
 """
 
 from __future__ import annotations
 
-import html
 import os
+from dataclasses import dataclass
 
-from PySide6.QtCore import QCoreApplication, QEvent, QPoint, Qt
+from PySide6.QtCore import QCoreApplication, QPoint, Qt
 from PySide6.QtWidgets import (
     QFrame,
     QGridLayout,
@@ -21,6 +22,7 @@ from PySide6.QtWidgets import (
     QMenu,
     QPushButton,
     QScrollArea,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -49,63 +51,77 @@ _LINWAS_PAGES = {
     "display": "display",
 }
 
-# Satırdaki bağlantıların ayırıcısı
-_SEPARATOR = " · "
+
+@dataclass(frozen=True)
+class _Category:
+    icon: str
+    title: str
+    description: str
+    items: list[tuple[str, str, str]]  # (ayar kimliği, simge, bağlantı metni)
 
 
-def _categories() -> list[tuple[str, str, list[tuple[str, str]]]]:
-    """(simge, başlık, [(ayar kimliği, bağlantı metni)])."""
+def _categories() -> list[_Category]:
     return [
-        (
+        _Category(
             "system",
             tr("System"),
+            tr("Computer info, time, language and accounts"),
             [
-                ("about", tr("About this computer")),
-                ("datetime", tr("Date & time")),
-                ("region", tr("Language & region")),
-                ("users", tr("User accounts")),
-                ("default_apps", tr("Default apps")),
+                ("about", "info", tr("About this computer")),
+                ("datetime", "clock", tr("Date & time")),
+                ("region", "globe", tr("Language & region")),
+                ("users", "user", tr("User accounts")),
+                ("default_apps", "default_apps", tr("Default apps")),
             ],
         ),
-        (
+        _Category(
             "hardware",
             tr("Hardware & sound"),
+            tr("Screen, sound, input devices, printers and power"),
             [
-                ("display", tr("Display")),
-                ("sound", tr("Sound")),
-                ("mouse", tr("Mouse & touchpad")),
-                ("keyboard", tr("Keyboard")),
-                ("printers", tr("Printers")),
-                ("power", tr("Power")),
+                ("display", "display", tr("Display")),
+                ("sound", "sound", tr("Sound")),
+                ("mouse", "mouse", tr("Mouse & touchpad")),
+                ("keyboard", "keyboard", tr("Keyboard")),
+                ("printers", "hardware", tr("Printers")),
+                ("power", "power", tr("Power")),
             ],
         ),
-        (
+        _Category(
             "network",
             tr("Network & Internet"),
+            tr("Wireless, wired connections and Bluetooth"),
             [
-                ("wifi", tr("Wi-Fi")),
-                ("network", tr("Network connections")),
-                ("bluetooth", tr("Bluetooth")),
+                ("wifi", "network", tr("Wi-Fi")),
+                ("network", "ethernet", tr("Network connections")),
+                ("bluetooth", "bluetooth", tr("Bluetooth")),
             ],
         ),
-        (
+        _Category(
             "interface",
             tr("Appearance & personalization"),
+            tr("Wallpaper, colors and fonts"),
             [
-                ("background", tr("Wallpaper")),
-                ("themes", tr("Colors & theme")),
-                ("fonts", tr("Fonts")),
+                ("background", "wallpaper", tr("Wallpaper")),
+                ("themes", "theme", tr("Colors & theme")),
+                ("fonts", "fonts", tr("Fonts")),
             ],
         ),
-        (
+        _Category(
             "privacy",
             tr("Privacy & notifications"),
+            tr("What apps can see and which alerts you get"),
             [
-                ("privacy", tr("Privacy")),
-                ("notifications", tr("Notifications")),
+                ("privacy", "privacy", tr("Privacy")),
+                ("notifications", "bell", tr("Notifications")),
             ],
         ),
-        ("accessibility", tr("Ease of access"), [("accessibility", tr("Accessibility"))]),
+        _Category(
+            "accessibility",
+            tr("Ease of access"),
+            tr("Text size, contrast, screen reader and more"),
+            [("accessibility", "accessibility", tr("Accessibility"))],
+        ),
     ]
 
 
@@ -114,109 +130,113 @@ def _fold(text: str) -> str:
     return text.replace("İ", "i").replace("I", "ı").lower()
 
 
-class _LinkLabel(QLabel):
-    """Bağlantı satırı; sağ tıkta üzerindeki bağlantının menüsünü açar."""
+class _SettingLink(QWidget):
+    """Simgeli bağlantı düğmesi + (Linwas sayfası varsa) "Linwas" etiketi."""
 
-    def __init__(self, page: AllSettingsPage, parent: QWidget) -> None:
-        super().__init__(parent)
-        self._page = page
-        self._hovered = ""
-        self.setWordWrap(True)
-        self.setTextFormat(Qt.TextFormat.RichText)
-        self.setTextInteractionFlags(
-            Qt.TextInteractionFlag.LinksAccessibleByMouse
-            | Qt.TextInteractionFlag.LinksAccessibleByKeyboard
-        )
-        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.linkActivated.connect(page.open_item)
-        self.linkHovered.connect(self._on_hovered)
-        self.customContextMenuRequested.connect(self._menu)
-
-    def _on_hovered(self, link: str) -> None:
-        self._hovered = link
-
-    def _menu(self, pos: QPoint) -> None:
-        if self._hovered:
-            self._page.show_item_menu(self._hovered, self.mapToGlobal(pos))
-
-
-class _CategoryRow(QWidget):
     def __init__(
-        self,
-        page: AllSettingsPage,
-        icon_name: str,
-        title: str,
-        items: list[tuple[str, str]],
-        parent: QWidget,
+        self, page: AllSettingsPage, item_id: str, icon_name: str, label: str, parent: QWidget
     ) -> None:
         super().__init__(parent)
         self.setObjectName("CardRow")
-        self._page = page
-        self._title = title
-        self._items = items
-        self._visible_ids = [item_id for item_id, _ in items]
-
+        self.label = label
         lay = QHBoxLayout(self)
-        lay.setContentsMargins(0, 4, 0, 4)
-        lay.setSpacing(14)
-        ico = QLabel(self)
-        ico.setObjectName("CardIcon")
-        ico.setFixedSize(56, 56)
-        ico.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        icons.bind(ico, icon_name, "accent", 34)
-        lay.addWidget(ico, 0, Qt.AlignmentFlag.AlignTop)
+        lay.setContentsMargins(0, 0, 0, 0)
+        lay.setSpacing(6)
 
-        col = QVBoxLayout()
-        col.setSpacing(4)
-        head = QLabel(title, self)
-        head.setObjectName("AppName")
-        col.addWidget(head)
-        self._links = _LinkLabel(page, self)
-        self._links.setAccessibleName(title)
-        col.addWidget(self._links)
-        col.addStretch(1)
-        lay.addLayout(col, 1)
-        self.render_links()
+        btn = QToolButton(self)
+        btn.setObjectName("SettingLink")
+        btn.setText(label)
+        btn.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        icons.bind(btn, icon_name, "accent", 18)
+        btn.setEnabled(page.can_open(item_id))
+        btn.clicked.connect(lambda: page.open_item(item_id))
+        # Sağ tık ve klavyedeki menü tuşu aynı menüyü açar
+        btn.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        btn.customContextMenuRequested.connect(
+            lambda pos: page.show_item_menu(item_id, btn.mapToGlobal(pos))
+        )
+        lay.addWidget(btn)
+
+        if item_id in _LINWAS_PAGES:
+            tag = QLabel(tr("Linwas"), self)
+            tag.setObjectName("LinwasTag")
+            tag.setToolTip(tr("Opens in Linwas; right-click for system settings"))
+            lay.addWidget(tag, 0, Qt.AlignmentFlag.AlignVCenter)
+            btn.setToolTip(tr("Opens in Linwas; right-click for system settings"))
+        else:
+            btn.setToolTip(tr("Opens in your system settings"))
+        lay.addStretch(1)
+
+
+class _CategoryCard(Card):
+    def __init__(self, page: AllSettingsPage, cat: _Category, parent: QWidget) -> None:
+        super().__init__(parent)
+        self._title = cat.title
+        self.layout.setContentsMargins(18, 16, 18, 14)
+        self.layout.setSpacing(10)
+
+        head = QHBoxLayout()
+        head.setSpacing(14)
+        ico = QLabel(self)
+        ico.setObjectName("CategoryIcon")
+        ico.setFixedSize(52, 52)
+        ico.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        icons.bind(ico, cat.icon, "on_accent", 30)
+        head.addWidget(ico, 0, Qt.AlignmentFlag.AlignTop)
+        text = QVBoxLayout()
+        text.setSpacing(2)
+        title = QLabel(cat.title, self)
+        title.setObjectName("H2")
+        text.addWidget(title)
+        desc = QLabel(cat.description, self)
+        desc.setObjectName("Secondary")
+        desc.setWordWrap(True)
+        text.addWidget(desc)
+        head.addLayout(text, 1)
+        self.layout.addLayout(head)
+
+        line = QFrame(self)
+        line.setFrameShape(QFrame.Shape.HLine)
+        line.setObjectName("Separator")
+        self.layout.addWidget(line)
+
+        self._grid = QGridLayout()
+        self._grid.setHorizontalSpacing(4)
+        self._grid.setVerticalSpacing(2)
+        self._grid.setColumnStretch(0, 1)
+        self._grid.setColumnStretch(1, 1)
+        self._links = [
+            _SettingLink(page, item_id, icon_name, label, self)
+            for item_id, icon_name, label in cat.items
+        ]
+        self._place(self._links)
+        self.layout.addLayout(self._grid)
+        self.layout.addStretch(1)
+
+    def _place(self, links: list[_SettingLink]) -> None:
+        for link in self._links:
+            self._grid.removeWidget(link)
+        for i, link in enumerate(links):
+            self._grid.addWidget(link, i // 2, i % 2)
 
     def apply_filter(self, needle: str) -> bool:
-        """Aramaya uyan bağlantıları bırakır; satırda hiç kalmazsa False."""
-        if not needle or needle in _fold(self._title):
-            ids = [item_id for item_id, _ in self._items]
-        else:
-            ids = [item_id for item_id, label in self._items if needle in _fold(label)]
-        self._visible_ids = ids
-        self.render_links()
-        return bool(ids)
-
-    def render_links(self) -> None:
-        link_color = icons.color_for("accent")
-        muted = icons.color_for("secondary")
-        parts = []
-        for item_id, label in self._items:
-            if item_id not in self._visible_ids:
-                continue
-            text = html.escape(label)
-            if not self._page.can_open(item_id):
-                parts.append(f'<span style="color:{muted}">{text}</span>')
-                continue
-            part = (
-                f'<a href="{item_id}" style="color:{link_color}; text-decoration:none">{text}</a>'
-            )
-            if item_id in _LINWAS_PAGES:
-                part += (
-                    f' <span style="color:{muted}; font-size:10px; font-weight:bold">'
-                    f"{html.escape(tr('Linwas'))}</span>"
-                )
-            parts.append(part)
-        self._links.setText(_SEPARATOR.join(parts))
+        """Aramaya uyan bağlantıları bırakır; kartta hiç kalmazsa False."""
+        title_match = not needle or needle in _fold(self._title)
+        shown = []
+        for link in self._links:
+            visible = title_match or needle in _fold(link.label)
+            link.setVisible(visible)
+            if visible:
+                shown.append(link)
+        self._place(shown)
+        return bool(shown)
 
 
 class AllSettingsPage(BasePage):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._desktop = detect_desktop(os.environ).value
-        self._labels = {item_id: label for _, _, items in _categories() for item_id, label in items}
 
         scroll = QScrollArea(self)
         scroll.setWidgetResizable(True)
@@ -255,26 +275,19 @@ class AllSettingsPage(BasePage):
         hint.setWordWrap(True)
         outer.addWidget(hint)
 
-        card = Card(content)
-        grid = QGridLayout()
-        grid.setHorizontalSpacing(24)
-        grid.setVerticalSpacing(14)
-        self._grid = grid
-        self._rows = [
-            _CategoryRow(self, icon_name, cat_title, items, card)
-            for icon_name, cat_title, items in _categories()
-        ]
-        self._place_rows(self._rows)
-        grid.setColumnStretch(0, 1)
-        grid.setColumnStretch(1, 1)
-        card.layout.addLayout(grid)
-        outer.addWidget(card)
+        self._grid = QGridLayout()
+        self._grid.setHorizontalSpacing(14)
+        self._grid.setVerticalSpacing(14)
+        self._grid.setColumnStretch(0, 1)
+        self._grid.setColumnStretch(1, 1)
+        self._cards = [_CategoryCard(self, cat, content) for cat in _categories()]
+        self._place(self._cards)
+        outer.addLayout(self._grid)
 
         self._empty = QLabel(tr("No settings match your search."), content)
         self._empty.setObjectName("Secondary")
         self._empty.hide()
         outer.addWidget(self._empty)
-        self._card = card
 
         outer.addStretch(1)
         scroll.setWidget(content)
@@ -301,40 +314,30 @@ class AllSettingsPage(BasePage):
         if not self.can_open(item_id):
             return
         menu = QMenu(self)
-        label = self._labels.get(item_id, "")
         if item_id in _LINWAS_PAGES:
             menu.addAction(tr("Open in Linwas"), lambda: self.open_item(item_id))
         sys_action = menu.addAction(
             tr("Open in system settings"), lambda: open_settings(item_id, self._desktop)
         )
         sys_action.setEnabled(self._has_system(item_id))
-        menu.setAccessibleName(label)
         menu.exec(global_pos)
 
-    # --- Arama ve tema ---
+    # --- Arama ---
+
+    def _place(self, cards: list[_CategoryCard]) -> None:
+        for card in self._cards:
+            self._grid.removeWidget(card)
+        for i, card in enumerate(cards):
+            self._grid.addWidget(card, i // 2, i % 2)
 
     def _filter(self, text: str) -> None:
         needle = _fold(text.strip())
         shown = []
-        for row in self._rows:
-            visible = row.apply_filter(needle)
-            row.setVisible(visible)
+        for card in self._cards:
+            visible = card.apply_filter(needle)
+            card.setVisible(visible)
             if visible:
-                shown.append(row)
-        # Gizlenen satırlar boşluk bırakmasın: kalanlar baştan iki sütuna dizilir.
-        self._place_rows(shown)
-        self._card.setVisible(bool(shown))
+                shown.append(card)
+        # Gizlenen kartlar boşluk bırakmasın: kalanlar baştan iki sütuna dizilir.
+        self._place(shown)
         self._empty.setVisible(not shown)
-
-    def _place_rows(self, rows: list[_CategoryRow]) -> None:
-        for row in self._rows:
-            self._grid.removeWidget(row)
-        for i, row in enumerate(rows):
-            self._grid.addWidget(row, i // 2, i % 2)
-
-    def changeEvent(self, event: QEvent) -> None:  # noqa: N802
-        # Tema değişince bağlantı renkleri yeni paletten yeniden yazılır.
-        if event.type() == QEvent.Type.StyleChange:
-            for row in getattr(self, "_rows", []):
-                row.render_links()
-        super().changeEvent(event)

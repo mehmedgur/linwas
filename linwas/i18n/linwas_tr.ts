@@ -2401,6 +2401,10 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Renkler ve tema</translation>
     </message>
     <message>
+        <source>Computer info, time, language and accounts</source>
+        <translation>Bilgisayar bilgisi, saat, dil ve hesaplar</translation>
+    </message>
+    <message>
         <source>Date &amp; time</source>
         <translation>Tarih ve saat</translation>
     </message>
@@ -2473,6 +2477,14 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Sistem ayarlarını aç</translation>
     </message>
     <message>
+        <source>Opens in Linwas; right-click for system settings</source>
+        <translation>Linwas'ta açılır; sistem ayarları için sağ tıklayın</translation>
+    </message>
+    <message>
+        <source>Opens in your system settings</source>
+        <translation>Sistem ayarlarında açılır</translation>
+    </message>
+    <message>
         <source>Power</source>
         <translation>Güç</translation>
     </message>
@@ -2489,6 +2501,10 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Gizlilik ve bildirimler</translation>
     </message>
     <message>
+        <source>Screen, sound, input devices, printers and power</source>
+        <translation>Ekran, ses, giriş aygıtları, yazıcılar ve güç</translation>
+    </message>
+    <message>
         <source>Search settings</source>
         <translation>Ayarlarda ara</translation>
     </message>
@@ -2501,6 +2517,10 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Sistem</translation>
     </message>
     <message>
+        <source>Text size, contrast, screen reader and more</source>
+        <translation>Yazı boyutu, kontrast, ekran okuyucu ve daha fazlası</translation>
+    </message>
+    <message>
         <source>User accounts</source>
         <translation>Kullanıcı hesapları</translation>
     </message>
@@ -2509,8 +2529,20 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Duvar kâğıdı</translation>
     </message>
     <message>
+        <source>Wallpaper, colors and fonts</source>
+        <translation>Duvar kâğıdı, renkler ve yazı tipleri</translation>
+    </message>
+    <message>
+        <source>What apps can see and which alerts you get</source>
+        <translation>Uygulamaların neleri görebileceği ve hangi uyarıları alacağınız</translation>
+    </message>
+    <message>
         <source>Wi-Fi</source>
         <translation>Wi-Fi</translation>
+    </message>
+    <message>
+        <source>Wireless, wired connections and Bluetooth</source>
+        <translation>Kablosuz, kablolu bağlantılar ve Bluetooth</translation>
     </message>
 </context>
 <context>

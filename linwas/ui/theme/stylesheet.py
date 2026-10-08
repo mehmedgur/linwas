@@ -261,6 +261,42 @@ QLabel#TileNumber {{
 QLabel#TileNumber[attention="true"] {{
     color: {c.accent};
 }}
+/* === Tüm Ayarlar (Denetim Masası) === */
+QFrame#Card QToolButton#SettingLink {{
+    background-color: {c.surface};
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 5px 8px;
+    color: {c.accent};
+    text-align: left;
+}}
+QFrame#Card QToolButton#SettingLink:hover {{
+    background-color: {c.sidebar_item_hover};
+    border-color: {c.border};
+}}
+QFrame#Card QToolButton#SettingLink:focus {{
+    border-color: {c.accent};
+}}
+QFrame#Card QToolButton#SettingLink:disabled {{
+    color: {c.text_disabled};
+}}
+QFrame#Card QFrame#Separator {{
+    background-color: {c.border};
+    border: none;
+    max-height: 1px;
+}}
+QLabel#CategoryIcon {{
+    background-color: {c.accent};
+    border-radius: 12px;
+}}
+QLabel#LinwasTag {{
+    background-color: {c.sidebar_item_active};
+    color: {c.accent};
+    border-radius: 6px;
+    padding: 0 6px;
+    font-size: 10px;
+    font-weight: bold;
+}}
 QPushButton#Chip {{
     border-radius: 14px;
     padding: 4px 14px;
