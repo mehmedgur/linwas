@@ -131,7 +131,9 @@ def _usb_group(classes: set[str], name: str) -> str:
         return "bluetooth"
     if "0e" in classes or "camera" in lname or "webcam" in lname:
         return "camera"
-    if "07" in classes or "06" in classes or "scanner" in lname or "printer" in lname:
+    # 07 = yazıcı; 06 (Still Imaging) telefon/fotoğraf makinesi de olabilir, yalnızca adında
+    # tarayıcı geçiyorsa yazıcı/tarayıcı sayılır
+    if "07" in classes or "scanner" in lname or "printer" in lname:
         return "printer"
     if "01" in classes:
         return "audio"

@@ -33,7 +33,7 @@ Son güncelleme: 8 Ekim 2026
   4. [ ] Yaşam döngüsü: gerektiğinde başlat, boştayken durdur; bellek ayarı; kaldırma.
 - **Sürücüler geliştirmesi** (kararlar.md › Güncelleme merkezi › Sürücüler geliştirmesi, 8 Ekim 2026),
   aşamalar — her biri ayrı commit, aralarda kullanıcı dener:
-  1. [ ] Donanım kartları görünümü (durum rozeti, sade metin + "Ayrıntılar").
+  1. [x] Donanım kartları görünümü (durum rozeti, sade metin + "Ayrıntılar") — 8 Ekim 2026, deneme bekliyor.
   2. [ ] Sürücü sağlık kontrolü (modül, çizen kart, sürüm uyuşmazlığı, DKMS) — elle "Denetle".
   3. [ ] Eksik firmware tespiti (çekirdek günlüğü → depoda doğrulanmış paket).
   4. [ ] Hibrit grafik (PRIME): Dengeli + programı güçlü kartla açma; Ubuntu'da prime-select modları.

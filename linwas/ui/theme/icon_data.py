@@ -135,6 +135,10 @@ PATHS: dict[str, str] = {
         '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9.5" r="1.8"/>'
         '<path d="M3 17l5-5 4 4 3-3 6 6"/>'
     ),
+    "camera": (
+        '<path d="M3 8a2 2 0 0 1 2-2h2.5l1.5-2h6l1.5 2H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5'
+        'a2 2 0 0 1-2-2z"/><circle cx="12" cy="12.5" r="3.5"/>'
+    ),
     "bell": ('<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>'),
     "plugin": '<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 12h6M12 9v6"/>',
     "chevron_right": '<path d="M9 6l6 6-6 6"/>',

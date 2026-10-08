@@ -12,36 +12,29 @@ from PySide6.QtWidgets import (
     QLabel,
     QPushButton,
     QScrollArea,
-    QSizePolicy,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
 
 from linwas.backend import driver_options as dopt
+from linwas.backend.devices import Device, list_devices
 from linwas.backend.drivers import DriverCandidate, DriverCategory, list_drivers
+from linwas.backend.hardware_cards import (
+    PROPRIETARY_DRIVERS,
+    HardwareCard,
+    build_cards,
+    module_version,
+    short_name,
+)
 from linwas.core.tasks import Task, TaskStep
+from linwas.ui import icons
 from linwas.ui.pages.base import BasePage
 from linwas.ui.widgets.card import Card
 
 
 def tr(text: str) -> str:
     return QCoreApplication.translate("DriversPage", text)
-
-
-_CATEGORY_LABELS = {
-    DriverCategory.GPU: "Graphics",
-    DriverCategory.NETWORK: "Network & Wi-Fi",
-    DriverCategory.PRINTER: "Printers & Scanners",
-    DriverCategory.FIRMWARE: "Firmware Updates",
-}
-
-
-def _translation_markers() -> None:
-    """Dinamik kategori etiketleri için çeviri tarayıcısı işaretleyicileri. Hiç çağrılmaz."""
-    tr("Graphics")
-    tr("Network & Wi-Fi")
-    tr("Printers & Scanners")
-    tr("Firmware Updates")
 
 
 def _description(text: str) -> str:
@@ -121,7 +114,8 @@ def _description_markers() -> None:
 
 
 class _ScanWorker(QThread):
-    # (list[DriverCandidate], Secure Boot açık mı, MOK kayıtlı mı | None, KernelOffer | None)
+    # (list[DriverCandidate], Secure Boot açık mı, MOK kayıtlı mı | None, KernelOffer | None,
+    #  list[Device])
     done = Signal(object)
     error = Signal(str)
 
@@ -132,118 +126,228 @@ class _ScanWorker(QThread):
             drivers = list_drivers()
             secure_boot = dopt.secure_boot_enabled()
             mok = dopt.mok_enrolled() if secure_boot else None
-            self.done.emit((drivers, secure_boot, mok, kernel_offer()))
+            self.done.emit((drivers, secure_boot, mok, kernel_offer(), list_devices()))
         except Exception as exc:
             self.error.emit(str(exc))
 
 
-# --- Sürücü kartı ---
+# --- Donanım kartı ---
+
+_WIFI_DRIVERS = ("iwlwifi", "ath", "rtw", "rtl8", "mt7", "brcmfmac", "wl", "b43")
+
+# (yazı rengi, zemin) — durum rozetleri
+_STATUS_STYLE = {
+    "ok": ("#0e7a0e", "#e8f5e9"),
+    "recommended": ("#0067c0", "#e3f2fd"),
+    "problem": ("#c42b1c", "#fde7e9"),
+}
 
 
-class _DriverCard(Card):
+def _is_wifi(device: Device) -> bool:
+    name = device.name.lower()
+    if any(k in name for k in ("wireless", "wi-fi", "wifi", "wlan", "802.11")):
+        return True
+    return device.driver.startswith(_WIFI_DRIVERS)
+
+
+def _kind(card: HardwareCard) -> tuple[str, str]:
+    """(simge, tür adı)."""
+    group = card.group
+    if group == "display":
+        return "display", tr("Graphics card")
+    if group == "network":
+        if card.device is None or _is_wifi(card.device):
+            return "network", tr("Wi-Fi")
+        return "ethernet", tr("Wired network (Ethernet)")
+    if group == "audio":
+        return "sound", tr("Sound")
+    if group == "bluetooth":
+        return "bluetooth", tr("Bluetooth")
+    if group == "camera":
+        return "camera", tr("Camera")
+    return "hardware", tr("Printer / scanner")
+
+
+def _driver_text(card: HardwareCard) -> str:
+    dev = card.device
+    if dev is None:
+        return tr("Not connected right now")
+    if dev.driver in PROPRIETARY_DRIVERS:
+        maker = "NVIDIA" if dev.driver == "nvidia" else "Broadcom"
+        return tr("Uses the {maker} proprietary driver").format(maker=maker)
+    if dev.driver:
+        return tr("Uses the built-in Linux driver")
+    if dev.problem:
+        return tr("No driver is working for this device")
+    return tr("No driver in use")
+
+
+def _status_text(status: str) -> str:
+    if status == "problem":
+        return tr("Problem")
+    if status == "recommended":
+        return tr("Recommended driver available")
+    return tr("Working")
+
+
+class _HardwareCard(Card):
     action_requested = Signal(DriverCandidate)
     options_requested = Signal(DriverCandidate)
     revert_requested = Signal(DriverCandidate)
 
     def __init__(
-        self, driver: DriverCandidate, parent: QWidget | None = None, can_revert: bool = False
+        self,
+        card: HardwareCard,
+        can_revert: set[str],
+        parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
-        self._driver = driver
+        self.layout.setSpacing(10)
+        icon_name, kind = _kind(card)
+        dev = card.device
 
-        # Üst satır: paket adı + rozetler
-        top = QHBoxLayout()
-        top.setContentsMargins(0, 0, 0, 0)
+        head = QHBoxLayout()
+        head.setSpacing(14)
+        ico = QLabel(self)
+        ico.setObjectName("CategoryIcon")
+        ico.setFixedSize(48, 48)
+        ico.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        icons.bind(ico, icon_name, "on_accent", 28)
+        head.addWidget(ico, 0, Qt.AlignmentFlag.AlignTop)
 
-        pkg_lbl = QLabel(driver.package, self)
-        pkg_lbl.setObjectName("H2")
-        top.addWidget(pkg_lbl)
-        top.addStretch(1)
-
-        if driver.driver_type == "proprietary":
-            self._add_badge(top, tr("Proprietary"), "#9d5d00", "#fff3cc")
-        elif driver.driver_type == "open-source":
-            self._add_badge(top, tr("Open source"), "#0e7a0e", "#e8f5e9")
-
-        if driver.needs_reboot and not driver.installed:
-            self._add_badge(top, tr("Reboot required"), "#6b3a7d", "#f3e5f5")
-
-        if driver.recommended and not driver.installed:
-            self._add_badge(top, tr("Recommended"), "#0067c0", "#e3f2fd")
-
-        self.layout.addLayout(top)
-
-        # Cihaz adı
-        dev_lbl = QLabel(_description(driver.device_name), self)
-        dev_lbl.setObjectName("Secondary")
-        dev_lbl.setWordWrap(True)
-        self.layout.addWidget(dev_lbl)
-
-        # Aktif sürücü (bilgi satırı)
-        if driver.current_driver:
-            active_lbl = QLabel(tr("Current driver: {d}").format(d=driver.current_driver), self)
-            active_lbl.setObjectName("Secondary")
-            self.layout.addWidget(active_lbl)
-
-        # Açıklama
-        desc_lbl = QLabel(_description(driver.description), self)
-        desc_lbl.setWordWrap(True)
-        self.layout.addWidget(desc_lbl)
-
-        # Alt satır: eylem düğmeleri
-        row = QHBoxLayout()
-        if driver.installed:
-            status = QLabel("✓ " + tr("Installed"), self)
-            status.setStyleSheet("color: #0e7a0e; font-weight: bold;")
-            row.addWidget(status)
-        elif driver.package == "__fwupd_update__":
-            btn = QPushButton(tr("Update firmware"), self)
-            btn.setProperty("primary", True)
-            btn.clicked.connect(lambda: self.action_requested.emit(driver))
-            row.addWidget(btn)
+        text = QVBoxLayout()
+        text.setSpacing(2)
+        if dev is not None:
+            title_text = short_name(dev.name)
+        elif card.candidates:
+            title_text = _description(card.candidates[0].device_name)
         else:
-            btn = QPushButton(tr("Install"), self)
-            btn.setProperty("primary", driver.recommended)
-            btn.clicked.connect(lambda: self.action_requested.emit(driver))
-            row.addWidget(btn)
-        if driver.options:
-            more = QPushButton(tr("Other options…"), self)
-            more.setToolTip(tr("Choose another driver version or the open-source driver."))
-            more.clicked.connect(lambda: self.options_requested.emit(driver))
-            row.addWidget(more)
-        if can_revert:
-            back = QPushButton(tr("Return to the previous driver"), self)
-            back.clicked.connect(lambda: self.revert_requested.emit(driver))
-            row.addWidget(back)
-        row.addStretch(1)
-        self.layout.addLayout(row)
+            title_text = kind
+        title = QLabel(title_text, self)
+        title.setObjectName("H2")
+        title.setWordWrap(True)
+        text.addWidget(title)
+        sub = QLabel(f"{kind} · {_driver_text(card)}", self)
+        sub.setObjectName("Secondary")
+        sub.setWordWrap(True)
+        text.addWidget(sub)
+        head.addLayout(text, 1)
 
-    def _add_badge(self, layout: QHBoxLayout, text: str, fg: str, bg: str) -> None:
-        badge = QLabel(text, self)
+        fg, bg = _STATUS_STYLE[card.status]
+        badge = QLabel(_status_text(card.status), self)
         badge.setStyleSheet(
+            f"background-color: {bg}; color: {fg}; border-radius: 10px;"
+            " padding: 2px 10px; font-size: 11px; font-weight: bold;"
+        )
+        head.addWidget(badge, 0, Qt.AlignmentFlag.AlignTop)
+        self.layout.addLayout(head)
+
+        # Kurulabilecek sürücüler / sürüm seçenekleri
+        for cand in card.candidates:
+            if cand.installed and not cand.options:
+                continue
+            self.layout.addWidget(self._candidate_row(cand, cand.package in can_revert))
+
+        # Ayrıntılar (teknik bilgi)
+        details_btn = QToolButton(self)
+        details_btn.setObjectName("DetailsToggle")
+        details_btn.setText(tr("Details"))
+        details_btn.setCheckable(True)
+        details_btn.setAutoRaise(True)
+        details_btn.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        icons.bind(details_btn, "chevron_right", "secondary", 14)
+        details = QLabel(self._details_html(card), self)
+        details.setObjectName("Secondary")
+        details.setTextFormat(Qt.TextFormat.RichText)
+        details.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+        details.setWordWrap(True)
+        details.hide()
+
+        def toggle(on: bool) -> None:
+            details.setVisible(on)
+            icons.bind(details_btn, "chevron_down" if on else "chevron_right", "secondary", 14)
+
+        details_btn.toggled.connect(toggle)
+        self.layout.addWidget(details_btn, 0, Qt.AlignmentFlag.AlignLeft)
+        self.layout.addWidget(details)
+
+    def _candidate_row(self, cand: DriverCandidate, can_revert: bool) -> QWidget:
+        row = QWidget(self)
+        row.setObjectName("CardRow")
+        lay = QVBoxLayout(row)
+        lay.setContentsMargins(62, 0, 0, 0)
+        lay.setSpacing(4)
+
+        desc = QLabel(_description(cand.description), row)
+        desc.setWordWrap(True)
+        lay.addWidget(desc)
+
+        buttons = QHBoxLayout()
+        if cand.installed:
+            status = QLabel("✓ " + tr("Installed"), row)
+            status.setObjectName("Success")
+            buttons.addWidget(status)
+        else:
+            btn = QPushButton(
+                tr("Update firmware") if cand.package == "__fwupd_update__" else tr("Install"), row
+            )
+            btn.setProperty("primary", cand.recommended)
+            btn.clicked.connect(lambda: self.action_requested.emit(cand))
+            buttons.addWidget(btn)
+        if cand.options:
+            more = QPushButton(tr("Other options…"), row)
+            more.setToolTip(tr("Choose another driver version or the open-source driver."))
+            more.clicked.connect(lambda: self.options_requested.emit(cand))
+            buttons.addWidget(more)
+        if can_revert:
+            back = QPushButton(tr("Return to the previous driver"), row)
+            back.clicked.connect(lambda: self.revert_requested.emit(cand))
+            buttons.addWidget(back)
+        if cand.recommended and not cand.installed:
+            buttons.addWidget(
+                self._tag(tr("Recommended"), "#0067c0", "#e3f2fd"), 0, Qt.AlignmentFlag.AlignVCenter
+            )
+        if cand.driver_type == "proprietary":
+            buttons.addWidget(
+                self._tag(tr("Proprietary"), "#9d5d00", "#fff3cc"), 0, Qt.AlignmentFlag.AlignVCenter
+            )
+        if cand.needs_reboot and not cand.installed:
+            buttons.addWidget(
+                self._tag(tr("Reboot required"), "#6b3a7d", "#f3e5f5"),
+                0,
+                Qt.AlignmentFlag.AlignVCenter,
+            )
+        buttons.addStretch(1)
+        lay.addLayout(buttons)
+        return row
+
+    def _tag(self, text: str, fg: str, bg: str) -> QLabel:
+        tag = QLabel(text, self)
+        tag.setStyleSheet(
             f"background-color: {bg}; color: {fg}; border-radius: 4px;"
             " padding: 1px 7px; font-size: 11px; font-weight: bold;"
         )
-        layout.addWidget(badge)
+        return tag
 
-
-# --- Bölüm başlığı ---
-
-
-class _SectionHeader(QWidget):
-    def __init__(self, text: str, parent: QWidget | None = None) -> None:
-        super().__init__(parent)
-        row = QHBoxLayout(self)
-        row.setContentsMargins(0, 8, 0, 4)
-
-        lbl = QLabel(text, self)
-        lbl.setObjectName("H2")
-        row.addWidget(lbl)
-
-        sep = QFrame(self)
-        sep.setFrameShape(QFrame.Shape.HLine)
-        sep.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        row.addWidget(sep, 1)
+    @staticmethod
+    def _details_html(card: HardwareCard) -> str:
+        rows: list[tuple[str, str]] = []
+        dev = card.device
+        if dev is not None:
+            rows.append((tr("Full name"), dev.name))
+            rows.append((tr("Kernel driver"), dev.driver or "—"))
+            if dev.module and dev.module != dev.driver:
+                rows.append((tr("Available module"), dev.module))
+            version = module_version(dev.driver)
+            if version:
+                rows.append((tr("Driver version"), version))
+            rows.append((tr("Device ID"), f"{dev.ids} ({dev.bus.upper()})"))
+        for cand in card.candidates:
+            if cand.package.startswith("__"):
+                continue
+            state = tr("installed") if cand.installed else tr("not installed")
+            rows.append((tr("Package"), f"{cand.package} ({state})"))
+        return "<br>".join(f"<b>{html.escape(k)}:</b> {html.escape(v)}" for k, v in rows)
 
 
 # --- Sayfa ---
@@ -266,6 +370,7 @@ class DriversPage(BasePage):
         self._mok: bool | None = None
         self._kernel = None  # backend.kernel.KernelOffer | None
         self._candidates: list[DriverCandidate] = []
+        self._devices: list[Device] = []
         # Görev bitince geçmişe yazılacak değişiklik: (aygıt, önceki paket, yeni paket)
         self._pending_change: tuple[str, str, str] | None = None
 
@@ -345,57 +450,42 @@ class DriversPage(BasePage):
         return self._categories is None or category in self._categories
 
     def _on_done(self, result: tuple) -> None:
-        candidates, self._secure_boot, self._mok, self._kernel = result
+        candidates, self._secure_boot, self._mok, self._kernel, devices = result
         self._clear_cards()
         if self._categories is not None:
             candidates = [c for c in candidates if c.category in self._categories]
         self._candidates = candidates
+        self._devices = devices
         insert_at = self._cards_start
         # Secure Boot açık ve imza anahtarı kayıtlı değil → sürücü yüklenemez
         if self._shows(DriverCategory.GPU) and self._secure_boot and self._mok is False:
             self._outer.insertWidget(insert_at, self._mok_card())
             insert_at += 1
 
-        if not candidates:
-            self._status_lbl.setText(
-                tr("No additional drivers found. Your system is using the recommended drivers.")
-            )
-            self._add_troubleshooting()
-            self._outer.addStretch(1)
-            return
-
-        # Kaç kurulmamış önerilen var?
+        cards = build_cards(devices, candidates)
+        problems = sum(1 for c in cards if c.status == "problem")
         pending = sum(1 for d in candidates if d.recommended and not d.installed)
-        if pending:
+        if problems:
+            self._status_lbl.setText(tr("{n} device(s) need attention").format(n=problems))
+        elif pending:
             self._status_lbl.setText(
                 tr("{n} driver/firmware update(s) recommended").format(n=pending)
             )
         else:
-            self._status_lbl.setText(tr("All recommended drivers are installed"))
+            self._status_lbl.setText(tr("All your hardware is working"))
 
-        # Kategorilere göre grupla
-        categories_seen: list[DriverCategory] = []
-        by_cat: dict[DriverCategory, list[DriverCandidate]] = {}
-        for d in candidates:
-            if d.category not in by_cat:
-                by_cat[d.category] = []
-                categories_seen.append(d.category)
-            by_cat[d.category].append(d)
-
-        for cat in categories_seen:
-            header = _SectionHeader(tr(_CATEGORY_LABELS[cat]), self._content)
-            self._outer.insertWidget(insert_at, header)
-            insert_at += 1
-            for driver in by_cat[cat]:
+        for card in cards:
+            can_revert: set[str] = set()
+            for driver in card.candidates:
                 change = dopt.last_change(driver.device_name) if driver.options else None
-                current = self._current_package(driver)
-                can_revert = change is not None and change.new == current
-                card = _DriverCard(driver, self._content, can_revert=can_revert)
-                card.action_requested.connect(self._on_action)
-                card.options_requested.connect(self._on_options)
-                card.revert_requested.connect(self._on_revert)
-                self._outer.insertWidget(insert_at, card)
-                insert_at += 1
+                if change is not None and change.new == self._current_package(driver):
+                    can_revert.add(driver.package)
+            widget = _HardwareCard(card, can_revert, self._content)
+            widget.action_requested.connect(self._on_action)
+            widget.options_requested.connect(self._on_options)
+            widget.revert_requested.connect(self._on_revert)
+            self._outer.insertWidget(insert_at, widget)
+            insert_at += 1
 
         self._add_troubleshooting()
         self._outer.addStretch(1)

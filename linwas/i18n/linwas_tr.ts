@@ -596,88 +596,8 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
 <context>
     <name>DriversPage</name>
     <message>
-        <source>Drivers</source>
-        <translation>Sürücüler</translation>
-    </message>
-    <message>
-        <source>Scan again</source>
-        <translation>Yeniden tara</translation>
-    </message>
-    <message>
-        <source>Linwas scans your hardware and suggests drivers and firmware updates.</source>
-        <translation>Linwas donanımınızı tarar ve sürücü ile firmware güncellemelerini önerir.</translation>
-    </message>
-    <message>
-        <source>Scanning hardware…</source>
-        <translation>Donanım taranıyor…</translation>
-    </message>
-    <message>
-        <source>No additional drivers found. Your system is using the recommended drivers.</source>
-        <translation>Ek sürücü bulunamadı. Sisteminiz önerilen sürücüleri kullanıyor.</translation>
-    </message>
-    <message>
-        <source>All recommended drivers are installed</source>
-        <translation>Tüm önerilen sürücüler kurulu</translation>
-    </message>
-    <message>
-        <source>{n} driver/firmware update(s) recommended</source>
-        <translation>{n} sürücü/firmware güncellemesi öneriliyor</translation>
-    </message>
-    <message>
-        <source>Installed</source>
-        <translation>Kurulu</translation>
-    </message>
-    <message>
-        <source>Install</source>
-        <translation>Kur</translation>
-    </message>
-    <message>
-        <source>Recommended</source>
-        <translation>Önerilen</translation>
-    </message>
-    <message>
-        <source>Proprietary</source>
-        <translation>Tescilli</translation>
-    </message>
-    <message>
-        <source>Open source</source>
-        <translation>Açık kaynak</translation>
-    </message>
-    <message>
-        <source>Reboot required</source>
-        <translation>Yeniden başlatma gerekli</translation>
-    </message>
-    <message>
-        <source>Current driver: {d}</source>
-        <translation>Mevcut sürücü: {d}</translation>
-    </message>
-    <message>
-        <source>Update firmware</source>
-        <translation>Firmware güncelle</translation>
-    </message>
-    <message>
-        <source>Install {pkg}</source>
-        <translation>{pkg} kur</translation>
-    </message>
-    <message>
-        <source>Update firmware (fwupd)</source>
-        <translation>Firmware güncelle (fwupd)</translation>
-    </message>
-    <message>
-        <source>Scan failed: {error}</source>
-        <translation>Tarama başarısız: {error}</translation>
-    </message>
-    <message>
-        <source>Graphics</source>
-        <translation>Ekran Kartı</translation>
-    </message>
-    <message>
-        <source>Network &amp; Wi-Fi</source>
-        <translation>Ağ ve Wi-Fi</translation>
-    </message>
-    <message>
-        <source>Firmware Updates</source>
-        <translation>Firmware Güncellemeleri</translation>
+        <source>All your hardware is working</source>
+        <translation>Bütün donanımınız çalışıyor</translation>
     </message>
     <message>
         <source>Ask the assistant</source>
@@ -688,28 +608,148 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Açılışta önyükleme menüsünden “Gelişmiş seçenekler”i seçip eski bir çekirdeği ya da kurtarma kipini başlatın. Linwas açılınca “Önceki sürücüye dön”e basın. Değişiklikten önce alınan Timeshift yedeğini de geri yükleyebilirsiniz.</translation>
     </message>
     <message>
+        <source>Available module</source>
+        <translation>Kullanılabilir modül</translation>
+    </message>
+    <message>
         <source>Black screen or the desktop does not open</source>
         <translation>Siyah ekran ya da masaüstü açılmıyor</translation>
+    </message>
+    <message>
+        <source>Bluetooth</source>
+        <translation>Bluetooth</translation>
+    </message>
+    <message>
+        <source>Camera</source>
+        <translation>Kamera</translation>
     </message>
     <message>
         <source>Choose another driver version or the open-source driver.</source>
         <translation>Başka bir sürücü sürümü ya da açık kaynak sürücüyü seçin.</translation>
     </message>
     <message>
+        <source>Details</source>
+        <translation>Ayrıntılar</translation>
+    </message>
+    <message>
+        <source>Device ID</source>
+        <translation>Aygıt kimliği</translation>
+    </message>
+    <message>
         <source>Driver problem</source>
         <translation>Sürücü sorunu</translation>
+    </message>
+    <message>
+        <source>Driver version</source>
+        <translation>Sürücü sürümü</translation>
+    </message>
+    <message>
+        <source>Drivers</source>
+        <translation>Sürücüler</translation>
+    </message>
+    <message>
+        <source>Enable {suite}</source>
+        <translation>{suite} deposunu etkinleştir</translation>
+    </message>
+    <message>
+        <source>Full name</source>
+        <translation>Tam ad</translation>
+    </message>
+    <message>
+        <source>Graphics card</source>
+        <translation>Ekran kartı</translation>
+    </message>
+    <message>
+        <source>If a very new device (Wi-Fi, graphics, touchpad…) does not work, {what} may support it. You are using kernel {running}.</source>
+        <translation>Çok yeni bir aygıt (Wi-Fi, ekran kartı, dokunmatik yüzey…) çalışmıyorsa {what} onu destekleyebilir. Kullandığınız çekirdek: {running}.</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Kur</translation>
+    </message>
+    <message>
+        <source>Install it only if something does not work. A full system backup is taken first; the old kernel stays and can be chosen at startup. A restart is required.</source>
+        <translation>Yalnızca bir şey çalışmıyorsa kurun. Önce tam sistem yedeği alınır; eski çekirdek kalır ve açılışta seçilebilir. Yeniden başlatma gerekir.</translation>
+    </message>
+    <message>
+        <source>Install the newer kernel</source>
+        <translation>Yeni çekirdeği kur</translation>
+    </message>
+    <message>
+        <source>Install {pkg}</source>
+        <translation>{pkg} kur</translation>
+    </message>
+    <message>
+        <source>Installed</source>
+        <translation>Kurulu</translation>
+    </message>
+    <message>
+        <source>Kernel driver</source>
+        <translation>Çekirdek sürücüsü</translation>
+    </message>
+    <message>
+        <source>Linwas scans your hardware and suggests drivers and firmware updates.</source>
+        <translation>Linwas donanımınızı tarar ve sürücü ile firmware güncellemelerini önerir.</translation>
+    </message>
+    <message>
+        <source>Newer kernel for new hardware</source>
+        <translation>Yeni donanım için yeni çekirdek</translation>
+    </message>
+    <message>
+        <source>No driver in use</source>
+        <translation>Kullanılan sürücü yok</translation>
+    </message>
+    <message>
+        <source>No driver is working for this device</source>
+        <translation>Bu aygıt için çalışan sürücü yok</translation>
+    </message>
+    <message>
+        <source>Not connected right now</source>
+        <translation>Şu anda bağlı değil</translation>
+    </message>
+    <message>
+        <source>Offered version: {version}.</source>
+        <translation>Önerilen sürüm: {version}.</translation>
     </message>
     <message>
         <source>Other options…</source>
         <translation>Diğer seçenekler…</translation>
     </message>
     <message>
-        <source>Printers &amp; Scanners</source>
-        <translation>Yazıcılar ve tarayıcılar</translation>
+        <source>Package</source>
+        <translation>Paket</translation>
+    </message>
+    <message>
+        <source>Printer / scanner</source>
+        <translation>Yazıcı / tarayıcı</translation>
+    </message>
+    <message>
+        <source>Problem</source>
+        <translation>Sorunlu</translation>
     </message>
     <message>
         <source>Problems after installing a driver?</source>
         <translation>Sürücü kurduktan sonra sorun mu var?</translation>
+    </message>
+    <message>
+        <source>Proprietary</source>
+        <translation>Tescilli</translation>
+    </message>
+    <message>
+        <source>Reboot required</source>
+        <translation>Yeniden başlatma gerekli</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Önerilen</translation>
+    </message>
+    <message>
+        <source>Recommended driver available</source>
+        <translation>Önerilen sürücü var</translation>
+    </message>
+    <message>
+        <source>Refresh package index</source>
+        <translation>Paket listesini yenile</translation>
     </message>
     <message>
         <source>Register the driver signing key</source>
@@ -732,6 +772,18 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Önceki sürücüye dön</translation>
     </message>
     <message>
+        <source>Scan again</source>
+        <translation>Yeniden tara</translation>
+    </message>
+    <message>
+        <source>Scan failed: {error}</source>
+        <translation>Tarama başarısız: {error}</translation>
+    </message>
+    <message>
+        <source>Scanning hardware…</source>
+        <translation>Donanım taranıyor…</translation>
+    </message>
+    <message>
         <source>Secure Boot is on and the driver does not load</source>
         <translation>Secure Boot açık ve sürücü yüklenmiyor</translation>
     </message>
@@ -742,6 +794,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     <message>
         <source>Secure Boot: the driver signing key is not registered</source>
         <translation>Secure Boot: sürücü imza anahtarı kayıtlı değil</translation>
+    </message>
+    <message>
+        <source>Sound</source>
+        <translation>Ses</translation>
     </message>
     <message>
         <source>Switch to the open-source driver</source>
@@ -760,56 +816,72 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Anahtar büyük olasılıkla mavi ekranda kaydedilmedi. Yukarıdaki “Anahtarı kaydet”i kullanıp yeniden başlatın.</translation>
     </message>
     <message>
+        <source>Ubuntu's hardware enablement (HWE) kernel</source>
+        <translation>Ubuntu'nun donanım desteği (HWE) çekirdeği</translation>
+    </message>
+    <message>
+        <source>Update firmware</source>
+        <translation>Firmware güncelle</translation>
+    </message>
+    <message>
+        <source>Update firmware (fwupd)</source>
+        <translation>Firmware güncelle (fwupd)</translation>
+    </message>
+    <message>
+        <source>Uses the built-in Linux driver</source>
+        <translation>Linux'un kendi sürücüsünü kullanıyor</translation>
+    </message>
+    <message>
+        <source>Uses the {maker} proprietary driver</source>
+        <translation>{maker} kapalı kaynak sürücüsünü kullanıyor</translation>
+    </message>
+    <message>
+        <source>Wi-Fi</source>
+        <translation>Wi-Fi</translation>
+    </message>
+    <message>
         <source>Wi-Fi stopped working after a firmware or driver install</source>
         <translation>Firmware ya da sürücü kurduktan sonra Wi-Fi çalışmıyor</translation>
+    </message>
+    <message>
+        <source>Wired network (Ethernet)</source>
+        <translation>Kablolu ağ (Ethernet)</translation>
+    </message>
+    <message>
+        <source>Working</source>
+        <translation>Çalışıyor</translation>
     </message>
     <message>
         <source>Wrong resolution or blurry screen</source>
         <translation>Yanlış çözünürlük ya da bulanık ekran</translation>
     </message>
     <message>
-        <source>{n} device(s)</source>
-        <translation>{n} aygıt</translation>
+        <source>installed</source>
+        <translation>kurulu</translation>
     </message>
     <message>
-        <source>{n} firmware update(s) available (BIOS, SSD, docks…).</source>
-        <translation>{n} firmware güncellemesi var (BIOS, SSD, yerleştirme istasyonu…).</translation>
-    </message>
-    <message>
-        <source>Enable {suite}</source>
-        <translation>{suite} deposunu etkinleştir</translation>
-    </message>
-    <message>
-        <source>If a very new device (Wi-Fi, graphics, touchpad…) does not work, {what} may support it. You are using kernel {running}.</source>
-        <translation>Çok yeni bir aygıt (Wi-Fi, ekran kartı, dokunmatik yüzey…) çalışmıyorsa {what} onu destekleyebilir. Kullandığınız çekirdek: {running}.</translation>
-    </message>
-    <message>
-        <source>Install it only if something does not work. A full system backup is taken first; the old kernel stays and can be chosen at startup. A restart is required.</source>
-        <translation>Yalnızca bir şey çalışmıyorsa kurun. Önce tam sistem yedeği alınır; eski çekirdek kalır ve açılışta seçilebilir. Yeniden başlatma gerekir.</translation>
-    </message>
-    <message>
-        <source>Install the newer kernel</source>
-        <translation>Yeni çekirdeği kur</translation>
-    </message>
-    <message>
-        <source>Newer kernel for new hardware</source>
-        <translation>Yeni donanım için yeni çekirdek</translation>
-    </message>
-    <message>
-        <source>Offered version: {version}.</source>
-        <translation>Önerilen sürüm: {version}.</translation>
-    </message>
-    <message>
-        <source>Refresh package index</source>
-        <translation>Paket listesini yenile</translation>
-    </message>
-    <message>
-        <source>Ubuntu's hardware enablement (HWE) kernel</source>
-        <translation>Ubuntu'nun donanım desteği (HWE) çekirdeği</translation>
+        <source>not installed</source>
+        <translation>kurulu değil</translation>
     </message>
     <message>
         <source>the newer kernel from {suite}</source>
         <translation>{suite} deposundaki yeni çekirdek</translation>
+    </message>
+    <message>
+        <source>{n} device(s)</source>
+        <translation>{n} aygıt</translation>
+    </message>
+    <message>
+        <source>{n} device(s) need attention</source>
+        <translation>{n} aygıt ilgi bekliyor</translation>
+    </message>
+    <message>
+        <source>{n} driver/firmware update(s) recommended</source>
+        <translation>{n} sürücü/firmware güncellemesi öneriliyor</translation>
+    </message>
+    <message>
+        <source>{n} firmware update(s) available (BIOS, SSD, docks…).</source>
+        <translation>{n} firmware güncellemesi var (BIOS, SSD, yerleştirme istasyonu…).</translation>
     </message>
 </context>
 <context>

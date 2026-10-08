@@ -280,6 +280,15 @@ QFrame#Card QToolButton#SettingLink:focus {{
 QFrame#Card QToolButton#SettingLink:disabled {{
     color: {c.text_disabled};
 }}
+QFrame#Card QToolButton#DetailsToggle {{
+    background-color: {c.surface};
+    border: none;
+    padding: 2px 0;
+    color: {c.text_secondary};
+}}
+QFrame#Card QToolButton#DetailsToggle:hover {{
+    color: {c.accent};
+}}
 QFrame#Card QFrame#Separator {{
     background-color: {c.border};
     border: none;
