@@ -360,21 +360,72 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event: object) -> None:  # type: ignore[override]
         self._settings = app_settings.load()
+        if not self._quitting and self._settings.ask_on_close:
+            choice = self._ask_close_action()
+            if choice == "cancel":
+                event.ignore()  # type: ignore[attr-defined]
+                return
+            if choice == "quit":
+                event.ignore()  # type: ignore[attr-defined]
+                self._quit()
+                return
+            self._hide_to_background()
+            event.ignore()  # type: ignore[attr-defined]
+            return
         if not self._quitting and self._settings.keep_running:
-            # Tepsi olmasa da arka planda kalır (bildirimler); menüden yeniden açılır
-            self._ensure_background()
-            self.hide()
-            if not self._tray_wanted():
-                self._notifier.send(
-                    tr("Linwas is still running"),
-                    tr(
-                        "It will notify you about updates and problems. Open it again from the "
-                        "application menu, or quit it in Settings › General."
-                    ),
-                )
+            self._hide_to_background()
             event.ignore()  # type: ignore[attr-defined]
             return
         super().closeEvent(event)  # type: ignore[arg-type]
+
+    def _ask_close_action(self) -> str:
+        """Küçültme / tamamen kapatma sorusu: "tray" | "quit" | "cancel".
+
+        "Seçimimi hatırla" işaretlenirse karar ayarlara yazılır (Ayarlar › Genel'den değişir).
+        """
+        from PySide6.QtWidgets import QCheckBox, QMessageBox
+
+        box = QMessageBox(self)
+        box.setIcon(QMessageBox.Icon.Question)
+        box.setWindowTitle(tr("Close Linwas"))
+        box.setText(tr("Keep Linwas running in the background, or quit it completely?"))
+        box.setInformativeText(
+            tr(
+                "In the background Linwas keeps checking for updates and problems and notifies "
+                "you. Quitting stops it until you open it again."
+            )
+        )
+        keep = box.addButton(tr("Minimize to background"), QMessageBox.ButtonRole.AcceptRole)
+        quit_btn = box.addButton(tr("Quit completely"), QMessageBox.ButtonRole.DestructiveRole)
+        box.addButton(tr("Cancel"), QMessageBox.ButtonRole.RejectRole)
+        box.setDefaultButton(keep)
+        remember = QCheckBox(tr("Remember my choice"), box)
+        box.setCheckBox(remember)
+        box.exec()
+        clicked = box.clickedButton()
+        if clicked is keep:
+            choice = "tray"
+        elif clicked is quit_btn:
+            choice = "quit"
+        else:
+            return "cancel"
+        if remember.isChecked():
+            self._update_settings(close_action=choice)
+            self._on_close_action_changed(choice)
+        return choice
+
+    def _hide_to_background(self) -> None:
+        # Tepsi olmasa da arka planda kalır (bildirimler); menüden yeniden açılır
+        self._ensure_background()
+        self.hide()
+        if not self._tray_wanted():
+            self._notifier.send(
+                tr("Linwas is still running"),
+                tr(
+                    "It will notify you about updates and problems. Open it again from the "
+                    "application menu, or quit it in Settings › General."
+                ),
+            )
 
     def _add_page(self, page_id: str, page: QWidget) -> None:
         """Sayfayı yığına ekler; BasePage sinyallerini bağlar."""

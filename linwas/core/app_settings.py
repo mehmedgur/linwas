@@ -13,9 +13,10 @@ from dataclasses import asdict, dataclass, fields
 from pathlib import Path
 
 THEMES = ("system", "light", "dark", "high_contrast")
-# auto/tray: pencere kapatılınca arka planda çalışmaya devam et (tepsi varsa simgeyle);
-# quit: Linwas'ı kapat. "auto" eski ayar dosyalarından gelir, "tray" ile aynı davranır.
-CLOSE_ACTIONS = ("auto", "tray", "quit")
+# ask: pencere kapatılınca her seferinde sor (varsayılan); "auto" eski ayar dosyalarından
+# gelir, "ask" ile aynı davranır. tray: arka planda çalışmaya devam et (tepsi varsa simgeyle);
+# quit: Linwas'ı kapat.
+CLOSE_ACTIONS = ("auto", "ask", "tray", "quit")
 LANGUAGES = ("tr", "en")
 ERROR_CONSENT = ("ask", "yes", "no")  # hata kayıtlarını yardımcıya gönderme izni
 # AI sohbetlerini saklama süresi: hiç, 7 gün, 30 gün, her zaman
@@ -32,7 +33,7 @@ def default_path() -> Path:
 @dataclass
 class AppSettings:
     theme: str = "system"
-    close_action: str = "auto"
+    close_action: str = "ask"
     language: str = "tr"
     send_errors_to_ai: str = "ask"
     onboarding_done: bool = False
@@ -52,6 +53,11 @@ class AppSettings:
     # Gelişmiş (teknik) ayarlar
     show_details: bool = False  # görev penceresinde komut çıktısı baştan açık
     debug_log: bool = False  # ayrıntılı günlük dosyası
+
+    @property
+    def ask_on_close(self) -> bool:
+        """Pencere kapatılınca küçültme / tamamen kapatma sorulur mu."""
+        return self.close_action in ("auto", "ask")
 
     @property
     def keep_running(self) -> bool:

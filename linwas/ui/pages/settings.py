@@ -239,6 +239,7 @@ class SettingsPage(BasePage):
 
     def showEvent(self, event: object) -> None:  # type: ignore[override]
         super().showEvent(event)  # type: ignore[arg-type]
+        self._sync_close_action()
         self._load_history()
         self._load_plugins()
         self._load_data()
@@ -257,10 +258,11 @@ class SettingsPage(BasePage):
         )
         self._lang.currentIndexChanged.connect(self._on_lang)
         form.addRow(tr("Language:"), self._lang)
-        close = "quit" if self._settings.close_action == "quit" else "tray"
+        close = "ask" if self._settings.ask_on_close else self._settings.close_action
         self._close = self._combo(
             card,
             [
+                ("ask", tr("Ask me every time")),
                 ("tray", tr("Keep running in the background")),
                 ("quit", tr("Quit Linwas")),
             ],
@@ -295,6 +297,16 @@ class SettingsPage(BasePage):
         row.addWidget(quit_btn)
         row.addStretch(1)
         card.layout.addLayout(row)
+
+    def _sync_close_action(self) -> None:
+        """Kapatma sorusundaki "Seçimimi hatırla" diske yazar; eski kopya üzerine yazmasın."""
+        self._settings.close_action = app_settings.load().close_action
+        value = "ask" if self._settings.ask_on_close else self._settings.close_action
+        index = self._close.findData(value)
+        if index >= 0 and index != self._close.currentIndex():
+            self._close.blockSignals(True)
+            self._close.setCurrentIndex(index)
+            self._close.blockSignals(False)
 
     def _on_close(self) -> None:
         self._settings.close_action = self._close.currentData()

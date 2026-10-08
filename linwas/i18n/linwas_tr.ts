@@ -4,60 +4,72 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>Supported</source>
-        <translation>Destekleniyor</translation>
-    </message>
-    <message>
-        <source>Security updates for this system have ended. We recommend upgrading.</source>
-        <translation>Bu sistem için güvenlik güncellemeleri sona erdi. Yükseltmenizi öneririz.</translation>
-    </message>
-    <message>
-        <source>This system is in the Debian/Ubuntu family but has not been tested.</source>
-        <translation>Bu sistem Debian/Ubuntu ailesinden ama henüz test edilmedi.</translation>
-    </message>
-    <message>
-        <source>This system is not officially supported.</source>
-        <translation>Bu sistem resmi olarak desteklenmiyor.</translation>
-    </message>
-    <message>
-        <source>Other</source>
-        <translation>Diğer</translation>
-    </message>
-    <message>
-        <source>Unknown</source>
-        <translation>Bilinmiyor</translation>
-    </message>
-    <message>
-        <source>limited support</source>
-        <translation>sınırlı destek</translation>
-    </message>
-    <message>
-        <source>Full system backup (Timeshift)</source>
-        <translation>Tam sistem yedeği (Timeshift)</translation>
-    </message>
-    <message>
-        <source>Undo changes</source>
-        <translation>Değişiklikleri geri al</translation>
-    </message>
-    <message>
-        <source>Open Linwas</source>
-        <translation>Linwas'ı aç</translation>
-    </message>
-    <message>
-        <source>Quit</source>
-        <translation>Çıkış</translation>
+        <source>Cancel</source>
+        <translation>Vazgeç</translation>
     </message>
     <message>
         <source>Close</source>
         <translation>Kapat</translation>
     </message>
     <message>
+        <source>Close Linwas</source>
+        <translation>Linwas'ı kapat</translation>
+    </message>
+    <message>
         <source>Don't send</source>
         <translation>Gönderme</translation>
     </message>
     <message>
+        <source>Full system backup (Timeshift)</source>
+        <translation>Tam sistem yedeği (Timeshift)</translation>
+    </message>
+    <message>
+        <source>In the background Linwas keeps checking for updates and problems and notifies you. Quitting stops it until you open it again.</source>
+        <translation>Arka planda Linwas güncellemeleri ve sorunları denetlemeyi sürdürür ve size bildirir. Tamamen kapatırsanız yeniden açana dek durur.</translation>
+    </message>
+    <message>
+        <source>It will notify you about updates and problems. Open it again from the application menu, or quit it in Settings › General.</source>
+        <translation>Güncellemeler ve sorunlar için size bildirim gönderecek. Uygulama menüsünden yeniden açabilir ya da Ayarlar › Genel'den tamamen kapatabilirsiniz.</translation>
+    </message>
+    <message>
+        <source>Keep Linwas running in the background, or quit it completely?</source>
+        <translation>Linwas arka planda çalışmaya devam etsin mi, yoksa tamamen kapatılsın mı?</translation>
+    </message>
+    <message>
+        <source>Linwas is still running</source>
+        <translation>Linwas çalışmaya devam ediyor</translation>
+    </message>
+    <message>
+        <source>Linwas notifications work</source>
+        <translation>Linwas bildirimleri çalışıyor</translation>
+    </message>
+    <message>
+        <source>Minimize to background</source>
+        <translation>Arka plana küçült</translation>
+    </message>
+    <message>
+        <source>Open Linwas</source>
+        <translation>Linwas'ı aç</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>Diğer</translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation>Çıkış</translation>
+    </message>
+    <message>
+        <source>Quit completely</source>
+        <translation>Tamamen kapat</translation>
+    </message>
+    <message>
         <source>Remember my choice</source>
         <translation>Seçimimi hatırla</translation>
+    </message>
+    <message>
+        <source>Security updates for this system have ended. We recommend upgrading.</source>
+        <translation>Bu sistem için güvenlik güncellemeleri sona erdi. Yükseltmenizi öneririz.</translation>
     </message>
     <message>
         <source>Send</source>
@@ -70,6 +82,10 @@
     <message>
         <source>Send the error details to the assistant? Personal information such as user names and addresses is hidden first.</source>
         <translation>Hata ayrıntıları yardımcıya gönderilsin mi? Kullanıcı adı ve adres gibi kişisel bilgiler önce gizlenir.</translation>
+    </message>
+    <message>
+        <source>Supported</source>
+        <translation>Destekleniyor</translation>
     </message>
     <message>
         <source>This Linwas task failed: {tasks}
@@ -86,20 +102,28 @@ Hata çıktısı:
 Ne ters gitti ve nasıl düzeltebilirim?</translation>
     </message>
     <message>
-        <source>It will notify you about updates and problems. Open it again from the application menu, or quit it in Settings › General.</source>
-        <translation>Güncellemeler ve sorunlar için size bildirim gönderecek. Uygulama menüsünden yeniden açabilir ya da Ayarlar › Genel'den tamamen kapatabilirsiniz.</translation>
-    </message>
-    <message>
-        <source>Linwas is still running</source>
-        <translation>Linwas çalışmaya devam ediyor</translation>
-    </message>
-    <message>
-        <source>Linwas notifications work</source>
-        <translation>Linwas bildirimleri çalışıyor</translation>
-    </message>
-    <message>
         <source>This is how Linwas tells you about updates and problems.</source>
         <translation>Linwas güncellemeleri ve sorunları size böyle bildirir.</translation>
+    </message>
+    <message>
+        <source>This system is in the Debian/Ubuntu family but has not been tested.</source>
+        <translation>Bu sistem Debian/Ubuntu ailesinden ama henüz test edilmedi.</translation>
+    </message>
+    <message>
+        <source>This system is not officially supported.</source>
+        <translation>Bu sistem resmi olarak desteklenmiyor.</translation>
+    </message>
+    <message>
+        <source>Undo changes</source>
+        <translation>Değişiklikleri geri al</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Bilinmiyor</translation>
+    </message>
+    <message>
+        <source>limited support</source>
+        <translation>sınırlı destek</translation>
     </message>
 </context>
 <context>
@@ -2799,98 +2823,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
 <context>
     <name>SettingsPage</name>
     <message>
-        <source>Activity history</source>
-        <translation>İşlem geçmişi</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Vazgeç</translation>
-    </message>
-    <message>
-        <source>Clear history</source>
-        <translation>Geçmişi temizle</translation>
-    </message>
-    <message>
-        <source>Dark</source>
-        <translation>Koyu</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation>Sil</translation>
-    </message>
-    <message>
-        <source>Delete the whole activity history?</source>
-        <translation>Tüm işlem geçmişi silinsin mi?</translation>
-    </message>
-    <message>
-        <source>Done</source>
-        <translation>Tamamlandı</translation>
-    </message>
-    <message>
-        <source>Failed</source>
-        <translation>Başarısız</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Genel</translation>
-    </message>
-    <message>
-        <source>High contrast</source>
-        <translation>Yüksek karşıtlık</translation>
-    </message>
-    <message>
-        <source>Language:</source>
-        <translation>Dil:</translation>
-    </message>
-    <message>
-        <source>Light</source>
-        <translation>Açık</translation>
-    </message>
-    <message>
-        <source>Linwas theme:</source>
-        <translation>Linwas teması:</translation>
-    </message>
-    <message>
-        <source>No activity yet.</source>
-        <translation>Henüz işlem yok.</translation>
-    </message>
-    <message>
-        <source>No plugins installed. Built-in features are listed in the menu.</source>
-        <translation>Kurulu eklenti yok. Yerleşik özellikler menüde listelenir.</translation>
-    </message>
-    <message>
-        <source>Partly done</source>
-        <translation>Kısmen tamamlandı</translation>
-    </message>
-    <message>
-        <source>Plugins</source>
-        <translation>Eklentiler</translation>
-    </message>
-    <message>
-        <source>Quit Linwas</source>
-        <translation>Linwas'ı kapat</translation>
-    </message>
-    <message>
-        <source>Same as system</source>
-        <translation>Sistemle aynı</translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation>Ayarlar</translation>
-    </message>
-    <message>
-        <source>The language changes the next time Linwas starts.</source>
-        <translation>Dil, Linwas bir sonraki açılışında değişir.</translation>
-    </message>
-    <message>
-        <source>When I close the window:</source>
-        <translation>Pencereyi kapattığımda:</translation>
-    </message>
-    <message>
-        <source>Show the welcome tour again</source>
-        <translation>Tanıtım turunu yeniden göster</translation>
-    </message>
-    <message>
         <source>A device has no driver</source>
         <translation>Bir aygıtın sürücüsü yok</translation>
     </message>
@@ -2901,98 +2833,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>AI assistant</source>
         <translation>Yapay zekâ</translation>
-    </message>
-    <message>
-        <source>Appearance</source>
-        <translation>Görünüm</translation>
-    </message>
-    <message>
-        <source>Automatic updates were installed or failed</source>
-        <translation>Otomatik güncellemeler kuruldu ya da başarısız oldu</translation>
-    </message>
-    <message>
-        <source>Desktop notifications are not available on this system (gdbus is missing).</source>
-        <translation>Bu sistemde masaüstü bildirimleri kullanılamıyor (gdbus yok).</translation>
-    </message>
-    <message>
-        <source>Don't show notifications between these times</source>
-        <translation>Bu saatler arasında bildirim gösterme</translation>
-    </message>
-    <message>
-        <source>Help</source>
-        <translation>Yardım</translation>
-    </message>
-    <message>
-        <source>In the background Linwas shows notifications about updates and problems. Open it again from the application menu.</source>
-        <translation>Linwas arka planda güncellemeler ve sorunlar hakkında bildirim gösterir. Uygulama menüsünden yeniden açabilirsiniz.</translation>
-    </message>
-    <message>
-        <source>Installed plugins</source>
-        <translation>Kurulu eklentiler</translation>
-    </message>
-    <message>
-        <source>Keep running in the background</source>
-        <translation>Arka planda çalışmaya devam et</translation>
-    </message>
-    <message>
-        <source>Language and window</source>
-        <translation>Dil ve pencere</translation>
-    </message>
-    <message>
-        <source>Notifications</source>
-        <translation>Bildirimler</translation>
-    </message>
-    <message>
-        <source>Notifications and startup</source>
-        <translation>Bildirimler ve başlangıç</translation>
-    </message>
-    <message>
-        <source>Privacy and data</source>
-        <translation>Gizlilik ve veriler</translation>
-    </message>
-    <message>
-        <source>Quiet hours</source>
-        <translation>Sessiz saatler</translation>
-    </message>
-    <message>
-        <source>Quit Linwas completely</source>
-        <translation>Linwas'ı tamamen kapat</translation>
-    </message>
-    <message>
-        <source>Search settings…</source>
-        <translation>Ayarlarda ara…</translation>
-    </message>
-    <message>
-        <source>Send a test notification</source>
-        <translation>Deneme bildirimi gönder</translation>
-    </message>
-    <message>
-        <source>Start Linwas in the background when I log in (for notifications)</source>
-        <translation>Oturum açtığımda Linwas arka planda başlasın (bildirimler için)</translation>
-    </message>
-    <message>
-        <source>Startup</source>
-        <translation>Başlangıç</translation>
-    </message>
-    <message>
-        <source>Stops Linwas, including the background notifications.</source>
-        <translation>Arka plan bildirimleri dahil Linwas'ı durdurur.</translation>
-    </message>
-    <message>
-        <source>The desktop's own theme and wallpaper are under Interface › Theme &amp; Wallpaper.</source>
-        <translation>Masaüstünün kendi teması ve duvar kâğıdı Arayüz › Tema ve duvar kâğıdı altında.</translation>
-    </message>
-    <message>
-        <source>The startup setting could not be changed.</source>
-        <translation>Başlangıç ayarı değiştirilemedi.</translation>
-    </message>
-    <message>
-        <source>Theme</source>
-        <translation>Tema</translation>
-    </message>
-    <message>
-        <source>Updates are ready</source>
-        <translation>Güncellemeler hazır</translation>
     </message>
     <message>
         <source>AI conversations</source>
@@ -3007,8 +2847,24 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Hakkında</translation>
     </message>
     <message>
+        <source>Activity history</source>
+        <translation>İşlem geçmişi</translation>
+    </message>
+    <message>
         <source>Advanced settings</source>
         <translation>Gelişmiş ayarlar</translation>
+    </message>
+    <message>
+        <source>Appearance</source>
+        <translation>Görünüm</translation>
+    </message>
+    <message>
+        <source>Ask me every time</source>
+        <translation>Her seferinde sor</translation>
+    </message>
+    <message>
+        <source>Automatic updates were installed or failed</source>
+        <translation>Otomatik güncellemeler kuruldu ya da başarısız oldu</translation>
     </message>
     <message>
         <source>Backup and reset</source>
@@ -3019,12 +2875,28 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Yedekler ve geri alma</translation>
     </message>
     <message>
+        <source>Cancel</source>
+        <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Clear history</source>
+        <translation>Geçmişi temizle</translation>
+    </message>
+    <message>
         <source>Copy system information</source>
         <translation>Sistem bilgisini kopyala</translation>
     </message>
     <message>
+        <source>Dark</source>
+        <translation>Koyu</translation>
+    </message>
+    <message>
         <source>Data Linwas keeps</source>
         <translation>Linwas'ın tuttuğu veriler</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Sil</translation>
     </message>
     <message>
         <source>Delete all my Linwas data</source>
@@ -3035,12 +2907,28 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>İşlem geçmişi, yapay zekâ sohbetleri ve kullanım sayaçları, bildirim durumu, sürücü değişikliği geçmişi ve günlükler silinsin mi? Ayarlar ve API anahtarları korunur.</translation>
     </message>
     <message>
+        <source>Delete the whole activity history?</source>
+        <translation>Tüm işlem geçmişi silinsin mi?</translation>
+    </message>
+    <message>
         <source>Delete {name}?</source>
         <translation>{name} silinsin mi?</translation>
     </message>
     <message>
         <source>Desktop</source>
         <translation>Masaüstü</translation>
+    </message>
+    <message>
+        <source>Desktop notifications are not available on this system (gdbus is missing).</source>
+        <translation>Bu sistemde masaüstü bildirimleri kullanılamıyor (gdbus yok).</translation>
+    </message>
+    <message>
+        <source>Don't show notifications between these times</source>
+        <translation>Bu saatler arasında bildirim gösterme</translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation>Tamamlandı</translation>
     </message>
     <message>
         <source>Driver change history</source>
@@ -3059,6 +2947,22 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Ayarları dışa aktar…</translation>
     </message>
     <message>
+        <source>Failed</source>
+        <translation>Başarısız</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Genel</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>Yardım</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>Yüksek karşıtlık</translation>
+    </message>
+    <message>
         <source>Import settings</source>
         <translation>Ayarları içe aktar</translation>
     </message>
@@ -3067,12 +2971,40 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Ayarları içe aktar…</translation>
     </message>
     <message>
+        <source>In the background Linwas shows notifications about updates and problems. Open it again from the application menu.</source>
+        <translation>Linwas arka planda güncellemeler ve sorunlar hakkında bildirim gösterir. Uygulama menüsünden yeniden açabilirsiniz.</translation>
+    </message>
+    <message>
+        <source>Installed plugins</source>
+        <translation>Kurulu eklentiler</translation>
+    </message>
+    <message>
+        <source>Keep running in the background</source>
+        <translation>Arka planda çalışmaya devam et</translation>
+    </message>
+    <message>
+        <source>Language and window</source>
+        <translation>Dil ve pencere</translation>
+    </message>
+    <message>
+        <source>Language:</source>
+        <translation>Dil:</translation>
+    </message>
+    <message>
         <source>Licenses</source>
         <translation>Lisanslar</translation>
     </message>
     <message>
+        <source>Light</source>
+        <translation>Açık</translation>
+    </message>
+    <message>
         <source>Linwas settings (*.json)</source>
         <translation>Linwas ayarları (*.json)</translation>
+    </message>
+    <message>
+        <source>Linwas theme:</source>
+        <translation>Linwas teması:</translation>
     </message>
     <message>
         <source>Linwas: the licence will be chosen before the first public release.</source>
@@ -3091,12 +3023,52 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>“Önceki sürücüye dön” için gerekir</translation>
     </message>
     <message>
+        <source>No activity yet.</source>
+        <translation>Henüz işlem yok.</translation>
+    </message>
+    <message>
+        <source>No plugins installed. Built-in features are listed in the menu.</source>
+        <translation>Kurulu eklenti yok. Yerleşik özellikler menüde listelenir.</translation>
+    </message>
+    <message>
         <source>Notification state</source>
         <translation>Bildirim durumu</translation>
     </message>
     <message>
+        <source>Notifications</source>
+        <translation>Bildirimler</translation>
+    </message>
+    <message>
+        <source>Notifications and startup</source>
+        <translation>Bildirimler ve başlangıç</translation>
+    </message>
+    <message>
+        <source>Partly done</source>
+        <translation>Kısmen tamamlandı</translation>
+    </message>
+    <message>
+        <source>Plugins</source>
+        <translation>Eklentiler</translation>
+    </message>
+    <message>
+        <source>Privacy and data</source>
+        <translation>Gizlilik ve veriler</translation>
+    </message>
+    <message>
         <source>Qt and PySide6: LGPL-3.0 · Python: PSF License · keyring: MIT</source>
         <translation>Qt ve PySide6: LGPL-3.0 · Python: PSF Lisansı · keyring: MIT</translation>
+    </message>
+    <message>
+        <source>Quiet hours</source>
+        <translation>Sessiz saatler</translation>
+    </message>
+    <message>
+        <source>Quit Linwas</source>
+        <translation>Linwas'ı kapat</translation>
+    </message>
+    <message>
+        <source>Quit Linwas completely</source>
+        <translation>Linwas'ı tamamen kapat</translation>
     </message>
     <message>
         <source>Report a problem</source>
@@ -3119,12 +3091,28 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Bütün Linwas ayarları varsayılana döndürülsün mü?</translation>
     </message>
     <message>
+        <source>Same as system</source>
+        <translation>Sistemle aynı</translation>
+    </message>
+    <message>
         <source>Save Linwas settings to a file and load them on another computer. API keys are not written to the file.</source>
         <translation>Linwas ayarlarını bir dosyaya kaydedip başka bir bilgisayarda yükleyin. API anahtarları dosyaya yazılmaz.</translation>
     </message>
     <message>
         <source>Saved conversations with the assistant</source>
         <translation>Asistanla kaydedilmiş sohbetler</translation>
+    </message>
+    <message>
+        <source>Search settings…</source>
+        <translation>Ayarlarda ara…</translation>
+    </message>
+    <message>
+        <source>Send a test notification</source>
+        <translation>Deneme bildirimi gönder</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>Ayarlar</translation>
     </message>
     <message>
         <source>Settings loaded. The language changes the next time Linwas starts.</source>
@@ -3135,8 +3123,24 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Ayarlar kaydedildi.</translation>
     </message>
     <message>
+        <source>Show the welcome tour again</source>
+        <translation>Tanıtım turunu yeniden göster</translation>
+    </message>
+    <message>
         <source>Some data could not be deleted.</source>
         <translation>Bazı veriler silinemedi.</translation>
+    </message>
+    <message>
+        <source>Start Linwas in the background when I log in (for notifications)</source>
+        <translation>Oturum açtığımda Linwas arka planda başlasın (bildirimler için)</translation>
+    </message>
+    <message>
+        <source>Startup</source>
+        <translation>Başlangıç</translation>
+    </message>
+    <message>
+        <source>Stops Linwas, including the background notifications.</source>
+        <translation>Arka plan bildirimleri dahil Linwas'ı durdurur.</translation>
     </message>
     <message>
         <source>System</source>
@@ -3145,6 +3149,22 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>Technical settings, diagnostics and logs</source>
         <translation>Teknik ayarlar, tanılama ve günlükler</translation>
+    </message>
+    <message>
+        <source>The desktop's own theme and wallpaper are under Interface › Theme &amp; Wallpaper.</source>
+        <translation>Masaüstünün kendi teması ve duvar kâğıdı Arayüz › Tema ve duvar kâğıdı altında.</translation>
+    </message>
+    <message>
+        <source>The language changes the next time Linwas starts.</source>
+        <translation>Dil, Linwas bir sonraki açılışında değişir.</translation>
+    </message>
+    <message>
+        <source>The startup setting could not be changed.</source>
+        <translation>Başlangıç ayarı değiştirilemedi.</translation>
+    </message>
+    <message>
+        <source>Theme</source>
+        <translation>Tema</translation>
     </message>
     <message>
         <source>This file is not a Linwas settings file.</source>
@@ -3159,12 +3179,20 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Geri alma kayıtları: {n} (sistemde tutulur, Yedekler ve geri alma sayfasından yönetilir)</translation>
     </message>
     <message>
+        <source>Updates are ready</source>
+        <translation>Güncellemeler hazır</translation>
+    </message>
+    <message>
         <source>Version</source>
         <translation>Sürüm</translation>
     </message>
     <message>
         <source>What Linwas changed on this computer</source>
         <translation>Linwas'ın bu bilgisayarda yaptığı değişiklikler</translation>
+    </message>
+    <message>
+        <source>When I close the window:</source>
+        <translation>Pencereyi kapattığımda:</translation>
     </message>
     <message>
         <source>Which notifications were already shown</source>

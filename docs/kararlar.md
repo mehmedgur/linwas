@@ -65,6 +65,7 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - İlk açılış: kısa tanıtım turu → kurulum sihirbazı (sistem taraması, Windows'tan taşıma, Timeshift önerisi ve ilk tam yedek, isteğe bağlı AI anahtarı).
 - Tema: Windows benzeri tasarım; Açık / Koyu / Sistem (Ayarlar'dan).
 - Dil: Türkçe + İngilizce (Qt Linguist altyapısı).
+- **Pencere kapatma (8 Ekim 2026 kararı):** varsayılan her kapatmada sorulur: "Arka plana küçült" / "Tamamen kapat" / "Vazgeç" + "Seçimimi hatırla" (işaretlenirse Ayarlar › Genel › "Pencereyi kapattığımda"ya yazılır; oradan "Her seferinde sor"a dönülür). Eski ayar dosyalarındaki "auto" da sorar.
 - ~~Pencere kapatma varsayılanı~~ → aşağıdaki **Ayarlar (7 Ekim 2026)** kararına bakın (tepside arka planda çalışma). Pencere kapatma: Ayarlar'dan seçilir. Varsayılan: sistem tepsisi destekleniyorsa tepsiye küçülür; desteklenmiyorsa (ör. Debian/Pardus GNOME) uygulama kapanır, arka planda iş varsa bildirimle devam eder.
 - Erişilebilirlik: yazı boyutu, yüksek kontrast, tam klavye kullanımı, ekran okuyucu (Orca) uyumu.
 - Telemetri yok.
