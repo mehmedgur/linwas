@@ -31,6 +31,13 @@ Son güncelleme: 8 Ekim 2026
   2. [ ] Kurulum (root işlemleri: Podman/Docker, FreeRDP; Windows'un gözetimsiz kurulumu, ilerleme).
   3. [ ] Office kurulumu, RemoteApp kısayolları, dosya ilişkilendirmesi, paylaşılan klasör.
   4. [ ] Yaşam döngüsü: gerektiğinde başlat, boştayken durdur; bellek ayarı; kaldırma.
+- **Sürücüler geliştirmesi** (kararlar.md › Güncelleme merkezi › Sürücüler geliştirmesi, 8 Ekim 2026),
+  aşamalar — her biri ayrı commit, aralarda kullanıcı dener:
+  1. [ ] Donanım kartları görünümü (durum rozeti, sade metin + "Ayrıntılar").
+  2. [ ] Sürücü sağlık kontrolü (modül, çizen kart, sürüm uyuşmazlığı, DKMS) — elle "Denetle".
+  3. [ ] Eksik firmware tespiti (çekirdek günlüğü → depoda doğrulanmış paket).
+  4. [ ] Hibrit grafik (PRIME): Dengeli + programı güçlü kartla açma; Ubuntu'da prime-select modları.
+  5. [ ] Yeni NVIDIA sürümü bildirimi.
 - **Ayarlar** (kararlar.md › Ayarlar, 7 Ekim 2026), aşamalar:
   1. [x] İskelet: solda kategoriler + arama, anında kaydetme; mevcut Genel/tema/eklentiler/geçmiş taşınır.
   2. [x] Yapay zekâ bölümü (AI penceresi taşınır, token sınırı, sohbet saklama süresi, erişim izinleri).
