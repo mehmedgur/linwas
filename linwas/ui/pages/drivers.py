@@ -17,6 +17,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from linwas.backend import driver_health
 from linwas.backend import driver_options as dopt
 from linwas.backend.devices import Device, list_devices
 from linwas.backend.drivers import DriverCandidate, DriverCategory, list_drivers
@@ -129,6 +130,80 @@ class _ScanWorker(QThread):
             self.done.emit((drivers, secure_boot, mok, kernel_offer(), list_devices()))
         except Exception as exc:
             self.error.emit(str(exc))
+
+
+# --- Sağlık kontrolü ---
+
+
+class _HealthWorker(QThread):
+    done = Signal(object)  # list[HealthItem]
+
+    def __init__(self, devices: list[Device], secure_boot: bool, mok: bool | None) -> None:
+        super().__init__()
+        self._args = (devices, secure_boot, mok)
+
+    def run(self) -> None:
+        try:
+            self.done.emit(driver_health.check_all(*self._args))
+        except Exception:  # denetim hiçbir zaman sayfayı düşürmesin
+            self.done.emit([])
+
+
+def _health_texts(item: driver_health.HealthItem) -> tuple[str, str]:
+    """(başlık, açıklama)."""
+    v = item.values
+    texts = {
+        "nvidia_ok": (
+            tr("The NVIDIA driver is working"),
+            tr("Version {version} is loaded."),
+        ),
+        "nvidia_mismatch": (
+            tr("The NVIDIA driver was updated: restart needed"),
+            tr(
+                "Version {loaded} is running but {installed} is installed. Restart so the new "
+                "version is used."
+            ),
+        ),
+        "nvidia_secure_boot": (
+            tr("Secure Boot is blocking the NVIDIA driver"),
+            tr("Register the driver signing key and restart the computer."),
+        ),
+        "nvidia_nouveau": (
+            tr("The open-source driver is still in use"),
+            tr(
+                "The NVIDIA driver is installed but the computer has not been restarted since. "
+                "Restart to switch to it."
+            ),
+        ),
+        "nvidia_not_loaded": (
+            tr("The NVIDIA driver is installed but not running"),
+            tr("Version {version} is installed but not loaded. A restart usually fixes this."),
+        ),
+        "dkms_ok": (
+            tr("Drivers are prepared for the running kernel"),
+            tr("Checked: {modules}."),
+        ),
+        "dkms_missing": (
+            tr("Some drivers are not prepared for the running kernel"),
+            tr(
+                "{modules} could not be prepared for kernel {kernel}. This usually happens after "
+                "a kernel update. Linwas can prepare them again."
+            ),
+        ),
+        "render_ok": (
+            tr("Graphics acceleration is working"),
+            tr("Your desktop is drawn by: {renderer}."),
+        ),
+        "render_software": (
+            tr("No graphics acceleration"),
+            tr(
+                "The desktop is drawn by the processor ({renderer}), so it may be slow. The "
+                "graphics driver is not working."
+            ),
+        ),
+    }
+    title, body = texts.get(item.key, (item.key, ""))
+    return title, body.format(**v)
 
 
 # --- Donanım kartı ---
@@ -407,6 +482,11 @@ class DriversPage(BasePage):
         self._status_lbl.setObjectName("H2")
         self._outer.addWidget(self._status_lbl)
 
+        # Sürücü sağlık kontrolü (yalnızca elle; yeniden taramada silinmez)
+        self._health_worker: _HealthWorker | None = None
+        self._health_card = self._build_health_card()
+        self._outer.addWidget(self._health_card)
+
         # Kartların ekleneceği alan (stretch öncesinde)
         self._cards_start = self._outer.count()  # şu anki son indeks
         self._outer.addStretch(1)
@@ -434,6 +514,8 @@ class DriversPage(BasePage):
         self._scanned = True
         self._refresh_btn.setEnabled(False)
         self._status_lbl.setText(tr("Scanning hardware…"))
+        self._health_btn.setEnabled(False)
+        self._clear_health()  # sonuçlar eski taramaya ait; yeniden "Denetle" gerekir
         self._clear_cards()
         self._outer.addStretch(1)
 
@@ -462,6 +544,7 @@ class DriversPage(BasePage):
             self._outer.insertWidget(insert_at, self._mok_card())
             insert_at += 1
 
+        self._health_btn.setEnabled(True)
         cards = build_cards(devices, candidates)
         problems = sum(1 for c in cards if c.status == "problem")
         pending = sum(1 for d in candidates if d.recommended and not d.installed)
@@ -489,6 +572,145 @@ class DriversPage(BasePage):
 
         self._add_troubleshooting()
         self._outer.addStretch(1)
+
+    # --- Sağlık kontrolü ---
+
+    def _build_health_card(self) -> Card:
+        card = Card(self._content)
+        head = QHBoxLayout()
+        text = QVBoxLayout()
+        text.setSpacing(2)
+        h = QLabel(tr("Driver health check"), card)
+        h.setObjectName("H2")
+        text.addWidget(h)
+        hint = QLabel(
+            tr(
+                "Checks that installed drivers are really working: loaded, built for the "
+                "running kernel and drawing your desktop."
+            ),
+            card,
+        )
+        hint.setObjectName("Secondary")
+        hint.setWordWrap(True)
+        text.addWidget(hint)
+        head.addLayout(text, 1)
+        self._health_btn = QPushButton(tr("Check"), card)
+        self._health_btn.setEnabled(False)  # tarama bitince açılır
+        self._health_btn.clicked.connect(self._check_health)
+        head.addWidget(self._health_btn, 0, Qt.AlignmentFlag.AlignTop)
+        card.layout.addLayout(head)
+        self._health_box = QVBoxLayout()
+        self._health_box.setSpacing(8)
+        card.layout.addLayout(self._health_box)
+        return card
+
+    def _clear_health(self) -> None:
+        while self._health_box.count():
+            item = self._health_box.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+    def _check_health(self) -> None:
+        self._health_btn.setEnabled(False)
+        self._clear_health()
+        busy = QLabel(tr("Checking drivers…"), self._health_card)
+        busy.setObjectName("Secondary")
+        self._health_box.addWidget(busy)
+        self._health_worker = _HealthWorker(self._devices, self._secure_boot, self._mok)
+        self._health_worker.done.connect(self._on_health)
+        self._health_worker.finished.connect(lambda: self._health_btn.setEnabled(True))
+        self._health_worker.start()
+
+    def _on_health(self, items: list) -> None:
+        self._clear_health()
+        if not items:
+            lbl = QLabel(tr("Nothing to check: no extra drivers are in use."), self._health_card)
+            lbl.setObjectName("Secondary")
+            self._health_box.addWidget(lbl)
+            return
+        for item in items:
+            self._health_box.addWidget(self._health_row(item))
+
+    def _health_row(self, item: driver_health.HealthItem) -> QWidget:
+        row = QWidget(self._health_card)
+        row.setObjectName("CardRow")
+        lay = QHBoxLayout(row)
+        lay.setContentsMargins(0, 4, 0, 4)
+        lay.setSpacing(12)
+        mark = QLabel(row)
+        mark.setFixedSize(22, 22)
+        icons.bind(mark, "check" if item.ok else "info", "accent" if item.ok else "normal", 20)
+        if not item.ok:
+            mark.setStyleSheet("background-color: #fde7e9; border-radius: 11px;")
+        lay.addWidget(mark, 0, Qt.AlignmentFlag.AlignTop)
+
+        title, body = _health_texts(item)
+        text = QVBoxLayout()
+        text.setSpacing(2)
+        t = QLabel(title, row)
+        t.setObjectName("AppName" if not item.ok else "")
+        t.setWordWrap(True)
+        text.addWidget(t)
+        b = QLabel(body, row)
+        b.setObjectName("Secondary")
+        b.setWordWrap(True)
+        text.addWidget(b)
+        lay.addLayout(text, 1)
+
+        fix = self._fix_button(item, row)
+        if fix is not None:
+            lay.addWidget(fix, 0, Qt.AlignmentFlag.AlignTop)
+        return row
+
+    def _fix_button(self, item: driver_health.HealthItem, parent: QWidget) -> QPushButton | None:
+        if item.fix == "reboot":
+            btn = QPushButton(tr("Restart now"), parent)
+            btn.clicked.connect(self._restart)
+        elif item.fix == "rebuild_modules":
+            btn = QPushButton(tr("Prepare drivers again"), parent)
+            btn.clicked.connect(lambda: self._rebuild_modules(item.package))
+        elif item.fix == "secure_boot":
+            btn = QPushButton(tr("Register the key"), parent)
+            btn.clicked.connect(self._enroll_key)
+        elif item.fix == "ask_ai":
+            btn = QPushButton(tr("Ask the assistant"), parent)
+            title, body = _health_texts(item)
+            btn.clicked.connect(lambda: self.ai_help_requested.emit(title, body))
+        else:
+            return None
+        btn.setProperty("primary", True)
+        return btn
+
+    def _restart(self) -> None:
+        from PySide6.QtCore import QProcess
+        from PySide6.QtWidgets import QMessageBox
+
+        answer = QMessageBox.question(
+            self,
+            tr("Restart now"),
+            tr("Save your work first. Restart the computer now?"),
+        )
+        if answer == QMessageBox.StandardButton.Yes:
+            QProcess.startDetached("systemctl", ["reboot"])
+
+    def _rebuild_modules(self, headers: str) -> None:
+        steps: list[TaskStep] = []
+        if headers:
+            steps.append(
+                TaskStep(
+                    op_id="package.install",
+                    label=tr("Install {pkg}").format(pkg=headers),
+                    params={"name": headers},
+                )
+            )
+        steps.append(
+            TaskStep(
+                op_id="driver.rebuild_modules",
+                label=tr("Prepare drivers for the running kernel"),
+                params={},
+            )
+        )
+        self.task_run_now.emit(Task(label=tr("Prepare drivers again"), steps=steps))
 
     # --- Secure Boot ve sorun giderme kartları ---
 

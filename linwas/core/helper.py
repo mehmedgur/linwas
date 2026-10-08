@@ -575,6 +575,14 @@ def _exec_driver_remove_nvidia(seq: int, params: dict[str, str]) -> bool:
     return _run(["apt-get", "autoremove", "-y"], seq, _APT_ENV)
 
 
+def _exec_driver_rebuild_modules(seq: int, params: dict[str, str]) -> bool:
+    """DKMS modüllerini çalışan çekirdek için yeniden derleyip kurar (`dkms autoinstall`).
+
+    Çekirdek sürümü parametre olarak alınmaz; helper'ın çalıştığı çekirdekten okunur.
+    """
+    return _run(["dkms", "autoinstall", "-k", os.uname().release], seq)
+
+
 def _exec_firmware_refresh(seq: int, params: dict[str, str]) -> bool:
     return _run(["fwupdmgr", "refresh", "--force"], seq)
 
@@ -812,6 +820,7 @@ _EXECUTORS: dict[str, Any] = {
     "wine.setup": _exec_wine_setup,
     "flatpak.setup": _exec_flatpak_setup,
     "driver.remove_nvidia": _exec_driver_remove_nvidia,
+    "driver.rebuild_modules": _exec_driver_rebuild_modules,
     "firmware.refresh": _exec_firmware_refresh,
     "firmware.update_device": _exec_firmware_update_device,
     "kernel.install_backports": _exec_kernel_install_backports,

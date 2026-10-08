@@ -440,6 +440,11 @@ OPERATIONS: dict[str, OperationSpec] = {
         risk=RiskLevel.HIGH,
         label="Remove the NVIDIA driver (use the open-source driver)",
     ),
+    "driver.rebuild_modules": OperationSpec(
+        params=[],
+        risk=RiskLevel.MEDIUM,
+        label="Rebuild driver modules for the running kernel (DKMS)",
+    ),
     "secureboot.enroll_mok": _op(
         ("password", ParamKind.MOK_PASSWORD),
         risk=RiskLevel.MEDIUM,

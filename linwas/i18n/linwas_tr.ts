@@ -648,6 +648,22 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Kamera</translation>
     </message>
     <message>
+        <source>Check</source>
+        <translation>Denetle</translation>
+    </message>
+    <message>
+        <source>Checked: {modules}.</source>
+        <translation>Denetlenen: {modules}.</translation>
+    </message>
+    <message>
+        <source>Checking drivers…</source>
+        <translation>Sürücüler denetleniyor…</translation>
+    </message>
+    <message>
+        <source>Checks that installed drivers are really working: loaded, built for the running kernel and drawing your desktop.</source>
+        <translation>Kurulu sürücülerin gerçekten çalışıp çalışmadığını denetler: yüklenmiş mi, çalışan çekirdek için hazırlanmış mı, masaüstünüzü çiziyor mu.</translation>
+    </message>
+    <message>
         <source>Choose another driver version or the open-source driver.</source>
         <translation>Başka bir sürücü sürümü ya da açık kaynak sürücüyü seçin.</translation>
     </message>
@@ -658,6 +674,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     <message>
         <source>Device ID</source>
         <translation>Aygıt kimliği</translation>
+    </message>
+    <message>
+        <source>Driver health check</source>
+        <translation>Sürücü sağlık kontrolü</translation>
     </message>
     <message>
         <source>Driver problem</source>
@@ -672,12 +692,20 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Sürücüler</translation>
     </message>
     <message>
+        <source>Drivers are prepared for the running kernel</source>
+        <translation>Sürücüler çalışan çekirdek için hazır</translation>
+    </message>
+    <message>
         <source>Enable {suite}</source>
         <translation>{suite} deposunu etkinleştir</translation>
     </message>
     <message>
         <source>Full name</source>
         <translation>Tam ad</translation>
+    </message>
+    <message>
+        <source>Graphics acceleration is working</source>
+        <translation>Grafik hızlandırma çalışıyor</translation>
     </message>
     <message>
         <source>Graphics card</source>
@@ -728,8 +756,16 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Bu aygıt için çalışan sürücü yok</translation>
     </message>
     <message>
+        <source>No graphics acceleration</source>
+        <translation>Grafik hızlandırma yok</translation>
+    </message>
+    <message>
         <source>Not connected right now</source>
         <translation>Şu anda bağlı değil</translation>
+    </message>
+    <message>
+        <source>Nothing to check: no extra drivers are in use.</source>
+        <translation>Denetlenecek bir şey yok: ek sürücü kullanılmıyor.</translation>
     </message>
     <message>
         <source>Offered version: {version}.</source>
@@ -742,6 +778,14 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     <message>
         <source>Package</source>
         <translation>Paket</translation>
+    </message>
+    <message>
+        <source>Prepare drivers again</source>
+        <translation>Sürücüleri yeniden hazırla</translation>
+    </message>
+    <message>
+        <source>Prepare drivers for the running kernel</source>
+        <translation>Sürücüleri çalışan çekirdek için hazırla</translation>
     </message>
     <message>
         <source>Printer / scanner</source>
@@ -780,8 +824,16 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Sürücü imza anahtarını kaydet</translation>
     </message>
     <message>
+        <source>Register the driver signing key and restart the computer.</source>
+        <translation>Sürücü imza anahtarını kaydedip bilgisayarı yeniden başlatın.</translation>
+    </message>
+    <message>
         <source>Register the key</source>
         <translation>Anahtarı kaydet</translation>
+    </message>
+    <message>
+        <source>Restart now</source>
+        <translation>Şimdi yeniden başlat</translation>
     </message>
     <message>
         <source>Restart once. If it stays, choose the resolution under Display &amp; Scaling.</source>
@@ -796,6 +848,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Önceki sürücüye dön</translation>
     </message>
     <message>
+        <source>Save your work first. Restart the computer now?</source>
+        <translation>Önce açık işlerinizi kaydedin. Bilgisayar şimdi yeniden başlatılsın mı?</translation>
+    </message>
+    <message>
         <source>Scan again</source>
         <translation>Yeniden tara</translation>
     </message>
@@ -808,6 +864,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Donanım taranıyor…</translation>
     </message>
     <message>
+        <source>Secure Boot is blocking the NVIDIA driver</source>
+        <translation>Güvenli Önyükleme (Secure Boot) NVIDIA sürücüsünü engelliyor</translation>
+    </message>
+    <message>
         <source>Secure Boot is on and the driver does not load</source>
         <translation>Secure Boot açık ve sürücü yüklenmiyor</translation>
     </message>
@@ -818,6 +878,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     <message>
         <source>Secure Boot: the driver signing key is not registered</source>
         <translation>Secure Boot: sürücü imza anahtarı kayıtlı değil</translation>
+    </message>
+    <message>
+        <source>Some drivers are not prepared for the running kernel</source>
+        <translation>Bazı sürücüler çalışan çekirdek için hazır değil</translation>
     </message>
     <message>
         <source>Sound</source>
@@ -836,8 +900,32 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Sistem yedeği (Timeshift)</translation>
     </message>
     <message>
+        <source>The NVIDIA driver is installed but not running</source>
+        <translation>NVIDIA sürücüsü kurulu ama çalışmıyor</translation>
+    </message>
+    <message>
+        <source>The NVIDIA driver is installed but the computer has not been restarted since. Restart to switch to it.</source>
+        <translation>NVIDIA sürücüsü kurulu ama bilgisayar o zamandan beri yeniden başlatılmadı. Geçmek için yeniden başlatın.</translation>
+    </message>
+    <message>
+        <source>The NVIDIA driver is working</source>
+        <translation>NVIDIA sürücüsü çalışıyor</translation>
+    </message>
+    <message>
+        <source>The NVIDIA driver was updated: restart needed</source>
+        <translation>NVIDIA sürücüsü güncellendi: yeniden başlatma gerekli</translation>
+    </message>
+    <message>
+        <source>The desktop is drawn by the processor ({renderer}), so it may be slow. The graphics driver is not working.</source>
+        <translation>Masaüstünü işlemci çiziyor ({renderer}), bu yüzden yavaş olabilir. Ekran kartı sürücüsü çalışmıyor.</translation>
+    </message>
+    <message>
         <source>The key was probably not registered on the blue screen. Use “Register the key” above and restart.</source>
         <translation>Anahtar büyük olasılıkla mavi ekranda kaydedilmedi. Yukarıdaki “Anahtarı kaydet”i kullanıp yeniden başlatın.</translation>
+    </message>
+    <message>
+        <source>The open-source driver is still in use</source>
+        <translation>Hâlâ açık kaynak sürücü kullanılıyor</translation>
     </message>
     <message>
         <source>Ubuntu's hardware enablement (HWE) kernel</source>
@@ -860,6 +948,18 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>{maker} kapalı kaynak sürücüsünü kullanıyor</translation>
     </message>
     <message>
+        <source>Version {loaded} is running but {installed} is installed. Restart so the new version is used.</source>
+        <translation>Çalışan sürüm {loaded}, kurulu sürüm {installed}. Yeni sürümün kullanılması için yeniden başlatın.</translation>
+    </message>
+    <message>
+        <source>Version {version} is installed but not loaded. A restart usually fixes this.</source>
+        <translation>{version} sürümü kurulu ama yüklenmemiş. Genellikle yeniden başlatmak düzeltir.</translation>
+    </message>
+    <message>
+        <source>Version {version} is loaded.</source>
+        <translation>{version} sürümü yüklü.</translation>
+    </message>
+    <message>
         <source>Wi-Fi</source>
         <translation>Wi-Fi</translation>
     </message>
@@ -880,6 +980,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Yanlış çözünürlük ya da bulanık ekran</translation>
     </message>
     <message>
+        <source>Your desktop is drawn by: {renderer}.</source>
+        <translation>Masaüstünüzü çizen: {renderer}.</translation>
+    </message>
+    <message>
         <source>installed</source>
         <translation>kurulu</translation>
     </message>
@@ -890,6 +994,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     <message>
         <source>the newer kernel from {suite}</source>
         <translation>{suite} deposundaki yeni çekirdek</translation>
+    </message>
+    <message>
+        <source>{modules} could not be prepared for kernel {kernel}. This usually happens after a kernel update. Linwas can prepare them again.</source>
+        <translation>{modules}, {kernel} çekirdeği için hazırlanamadı. Bu genellikle çekirdek güncellemesinden sonra olur. Linwas yeniden hazırlayabilir.</translation>
     </message>
     <message>
         <source>{n} device(s)</source>
