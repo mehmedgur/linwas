@@ -116,7 +116,7 @@ def _description_markers() -> None:
 
 class _ScanWorker(QThread):
     # (list[DriverCandidate], Secure Boot açık mı, MOK kayıtlı mı | None, KernelOffer | None,
-    #  list[Device])
+    #  list[Device], HybridInfo | None)
     done = Signal(object)
     error = Signal(str)
 
@@ -127,7 +127,10 @@ class _ScanWorker(QThread):
             drivers = list_drivers()
             secure_boot = dopt.secure_boot_enabled()
             mok = dopt.mok_enrolled() if secure_boot else None
-            self.done.emit((drivers, secure_boot, mok, kernel_offer(), list_devices()))
+            from linwas.backend.hybrid_gpu import detect
+
+            devices = list_devices()
+            self.done.emit((drivers, secure_boot, mok, kernel_offer(), devices, detect(devices)))
         except Exception as exc:
             self.error.emit(str(exc))
 
@@ -554,7 +557,7 @@ class DriversPage(BasePage):
         return self._categories is None or category in self._categories
 
     def _on_done(self, result: tuple) -> None:
-        candidates, self._secure_boot, self._mok, self._kernel, devices = result
+        candidates, self._secure_boot, self._mok, self._kernel, devices, hybrid = result
         self._clear_cards()
         if self._categories is not None:
             candidates = [c for c in candidates if c.category in self._categories]
@@ -564,6 +567,15 @@ class DriversPage(BasePage):
         # Secure Boot açık ve imza anahtarı kayıtlı değil → sürücü yüklenemez
         if self._shows(DriverCategory.GPU) and self._secure_boot and self._mok is False:
             self._outer.insertWidget(insert_at, self._mok_card())
+            insert_at += 1
+
+        # İki ekran kartı: Dengeli kip + programı güçlü kartla açma
+        if hybrid is not None and self._shows(DriverCategory.GPU):
+            from linwas.ui.pages.hybrid_view import HybridCard
+
+            hybrid_card = HybridCard(hybrid, self._content)
+            hybrid_card.task_run_now.connect(self.task_run_now)
+            self._outer.insertWidget(insert_at, hybrid_card)
             insert_at += 1
 
         self._health_btn.setEnabled(True)

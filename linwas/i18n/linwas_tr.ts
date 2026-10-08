@@ -5104,4 +5104,75 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
         <translation>Ayrıntılı günlük dosyası yaz</translation>
     </message>
 </context>
+<context>
+    <name>HybridGraphics</name>
+    <message>
+        <source>Add a program</source>
+        <translation>Program ekle</translation>
+    </message>
+    <message>
+        <source>Add a program…</source>
+        <translation>Program ekle…</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Uygula</translation>
+    </message>
+    <message>
+        <source>Balanced (recommended)</source>
+        <translation>Dengeli (önerilen)</translation>
+    </message>
+    <message>
+        <source>Change the graphics mode</source>
+        <translation>Grafik kipini değiştir</translation>
+    </message>
+    <message>
+        <source>Hybrid graphics</source>
+        <translation>Hibrit grafik</translation>
+    </message>
+    <message>
+        <source>Mode:</source>
+        <translation>Kip:</translation>
+    </message>
+    <message>
+        <source>None yet. Games and 3D, video or photo editing programs benefit most.</source>
+        <translation>Henüz yok. En çok oyunlar ve 3B, video ya da fotoğraf düzenleme programları yararlanır.</translation>
+    </message>
+    <message>
+        <source>Performance (always the powerful card)</source>
+        <translation>Performans (her zaman güçlü kart)</translation>
+    </message>
+    <message>
+        <source>Power saving (only the built-in card)</source>
+        <translation>Tasarruf (yalnızca tümleşik kart)</translation>
+    </message>
+    <message>
+        <source>Programs that use the powerful card</source>
+        <translation>Güçlü kartı kullanan programlar</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Kaldır</translation>
+    </message>
+    <message>
+        <source>Remove {name}</source>
+        <translation>{name} programını kaldır</translation>
+    </message>
+    <message>
+        <source>Search programs</source>
+        <translation>Programlarda ara</translation>
+    </message>
+    <message>
+        <source>Takes effect after you log out or restart.</source>
+        <translation>Oturumu kapatıp açınca ya da yeniden başlatınca geçerli olur.</translation>
+    </message>
+    <message>
+        <source>The program opens on the powerful card from the application menu. In GNOME you can also right-click a program in the app grid to start it on the powerful card once.</source>
+        <translation>Program uygulama menüsünden güçlü kartla açılır. GNOME'da uygulama ızgarasında bir programa sağ tıklayarak onu bir kereliğine güçlü kartla da başlatabilirsiniz.</translation>
+    </message>
+    <message>
+        <source>Your computer has two graphics cards. To save power, {integrated} draws the desktop; {discrete} is used for the programs you choose below.</source>
+        <translation>Bilgisayarınızda iki ekran kartı var. Güç tasarrufu için masaüstünü {integrated} çiziyor; aşağıda seçtiğiniz programlar {discrete} kullanır.</translation>
+    </message>
+</context>
 </TS>

@@ -58,6 +58,8 @@ class ParamKind(Enum):
     FWUPD_DEVICE_ID = "fwupd_device_id"
     # Backports kod adı (ör. bookworm-backports)
     BACKPORTS_SUITE = "backports_suite"
+    # Ubuntu nvidia-prime kipi (prime-select): nvidia | on-demand | intel
+    PRIME_MODE = "prime_mode"
 
 
 @dataclass(frozen=True)
@@ -209,6 +211,15 @@ def _validate_lid_action(value: str) -> str:
     return value
 
 
+_PRIME_MODES = ("nvidia", "on-demand", "intel")
+
+
+def _validate_prime_mode(value: str) -> str:
+    if value not in _PRIME_MODES:
+        raise ValidationError(f"Geçersiz grafik kipi: {value!r}")
+    return value
+
+
 def _validate_battery_name(value: str) -> str:
     if not _RE_BATTERY.match(value):
         raise ValidationError(f"Geçersiz pil adı: {value!r}")
@@ -296,6 +307,7 @@ _VALIDATORS: dict[ParamKind, object] = {
     ParamKind.FLATPAK_ID: _validate_flatpak_id,
     ParamKind.SNAP_NAME: _validate_snap_name,
     ParamKind.LID_ACTION: _validate_lid_action,
+    ParamKind.PRIME_MODE: _validate_prime_mode,
     ParamKind.BATTERY_NAME: _validate_battery_name,
     ParamKind.CHARGE_LIMIT: _validate_charge_limit,
     ParamKind.RECORD_ID: _validate_record_id,
@@ -439,6 +451,11 @@ OPERATIONS: dict[str, OperationSpec] = {
         params=[],
         risk=RiskLevel.HIGH,
         label="Remove the NVIDIA driver (use the open-source driver)",
+    ),
+    "prime.select": _op(
+        ("mode", ParamKind.PRIME_MODE),
+        risk=RiskLevel.MEDIUM,
+        label="Change the hybrid graphics mode (prime-select)",
     ),
     "driver.rebuild_modules": OperationSpec(
         params=[],

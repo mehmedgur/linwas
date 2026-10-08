@@ -36,7 +36,7 @@ Son güncelleme: 8 Ekim 2026
   1. [x] Donanım kartları görünümü (durum rozeti, sade metin + "Ayrıntılar") — 8 Ekim 2026, deneme bekliyor.
   2. [x] Sürücü sağlık kontrolü (modül, çizen kart, sürüm uyuşmazlığı, DKMS) — elle "Denetle". 8 Ekim 2026, deneme bekliyor.
   3. [x] Eksik firmware tespiti (çekirdek günlüğü → depoda doğrulanmış paket). 8 Ekim 2026, deneme bekliyor.
-  4. [ ] Hibrit grafik (PRIME): Dengeli + programı güçlü kartla açma; Ubuntu'da prime-select modları.
+  4. [x] Hibrit grafik (PRIME): Dengeli + programı güçlü kartla açma; Ubuntu'da prime-select modları. 8 Ekim 2026, deneme bekliyor.
   5. [ ] Yeni NVIDIA sürümü bildirimi.
 - **Ayarlar** (kararlar.md › Ayarlar, 7 Ekim 2026), aşamalar:
   1. [x] İskelet: solda kategoriler + arama, anında kaydetme; mevcut Genel/tema/eklentiler/geçmiş taşınır.
@@ -136,6 +136,7 @@ Son güncelleme: 8 Ekim 2026
   alanları (Releases, Urgency) ve `fwupdmgr update <id> -y`; Ubuntu 22.04'te HWE önerisi; saf Debian 12'de
   backports etkinleştirme + `apt-get install -t bookworm-backports linux-image-amd64`.
 - [ ] **Sürücü sağlık kontrolü (8 Ekim 2026):** gerçek bir DKMS hatasıyla (ör. çekirdek güncellemesi + başlık paketi yok) "Sürücüleri yeniden hazırla" akışı (`dkms autoinstall -k`); Ubuntu'da `nvidia` modül adı ve `dpkg-query nvidia-*driver*` eşleşmesi; Wayland oturumunda `glxinfo -B`.
+- [ ] **Hibrit grafik (8 Ekim 2026):** güçlü kart kısayoluyla açılan programın gerçekten NVIDIA'da çalışması (Pardus'ta `__NV_PRIME_RENDER_OFFLOAD` elle doğrulandı); Flatpak uygulamalarında `env … flatpak run` ile ortam değişkenlerinin geçmesi; Ubuntu'da `prime-select query|nvidia|on-demand|intel` (nvidia-prime) ve AMD+AMD makinede `DRI_PRIME=1`.
 - [ ] **Sürücüler (aşama 3–4, denenmedi):** Secure Boot açık bir makinede MOK akışı (mavi ekran,
   `mokutil --test-key`); Ubuntu'da `ubuntu-drivers devices` çıktısı ve `nvidia-driver-<n>` seçenekleri;
   `apt-get purge '.*nvidia.*'` sonrası nouveau ile açılış; yazıcı üretici → paket eşlemesinin gerçek

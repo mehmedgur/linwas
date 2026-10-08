@@ -583,6 +583,11 @@ def _exec_driver_rebuild_modules(seq: int, params: dict[str, str]) -> bool:
     return _run(["dkms", "autoinstall", "-k", os.uname().release], seq)
 
 
+def _exec_prime_select(seq: int, params: dict[str, str]) -> bool:
+    """Ubuntu nvidia-prime kipi; oturum yeniden açılınca (ya da yeniden başlatınca) geçerli."""
+    return _run(["prime-select", params["mode"]], seq)
+
+
 def _exec_firmware_refresh(seq: int, params: dict[str, str]) -> bool:
     return _run(["fwupdmgr", "refresh", "--force"], seq)
 
@@ -821,6 +826,7 @@ _EXECUTORS: dict[str, Any] = {
     "flatpak.setup": _exec_flatpak_setup,
     "driver.remove_nvidia": _exec_driver_remove_nvidia,
     "driver.rebuild_modules": _exec_driver_rebuild_modules,
+    "prime.select": _exec_prime_select,
     "firmware.refresh": _exec_firmware_refresh,
     "firmware.update_device": _exec_firmware_update_device,
     "kernel.install_backports": _exec_kernel_install_backports,
