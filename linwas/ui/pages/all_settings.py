@@ -145,7 +145,8 @@ class _SettingLink(QWidget):
 
         btn = QToolButton(self)
         btn.setObjectName("SettingLink")
-        btn.setText(label)
+        btn.setText(label.replace("&", "&&"))  # "&" kısayol işareti sayılmasın
+        btn.setAccessibleName(label)
         btn.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         btn.setCursor(Qt.CursorShape.PointingHandCursor)
         icons.bind(btn, icon_name, "accent", 18)

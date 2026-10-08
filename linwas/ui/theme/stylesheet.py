@@ -285,11 +285,11 @@ QFrame#Card QFrame#Separator {{
     border: none;
     max-height: 1px;
 }}
-QLabel#CategoryIcon {{
+QFrame#Card QLabel#CategoryIcon {{
     background-color: {c.accent};
     border-radius: 12px;
 }}
-QLabel#LinwasTag {{
+QFrame#Card QLabel#LinwasTag {{
     background-color: {c.sidebar_item_active};
     color: {c.accent};
     border-radius: 6px;
