@@ -257,6 +257,25 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
        hariç. Tanılama: `backend/power_report.py` + root işlemi `power.powertop_report`
        (`/var/lib/linwas-power/powertop.csv`).
 
+9. **Görev çubuğu ve masaüstü gruplama (10 Ekim 2026, kullanıcı kararı):** amaç, çok pencereyle
+   çalışırken görev çubuğunu sade tutmak. Üç ayrı, isteğe bağlı eklenti; kullanıcı istediğini açar
+   (çizimli karşılaştırma: claude.ai artifact "Görev Çubuğu Gruplama Seçenekleri").
+   - **Ortak:** aynı programın pencereleri varsayılan olarak tek düğmede toplanır (GNOME: Dash to Panel,
+     KDE: Görev Yöneticisi gruplama, XFCE: Pencere Düğmeleri gruplama). Tasarım masaüstü bağımsız; ilk
+     teslim GNOME, sonra KDE ve XFCE.
+   - **C. Klasörler (ilk):** Android ana ekran klasörü gibi; masaüstüne ve görev çubuğuna sabitlenen klasör
+     simgesi, tıklayınca Linwas'ın açılır penceresinde program ızgarası. Düzenleme açılır pencereden ("+" ile
+     ekle, çıkar, yeniden adlandır, sırala) ve masaüstünde simgeyi klasörün üstüne sürükle-bırak (DING'in
+     bunu ilettiği kodlarken doğrulanacak). Masaüstü simgeleri kapalıysa (Pardus GNOME'da Desktop Icons NG
+     kurulu değil) ilk klasörde kurulumu önerilir.
+   - **A. Çalışma grupları (ikinci):** kullanıcının grupları ("Proje", "E-posta" …), her grup bir sanal
+     masaüstü; görev çubuğu yalnızca o grubun pencerelerini gösterir; grup değiştirici; grup açılınca
+     programları birlikte başlatma (grubun klasörüyle). X11'de dışarıdan pencere taşıma; Wayland'de
+     masaüstüne özel yol (doğrulanacak).
+   - **B. Pencere gruplama eklentisi (üçüncü):** farklı programların pencerelerini kullanıcının seçtiği tek
+     düğmede birleştirir, önizlemeli açılır liste. Her masaüstüne ayrı eklenti (GNOME Shell JS, KDE
+     Plasmoid QML, XFCE paneli C); önce GNOME. GNOME sürümleri arası bakım gerektirir.
+
 ## AI
 - Sağlayıcılar: Gemini, ChatGPT, DeepSeek. AI isteğe bağlı; anahtar yoksa gizlenir.
 - AI yalnızca görev önerir (tanımlı işlem adı + parametre); "Kuyruğa ekle"ye kullanıcı basar.

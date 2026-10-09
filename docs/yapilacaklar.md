@@ -36,6 +36,11 @@ Son güncelleme: 10 Ekim 2026
   1. [x] Plan modeli, sistem servisi (`linwas-power.service`), GNOME ajanı, `power.save_config`.
   2. [x] Sayfa: plan seçimi, sık ayarlar, ağaç liste, otomatik geçiş, çakışma/güç modu/hazırda bekletme.
   3. [x] Tanılama raporu (uygulama içi + HTML, powertop).
+- **Görev çubuğu ve masaüstü gruplama** (kararlar.md › Yeni özellikler › 9, 10 Ekim 2026), kullanıcı
+  "kodlamaya geçelim" deyince; sıra:
+  1. [ ] C. Klasörler (masaüstü + görev çubuğu, açılır pencere, DING kurulum önerisi).
+  2. [ ] A. Çalışma grupları (sanal masaüstü başına grup, grup değiştirici, birlikte başlatma).
+  3. [ ] B. Pencere gruplama eklentisi (önce GNOME Shell; sonra KDE, XFCE).
 - **Sürücüler geliştirmesi** (kararlar.md › Güncelleme merkezi › Sürücüler geliştirmesi, 8 Ekim 2026),
   aşamalar — her biri ayrı commit, aralarda kullanıcı dener:
   1. [x] Donanım kartları görünümü (durum rozeti, sade metin + "Ayrıntılar") — 8 Ekim 2026, deneme bekliyor.
