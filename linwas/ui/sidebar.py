@@ -33,6 +33,12 @@ def tr(text: str) -> str:
     return QCoreApplication.translate("Sidebar", text)
 
 
+def _is_laptop() -> bool:
+    from linwas.backend.power import is_laptop
+
+    return is_laptop()
+
+
 @dataclass
 class MenuItem:
     id: str
@@ -87,6 +93,8 @@ BOTTOM_ITEMS: list[MenuItem] = [
 class _NavButton(QPushButton):
     def __init__(self, item: MenuItem, indent: int = 0, parent: QWidget | None = None) -> None:
         label = tr(item.label)
+        if item.id == "power" and not _is_laptop():
+            label = tr("Power")  # masaüstü bilgisayar: pil bölümleri yok
         super().__init__(label, parent)
         self._item = item
         self._active = False
@@ -334,6 +342,7 @@ def _translation_markers() -> None:
     tr("Disk Cleanup")
     tr("Personal Backup")
     tr("Power & Battery")
+    tr("Power")
     tr("Import from Windows")
     tr("All Settings")
     tr("Interface")

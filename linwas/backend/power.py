@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import os
 import re
+import shutil
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -169,3 +170,20 @@ def current_lid_action() -> str:
         if value:
             action = value
     return action
+
+
+# --- Güç planı değiştirme (şifresiz; polkit eylemi org.linwas.power.switch) ---
+
+SWITCH_HELPER = Path("/usr/lib/linwas/linwas-power-switch")
+
+
+def can_switch_plan_directly() -> bool:
+    """Kurulu pakette plan şifresiz değişir; kaynak koddan çalışırken root helper gerekir."""
+    return SWITCH_HELPER.is_file() and shutil.which("pkexec") is not None
+
+
+def switch_plan(plan_id: str) -> bool:
+    if not re.fullmatch(r"[a-z0-9-]{1,32}", plan_id):
+        return False
+    r = _run(["pkexec", str(SWITCH_HELPER), plan_id], timeout=60)
+    return bool(r and r.returncode == 0)

@@ -56,12 +56,6 @@ def _plugin(
     return type(f"{page_id.title().replace('_', '')}Plugin", (_PagePlugin,), attrs)
 
 
-def _is_laptop() -> bool:
-    from linwas.backend.power import is_laptop
-
-    return is_laptop()
-
-
 BUILTIN_PLUGINS: tuple[type[_PagePlugin], ...] = (
     _plugin(
         "linwas.migrate", "Import from Windows", "migrate", "linwas.ui.pages.migrate:MigratePage"
@@ -85,6 +79,5 @@ BUILTIN_PLUGINS: tuple[type[_PagePlugin], ...] = (
         "Power & Battery",
         "power",
         "linwas.ui.pages.power:PowerPage",
-        available=_is_laptop,
     ),
 )

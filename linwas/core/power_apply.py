@@ -580,13 +580,14 @@ def run_service() -> None:
 
     last_key: tuple[object, ...] | None = None
     last_full = 0.0
+    forced = False  # SIGUSR1: ayar değişti ya da "planı yeniden uygula"
     while not stop.is_set():
         cfg = powerplan.load_config()
         state = powerplan.read_power_state()
         plan, reason = powerplan.effective_plan(cfg, state)
         source = "ac" if state.on_ac else "bat"
         key = (plan.id, source, _config_mtime())
-        changed = key != last_key
+        changed = forced or key != last_key
         now = time.monotonic()
         if changed or now - last_full >= REAPPLY_SECONDS:
             results = apply_system(cfg, plan, source, changed)
@@ -600,7 +601,7 @@ def run_service() -> None:
             with contextlib.suppress(OSError):
                 _write_json(STATUS_FILE, status)
             last_key, last_full = key, now
-        wake.wait(POLL_SECONDS)
+        forced = wake.wait(POLL_SECONDS)
         wake.clear()
     with contextlib.suppress(OSError):
         PID_FILE.unlink()

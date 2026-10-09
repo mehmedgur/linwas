@@ -224,6 +224,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <source>Update center</source>
         <translation>Güncelleme merkezi</translation>
     </message>
+    <message>
+        <source>Power</source>
+        <translation>Güç</translation>
+    </message>
 </context>
 <context>
     <name>StatusBar</name>
@@ -2364,20 +2368,8 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Tamamen dolu</translation>
     </message>
     <message>
-        <source>Lid close: {action}</source>
-        <translation>Kapak kapanınca: {action}</translation>
-    </message>
-    <message>
-        <source>Lock the screen only</source>
-        <translation>Yalnızca ekranı kilitle</translation>
-    </message>
-    <message>
         <source>Longer battery life, slower computer</source>
         <translation>Daha uzun pil ömrü, daha yavaş bilgisayar</translation>
-    </message>
-    <message>
-        <source>No battery found.</source>
-        <translation>Pil bulunamadı.</translation>
     </message>
     <message>
         <source>No limit (100%)</source>
@@ -2400,14 +2392,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Güç ve Pil</translation>
     </message>
     <message>
-        <source>Power mode</source>
-        <translation>Güç modu</translation>
-    </message>
-    <message>
-        <source>Power modes are not available on this computer.</source>
-        <translation>Bu bilgisayarda güç modları kullanılamıyor.</translation>
-    </message>
-    <message>
         <source>Power saver</source>
         <translation>Güç tasarrufu</translation>
     </message>
@@ -2424,20 +2408,12 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Bilgisayarı kapat</translation>
     </message>
     <message>
-        <source>Sleep (default)</source>
-        <translation>Uyku (varsayılan)</translation>
-    </message>
-    <message>
         <source>Stop at {n}%</source>
         <translation>%{n} olunca dur</translation>
     </message>
     <message>
         <source>Stopping charging at 80% helps the battery last longer if the laptop is usually plugged in.</source>
         <translation>Dizüstü genelde prize takılıysa şarjı %80'de durdurmak pilin ömrünü uzatır.</translation>
-    </message>
-    <message>
-        <source>The change takes effect after the next restart.</source>
-        <translation>Değişiklik bir sonraki yeniden başlatmada geçerli olur.</translation>
     </message>
     <message>
         <source>Unknown</source>
@@ -2462,6 +2438,578 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>The limit is kept after restarting.</source>
         <translation>Sınır yeniden başlattıktan sonra da korunur.</translation>
+    </message>
+    <message>
+        <source>"System default" means Linwas does not change that setting. Settings under "all plans" are the same for every plan.</source>
+        <translation>"Sistem varsayılanı", Linwas'ın o ayara dokunmadığı anlamına gelir. "Tüm planlar" altındaki ayarlar her plan için aynıdır.</translation>
+    </message>
+    <message>
+        <source>AMD and Intel: speed limit; NVIDIA: switch off the card when not in use.</source>
+        <translation>AMD ve Intel: hız sınırı; NVIDIA: kullanılmadığında kartı kapatır.</translation>
+    </message>
+    <message>
+        <source>Adaptive brightness</source>
+        <translation>Uyarlanabilir parlaklık</translation>
+    </message>
+    <message>
+        <source>Adjusts brightness using the light sensor.</source>
+        <translation>Parlaklığı ışık algılayıcısına göre ayarlar.</translation>
+    </message>
+    <message>
+        <source>Advanced power settings</source>
+        <translation>Gelişmiş güç seçenekleri</translation>
+    </message>
+    <message>
+        <source>Advanced: the kernel's frequency scaling method.</source>
+        <translation>İleri düzey: çekirdeğin frekans ayarlama yöntemi.</translation>
+    </message>
+    <message>
+        <source>Allow</source>
+        <translation>İzin ver</translation>
+    </message>
+    <message>
+        <source>Allow wake timers</source>
+        <translation>Uyanma zamanlayıcılarına izin ver</translation>
+    </message>
+    <message>
+        <source>Another power tool is installed</source>
+        <translation>Başka bir güç aracı kurulu</translation>
+    </message>
+    <message>
+        <source>Applied once when the plan or power source changes; you can still adjust it.</source>
+        <translation>Plan ya da güç kaynağı değişince bir kez uygulanır; sonra yine ayarlayabilirsiniz.</translation>
+    </message>
+    <message>
+        <source>Ask what to do</source>
+        <translation>Ne yapılacağını sor</translation>
+    </message>
+    <message>
+        <source>Automatic plan switching</source>
+        <translation>Otomatik plan değiştirme</translation>
+    </message>
+    <message>
+        <source>Balanced, faster</source>
+        <translation>Dengeli, daha hızlı</translation>
+    </message>
+    <message>
+        <source>Balanced, longer battery</source>
+        <translation>Dengeli, daha uzun pil</translation>
+    </message>
+    <message>
+        <source>Battery (all plans)</source>
+        <translation>Pil (tüm planlar)</translation>
+    </message>
+    <message>
+        <source>Battery levels must be: low &gt; critical &gt; action level.</source>
+        <translation>Pil seviyeleri şöyle olmalı: düşük &gt; kritik &gt; eylem seviyesi.</translation>
+    </message>
+    <message>
+        <source>Bluetooth</source>
+        <translation>Bluetooth</translation>
+    </message>
+    <message>
+        <source>Bluetooth is turned back on when you leave this plan.</source>
+        <translation>Bu plandan çıkınca Bluetooth yeniden açılır.</translation>
+    </message>
+    <message>
+        <source>Buttons and lid (all plans)</source>
+        <translation>Düğmeler ve kapak (tüm planlar)</translation>
+    </message>
+    <message>
+        <source>Closing the lid with an external screen</source>
+        <translation>Harici ekran bağlıyken kapak kapanınca</translation>
+    </message>
+    <message>
+        <source>Common settings for {plan}</source>
+        <translation>{plan} için sık kullanılan ayarlar</translation>
+    </message>
+    <message>
+        <source>Critical battery action</source>
+        <translation>Kritik pil eylemi</translation>
+    </message>
+    <message>
+        <source>Critical battery action level</source>
+        <translation>Kritik pil eylemi seviyesi</translation>
+    </message>
+    <message>
+        <source>Critical battery level</source>
+        <translation>Kritik pil seviyesi</translation>
+    </message>
+    <message>
+        <source>Custom plan</source>
+        <translation>Özel plan</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Sil</translation>
+    </message>
+    <message>
+        <source>Delete the plan "{name}"?</source>
+        <translation>"{name}" planı silinsin mi?</translation>
+    </message>
+    <message>
+        <source>Dim the screen when inactive</source>
+        <translation>Boştayken ekranı karart</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Display and sleep</source>
+        <translation>Ekran ve uyku</translation>
+    </message>
+    <message>
+        <source>Do not allow</source>
+        <translation>İzin verme</translation>
+    </message>
+    <message>
+        <source>Energy preference (EPP)</source>
+        <translation>Enerji tercihi (EPP)</translation>
+    </message>
+    <message>
+        <source>Every day from</source>
+        <translation>Her gün</translation>
+    </message>
+    <message>
+        <source>Export power plan</source>
+        <translation>Güç planını dışa aktar</translation>
+    </message>
+    <message>
+        <source>Export…</source>
+        <translation>Dışa aktar…</translation>
+    </message>
+    <message>
+        <source>Firmware default</source>
+        <translation>Donanım yazılımı varsayılanı</translation>
+    </message>
+    <message>
+        <source>Frequency governor</source>
+        <translation>Frekans yöneticisi (governor)</translation>
+    </message>
+    <message>
+        <source>Graphics and brightness</source>
+        <translation>Ekran kartı ve parlaklık</translation>
+    </message>
+    <message>
+        <source>Graphics card power mode</source>
+        <translation>Ekran kartı güç modu</translation>
+    </message>
+    <message>
+        <source>Hibernate</source>
+        <translation>Hazırda beklet</translation>
+    </message>
+    <message>
+        <source>Hibernate is available. You can choose it for sleep, the lid and buttons.</source>
+        <translation>Hazırda bekletme kullanılabilir. Uyku, kapak ve düğmeler için seçebilirsiniz.</translation>
+    </message>
+    <message>
+        <source>Hibernate is not available on this computer:</source>
+        <translation>Bu bilgisayarda hazırda bekletme kullanılamıyor:</translation>
+    </message>
+    <message>
+        <source>Hibernate saves your work to disk and turns the computer off.</source>
+        <translation>Hazırda bekletme, açık işlerinizi diske kaydedip bilgisayarı kapatır.</translation>
+    </message>
+    <message>
+        <source>Hybrid sleep</source>
+        <translation>Karma uyku</translation>
+    </message>
+    <message>
+        <source>Idle USB devices are switched off. Mice and keyboards are excluded.</source>
+        <translation>Boştaki USB aygıtları kapatılır. Fare ve klavye hariç.</translation>
+    </message>
+    <message>
+        <source>Import power plan</source>
+        <translation>Güç planını içe aktar</translation>
+    </message>
+    <message>
+        <source>Imported plan</source>
+        <translation>İçe aktarılan plan</translation>
+    </message>
+    <message>
+        <source>Import…</source>
+        <translation>İçe aktar…</translation>
+    </message>
+    <message>
+        <source>In {plan}, the minimum processor state is higher than the maximum.</source>
+        <translation>{plan} planında en düşük işlemci durumu en yüksekten büyük.</translation>
+    </message>
+    <message>
+        <source>Lets scheduled tasks wake the computer from sleep.</source>
+        <translation>Zamanlanmış görevlerin bilgisayarı uykudan uyandırmasına izin verir.</translation>
+    </message>
+    <message>
+        <source>Linwas will be able to set up hibernation in a later version.</source>
+        <translation>Linwas, sonraki bir sürümde hazırda bekletmeyi kurabilecek.</translation>
+    </message>
+    <message>
+        <source>Lock the screen</source>
+        <translation>Ekranı kilitle</translation>
+    </message>
+    <message>
+        <source>Low battery level</source>
+        <translation>Düşük pil seviyesi</translation>
+    </message>
+    <message>
+        <source>Low battery switching comes first, then the schedule, then the selected plan.</source>
+        <translation>Önce düşük pil geçişi, sonra zamanlama, sonra seçili plan geçerlidir.</translation>
+    </message>
+    <message>
+        <source>Managed by another power tool</source>
+        <translation>Başka bir güç aracı yönetiyor</translation>
+    </message>
+    <message>
+        <source>Maximum power saving</source>
+        <translation>En yüksek tasarruf</translation>
+    </message>
+    <message>
+        <source>Maximum processor state</source>
+        <translation>En yüksek işlemci durumu</translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation>Orta</translation>
+    </message>
+    <message>
+        <source>Minimum processor state</source>
+        <translation>En düşük işlemci durumu</translation>
+    </message>
+    <message>
+        <source>Never</source>
+        <translation>Hiçbir zaman</translation>
+    </message>
+    <message>
+        <source>New plan…</source>
+        <translation>Yeni plan…</translation>
+    </message>
+    <message>
+        <source>New power plan</source>
+        <translation>Yeni güç planı</translation>
+    </message>
+    <message>
+        <source>No resume device is set up.</source>
+        <translation>Uyanma (resume) aygıtı ayarlanmamış.</translation>
+    </message>
+    <message>
+        <source>Not supported by this computer</source>
+        <translation>Bu bilgisayar desteklemiyor</translation>
+    </message>
+    <message>
+        <source>Not yet supported on this desktop (GNOME only for now)</source>
+        <translation>Bu masaüstünde henüz desteklenmiyor (şimdilik yalnızca GNOME)</translation>
+    </message>
+    <message>
+        <source>Now using: {plan} ({source})</source>
+        <translation>Şu an: {plan} ({source})</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>Kapalı</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>Açık</translation>
+    </message>
+    <message>
+        <source>Only for hard disks with spinning platters.</source>
+        <translation>Yalnızca dönen plakalı sabit diskler için.</translation>
+    </message>
+    <message>
+        <source>Only on laptops</source>
+        <translation>Yalnızca dizüstü bilgisayarlarda</translation>
+    </message>
+    <message>
+        <source>PCI Express link state power management</source>
+        <translation>PCI Express bağlantı durumu güç yönetimi</translation>
+    </message>
+    <message>
+        <source>PCI device power management</source>
+        <translation>PCI aygıt güç yönetimi</translation>
+    </message>
+    <message>
+        <source>Percentage of the highest processor speed.</source>
+        <translation>En yüksek işlemci hızının yüzdesi.</translation>
+    </message>
+    <message>
+        <source>Percentage of the highest processor speed. Lower values save battery.</source>
+        <translation>En yüksek işlemci hızının yüzdesi. Düşük değerler pil tasarrufu sağlar.</translation>
+    </message>
+    <message>
+        <source>Plan name:</source>
+        <translation>Plan adı:</translation>
+    </message>
+    <message>
+        <source>Plan:</source>
+        <translation>Plan:</translation>
+    </message>
+    <message>
+        <source>Plugged in</source>
+        <translation>Prizde</translation>
+    </message>
+    <message>
+        <source>Power</source>
+        <translation>Güç</translation>
+    </message>
+    <message>
+        <source>Power plan</source>
+        <translation>Güç planı</translation>
+    </message>
+    <message>
+        <source>Power plan (*.json)</source>
+        <translation>Güç planı (*.json)</translation>
+    </message>
+    <message>
+        <source>Power saving</source>
+        <translation>Güç tasarrufu</translation>
+    </message>
+    <message>
+        <source>Processor</source>
+        <translation>İşlemci</translation>
+    </message>
+    <message>
+        <source>Put the computer to sleep after</source>
+        <translation>Bilgisayarı uyku moduna al</translation>
+    </message>
+    <message>
+        <source>Reapply plan</source>
+        <translation>Planı yeniden uygula</translation>
+    </message>
+    <message>
+        <source>Remove {name}</source>
+        <translation>{name} aracını kaldır</translation>
+    </message>
+    <message>
+        <source>Rename power plan</source>
+        <translation>Güç planını yeniden adlandır</translation>
+    </message>
+    <message>
+        <source>Rename…</source>
+        <translation>Yeniden adlandır…</translation>
+    </message>
+    <message>
+        <source>Restore all defaults</source>
+        <translation>Tümünü varsayılana döndür</translation>
+    </message>
+    <message>
+        <source>Restore all power settings to their defaults? Custom plans and automatic switching are removed.</source>
+        <translation>Bütün güç ayarları varsayılana döndürülsün mü? Özel planlar ve otomatik geçiş silinir.</translation>
+    </message>
+    <message>
+        <source>Restore plan defaults</source>
+        <translation>Planı varsayılana döndür</translation>
+    </message>
+    <message>
+        <source>Restore the default settings of "{name}"?</source>
+        <translation>"{name}" planı varsayılan ayarlarına döndürülsün mü?</translation>
+    </message>
+    <message>
+        <source>SATA link power management</source>
+        <translation>SATA bağlantı güç yönetimi</translation>
+    </message>
+    <message>
+        <source>Save changes</source>
+        <translation>Değişiklikleri kaydet</translation>
+    </message>
+    <message>
+        <source>Save power plan settings</source>
+        <translation>Güç planı ayarlarını kaydet</translation>
+    </message>
+    <message>
+        <source>Saves battery; can slightly slow down the connection.</source>
+        <translation>Pil tasarrufu sağlar; bağlantıyı biraz yavaşlatabilir.</translation>
+    </message>
+    <message>
+        <source>Screen brightness when switching to this plan</source>
+        <translation>Bu plana geçince ekran parlaklığı</translation>
+    </message>
+    <message>
+        <source>Secure Boot (kernel lockdown) blocks hibernation.</source>
+        <translation>Güvenli Önyükleme (çekirdek kilidi) hazırda bekletmeyi engelliyor.</translation>
+    </message>
+    <message>
+        <source>Setting</source>
+        <translation>Ayar</translation>
+    </message>
+    <message>
+        <source>Sleep</source>
+        <translation>Uyku</translation>
+    </message>
+    <message>
+        <source>Sleep type</source>
+        <translation>Uyku türü</translation>
+    </message>
+    <message>
+        <source>Some computers do not allow changing this; then it has no effect.</source>
+        <translation>Bazı bilgisayarlar bunun değiştirilmesine izin vermez; o zaman etkisi olmaz.</translation>
+    </message>
+    <message>
+        <source>System default</source>
+        <translation>Sistem varsayılanı</translation>
+    </message>
+    <message>
+        <source>System power mode</source>
+        <translation>Sistem güç modu</translation>
+    </message>
+    <message>
+        <source>Takes effect after the next restart.</source>
+        <translation>Bir sonraki yeniden başlatmada geçerli olur.</translation>
+    </message>
+    <message>
+        <source>Tells the processor whether to favour speed or battery life.</source>
+        <translation>İşlemciye hızı mı pil ömrünü mü öne alacağını söyler.</translation>
+    </message>
+    <message>
+        <source>The Power saver / Balanced / Performance mode in the system menu.</source>
+        <translation>Sistem menüsündeki Güç tasarrufu / Dengeli / Performans modu.</translation>
+    </message>
+    <message>
+        <source>The critical battery action runs at this level.</source>
+        <translation>Kritik pil eylemi bu seviyede çalışır.</translation>
+    </message>
+    <message>
+        <source>The hdparm tool is not installed</source>
+        <translation>hdparm aracı kurulu değil</translation>
+    </message>
+    <message>
+        <source>The iw tool is not installed</source>
+        <translation>iw aracı kurulu değil</translation>
+    </message>
+    <message>
+        <source>The kernel does not support hibernation.</source>
+        <translation>Çekirdek hazırda bekletmeyi desteklemiyor.</translation>
+    </message>
+    <message>
+        <source>The login screen follows this setting after the next restart.</source>
+        <translation>Giriş ekranı bu ayara bir sonraki yeniden başlatmadan sonra uyar.</translation>
+    </message>
+    <message>
+        <source>The power mode was changed from the system menu ({now}). This plan uses {want}; it is set again when the plan or power source changes, or when you press "Reapply plan".</source>
+        <translation>Güç modu sistem menüsünden değiştirilmiş ({now}). Bu plan {want} kullanıyor; plan ya da güç kaynağı değişince veya "Planı yeniden uygula"ya basınca yeniden ayarlanır.</translation>
+    </message>
+    <message>
+        <source>The power plan could not be changed.</source>
+        <translation>Güç planı değiştirilemedi.</translation>
+    </message>
+    <message>
+        <source>The power plan service is not running; some settings are not applied.</source>
+        <translation>Güç planı servisi çalışmıyor; bazı ayarlar uygulanmıyor.</translation>
+    </message>
+    <message>
+        <source>The schedule start and end times are the same.</source>
+        <translation>Zamanlamanın başlangıç ve bitiş saatleri aynı.</translation>
+    </message>
+    <message>
+        <source>The swap space is smaller than the memory (RAM).</source>
+        <translation>Takas alanı (swap) bellekten (RAM) küçük.</translation>
+    </message>
+    <message>
+        <source>This file is not a valid Linwas power plan.</source>
+        <translation>Bu dosya geçerli bir Linwas güç planı değil.</translation>
+    </message>
+    <message>
+        <source>Turbo boost</source>
+        <translation>Turbo hızlandırma</translation>
+    </message>
+    <message>
+        <source>Turn off</source>
+        <translation>Kapat</translation>
+    </message>
+    <message>
+        <source>Turn off hard disk after</source>
+        <translation>Sabit diski kapat</translation>
+    </message>
+    <message>
+        <source>Turn off the screen after</source>
+        <translation>Ekranı kapat</translation>
+    </message>
+    <message>
+        <source>Turning turbo off makes the computer cooler and quieter but slower.</source>
+        <translation>Turbo kapalıyken bilgisayar daha serin ve sessiz ama daha yavaştır.</translation>
+    </message>
+    <message>
+        <source>USB selective suspend</source>
+        <translation>USB seçici askıya alma</translation>
+    </message>
+    <message>
+        <source>USB, PCIe and disks</source>
+        <translation>USB, PCIe ve diskler</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation>Değer</translation>
+    </message>
+    <message>
+        <source>When I press the power button</source>
+        <translation>Güç düğmesine basınca</translation>
+    </message>
+    <message>
+        <source>When the battery falls to</source>
+        <translation>Pil şu seviyeye düşünce:</translation>
+    </message>
+    <message>
+        <source>Wi-Fi power saving</source>
+        <translation>Wi-Fi güç tasarrufu</translation>
+    </message>
+    <message>
+        <source>Wireless</source>
+        <translation>Kablosuz</translation>
+    </message>
+    <message>
+        <source>You are warned at this level.</source>
+        <translation>Bu seviyede uyarılırsınız.</translation>
+    </message>
+    <message>
+        <source>You can have at most {n} custom plans.</source>
+        <translation>En fazla {n} özel plan oluşturabilirsiniz.</translation>
+    </message>
+    <message>
+        <source>You have unsaved changes.</source>
+        <translation>Kaydedilmemiş değişiklikler var.</translation>
+    </message>
+    <message>
+        <source>because of the schedule</source>
+        <translation>zamanlama nedeniyle</translation>
+    </message>
+    <message>
+        <source>because the battery is low</source>
+        <translation>pil azaldığı için</translation>
+    </message>
+    <message>
+        <source>on battery</source>
+        <translation>pilde</translation>
+    </message>
+    <message>
+        <source>plugged in</source>
+        <translation>prizde</translation>
+    </message>
+    <message>
+        <source>power-profiles-daemon is not installed</source>
+        <translation>power-profiles-daemon kurulu değil</translation>
+    </message>
+    <message>
+        <source>switch to</source>
+        <translation>şu plana geç:</translation>
+    </message>
+    <message>
+        <source>to</source>
+        <translation>ile</translation>
+    </message>
+    <message>
+        <source>use</source>
+        <translation>arasında kullan:</translation>
+    </message>
+    <message>
+        <source>{names} also manages power settings. To avoid the two overriding each other, Linwas does not change processor, USB/PCIe/disk, wireless and graphics card settings. Removing it is recommended.</source>
+        <translation>{names} de güç ayarlarını yönetiyor. İkisi birbirinin ayarını ezmesin diye Linwas işlemci, USB/PCIe/disk, kablosuz ve ekran kartı ayarlarını değiştirmiyor. Kaldırılması önerilir.</translation>
+    </message>
+    <message>
+        <source>{n} min</source>
+        <translation>{n} dk</translation>
+    </message>
+    <message>
+        <source>{n}%</source>
+        <translation>%{n}</translation>
     </message>
 </context>
 <context>
