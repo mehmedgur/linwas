@@ -60,6 +60,8 @@ class ParamKind(Enum):
     BACKPORTS_SUITE = "backports_suite"
     # Ubuntu nvidia-prime kipi (prime-select): nvidia | on-demand | intel
     PRIME_MODE = "prime_mode"
+    # Güç planları ayarı (JSON; core.powerplan katı doğrulamasından geçer)
+    POWER_CONFIG = "power_config"
 
 
 @dataclass(frozen=True)
@@ -287,6 +289,17 @@ def _validate_record_id(value: str) -> str:
     return value
 
 
+def _validate_power_config(value: str) -> str:
+    from linwas.core.powerplan import PowerConfigError, dumps, loads
+
+    if len(value) > 200_000:
+        raise ValidationError("Güç ayarı çok büyük")
+    try:
+        return dumps(loads(value))
+    except PowerConfigError as exc:
+        raise ValidationError(f"Geçersiz güç ayarı: {exc}") from exc
+
+
 def _validate_text(value: str) -> str:
     # Serbest metin; boş olabilir, NUL byte yok
     if "\x00" in value:
@@ -317,6 +330,7 @@ _VALIDATORS: dict[ParamKind, object] = {
     ParamKind.MOK_PASSWORD: _validate_mok_password,
     ParamKind.FWUPD_DEVICE_ID: _validate_fwupd_device_id,
     ParamKind.BACKPORTS_SUITE: _validate_backports_suite,
+    ParamKind.POWER_CONFIG: _validate_power_config,
 }
 
 
@@ -426,6 +440,11 @@ OPERATIONS: dict[str, OperationSpec] = {
         ("percent", ParamKind.CHARGE_LIMIT),
         risk=RiskLevel.LOW,
         label="Set battery charge limit",
+    ),
+    "power.save_config": _op(
+        ("config", ParamKind.POWER_CONFIG),
+        risk=RiskLevel.LOW,
+        label="Save power plan settings",
     ),
     "rollback.restore_files": _op(
         ("record_id", ParamKind.RECORD_ID),

@@ -78,6 +78,15 @@ install -D -m 0644 "$ROOT/packaging/systemd/linwas-autoupdate.service" \
 install -D -m 0644 "$ROOT/packaging/systemd/linwas-autoupdate.timer" \
     "$PKG/usr/lib/systemd/system/linwas-autoupdate.timer"
 
+echo "==> Güç planları servisi ve masaüstü ajanı"
+install -D -m 0755 "$ROOT/packaging/linwas-power.sh" "$PKG/usr/lib/linwas/linwas-power"
+install -D -m 0755 "$ROOT/packaging/linwas-power-switch.sh" "$PKG/usr/lib/linwas/linwas-power-switch"
+install -D -m 0755 "$ROOT/packaging/linwas-power-agent.sh" "$PKG/usr/lib/linwas/linwas-power-agent"
+install -D -m 0644 "$ROOT/packaging/systemd/linwas-power.service" \
+    "$PKG/usr/lib/systemd/system/linwas-power.service"
+install -D -m 0644 "$ROOT/packaging/linwas-power-agent.desktop" \
+    "$PKG/etc/xdg/autostart/linwas-power-agent.desktop"
+
 # APT deposu (yayın yeri kararlaştırılınca): LINWAS_APT_URL ve imza anahtarı verilirse
 APT_URL=${LINWAS_APT_URL:-}
 if [ -n "$APT_URL" ]; then
@@ -96,6 +105,8 @@ sed -e "s/@VERSION@/${VERSION}/" -e "s/@ARCH@/${ARCH}/" -e "s/@INSTALLED_SIZE@/$
     "$ROOT/packaging/debian/control.in" > "$PKG/DEBIAN/control"
 sed -e "s|@APT_URL@|${APT_URL}|" "$ROOT/packaging/debian/postinst.in" > "$PKG/DEBIAN/postinst"
 install -m 0755 "$ROOT/packaging/debian/postrm" "$PKG/DEBIAN/postrm"
+# /etc altındaki dosyalar kullanıcı değiştirirse güncellemede korunur
+echo "/etc/xdg/autostart/linwas-power-agent.desktop" > "$PKG/DEBIAN/conffiles"
 install -m 0755 "$ROOT/packaging/debian/prerm" "$PKG/DEBIAN/prerm"
 chmod 0755 "$PKG/DEBIAN/postinst"
 

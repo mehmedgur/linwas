@@ -491,6 +491,13 @@ def _exec_power_set_lid_action(seq: int, params: dict[str, str]) -> bool:
 
 
 _BATTERY_RULE = Path("/etc/udev/rules.d/90-linwas-battery.rules")
+# power.save_config'in değiştirdiği dosyalar (core.power_apply ile aynı yollar)
+_POWER_FILES = [
+    Path("/etc/linwas/power.json"),
+    Path("/etc/systemd/logind.conf.d/90-linwas-power.conf"),
+    _LID_DROPIN,
+    Path("/etc/UPower/UPower.conf"),
+]
 
 
 def _write_battery_rule(seq: int, battery: str, percent: str) -> bool:
@@ -526,6 +533,28 @@ def _exec_battery_set_charge_limit(seq: int, params: dict[str, str]) -> bool:
         _error(seq, f"Şarj sınırı yazılamadı: {exc}")
         return False
     return _write_battery_rule(seq, params["battery"], params["percent"])
+
+
+def _exec_power_save_config(seq: int, params: dict[str, str]) -> bool:
+    """Güç planlarını yazar; logind (düğmeler/kapak) ve UPower (pil seviyeleri) ayarlarını
+    günceller, servise haber verir (servis yoksa planı hemen uygular)."""
+    from linwas.core import power_apply, powerplan
+
+    try:
+        cfg = powerplan.loads(params["config"])
+        power_apply.check_upower(cfg)  # pil seviyeleri sırası; hiçbir şey yazılmadan önce
+        powerplan.write_config(cfg)
+        power_apply.write_logind(cfg)
+        power_apply.write_upower(cfg)
+    except powerplan.PowerConfigError as exc:
+        _error(seq, f"Geçersiz güç ayarı: {exc}")
+        return False
+    except OSError as exc:
+        _error(seq, f"Güç ayarı yazılamadı: {exc}")
+        return False
+    if not power_apply.notify_service():
+        power_apply.apply_once()
+    return True
 
 
 def _exec_fonts_install_microsoft(seq: int, params: dict[str, str]) -> bool:
@@ -800,6 +829,9 @@ _EXECUTORS: dict[str, Any] = {
     ),
     "battery.set_charge_limit": lambda seq, p: _with_file_backup(
         seq, "battery", [_BATTERY_RULE], lambda: _exec_battery_set_charge_limit(seq, p)
+    ),
+    "power.save_config": lambda seq, p: _with_file_backup(
+        seq, "power", _POWER_FILES, lambda: _exec_power_save_config(seq, p)
     ),
     "fonts.install_microsoft": _exec_fonts_install_microsoft,
     "package.update_index": _exec_package_update_index,

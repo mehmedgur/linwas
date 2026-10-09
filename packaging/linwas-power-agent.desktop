@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Linwas power plans
+Name[tr]=Linwas güç planları
+Exec=/usr/lib/linwas/linwas-power-agent
+NoDisplay=true
+OnlyShowIn=GNOME;
+X-GNOME-Autostart-enabled=true

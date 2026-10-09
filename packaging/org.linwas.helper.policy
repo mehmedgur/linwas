@@ -20,4 +20,18 @@
     </defaults>
     <annotate key="org.freedesktop.policykit.exec.path">/usr/lib/linwas/linwas-helper</annotate>
   </action>
+  <!-- Etkin güç planını değiştirmek: Windows'taki gibi şifre sorulmaz (yalnızca yerel etkin
+       oturum). Plan ayarlarını değiştirmek org.linwas.helper.run ile şifre ister. -->
+  <action id="org.linwas.power.switch">
+    <description>Change the active power plan</description>
+    <description xml:lang="tr">Etkin güç planını değiştir</description>
+    <message>Linwas needs your password to change the power plan.</message>
+    <message xml:lang="tr">Linwas, güç planını değiştirmek için şifrenizi istiyor.</message>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/lib/linwas/linwas-power-switch</annotate>
+  </action>
 </policyconfig>
