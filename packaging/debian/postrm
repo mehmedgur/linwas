@@ -8,7 +8,7 @@ if [ "$1" = "purge" ]; then
     rm -rf /var/lib/linwas /var/lib/linwas-autoupdate
     rm -f /etc/linwas/autoupdate.json
     rm -f /etc/linwas/power.json /etc/systemd/logind.conf.d/90-linwas-power.conf
-    rm -rf /run/linwas-power
+    rm -rf /run/linwas-power /var/lib/linwas-power
 fi
 
 if [ -d /run/systemd/system ]; then

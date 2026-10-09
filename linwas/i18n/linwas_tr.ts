@@ -3011,6 +3011,226 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <source>{n}%</source>
         <translation>%{n}</translation>
     </message>
+    <message>
+        <source>"{name}" is keeping the processor busy ({cpu}% of one core).</source>
+        <translation>"{name}" işlemciyi meşgul ediyor (bir çekirdeğin %{cpu} kadarı).</translation>
+    </message>
+    <message>
+        <source>Automatic switching to a power saving plan on low battery is off.</source>
+        <translation>Pil azalınca tasarruf planına otomatik geçiş kapalı.</translation>
+    </message>
+    <message>
+        <source>Charge</source>
+        <translation>Doluluk</translation>
+    </message>
+    <message>
+        <source>Charge cycles</source>
+        <translation>Şarj döngüsü</translation>
+    </message>
+    <message>
+        <source>Current power use on battery</source>
+        <translation>Pilde anlık güç tüketimi</translation>
+    </message>
+    <message>
+        <source>Current power use on battery: {w} W</source>
+        <translation>Pilde anlık güç tüketimi: {w} W</translation>
+    </message>
+    <message>
+        <source>Detailed measurement (powertop, 20 s)</source>
+        <translation>Ayrıntılı ölçüm (powertop, 20 sn)</translation>
+    </message>
+    <message>
+        <source>Detailed power measurement (powertop)</source>
+        <translation>Ayrıntılı güç ölçümü (powertop)</translation>
+    </message>
+    <message>
+        <source>Device</source>
+        <translation>Aygıt</translation>
+    </message>
+    <message>
+        <source>Devices that can wake the computer</source>
+        <translation>Bilgisayarı uyandırabilen aygıtlar</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>Hata</translation>
+    </message>
+    <message>
+        <source>Findings</source>
+        <translation>Bulgular</translation>
+    </message>
+    <message>
+        <source>Finds what uses power, checks the settings and suggests improvements.</source>
+        <translation>Gücü neyin harcadığını bulur, ayarları denetler ve iyileştirme önerir.</translation>
+    </message>
+    <message>
+        <source>Fix</source>
+        <translation>Düzelt</translation>
+    </message>
+    <message>
+        <source>Health</source>
+        <translation>Sağlık</translation>
+    </message>
+    <message>
+        <source>Hibernate is not available.</source>
+        <translation>Hazırda bekletme kullanılamıyor.</translation>
+    </message>
+    <message>
+        <source>Information</source>
+        <translation>Bilgi</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Kur</translation>
+    </message>
+    <message>
+        <source>Install power-profiles-daemon to use the system power modes.</source>
+        <translation>Sistem güç modlarını kullanmak için power-profiles-daemon kurun.</translation>
+    </message>
+    <message>
+        <source>Install powertop for a detailed measurement of power use.</source>
+        <translation>Güç tüketimini ayrıntılı ölçmek için powertop kurun.</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation>Öğe</translation>
+    </message>
+    <message>
+        <source>Measuring…</source>
+        <translation>Ölçülüyor…</translation>
+    </message>
+    <message>
+        <source>No problems found.</source>
+        <translation>Sorun bulunamadı.</translation>
+    </message>
+    <message>
+        <source>Not running</source>
+        <translation>Çalışmıyor</translation>
+    </message>
+    <message>
+        <source>PCI device power management is not turned on for battery in the current plan.</source>
+        <translation>Geçerli planda pilde PCI aygıt güç yönetimi açık değil.</translation>
+    </message>
+    <message>
+        <source>Power diagnostics</source>
+        <translation>Güç tanılaması</translation>
+    </message>
+    <message>
+        <source>Power plan service</source>
+        <translation>Güç planı servisi</translation>
+    </message>
+    <message>
+        <source>Power report</source>
+        <translation>Güç raporu</translation>
+    </message>
+    <message>
+        <source>Power source</source>
+        <translation>Güç kaynağı</translation>
+    </message>
+    <message>
+        <source>Process ID</source>
+        <translation>Süreç kimliği</translation>
+    </message>
+    <message>
+        <source>Processor (% of one core)</source>
+        <translation>İşlemci (bir çekirdeğin yüzdesi)</translation>
+    </message>
+    <message>
+        <source>Program</source>
+        <translation>Program</translation>
+    </message>
+    <message>
+        <source>Programs using the processor</source>
+        <translation>İşlemciyi kullanan programlar</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Kaldır</translation>
+    </message>
+    <message>
+        <source>Run diagnostics</source>
+        <translation>Tanılamayı başlat</translation>
+    </message>
+    <message>
+        <source>Running</source>
+        <translation>Çalışıyor</translation>
+    </message>
+    <message>
+        <source>Save as HTML…</source>
+        <translation>HTML olarak kaydet…</translation>
+    </message>
+    <message>
+        <source>Save power report</source>
+        <translation>Güç raporunu kaydet</translation>
+    </message>
+    <message>
+        <source>Show</source>
+        <translation>Göster</translation>
+    </message>
+    <message>
+        <source>Some settings could not be applied: {names}</source>
+        <translation>Bazı ayarlar uygulanamadı: {names}</translation>
+    </message>
+    <message>
+        <source>Suggestion</source>
+        <translation>Öneri</translation>
+    </message>
+    <message>
+        <source>Summary</source>
+        <translation>Özet</translation>
+    </message>
+    <message>
+        <source>The Linwas power plan service is not running, so plans are not applied.</source>
+        <translation>Linwas güç planı servisi çalışmıyor; planlar uygulanmıyor.</translation>
+    </message>
+    <message>
+        <source>The battery holds {n}% of its original capacity.</source>
+        <translation>Pil, ilk kapasitesinin %{n} kadarını tutuyor.</translation>
+    </message>
+    <message>
+        <source>The battery holds {n}% of its original capacity; consider replacing it.</source>
+        <translation>Pil, ilk kapasitesinin %{n} kadarını tutuyor; değiştirmeyi düşünün.</translation>
+    </message>
+    <message>
+        <source>The computer is using {w} W on battery, which is high.</source>
+        <translation>Bilgisayar pilde {w} W harcıyor; bu yüksek.</translation>
+    </message>
+    <message>
+        <source>The current plan sets the screen brightness to {n}% on battery.</source>
+        <translation>Geçerli plan pilde ekran parlaklığını %{n} yapıyor.</translation>
+    </message>
+    <message>
+        <source>The laptop is plugged in and charges to 100%. A charge limit of 80% helps the battery last longer.</source>
+        <translation>Dizüstü prizde ve %100'e kadar şarj oluyor. %80 şarj sınırı pilin daha uzun ömürlü olmasına yardım eder.</translation>
+    </message>
+    <message>
+        <source>USB selective suspend is not turned on for battery in the current plan.</source>
+        <translation>Geçerli planda pilde USB seçici askıya alma açık değil.</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation>Uyarı</translation>
+    </message>
+    <message>
+        <source>Web page (*.html)</source>
+        <translation>Web sayfası (*.html)</translation>
+    </message>
+    <message>
+        <source>Wi-Fi power saving is not turned on for battery in the current plan.</source>
+        <translation>Geçerli planda pilde Wi-Fi güç tasarrufu açık değil.</translation>
+    </message>
+    <message>
+        <source>{e} errors, {w} warnings, {s} suggestions</source>
+        <translation>{e} hata, {w} uyarı, {s} öneri</translation>
+    </message>
+    <message>
+        <source>{name} is also managing power settings; the two can override each other.</source>
+        <translation>{name} de güç ayarlarını yönetiyor; ikisi birbirinin ayarını ezebilir.</translation>
+    </message>
+    <message>
+        <source>{n} devices can wake the computer from sleep.</source>
+        <translation>{n} aygıt bilgisayarı uykudan uyandırabiliyor.</translation>
+    </message>
 </context>
 <context>
     <name>AISettingsDialog</name>

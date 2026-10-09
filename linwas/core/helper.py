@@ -557,6 +557,23 @@ def _exec_power_save_config(seq: int, params: dict[str, str]) -> bool:
     return True
 
 
+_POWERTOP_CSV = Path("/var/lib/linwas-power/powertop.csv")  # backend.power_report ile aynı yol
+
+
+def _exec_power_powertop_report(seq: int, params: dict[str, str]) -> bool:
+    """powertop'u 20 sn ölçümle çalıştırır; raporu herkesin okuyabileceği dosyaya yazar."""
+    _POWERTOP_CSV.parent.mkdir(parents=True, exist_ok=True)
+    _POWERTOP_CSV.parent.chmod(0o755)
+    if not _run(["powertop", f"--csv={_POWERTOP_CSV}", "--time=20"], seq):
+        return False
+    try:
+        _POWERTOP_CSV.chmod(0o644)
+    except OSError as exc:
+        _error(seq, f"Rapor okunamadı: {exc}")
+        return False
+    return True
+
+
 def _exec_fonts_install_microsoft(seq: int, params: dict[str, str]) -> bool:
     """Kullanıcı lisansı Linwas penceresinde kabul etti; Ubuntu'daki debconf sorusu
     önceden yanıtlanır (Debian/Pardus paketinde bu soru yok, satır yok sayılır)."""
@@ -833,6 +850,7 @@ _EXECUTORS: dict[str, Any] = {
     "power.save_config": lambda seq, p: _with_file_backup(
         seq, "power", _POWER_FILES, lambda: _exec_power_save_config(seq, p)
     ),
+    "power.powertop_report": _exec_power_powertop_report,
     "fonts.install_microsoft": _exec_fonts_install_microsoft,
     "package.update_index": _exec_package_update_index,
     "package.fix_broken": _exec_package_fix_broken,

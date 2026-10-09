@@ -40,6 +40,7 @@ from linwas.core.powerplan import AUTO, SECTIONS, SETTINGS, SPECS, PowerConfig
 from linwas.core.tasks import Task, TaskStep
 from linwas.ui.pages import power_texts as texts
 from linwas.ui.pages.base import BasePage
+from linwas.ui.pages.power_report_view import PowerReportCard
 from linwas.ui.widgets.card import Card
 
 # Hazırda bekletme yoksa listeden çıkarılan değerler (seçiliyse yine gösterilir)
@@ -114,6 +115,7 @@ class PowerPage(BasePage):
         self._pending_save = False
 
         scroll = QScrollArea(self)
+        self._scroll = scroll
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.Shape.NoFrame)
         content = QWidget()
@@ -132,10 +134,16 @@ class PowerPage(BasePage):
         self._battery_card.setVisible(self._laptop)
         outer.addWidget(self._build_plan_card(content))
         outer.addWidget(self._build_quick_card(content))
-        outer.addWidget(self._build_advanced_card(content))
-        outer.addWidget(self._build_automation_card(content))
+        self._advanced_card = self._build_advanced_card(content)
+        outer.addWidget(self._advanced_card)
+        self._automation_card = self._build_automation_card(content)
+        outer.addWidget(self._automation_card)
         self._hibernate_card = self._build_hibernate_card(content)
         outer.addWidget(self._hibernate_card)
+        self._report_card = PowerReportCard(content)
+        self._report_card.task_run_now.connect(self.task_run_now)
+        self._report_card.ui_action.connect(self._on_report_action)
+        outer.addWidget(self._report_card)
 
         # Kaydet çubuğu
         self._save_bar = Card(content)
@@ -914,6 +922,15 @@ class PowerPage(BasePage):
         self._fill_all()
 
     # --- Diğer işlemler ---
+
+    def _on_report_action(self, action: str) -> None:
+        target = {
+            "charge_limit": self._battery_card,
+            "automation": self._automation_card,
+            "advanced": self._advanced_card,
+        }.get(action)
+        if target is not None:
+            self._scroll.ensureWidgetVisible(target, 0, 40)
 
     def _remove_tool(self, tool: power_support.ConflictTool) -> None:
         op, param = (
