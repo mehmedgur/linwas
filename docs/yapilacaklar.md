@@ -3,7 +3,7 @@
 > **Kural:** Her kodlama aşamasına geçmeden önce Claude bu listeyi okur ve bekleyen fikirleri
 > kullanıcıya hatırlatır.
 
-Son güncelleme: 8 Ekim 2026
+Son güncelleme: 10 Ekim 2026
 
 ## Notlar
 - Kullanıcının Pardus 23 bilgisayarında hem **GNOME** hem **KDE Plasma** oturumu var. Testler
@@ -31,6 +31,11 @@ Son güncelleme: 8 Ekim 2026
   2. [ ] Kurulum (root işlemleri: Podman/Docker, FreeRDP; Windows'un gözetimsiz kurulumu, ilerleme).
   3. [ ] Office kurulumu, RemoteApp kısayolları, dosya ilişkilendirmesi, paylaşılan klasör.
   4. [ ] Yaşam döngüsü: gerektiğinde başlat, boştayken durdur; bellek ayarı; kaldırma.
+- **Gelişmiş güç seçenekleri** (kararlar.md › Yeni özellikler › Güç ve pil, 10 Ekim 2026), aşamalar —
+  her biri ayrı commit, kullanıcının denemesi bekleniyor:
+  1. [x] Plan modeli, sistem servisi (`linwas-power.service`), GNOME ajanı, `power.save_config`.
+  2. [x] Sayfa: plan seçimi, sık ayarlar, ağaç liste, otomatik geçiş, çakışma/güç modu/hazırda bekletme.
+  3. [x] Tanılama raporu (uygulama içi + HTML, powertop).
 - **Sürücüler geliştirmesi** (kararlar.md › Güncelleme merkezi › Sürücüler geliştirmesi, 8 Ekim 2026),
   aşamalar — her biri ayrı commit, aralarda kullanıcı dener:
   1. [x] Donanım kartları görünümü (durum rozeti, sade metin + "Ayrıntılar") — 8 Ekim 2026, deneme bekliyor.
@@ -69,6 +74,7 @@ Son güncelleme: 8 Ekim 2026
   sayfaların görsel kontrolü. Commit öncesi mevcut `ruff` + `pytest` çalışmaya devam ediyor.
 
 ## Bekleyen fikirler (sonraki sürümler)
+- [ ] **Hazırda bekletme kurulumu** (10 Ekim 2026): swap dosyası + resume + initramfs/GRUB, Timeshift yedeğiyle. Şimdilik yalnızca destek varsa gösteriliyor.
 - [ ] **Windows sanal makinesi (Microsoft 365)** — 7 Ekim 2026'da askıya alındı (kullanıcı kararı); araştırma
   bitti, sıradaki adım 0b (elle prototip). Ayrıntı: kararlar.md › EXE › Windows sanal makinesi. Başlarken
   lisans kararı da verilecek (IoT LTSC lisansının bireysel kullanıma uygunluğu, perakende seçenek,
@@ -129,6 +135,12 @@ Son güncelleme: 8 Ekim 2026
 - [ ] Yayın yeri belli olunca `release.yml`'ye depo yükleme adımı (ör. GitHub Pages).
 
 ## Kodlama sırasında doğrulanacaklar
+- [ ] **Gelişmiş güç seçenekleri (10 Ekim 2026):** .deb kurulunca `linwas-power.service` açık mı;
+  plan değiştirirken şifre sorulmuyor mu; prizden çekince/takınca plan ve ekran/uyku süreleri değişiyor mu
+  (`gsettings get org.gnome.desktop.session idle-delay`); "Sistem varsayılanı"na dönünce eski değerler geri
+  geliyor mu; AMD/Intel/NVIDIA'da ekran kartı güç modu; `iw` ile Wi-Fi tasarrufu; TLP kurulu Ubuntu'da uyarı
+  ve salt okunur bölümler; UPower.conf değişince upower yeniden başlıyor mu; powertop CSV ayrıştırma
+  (sürüme göre biçim farkı); masaüstü bilgisayarda sayfa adı "Güç".
 - [ ] **Ayarlar (aşama 1–3, denenmedi):** `gdbus call … Notify` bildiriminin GNOME/Cinnamon/XFCE'de
   görünmesi ve "Aç" düğmesinin `gdbus monitor` ile yakalanması; oturum açılışında `--background`
   başlatma; tek kopya (menüden ikinci açılışta pencerenin öne gelmesi); KDE/Cinnamon'da tepsi simgesi.

@@ -85,7 +85,7 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 
 ## Menü yapısı
 - **AI Soru** (geniş sohbet ekranı; ayrıca her sayfada yardımcı panel)
-- **Sistem:** Genel bakış, Güncellemeler, Sürücüler, Wi-Fi ve Bluetooth, **Yedekler ve geri alma**, Donanım ve yazıcı, Görev Yöneticisi, Disk temizliği, Yedekleme (kişisel dosyalar), Güç ve pil (yalnızca dizüstü), Windows'tan taşıma, Tüm ayarlar (Denetim Masası)
+- **Sistem:** Genel bakış, Güncellemeler, Sürücüler, Wi-Fi ve Bluetooth, **Yedekler ve geri alma**, Donanım ve yazıcı, Görev Yöneticisi, Disk temizliği, Yedekleme (kişisel dosyalar), Güç ve pil (masaüstü bilgisayarda adı "Güç", pil bölümleri gizli), Windows'tan taşıma, Tüm ayarlar (Denetim Masası)
 - **Arayüz:** Windows görünümü, tema/duvar kağıdı, yazı tipleri, ekran/ölçekleme
 - **Program:** Üstte arama, altta "Windows'ta ne kullanıyordun?" bölümü; **Kurulu programlar** sekmesi; Oyun sekmesi
 - **Sorun Giderme:** Üstte tek tıkla tam tarama, altta belirti kartları
@@ -217,6 +217,45 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 6. **Kişisel dosya yedeği:** harici disk / USB.
 7. **"Windows'ta nasıl?" rehberi:** ayarlar + programlar + klavye kısayolları + kavramlar (`data/windows_map.json`); sistem ayarı karşılıkları `data/settings_map.json` ile bağlantılı.
 8. **Güç ve pil:** enerji modu, pil sağlığı, kapak kapanınca davranışı, pil koruma (%80, destekleyen cihazlarda).
+   - **Gelişmiş güç seçenekleri (10 Ekim 2026, kullanıcı kararı):** Windows'taki gibi.
+     - **Planlar:** Linwas planları Tasarruf / Dengeli / Performans + kullanıcının özel planları. Her ayarın
+       Prizde ve Pilde ayrı değeri var; prize takınca/çıkarınca otomatik uygulanır. Plan sistem genelidir
+       (`/etc/linwas/`, yalnızca root helper yazar); ekran/uyku süreleri Linwas'ı açan kullanıcıya uygulanır.
+       Planda "Sistem güç profili" (power-profiles-daemon) ayarı da var; GNOME menüsünden değiştirilirse
+       Linwas görür ve uyarır.
+     - **Bölümler:** Ekran ve uyku (karartma/kapatma, uyku, hazırda bekletme, karma uyku, uyanma
+       zamanlayıcıları); Düğmeler ve kapak (güç/uyku düğmesi, kapak: prizde/pilde/harici ekran bağlıyken);
+       İşlemci (turbo, EPP, en düşük/en yüksek işlemci durumu, governor); Pil (şarj sınırı, düşük/kritik
+       seviye ve eylemi, bildirim); USB/PCIe/disk (USB seçici askıya alma, ASPM, SATA ALPM, disk kapanma);
+       Kablosuz (Wi-Fi güç tasarrufu, pilde Bluetooth kapatma); Ekran kartı ve parlaklık (AMD/Intel/NVIDIA
+       güç modu, pilde parlaklık, uyarlanabilir parlaklık); Tanılama raporu.
+     - **Arayüz:** üstte plan seçimi + sık ayarlar kartlarla; altta "Gelişmiş güç seçenekleri" ağaç listesi,
+       her satırda Prizde / Pilde değeri. Desteklenmeyen ayar gizlenmez, nedeniyle birlikte devre dışı gösterilir.
+     - **Masaüstü bilgisayar:** sayfa görünür (adı "Güç"), pil/kapak/priz-pil ayrımı gizli.
+     - **Uygulayıcı:** ek paket yok; root helper + sysfs/logind/udev ve priz/pil değişiminde uygulayan Linwas
+       systemd servisi. TLP / auto-cpufreq gibi araç kuruluysa uyarılır, düşük seviye bölümler (işlemci,
+       USB/PCIe/disk, kablosuz) salt okunur olur ve aracı kaldırma önerilir (kuyruğa eklenir).
+     - **Hazırda bekletme:** sistem destekliyorsa seçenek olarak sunulur, desteklemiyorsa nedeni yazılır
+       (swap/resume yok, Secure Boot kilidi vb.); Linwas kurulum yapmaz (kurulum bekleyen fikir).
+     - **Tanılama raporu:** uygulama içi özet (hata/uyarı/öneri, tek tıkla düzelt) + istenirse HTML rapor;
+       powertop varsa ayrıntı eklenir, yoksa kurulumu önerilir.
+     - **Ekler:** varsayılana sıfırla (plan / tümü), plan içe/dışa aktarma (dosya), zamanlı plan (belirli
+       saatlerde başka plan), pil seviyesine göre geçiş (%X altında Tasarruf).
+     - Komutlar, sysfs yolları ve gsettings anahtarları kodlarken resmi belgeden doğrulanır; donanımdan
+       bağımsız (AMD/Intel/NVIDIA, tüm desteklenen dağıtımlar).
+     - **Uygulama (10 Ekim 2026):** `core/powerplan.py` (katalog, model, doğrulama, etkin plan:
+       pil tasarrufu > zamanlı plan > seçili plan), `core/power_apply.py` (`linwas-power.service`, root;
+       20 sn'de bir priz/pil/saat/ayar değişimini denetler, değişince uygular, düşük seviye ayarları
+       10 dk'da bir yeniler; Linwas'ın değiştirdiği değerlerin eskisi `/run/linwas-power/state.json`'da,
+       "Sistem varsayılanı" seçilince geri yüklenir; parlaklık ve sistem güç profili yalnızca plan/kaynak
+       değişiminde), `core/power_agent.py` (GNOME gsettings; XDG autostart). Plan değiştirme şifresiz:
+       polkit eylemi `org.linwas.power.switch` (allow_active=yes) → `/usr/lib/linwas/linwas-power-switch`;
+       kaynak koddan çalışırken root helper. Ayarı kaydetmek root helper `power.save_config` (şifre;
+       `/etc/linwas/power.json`, logind `90-linwas-power.conf`, `UPower.conf`; yedekli). Düğmeler/kapak ve
+       Pil seviyeleri tüm planlar için ortak (logind/UPower genel ayar); kapak ayarı açılışta geçerli.
+       Güç düğmesinde "kapat" yok (GNOME bunu sunmuyor). USB askıya almada fare/klavye (HID) ve Bluetooth
+       hariç. Tanılama: `backend/power_report.py` + root işlemi `power.powertop_report`
+       (`/var/lib/linwas-power/powertop.csv`).
 
 ## AI
 - Sağlayıcılar: Gemini, ChatGPT, DeepSeek. AI isteğe bağlı; anahtar yoksa gizlenir.
