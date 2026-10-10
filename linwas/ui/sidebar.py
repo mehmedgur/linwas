@@ -79,6 +79,7 @@ MENU: list[MenuItem] = [
             MenuItem("fonts", "Fonts"),
             MenuItem("display", "Display & Scaling"),
             MenuItem("app_folders", "App Folders"),
+            MenuItem("workgroups", "Work Groups"),
         ],
     ),
     MenuItem("software", "Software"),
@@ -352,6 +353,7 @@ def _translation_markers() -> None:
     tr("Fonts")
     tr("Display & Scaling")
     tr("App Folders")
+    tr("Work Groups")
     tr("Software")
     tr("Troubleshooting")
     tr("How was it on Windows?")

@@ -39,7 +39,7 @@ Son güncelleme: 10 Ekim 2026
 - **Görev çubuğu ve masaüstü gruplama** (kararlar.md › Yeni özellikler › 9, 10 Ekim 2026), kullanıcı
   "kodlamaya geçelim" deyince; sıra:
   1. [x] C. Klasörler (masaüstü + görev çubuğu, açılır pencere, DING kurulum önerisi). 10 Ekim 2026, deneme bekliyor.
-  2. [ ] A. Çalışma grupları (sanal masaüstü başına grup, grup değiştirici, birlikte başlatma).
+  2. [x] A. Çalışma grupları (GNOME, XFCE, Cinnamon). 10 Ekim 2026, deneme bekliyor.
   3. [ ] B. Pencere gruplama eklentisi (önce GNOME Shell; sonra KDE, XFCE).
 - **Sürücüler geliştirmesi** (kararlar.md › Güncelleme merkezi › Sürücüler geliştirmesi, 8 Ekim 2026),
   aşamalar — her biri ayrı commit, aralarda kullanıcı dener:
@@ -140,6 +140,12 @@ Son güncelleme: 10 Ekim 2026
 - [ ] Yayın yeri belli olunca `release.yml`'ye depo yükleme adımı (ör. GitHub Pages).
 
 ## Kodlama sırasında doğrulanacaklar
+- [ ] **Çalışma grupları (10 Ekim 2026):** GNOME'da masaüstü sayısı/adları, Dash to Panel'de yalnızca geçerli
+  grup, Workspace Indicator'da grup adları, auto-move-windows ile programın kendi grubunda açılması (Wayland
+  dahil); XFCE'de xfconf adları, Pencere Düğmeleri `include-all-workspaces`, `xfce4-panel --add=pager`
+  penceresi, ajanın yeni pencereyi taşıması; Cinnamon'da (sanal makine) adlar, `enabled-applets`'e eklenen
+  değiştirici, pencere listesi JSON ayarı; grup sırası değişince/silinince pencerelerin taşınması; son grup
+  silinince eski masaüstü ayarlarının geri gelmesi; Flatpak programlarında pencere sınıfı eşleşmesi.
 - [ ] **Program klasörleri (10 Ekim 2026):** DING kurulup oturum yeniden açılınca klasör masaüstünde görünüyor
   mu; masaüstündeki kısayolu klasörün üstüne bırakınca ekleniyor mu (DING "güvenilir" saymazsa sağ tık ›
   "Başlatmaya izin ver"); Dash to Panel'de sabitlenen klasör simgesi ve tıklanınca açılır pencere;

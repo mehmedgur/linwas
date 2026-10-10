@@ -82,6 +82,13 @@ BUILTIN_PLUGINS: tuple[type[_PagePlugin], ...] = (
         parent="interface",
     ),
     _plugin(
+        "linwas.workgroups",
+        "Work Groups",
+        "workgroups",
+        "linwas.ui.pages.workgroups:WorkGroupsPage",
+        parent="interface",
+    ),
+    _plugin(
         "linwas.power",
         "Power & Battery",
         "power",

@@ -290,6 +290,16 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
      masaüstü; görev çubuğu yalnızca o grubun pencerelerini gösterir; grup değiştirici; grup açılınca
      programları birlikte başlatma (grubun klasörüyle). X11'de dışarıdan pencere taşıma; Wayland'de
      masaüstüne özel yol (doğrulanacak).
+     - **Uygulama (10 Ekim 2026):** `backend/workgroups.py` (kayıt `~/.local/share/linwas/workgroups.json`,
+       gruplar açılmadan önceki masaüstü ayarı `workgroups-before.json`; son grup silinince geri yüklenir),
+       sayfa Arayüz › Çalışma grupları (`ui/pages/workgroups.py`). Grup sırası = masaüstü sırası; sıra
+       değişince/grup silinince pencereler X11'de yeni sıraya taşınır (silinenin pencereleri ilk gruba).
+       Her grup için menü kısayolu `linwas-group-<kimlik>.desktop` (`linwas --open-group`): her masaüstünde
+       panele/favorilere sabitlenebilir; gruba geçer, o grupta penceresi olmayan programları başlatır.
+       XFCE/Cinnamon kural ajanı `linwas --workgroups-agent` (XDG autostart `linwas-workgroups.desktop`,
+       1 sn'de bir `wmctrl -lx`; pencere sınıfı StartupWMClass / masaüstü kimliği / Exec'ten eşleşir).
+       Hazırlık satırları: görev çubuğu yalnızca geçerli grup, grup değiştirici (GNOME eksikse
+       `gnome-shell-extensions` paketi), X11'de `wmctrl` (yoksa kurulum önerisi).
    - **B. Pencere gruplama eklentisi (üçüncü):** farklı programların pencerelerini kullanıcının seçtiği tek
      düğmede birleştirir, önizlemeli açılır liste. Her masaüstüne ayrı eklenti (GNOME Shell JS, KDE
      Plasmoid QML, XFCE paneli C); önce GNOME. GNOME sürümleri arası bakım gerektirir.

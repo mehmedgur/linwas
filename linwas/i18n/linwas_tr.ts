@@ -232,6 +232,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <source>App Folders</source>
         <translation>Program klasörleri</translation>
     </message>
+    <message>
+        <source>Work Groups</source>
+        <translation>Çalışma grupları</translation>
+    </message>
 </context>
 <context>
     <name>StatusBar</name>
@@ -6075,6 +6079,157 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>{n} programs: {names}</source>
         <translation>{n} program: {names}</translation>
+    </message>
+</context>
+<context>
+    <name>WorkGroupsPage</name>
+    <message>
+        <source>Add the group switcher to the panel to change groups with one click.</source>
+        <translation>Gruplar arasında tek tıkla geçmek için grup değiştiriciyi panele ekleyin.</translation>
+    </message>
+    <message>
+        <source>Add to panel</source>
+        <translation>Panele ekle</translation>
+    </message>
+    <message>
+        <source>Always open these programs in this group</source>
+        <translation>Bu programlar hep bu grupta açılsın</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Sil</translation>
+    </message>
+    <message>
+        <source>Delete group</source>
+        <translation>Grubu sil</translation>
+    </message>
+    <message>
+        <source>Delete the group "{name}"? Its windows move to the first group; programs are not removed.</source>
+        <translation>"{name}" grubu silinsin mi? Pencereleri ilk gruba taşınır; programlar kaldırılmaz.</translation>
+    </message>
+    <message>
+        <source>Each group becomes a virtual desktop, in order. Windows already open stay in the first group. Continue?</source>
+        <translation>Her grup sırasıyla bir sanal masaüstü olur. Şu an açık pencereler ilk grupta kalır. Devam edilsin mi?</translation>
+    </message>
+    <message>
+        <source>Fix</source>
+        <translation>Düzelt</translation>
+    </message>
+    <message>
+        <source>Group name:</source>
+        <translation>Grup adı:</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Kur</translation>
+    </message>
+    <message>
+        <source>Install wmctrl so Linwas can switch groups and move windows.</source>
+        <translation>Linwas'ın gruplar arasında geçebilmesi ve pencere taşıyabilmesi için wmctrl kurun.</translation>
+    </message>
+    <message>
+        <source>Install {name}</source>
+        <translation>{name} kur</translation>
+    </message>
+    <message>
+        <source>Keep different jobs apart: each group (for example Project, E-mail, Games) is a separate virtual desktop, and the taskbar shows only that group's windows. Programs you add to a group can always open there.</source>
+        <translation>Farklı işleri birbirinden ayırın: her grup (ör. Proje, E-posta, Oyun) ayrı bir sanal masaüstüdür ve görev çubuğu yalnızca o grubun pencerelerini gösterir. Gruba eklediğiniz programlar hep orada açılabilir.</translation>
+    </message>
+    <message>
+        <source>Linwas can switch groups and move windows.</source>
+        <translation>Linwas gruplar arasında geçebilir ve pencere taşıyabilir.</translation>
+    </message>
+    <message>
+        <source>New group</source>
+        <translation>Yeni grup</translation>
+    </message>
+    <message>
+        <source>New group…</source>
+        <translation>Yeni grup…</translation>
+    </message>
+    <message>
+        <source>No programs yet. Programs you add open together with "Open".</source>
+        <translation>Henüz program yok. Eklediğiniz programlar "Aç" ile birlikte başlar.</translation>
+    </message>
+    <message>
+        <source>No taskbar was found that Linwas can set up.</source>
+        <translation>Linwas'ın ayarlayabileceği bir görev çubuğu bulunamadı.</translation>
+    </message>
+    <message>
+        <source>On Wayland, Linwas cannot switch groups or move windows itself. Use the group switcher on the panel, or Super+Page Up / Page Down; Super+Shift+Page Up / Page Down moves the window. Programs still open in their group.</source>
+        <translation>Wayland'de Linwas gruplar arasında kendisi geçemez ve pencere taşıyamaz. Paneldeki grup değiştiriciyi ya da Super+Page Up / Page Down kısayolunu kullanın; Super+Shift+Page Up / Page Down pencereyi taşır. Programlar yine kendi gruplarında açılır.</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Aç</translation>
+    </message>
+    <message>
+        <source>Open windows</source>
+        <translation>Açık pencereler</translation>
+    </message>
+    <message>
+        <source>Other desktop</source>
+        <translation>Başka masaüstü</translation>
+    </message>
+    <message>
+        <source>Programs in {name}</source>
+        <translation>{name} grubundaki programlar</translation>
+    </message>
+    <message>
+        <source>Programs: {names}</source>
+        <translation>Programlar: {names}</translation>
+    </message>
+    <message>
+        <source>Programs…</source>
+        <translation>Programlar…</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>Yenile</translation>
+    </message>
+    <message>
+        <source>Rename group</source>
+        <translation>Grubu yeniden adlandır</translation>
+    </message>
+    <message>
+        <source>Rename…</source>
+        <translation>Yeniden adlandır…</translation>
+    </message>
+    <message>
+        <source>Setup</source>
+        <translation>Hazırlık</translation>
+    </message>
+    <message>
+        <source>The group switcher is on the panel.</source>
+        <translation>Grup değiştirici panelde.</translation>
+    </message>
+    <message>
+        <source>The group switcher needs the GNOME Shell extensions package.</source>
+        <translation>Grup değiştirici için GNOME Shell eklentileri paketi gerekli.</translation>
+    </message>
+    <message>
+        <source>The taskbar shows only the current group's windows.</source>
+        <translation>Görev çubuğu yalnızca geçerli grubun pencerelerini gösteriyor.</translation>
+    </message>
+    <message>
+        <source>The taskbar shows the windows of all groups.</source>
+        <translation>Görev çubuğu bütün grupların pencerelerini gösteriyor.</translation>
+    </message>
+    <message>
+        <source>Work Groups</source>
+        <translation>Çalışma grupları</translation>
+    </message>
+    <message>
+        <source>Work groups</source>
+        <translation>Çalışma grupları</translation>
+    </message>
+    <message>
+        <source>Work groups are supported on GNOME, Xfce and Cinnamon for now.</source>
+        <translation>Çalışma grupları şimdilik GNOME, Xfce ve Cinnamon'da destekleniyor.</translation>
+    </message>
+    <message>
+        <source>You have no groups yet.</source>
+        <translation>Henüz grubunuz yok.</translation>
     </message>
 </context>
 </TS>

@@ -84,7 +84,9 @@ def save_and_refresh(folder: AppFolder) -> None:
 class AppPicker(QDialog):
     """Klasöre eklenecek programları seçme penceresi."""
 
-    def __init__(self, exclude: set[str], parent: QWidget | None = None) -> None:
+    def __init__(
+        self, exclude: set[str], parent: QWidget | None = None, checked: set[str] | None = None
+    ) -> None:
         super().__init__(parent)
         self.setWindowTitle(tr("Add programs"))
         self.resize(420, 520)
@@ -101,7 +103,11 @@ class AppPicker(QDialog):
             item = QListWidgetItem(app_icon(entry), entry.name)
             item.setData(_REF, entry.ref)
             item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
-            item.setCheckState(Qt.CheckState.Unchecked)
+            item.setCheckState(
+                Qt.CheckState.Checked
+                if entry.ref in (checked or set())
+                else Qt.CheckState.Unchecked
+            )
             self._list.addItem(item)
         self._list.itemClicked.connect(self._toggle)
         layout.addWidget(self._list)

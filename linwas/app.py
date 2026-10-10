@@ -4,6 +4,8 @@ Komut satırı seçenekleri:
   --version      Sürümü yazdırır.
   --self-check   Pencere açmadan temel kontrolleri yapar (CI'da paket testi için).
   --app-folder KİMLİK [DOSYALAR]  Program klasörünü açar; bırakılan kısayolları ekler.
+  --open-group KİMLİK             Çalışma grubuna geçer, programlarını başlatır.
+  --workgroups-agent              Yeni pencereleri kendi grubuna taşır (X11; oturumla başlar).
 """
 
 from __future__ import annotations
@@ -49,6 +51,15 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if "--self-check" in argv[1:]:
         return _self_check()
+    if len(argv) > 1 and argv[1] == "--workgroups-agent":
+        # Çalışma grupları: X11'de yeni pencereyi kendi grubuna taşıyan ajan (Qt yok)
+        from linwas.backend import workgroups
+
+        return workgroups.run_agent()
+    if len(argv) > 2 and argv[1] == "--open-group":
+        from linwas.backend import workgroups
+
+        return 0 if workgroups.open_group(workgroups.load_groups(), argv[2]) else 1
     if len(argv) > 2 and argv[1] == "--app-folder":
         # Program klasörü açılır penceresi; ana pencereden bağımsız, hafif süreç
         from linwas.ui.app_folder_popup import run
