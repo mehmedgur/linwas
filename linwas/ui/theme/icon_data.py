@@ -140,6 +140,12 @@ PATHS: dict[str, str] = {
         'a2 2 0 0 1-2-2z"/><circle cx="12" cy="12.5" r="3.5"/>'
     ),
     "bell": ('<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>'),
+    "app_folders": (
+        '<rect x="4" y="4" width="7" height="7" rx="2"/>'
+        '<rect x="13" y="4" width="7" height="7" rx="2"/>'
+        '<rect x="4" y="13" width="7" height="7" rx="2"/>'
+        '<rect x="13" y="13" width="7" height="7" rx="2"/>'
+    ),
     "plugin": '<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 12h6M12 9v6"/>',
     "chevron_right": '<path d="M9 6l6 6-6 6"/>',
     "chevron_down": '<path d="M6 9l6 6 6-6"/>',

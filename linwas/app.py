@@ -3,6 +3,7 @@
 Komut satırı seçenekleri:
   --version      Sürümü yazdırır.
   --self-check   Pencere açmadan temel kontrolleri yapar (CI'da paket testi için).
+  --app-folder KİMLİK [DOSYALAR]  Program klasörünü açar; bırakılan kısayolları ekler.
 """
 
 from __future__ import annotations
@@ -48,6 +49,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if "--self-check" in argv[1:]:
         return _self_check()
+    if len(argv) > 2 and argv[1] == "--app-folder":
+        # Program klasörü açılır penceresi; ana pencereden bağımsız, hafif süreç
+        from linwas.ui.app_folder_popup import run
+
+        return run(argv[2], argv[3:])
 
     from PySide6.QtWidgets import QApplication
 

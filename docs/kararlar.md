@@ -268,6 +268,17 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
      ekle, çıkar, yeniden adlandır, sırala) ve masaüstünde simgeyi klasörün üstüne sürükle-bırak (DING'in
      bunu ilettiği kodlarken doğrulanacak). Masaüstü simgeleri kapalıysa (Pardus GNOME'da Desktop Icons NG
      kurulu değil) ilk klasörde kurulumu önerilir.
+     - **Uygulama (10 Ekim 2026):** `backend/app_folders.py` (kayıt `~/.local/share/linwas/app-folders.json`,
+       kısayol `~/.local/share/applications/linwas-folder-<kimlik>.desktop` + masaüstünde güvenilir kopya:
+       0755 + `gio set … metadata::trusted true`), `ui/app_folder_popup.py` (`linwas --app-folder <kimlik>
+       %U`; ana pencereden bağımsız süreç), sayfa Arayüz › Program klasörleri (`ui/pages/app_folders.py`).
+       Sürükle-bırak DING kaynağından doğrulandı (fileItem.js: güvenilir kısayola bırakılan dosyalar
+       argüman olarak verilir). Masaüstündeki kısayol klasöre taşınır (`folder-items/<klasör>/`), çıkarılınca
+       geri döner. Görev çubuğu: GNOME `favorite-apps` (Dash to Panel de kullanır). Klasör simgesi 2×2
+       program simgesinden üretilir, her değişimde yeni adla yazılır (önbellek). Masaüstü simgeleri
+       kapalıysa: kurulu ama kapalı → `gnome-extensions enable`; kurulu değil → `package.install`
+       (`gnome-shell-extension-desktop-icons-ng`, UUID `ding@rastersoft.com`), sonra `enabled-extensions`'a
+       yazılır, oturum yeniden açılınca görünür.
    - **A. Çalışma grupları (ikinci):** kullanıcının grupları ("Proje", "E-posta" …), her grup bir sanal
      masaüstü; görev çubuğu yalnızca o grubun pencerelerini gösterir; grup değiştirici; grup açılınca
      programları birlikte başlatma (grubun klasörüyle). X11'de dışarıdan pencere taşıma; Wayland'de

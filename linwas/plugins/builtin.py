@@ -75,6 +75,13 @@ BUILTIN_PLUGINS: tuple[type[_PagePlugin], ...] = (
         "linwas.ui.pages.personal_backup:PersonalBackupPage",
     ),
     _plugin(
+        "linwas.app_folders",
+        "App Folders",
+        "app_folders",
+        "linwas.ui.pages.app_folders:AppFoldersPage",
+        parent="interface",
+    ),
+    _plugin(
         "linwas.power",
         "Power & Battery",
         "power",

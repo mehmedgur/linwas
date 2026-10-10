@@ -38,7 +38,7 @@ Son güncelleme: 10 Ekim 2026
   3. [x] Tanılama raporu (uygulama içi + HTML, powertop).
 - **Görev çubuğu ve masaüstü gruplama** (kararlar.md › Yeni özellikler › 9, 10 Ekim 2026), kullanıcı
   "kodlamaya geçelim" deyince; sıra:
-  1. [ ] C. Klasörler (masaüstü + görev çubuğu, açılır pencere, DING kurulum önerisi).
+  1. [x] C. Klasörler (masaüstü + görev çubuğu, açılır pencere, DING kurulum önerisi). 10 Ekim 2026, deneme bekliyor.
   2. [ ] A. Çalışma grupları (sanal masaüstü başına grup, grup değiştirici, birlikte başlatma).
   3. [ ] B. Pencere gruplama eklentisi (önce GNOME Shell; sonra KDE, XFCE).
 - **Sürücüler geliştirmesi** (kararlar.md › Güncelleme merkezi › Sürücüler geliştirmesi, 8 Ekim 2026),
@@ -140,6 +140,11 @@ Son güncelleme: 10 Ekim 2026
 - [ ] Yayın yeri belli olunca `release.yml`'ye depo yükleme adımı (ör. GitHub Pages).
 
 ## Kodlama sırasında doğrulanacaklar
+- [ ] **Program klasörleri (10 Ekim 2026):** DING kurulup oturum yeniden açılınca klasör masaüstünde görünüyor
+  mu; masaüstündeki kısayolu klasörün üstüne bırakınca ekleniyor mu (DING "güvenilir" saymazsa sağ tık ›
+  "Başlatmaya izin ver"); Dash to Panel'de sabitlenen klasör simgesi ve tıklanınca açılır pencere;
+  açılır pencere dışına tıklayınca kapanıyor mu (X11/Wayland); simge değişince masaüstü yeniliyor mu;
+  Ubuntu'da (DING hazır kurulu, Ubuntu Dock) aynı adımlar.
 - [ ] **Gelişmiş güç seçenekleri (10 Ekim 2026):** .deb kurulunca `linwas-power.service` açık mı;
   plan değiştirirken şifre sorulmuyor mu; prizden çekince/takınca plan ve ekran/uyku süreleri değişiyor mu
   (`gsettings get org.gnome.desktop.session idle-delay`); "Sistem varsayılanı"na dönünce eski değerler geri

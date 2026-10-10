@@ -228,6 +228,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <source>Power</source>
         <translation>Güç</translation>
     </message>
+    <message>
+        <source>App Folders</source>
+        <translation>Program klasörleri</translation>
+    </message>
 </context>
 <context>
     <name>StatusBar</name>
@@ -5949,6 +5953,128 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>Your computer has two graphics cards. To save power, {integrated} draws the desktop; {discrete} is used for the programs you choose below.</source>
         <translation>Bilgisayarınızda iki ekran kartı var. Güç tasarrufu için masaüstünü {integrated} çiziyor; aşağıda seçtiğiniz programlar {discrete} kullanır.</translation>
+    </message>
+</context>
+<context>
+    <name>AppFolderPopup</name>
+    <message>
+        <source>Add</source>
+        <translation>Ekle</translation>
+    </message>
+    <message>
+        <source>Add programs</source>
+        <translation>Program ekle</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Click to rename the folder</source>
+        <translation>Klasörü yeniden adlandırmak için tıklayın</translation>
+    </message>
+    <message>
+        <source>Drag to reorder · right-click to remove</source>
+        <translation>Sıralamak için sürükleyin · çıkarmak için sağ tıklayın</translation>
+    </message>
+    <message>
+        <source>Remove from folder</source>
+        <translation>Klasörden çıkar</translation>
+    </message>
+    <message>
+        <source>Search programs</source>
+        <translation>Program ara</translation>
+    </message>
+</context>
+<context>
+    <name>AppFoldersPage</name>
+    <message>
+        <source>A folder needs at least two programs.</source>
+        <translation>Bir klasörde en az iki program olmalı.</translation>
+    </message>
+    <message>
+        <source>App Folders</source>
+        <translation>Program klasörleri</translation>
+    </message>
+    <message>
+        <source>Choose at least two programs</source>
+        <translation>En az iki program seçin</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Sil</translation>
+    </message>
+    <message>
+        <source>Delete folder</source>
+        <translation>Klasörü sil</translation>
+    </message>
+    <message>
+        <source>Delete the folder "{name}"? The programs are not removed; shortcuts moved into the folder go back to the desktop.</source>
+        <translation>"{name}" klasörü silinsin mi? Programlar kaldırılmaz; klasöre taşınan kısayollar masaüstüne geri döner.</translation>
+    </message>
+    <message>
+        <source>Desktop icons</source>
+        <translation>Masaüstü simgeleri</translation>
+    </message>
+    <message>
+        <source>Desktop icons are not installed, so folders on the desktop are not visible. After installing, log out and back in.</source>
+        <translation>Masaüstü simgeleri kurulu değil; bu yüzden masaüstündeki klasörler görünmüyor. Kurulumdan sonra oturumu kapatıp yeniden açın.</translation>
+    </message>
+    <message>
+        <source>Desktop icons are off, so the folder will not appear on the desktop. Turn them on?</source>
+        <translation>Masaüstü simgeleri kapalı; klasör masaüstünde görünmeyecek. Açılsın mı?</translation>
+    </message>
+    <message>
+        <source>Desktop icons are turned off, so folders on the desktop are not visible.</source>
+        <translation>Masaüstü simgeleri kapalı; bu yüzden masaüstündeki klasörler görünmüyor.</translation>
+    </message>
+    <message>
+        <source>Folder name:</source>
+        <translation>Klasör adı:</translation>
+    </message>
+    <message>
+        <source>Install desktop icons</source>
+        <translation>Masaüstü simgelerini kur</translation>
+    </message>
+    <message>
+        <source>New folder</source>
+        <translation>Yeni klasör</translation>
+    </message>
+    <message>
+        <source>New folder…</source>
+        <translation>Yeni klasör…</translation>
+    </message>
+    <message>
+        <source>Not yet supported on this desktop (GNOME only for now)</source>
+        <translation>Bu masaüstünde henüz desteklenmiyor (şimdilik yalnızca GNOME)</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Aç</translation>
+    </message>
+    <message>
+        <source>Pin to the taskbar</source>
+        <translation>Görev çubuğuna sabitle</translation>
+    </message>
+    <message>
+        <source>Put several programs into one folder, like on a phone home screen. The folder sits on the desktop and the taskbar; click it to see its programs. Drop a desktop shortcut on the folder to add it.</source>
+        <translation>Telefonun ana ekranındaki gibi birkaç programı tek klasörde toplayın. Klasör masaüstünde ve görev çubuğunda durur; tıklayınca programları görünür. Eklemek için masaüstündeki bir kısayolu klasörün üstüne bırakın.</translation>
+    </message>
+    <message>
+        <source>Show on the desktop</source>
+        <translation>Masaüstünde göster</translation>
+    </message>
+    <message>
+        <source>Turn on desktop icons</source>
+        <translation>Masaüstü simgelerini aç</translation>
+    </message>
+    <message>
+        <source>You have no folders yet.</source>
+        <translation>Henüz klasörünüz yok.</translation>
+    </message>
+    <message>
+        <source>{n} programs: {names}</source>
+        <translation>{n} program: {names}</translation>
     </message>
 </context>
 </TS>
