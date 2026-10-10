@@ -152,6 +152,11 @@ PATHS: dict[str, str] = {
         '<rect x="3" y="13" width="8" height="6" rx="1.5"/>'
         '<path d="M13 16h8M17 13v6"/>'
     ),
+    "window_groups": (
+        '<rect x="3" y="15" width="18" height="5" rx="1.5"/>'
+        '<rect x="5" y="4" width="10" height="7" rx="1.5"/>'
+        '<rect x="9" y="7" width="10" height="7" rx="1.5"/>'
+    ),
     "plugin": '<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 12h6M12 9v6"/>',
     "chevron_right": '<path d="M9 6l6 6-6 6"/>',
     "chevron_down": '<path d="M6 9l6 6 6-6"/>',

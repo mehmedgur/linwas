@@ -303,6 +303,22 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
    - **B. Pencere gruplama eklentisi (üçüncü):** farklı programların pencerelerini kullanıcının seçtiği tek
      düğmede birleştirir, önizlemeli açılır liste. Her masaüstüne ayrı eklenti (GNOME Shell JS, KDE
      Plasmoid QML, XFCE paneli C); önce GNOME. GNOME sürümleri arası bakım gerektirir.
+     - **Kararlar (10 Ekim 2026, kullanıcı):** grup düğmesi panelde ayrı düğme (Dash to Panel kendi
+       program düğmelerine dışarıdan ekleme yapılmasına izin vermiyor); gruba alınan programlar Dash to
+       Panel görev çubuğundan gizlenir; GNOME 42–48 desteklenir.
+     - **Uygulama (10 Ekim 2026):** `backend/window_groups.py` (kayıt `~/.local/share/linwas/window-groups.json`,
+       eklentinin göstereceği çevrilmiş metinler de bu dosyada), sayfa Arayüz › Pencere grupları
+       (`ui/pages/window_groups.py`). Eklenti `linwas-window-groups@linwas`, kullanıcı klasörüne
+       (`~/.local/share/gnome-shell/extensions/`) kurulur; kaynağı `resources/gnome-extension/`: ortak
+       `core.js` + GNOME 42–44 için eski içe aktarma, 45+ için ES modülü başı/sonu, kurulumda kabuk sürümüne
+       göre birleştirilir. Linwas güncellenince sayfa açılışında eklenti dosyaları yenilenir. Eklenti JSON'u
+       izler (Gio.FileMonitor); grubun penceresi yoksa düğme gizlenir; düğme simgesi grubun ilk programı,
+       yanında pencere sayısı; açılır listede Clutter.Clone önizleme, başlık, kapat düğmesi. Bir program
+       yalnızca bir grupta olabilir. Dash to Panel gizleme: `global.dashToPanel.panels[].taskbar`
+       prototipinde `getAppInfos` süzülür (eski ve yeni ESM sürümünde resmi kaynaktan doğrulandı);
+       sabitlenmiş (favorite-apps) programlar yerinde kalır; hata olursa süzme bırakılır. Ubuntu Dock'ta
+       gizleme yok (yalnızca düğme). Durum: `org.gnome.Shell.Extensions.GetExtensionInfo` (`state` 1 =
+       çalışıyor; boş = oturum yeniden açılmalı).
 
 ## AI
 - Sağlayıcılar: Gemini, ChatGPT, DeepSeek. AI isteğe bağlı; anahtar yoksa gizlenir.

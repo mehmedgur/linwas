@@ -236,6 +236,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <source>Work Groups</source>
         <translation>Çalışma grupları</translation>
     </message>
+    <message>
+        <source>Window Groups</source>
+        <translation>Pencere grupları</translation>
+    </message>
 </context>
 <context>
     <name>StatusBar</name>
@@ -6230,6 +6234,133 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>You have no groups yet.</source>
         <translation>Henüz grubunuz yok.</translation>
+    </message>
+</context>
+<context>
+    <name>WindowGroupsPage</name>
+    <message>
+        <source>Window Groups</source>
+        <translation>Pencere grupları</translation>
+    </message>
+    <message>
+        <source>Keep the taskbar tidy: the windows of the programs you choose (for example a browser, a mail program and a chat program) gather under one button on the panel. Click the button to see the windows with previews and switch between them.</source>
+        <translation>Görev çubuğunu sade tutun: seçtiğiniz programların (örneğin tarayıcı, e-posta ve sohbet programı) pencereleri paneldeki tek bir düğmede toplanır. Düğmeye tıklayınca pencereleri önizlemeleriyle görür, aralarında geçiş yaparsınız.</translation>
+    </message>
+    <message>
+        <source>Setup</source>
+        <translation>Hazırlık</translation>
+    </message>
+    <message>
+        <source>New group…</source>
+        <translation>Yeni grup…</translation>
+    </message>
+    <message>
+        <source>You have no window groups yet.</source>
+        <translation>Henüz pencere grubunuz yok.</translation>
+    </message>
+    <message>
+        <source>Window groups work on GNOME {low}–{high} for now.</source>
+        <translation>Pencere grupları şimdilik GNOME {low}–{high} sürümlerinde çalışır.</translation>
+    </message>
+    <message>
+        <source>The window groups extension is running.</source>
+        <translation>Pencere grupları eklentisi çalışıyor.</translation>
+    </message>
+    <message>
+        <source>Linwas adds a small GNOME Shell extension that shows the group buttons.</source>
+        <translation>Grup düğmelerini göstermek için Linwas küçük bir GNOME Shell eklentisi ekler.</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Kur</translation>
+    </message>
+    <message>
+        <source>The window groups extension is turned off.</source>
+        <translation>Pencere grupları eklentisi kapalı.</translation>
+    </message>
+    <message>
+        <source>Turn on</source>
+        <translation>Aç</translation>
+    </message>
+    <message>
+        <source>The extension could not start. Reinstall it, then log out and back in.</source>
+        <translation>Eklenti başlatılamadı. Yeniden kurun, sonra oturumu kapatıp açın.</translation>
+    </message>
+    <message>
+        <source>Reinstall</source>
+        <translation>Yeniden kur</translation>
+    </message>
+    <message>
+        <source>Log out and back in to start the window groups extension.</source>
+        <translation>Pencere grupları eklentisinin başlaması için oturumu kapatıp yeniden açın.</translation>
+    </message>
+    <message>
+        <source>Grouped programs are hidden from the Dash to Panel taskbar. Programs pinned to the taskbar stay there.</source>
+        <translation>Gruba alınan programlar Dash to Panel görev çubuğunda gizlenir. Görev çubuğuna sabitlenmiş programlar yerinde kalır.</translation>
+    </message>
+    <message>
+        <source>Grouped programs also stay on the taskbar; hiding them works with Dash to Panel.</source>
+        <translation>Gruba alınan programlar görev çubuğunda da kalır; gizleme Dash to Panel ile çalışır.</translation>
+    </message>
+    <message>
+        <source>Remove extension</source>
+        <translation>Eklentiyi kaldır</translation>
+    </message>
+    <message>
+        <source>Remove the window groups extension? Your groups are kept; the panel buttons disappear.</source>
+        <translation>Pencere grupları eklentisi kaldırılsın mı? Gruplarınız korunur; paneldeki düğmeler kaybolur.</translation>
+    </message>
+    <message>
+        <source>No open windows</source>
+        <translation>Açık pencere yok</translation>
+    </message>
+    <message>
+        <source>Close window</source>
+        <translation>Pencereyi kapat</translation>
+    </message>
+    <message>
+        <source>Programs…</source>
+        <translation>Programlar…</translation>
+    </message>
+    <message>
+        <source>Rename…</source>
+        <translation>Yeniden adlandır…</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Sil</translation>
+    </message>
+    <message>
+        <source>Programs: {names}</source>
+        <translation>Programlar: {names}</translation>
+    </message>
+    <message>
+        <source>No programs yet. Choose the programs whose windows go under this button.</source>
+        <translation>Henüz program yok. Pencereleri bu düğmede toplanacak programları seçin.</translation>
+    </message>
+    <message>
+        <source>Group name:</source>
+        <translation>Grup adı:</translation>
+    </message>
+    <message>
+        <source>New window group</source>
+        <translation>Yeni pencere grubu</translation>
+    </message>
+    <message>
+        <source>Programs in {name}</source>
+        <translation>{name} grubundaki programlar</translation>
+    </message>
+    <message>
+        <source>Rename group</source>
+        <translation>Grubu yeniden adlandır</translation>
+    </message>
+    <message>
+        <source>Delete group</source>
+        <translation>Grubu sil</translation>
+    </message>
+    <message>
+        <source>Delete the window group "{name}"? Its programs return to the taskbar; they are not removed.</source>
+        <translation>"{name}" pencere grubu silinsin mi? Programları görev çubuğuna geri döner; programlar kaldırılmaz.</translation>
     </message>
 </context>
 </TS>

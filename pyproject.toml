@@ -21,7 +21,7 @@ linwas = "linwas.app:main"
 include = ["linwas*"]
 
 [tool.setuptools.package-data]
-linwas = ["i18n/*.qm", "i18n/*.ts", "resources/*.svg", "data/*.json"]
+linwas = ["i18n/*.qm", "i18n/*.ts", "resources/*.svg", "resources/gnome-extension/*", "data/*.json"]
 
 [tool.ruff]
 line-length = 100

@@ -80,6 +80,7 @@ MENU: list[MenuItem] = [
             MenuItem("display", "Display & Scaling"),
             MenuItem("app_folders", "App Folders"),
             MenuItem("workgroups", "Work Groups"),
+            MenuItem("window_groups", "Window Groups"),
         ],
     ),
     MenuItem("software", "Software"),
