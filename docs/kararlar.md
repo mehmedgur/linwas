@@ -279,6 +279,13 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
        kapalıysa: kurulu ama kapalı → `gnome-extensions enable`; kurulu değil → `package.install`
        (`gnome-shell-extension-desktop-icons-ng`, UUID `ding@rastersoft.com`), sonra `enabled-extensions`'a
        yazılır, oturum yeniden açılınca görünür.
+   - **Masaüstü kapsamı (10 Ekim 2026, kullanıcı kararı):** çalışma grupları GNOME, XFCE ve Cinnamon için
+     birlikte yazılır (kullanıcı üçünü de kullanıyor); KDE sonraki sürümde. Ortak: X11'de `wmctrl` ile geçiş,
+     pencere taşıma ve "program hep kendi grubunda açılsın" ajanı; masaüstüne özel: masaüstü sayısı/adları,
+     görev çubuğu yalnızca geçerli masaüstü, grup değiştirici (GNOME: Dash to Panel/Dash to Dock
+     `isolate-workspaces`, Workspace Indicator, auto-move-windows; XFCE: xfconf xfwm4 + Pencere Düğmeleri +
+     Çalışma Alanı Değiştirici; Cinnamon: org.cinnamon gsettings + pencere listesi + çalışma alanı
+     değiştirici). GNOME Wayland'de geçiş/taşıma dışarıdan yapılamaz; GNOME kısayolları gösterilir.
    - **A. Çalışma grupları (ikinci):** kullanıcının grupları ("Proje", "E-posta" …), her grup bir sanal
      masaüstü; görev çubuğu yalnızca o grubun pencerelerini gösterir; grup değiştirici; grup açılınca
      programları birlikte başlatma (grubun klasörüyle). X11'de dışarıdan pencere taşıma; Wayland'de
