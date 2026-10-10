@@ -3927,6 +3927,30 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Linwas teması:</translation>
     </message>
     <message>
+        <source>Developer</source>
+        <translation>Geliştirici</translation>
+    </message>
+    <message>
+        <source>E-mail</source>
+        <translation>E-posta</translation>
+    </message>
+    <message>
+        <source>Project page</source>
+        <translation>Proje sayfası</translation>
+    </message>
+    <message>
+        <source>Licence</source>
+        <translation>Lisans</translation>
+    </message>
+    <message>
+        <source>Not decided yet</source>
+        <translation>Henüz karar verilmedi</translation>
+    </message>
+    <message>
+        <source>Found a bug or have an idea? Report it on the project page; your system information is added and personal details are masked.</source>
+        <translation>Bir hata mı buldunuz ya da bir fikriniz mi var? Proje sayfasında bildirin; sistem bilgileriniz eklenir, kişisel bilgiler gizlenir.</translation>
+    </message>
+    <message>
         <source>Linwas: the licence will be chosen before the first public release.</source>
         <translation>Linwas: lisans ilk herkese açık sürümden önce belirlenecek.</translation>
     </message>

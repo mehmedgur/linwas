@@ -722,11 +722,10 @@ class SettingsPage(BasePage):
         copy = QPushButton(tr("Copy system information"), card)
         copy.clicked.connect(self._copy_about)
         row.addWidget(copy)
-        report = QPushButton(tr("Report a problem"), card)
-        report.clicked.connect(self._report_problem)
-        row.addWidget(report)
         row.addStretch(1)
         card.layout.addLayout(row)
+
+        self._build_developer(s)
 
         card = s.card(tr("Licenses"))
         lic = QLabel(
@@ -737,6 +736,44 @@ class SettingsPage(BasePage):
         )
         lic.setWordWrap(True)
         card.layout.addWidget(lic)
+
+    def _build_developer(self, s: _Section) -> None:
+        from linwas import __author__, __email__, __homepage__, __license__
+
+        card = s.card(tr("Developer"))
+        form = QFormLayout()
+        rows = [
+            (tr("Developer"), __author__),
+            (tr("E-mail"), f'<a href="mailto:{__email__}">{__email__}</a>'),
+            (tr("Project page"), f'<a href="{__homepage__}">{__homepage__}</a>'),
+            (tr("Licence"), __license__ or tr("Not decided yet")),
+        ]
+        for label, value in rows:
+            v = QLabel(value, card)
+            # Bağlantılar varsayılan tarayıcı / e-posta programıyla açılır
+            v.setOpenExternalLinks(True)
+            v.setTextInteractionFlags(
+                Qt.TextInteractionFlag.TextBrowserInteraction
+                | Qt.TextInteractionFlag.TextSelectableByMouse
+            )
+            form.addRow(label + ":", v)
+        card.layout.addLayout(form)
+        note = QLabel(
+            tr(
+                "Found a bug or have an idea? Report it on the project page; "
+                "your system information is added and personal details are masked."
+            ),
+            card,
+        )
+        note.setWordWrap(True)
+        note.setObjectName("Secondary")
+        card.layout.addWidget(note)
+        row = QHBoxLayout()
+        report = QPushButton(tr("Report a problem"), card)
+        report.clicked.connect(self._report_problem)
+        row.addWidget(report)
+        row.addStretch(1)
+        card.layout.addLayout(row)
 
     def _copy_about(self) -> None:
         from PySide6.QtGui import QGuiApplication

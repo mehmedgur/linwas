@@ -355,6 +355,7 @@ def _translation_markers() -> None:
     tr("Display & Scaling")
     tr("App Folders")
     tr("Work Groups")
+    tr("Window Groups")
     tr("Software")
     tr("Troubleshooting")
     tr("How was it on Windows?")

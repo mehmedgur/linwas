@@ -7,11 +7,12 @@ from __future__ import annotations
 
 import urllib.parse
 
+from linwas import __homepage__
 from linwas.core.sanitizer import sanitize
 
 # Herkese açık yayın yeri henüz kararlaştırılmadı (bkz. karar belgesi › Açık konular);
-# değişirse yalnızca bu satır güncellenir.
-ISSUES_URL = "https://github.com/mehmedgur/linwas2/issues/new"
+# değişirse yalnızca linwas/__init__.py'deki __homepage__ güncellenir.
+ISSUES_URL = f"{__homepage__}/issues/new"
 
 # Tarayıcı/GitHub için güvenli URL uzunluğu
 _MAX_BODY = 6000
