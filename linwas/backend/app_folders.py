@@ -35,6 +35,8 @@ from linwas.backend.installed_apps import _ui_languages, parse_desktop_entry
 DING_UUID = "ding@rastersoft.com"
 DING_PACKAGE = "gnome-shell-extension-desktop-icons-ng"
 INSTALLED_LINWAS = Path("/usr/bin/linwas")
+# Paketin kurulduğu yer (gömülü Python ve site-packages/linwas)
+INSTALLED_ROOT = Path("/opt/linwas")
 LAUNCHER_PREFIX = "linwas-folder-"
 MAX_NAME_LEN = 40
 _RE_ID = re.compile(r"^[0-9a-f]{8}$")
@@ -280,10 +282,12 @@ def launch(entry: AppEntry) -> bool:
 
 
 def exec_command() -> list[str]:
-    """Klasör açılır penceresini başlatan komut (kurulu paket ya da kaynak koddan)."""
-    if INSTALLED_LINWAS.is_file():
+    """Şu an çalışan Linwas'ı başlatan komut. Kaynak koddan çalışırken kurulu (belki eski)
+    paket çağrılmaz; yoksa eski sürüm yeni seçenekleri bilmeyip ana pencereyi açar."""
+    root = Path(__file__).resolve().parents[2]
+    if INSTALLED_LINWAS.is_file() and root.is_relative_to(INSTALLED_ROOT):
         return [str(INSTALLED_LINWAS)]
-    return [sys.executable, "-m", "linwas"]
+    return ["/usr/bin/env", f"PYTHONPATH={root}", sys.executable, "-m", "linwas"]
 
 
 def _quote(arg: str) -> str:
@@ -332,6 +336,18 @@ def write_launchers(folder: AppFolder) -> None:
     else:
         desk.unlink(missing_ok=True)
     set_pinned(folder, folder.pinned)
+
+
+def refresh_launchers(folders: list[AppFolder]) -> None:
+    """Komutu eskimiş kısayolları (ör. başka kopyanın yazdığı) yeniden yazar."""
+    for folder in folders:
+        menu = user_apps_dir() / launcher_name(folder)
+        try:
+            current = menu.read_text(encoding="utf-8")
+        except OSError:
+            current = ""
+        if current != launcher_text(folder):
+            write_launchers(folder)
 
 
 def remove_launchers(folder: AppFolder) -> None:

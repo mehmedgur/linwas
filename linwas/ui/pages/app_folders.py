@@ -128,6 +128,7 @@ class AppFoldersPage(BasePage):
             if item.widget():
                 item.widget().deleteLater()
         folders = app_folders.load_folders()
+        app_folders.refresh_launchers(folders)
         self._empty.setVisible(not folders)
         for folder in folders:
             self._list.addWidget(self._folder_card(folder))
