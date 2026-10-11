@@ -1,9 +1,24 @@
 # Linwas 2.0
 
 Windows'tan Linux'a geçenler için, terminal kullanmadan Linux'u yönetmeyi sağlayan masaüstü yardımcısı.
-Debian/Ubuntu tabanlı dağıtımlara odaklanır: Ubuntu 20.04+, Debian 11+, Linux Mint, Pardus 23 ve 25.
 
 > **Durum:** Geliştirme aşamasında (aşama 0 — iskelet). Henüz son kullanıcıya uygun değildir.
+
+## Desteklenen sistemler
+| Dağıtım | Sürüm |
+|---|---|
+| Ubuntu | 22.04 ve üstü |
+| Debian | 12 ve üstü |
+| Linux Mint | 21 ve üstü |
+| Pardus | 23 ve 25 |
+
+Masaüstü: GNOME, Cinnamon, XFCE (diğerlerinde sınırlı destek).
+
+### Eski sistemler (Ubuntu 20.04, Debian 11, Linux Mint 20)
+Linwas bu sistemlerde çalışmaz: güncel Qt daha yeni bir sistem kütüphanesi (glibc 2.34) gerektirir.
+Bu sürümlerin güvenlik güncellemeleri de sona erdiği için sisteminizi dağıtımınızın **resmi
+yükseltme rehberini** izleyerek yükseltmenizi öneririz (Ubuntu 20.04 → 22.04, Linux Mint 20 → 21,
+Debian 11 → 12). Yükseltmeden önce mutlaka kişisel dosyalarınızı yedekleyin.
 
 ## Geliştirme sürümünü denemek
 
