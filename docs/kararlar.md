@@ -81,6 +81,16 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - Onaylı taslaklar: ana pencere (Sistem › Genel bakış) ve kuyruk senaryosu (Kuyruk → Onay → Çalışıyor → Sonuç).
   - Ana pencere: üstte başlık çubuğu; solda daraltılabilir menü (arama kutusu, rozetler, açılır alt menüler, altta sistem durumu kartı, Yardımcı paneli düğmesi, Ayarlar); ortada içerik (Genel bakış: Timeshift rozeti, 4 hızlı işlem kutusu, Güncellemeler/Sürücüler/Wi-Fi/Bluetooth kartları); sağda AI yardımcı paneli (sağlayıcı seçimi, sohbet, önerilen görev kartı + "Kuyruğa ekle", ekran görüntüsü/log ekleme, "Sistem bilgimi ekle", token çubuğu); altta durum çubuğu (kuyruk sayısı, ilerleme, Detay, "Uygula (tek onay)").
   - Vurgu rengi `#0067c0`, yazı tipi Noto Sans, açık tema zemin `#f3f3f3`, kartlar beyaz, kenarlık `#e0e3e7`, köşe 8 px (kartlar 10 px).
+  - ~~Windows görünümü~~ → **macOS havası (12 Ekim 2026, kullanıcı onayı):** tuval "Linwas macOS Görünümü"
+    (claude.ai artifact AYgNY1TjwxLtui1ERsfg1D: Güç ve pil, Wi-Fi, Giriş, Bileşenler). Kenar çubuğu
+    System Settings gibi: her öğenin simgesi renkli yuvarlak kare içinde, seçili öğe vurgu zeminli beyaz
+    yazı, üstte beyaz kullanıcı kartı, gri yuvarlak arama. İçerik zemini `#f5f5f7`, kenar çubuğu `#ebebef`,
+    kartlar beyaz + köşe 12 px + hafif gölge; iç satır ayırıcısı metin hizasından başlar; bölüm başlıkları
+    kartın dışında küçük gri. macOS tipi anahtar (beyaz yuvarlak düğme); düğme köşesi 8 px; vurgu `#0066d6`;
+    yazı `#1d1d1f`, ikincil `#6e6e73`. Pencere düğmeleri (trafik ışıkları) yok, başlığı masaüstü çizer.
+  - **Ölçek ve okunabilirlik (12 Ekim 2026, kullanıcı):** yazı küçük kalmasın. Qt'ye aktarımda gövde
+    16 px, başlık 32 px, ayar satırı en az 64 px, tıklama alanı en az 40 px. Her ekranda Windows / macOS /
+    Linux'taki karşılığı karşılaştırılır, en anlaşılır çözüm seçilir.
   - Kenar çubuğu: üstte logo + ad, her öğede simge, gruplar (Sistem, Arayüz) küçük ikincil renkli başlık + aç/kapa oku. Genel bakış kartlarında vurgu renkli simge kutusu, tıklanabilir kartlarda üzerine gelince vurgu kenarlık; durum kartları ilgili sayfayı açar.
 
 ## Menü yapısı
@@ -319,6 +329,30 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
        sabitlenmiş (favorite-apps) programlar yerinde kalır; hata olursa süzme bırakılır. Ubuntu Dock'ta
        gizleme yok (yalnızca düğme). Durum: `org.gnome.Shell.Extensions.GetExtensionInfo` (`state` 1 =
        çalışıyor; boş = oturum yeniden açılmalı).
+   - **D. Görev çubuğu ayarları (12 Ekim 2026, kullanıcı kararı):** Arayüz › Görev çubuğu sayfası; ilk
+     teslim GNOME (Dash to Panel), sonra XFCE/Cinnamon. Linux'ta bugün olmayan ya da dağınık olanlar:
+     - **Hazır düzen:** "Windows gibi" (altta tek panel: Dash to Panel) / "macOS gibi" (üstte ince çubuk +
+       altta ortalanmış dock: Dash to Panel kapatılır, Dash to Dock açılır; Pardus 23 deposunda
+       `gnome-shell-extension-dashtodock` 436.84.1 var). Geçişten önce mevcut ayarlar saklanır, "Önceki
+       düzene dön" düğmesi.
+     - **Sağ tıkta son açılan dosyalar:** program simgesinin menüsünde o programla son açılan dosyalar
+       (`~/.local/share/recently-used.xbel`, GTK; `remember-recent-files` kapalıysa bölüm gizlenir ve
+       nedeni sayfada yazar). Linwas GNOME eklentisine eklenir; Dash to Panel menüsüne ekleme yolu
+       kodlarken resmi kaynaktan doğrulanacak.
+     - **Görünüm:** Saydam / Mat / Bulanık (blur) + saydamlık kaydırıcısı. Saydam ve mat Dash to Panel
+       ayarlarıyla (`trans-use-custom-opacity`, `trans-panel-opacity`, `trans-use-custom-bg`,
+       `trans-bg-color`, `trans-use-dynamic-opacity`). Bulanık: Pardus deposunda Blur my Shell yok; Linwas
+       GNOME eklentisi panelin arkasına `Shell.BlurEffect` uygular (GNOME 43'te varlığı kodlarken
+       doğrulanacak). Desteklenmeyen masaüstünde seçenek gizlenir.
+     - Ayrıca (Linux'ta dağınık, tek sayfada): konum (alt/üst/sol/sağ: `panel-positions`), boyut
+       (`panel-sizes`), otomatik gizleme (`intellihide`), pencere önizlemesi (`show-window-previews`).
+   - **E. Klasör renkleri (12 Ekim 2026, kullanıcı kararı):** Dosyalar'da (Nautilus) klasöre renk verme;
+     Windows'ta yok, macOS'ta etiket rengi gibi. `gio set <klasör> metadata::custom-icon-name folder-<renk>`
+     (kullanıcı makinesinde çalıştığı doğrulandı; Nautilus 43.2, simge teması breeze: folder-red/blue/
+     green/orange/yellow/violet/grey/brown/black/magenta/cyan var). Simge temasında renkli klasör yoksa
+     Linwas kendi renkli SVG'lerini `~/.local/share/icons/hicolor` altına kurar. Sağ tık menüsüne "Klasör
+     rengi" için `python3-nautilus` (Pardus deposunda 4.0-1+b1) + Linwas Nautilus eklentisi; kurulu değilse
+     yalnızca Linwas sayfasından (klasör seç → renk). "Varsayılana dön" metadata'yı siler.
 
 ## AI
 - Sağlayıcılar: Gemini, ChatGPT, DeepSeek. AI isteğe bağlı; anahtar yoksa gizlenir.
