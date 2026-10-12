@@ -97,6 +97,12 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
     Tema (açık/koyu/yüksek kontrast) düzenden bağımsız. Kod: `tokens.UiStyle`, `tokens.METRICS`,
     `tokens.colors(theme, style)`, `stylesheet.build(theme, style)`, ayar `ui_style`. Windows düzeninin
     ayrıntılı tasarımı sonra konuşulacak.
+  - **macOS düzeni ilkeleri (12 Ekim 2026, kullanıcı; dış görüş):** birebir kopya değil. Tek tip simgeler
+    (aynı çizgi kalınlığı 1.8, aynı boyut); sakin kenar çubuğu: simge kutuları nötr gri, yalnızca seçili
+    öğe vurgu zeminli (renkli kutular kaldırıldı); kartlarda tek köşe/kenarlık/boşluk sistemi; pencere
+    başlığını masaüstü çizer (çift başlık çubuğu yok); Genel bakış'ta gerçek **sistem sağlığı** özeti
+    (sistem diski, ayrıysa kişisel dosyalar diski, bellek, pil sağlığı; durum rozeti İyi / Göz atın /
+    İlgilenin; `backend/health.py`).
   - Kenar çubuğu: üstte logo + ad, her öğede simge, gruplar (Sistem, Arayüz) küçük ikincil renkli başlık + aç/kapa oku. Genel bakış kartlarında vurgu renkli simge kutusu, tıklanabilir kartlarda üzerine gelince vurgu kenarlık; durum kartları ilgili sayfayı açar.
 
 ## Menü yapısı

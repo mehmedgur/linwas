@@ -49,6 +49,8 @@ class ColorSet:
     field_bg: str = "#dcdce1"  # kenar çubuğundaki arama kutusu
     soft_accent: str = "#e1ecfb"  # simge kutusu, etiket gibi açık vurgu zemini
     segment_bg: str = "#e3e3e8"  # sekme şeridi (segmented control) zemini
+    tile_bg: str = "#d1d1d6"  # kenar çubuğu simge kutusu (nötr; yalnızca seçili öğe renkli)
+    tile_fg: str = "#3a3a3c"
 
 
 # macOS havası (12 Ekim 2026 kararı; kararlar.md › Arayüz tasarımı)
@@ -104,6 +106,8 @@ DARK = ColorSet(
     field_bg="#38383b",
     soft_accent="#1c3456",
     segment_bg="#38383b",
+    tile_bg="#3a3a3c",
+    tile_fg="#e5e5ea",
 )
 
 HIGH_CONTRAST = ColorSet(
@@ -131,6 +135,8 @@ HIGH_CONTRAST = ColorSet(
     field_bg="#000000",
     soft_accent="#003355",
     segment_bg="#000000",
+    tile_bg="#000000",
+    tile_fg="#ffffff",
 )
 
 # Windows düzeni (12 Ekim 2026 öncesi görünüm; Ayarlar › Görünüm › Düzen ile seçilir)

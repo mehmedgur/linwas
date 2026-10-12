@@ -95,33 +95,6 @@ BOTTOM_ITEMS: list[MenuItem] = [
 # Geçerli düzenin ölçüleri; Sidebar.set_style() değiştirir
 _metrics = METRICS[UiStyle.MACOS]
 
-# Her öğenin simge kutusu rengi (macOS System Settings gibi); listede yoksa gri
-TILE_COLORS: dict[str, str] = {
-    "ai_chat": "#af52de",
-    "overview": "#5856d6",
-    "updates": "#8e8e93",
-    "network": "#007aff",
-    "backups": "#32ade6",
-    "hardware": "#636366",
-    "taskmgr": "#ff9500",
-    "cleanup": "#a2845e",
-    "personal_backup": "#30b0c7",
-    "power": "#34c759",
-    "migrate": "#0a84ff",
-    "all_settings": "#636366",
-    "appearance": "#ff2d55",
-    "theme": "#bf5af2",
-    "fonts": "#ff9f0a",
-    "display": "#007aff",
-    "app_folders": "#ff9500",
-    "workgroups": "#5856d6",
-    "window_groups": "#30b0c7",
-    "software": "#ff9500",
-    "troubleshoot": "#ff3b30",
-    "guide": "#0a84ff",
-    "settings": "#8e8e93",
-}
-
 
 class _NavButton(QPushButton):
     def __init__(self, item: MenuItem, indent: int = 0, parent: QWidget | None = None) -> None:
@@ -150,8 +123,9 @@ class _NavButton(QPushButton):
             name = "chevron_down" if self._expanded else "chevron_right"
             icons.bind(self, name, "secondary", 14)
         elif _metrics.sidebar_tiles:
-            color = TILE_COLORS.get(self._item.id, "#8e8e93")
-            icons.bind(self, self._item.icon or self._item.id, color, _metrics.sidebar_icon)
+            # Sakin kenar çubuğu: simgeler nötr, yalnızca seçili öğe vurgulu
+            role = "tile_active" if self._active else "tile"
+            icons.bind(self, self._item.icon or self._item.id, role, _metrics.sidebar_icon)
         else:
             role = "accent" if self._active else "normal"
             icons.bind(self, self._item.icon or self._item.id, role, _metrics.sidebar_icon)
@@ -349,7 +323,7 @@ class Sidebar(QWidget):
         self._apply_hidden()
 
     def set_style(self, style: UiStyle) -> None:
-        """Düzeni değiştirir (macOS: renkli simge kutuları; Windows: düz simgeler)."""
+        """Düzeni değiştirir (macOS: simge kutuları; Windows: düz simgeler)."""
         global _metrics
         _metrics = METRICS[style]
         self.setFixedWidth(_metrics.sidebar_width)

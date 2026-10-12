@@ -330,6 +330,54 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <source>Checking…</source>
         <translation>Kontrol ediliyor…</translation>
     </message>
+    <message>
+        <source>System health</source>
+        <translation>Sistem sağlığı</translation>
+    </message>
+    <message>
+        <source>System disk</source>
+        <translation>Sistem diski</translation>
+    </message>
+    <message>
+        <source>Personal files disk</source>
+        <translation>Kişisel dosyalar diski</translation>
+    </message>
+    <message>
+        <source>Memory (RAM)</source>
+        <translation>Bellek (RAM)</translation>
+    </message>
+    <message>
+        <source>Battery health</source>
+        <translation>Pil sağlığı</translation>
+    </message>
+    <message>
+        <source>%1 free of %2</source>
+        <translation>%2 diskin %1 kadarı boş</translation>
+    </message>
+    <message>
+        <source>%1 of %2 in use</source>
+        <translation>%2 belleğin %1 kadarı kullanımda</translation>
+    </message>
+    <message>
+        <source>%1% of its original capacity</source>
+        <translation>İlk kapasitesinin %%1 kadarı</translation>
+    </message>
+    <message>
+        <source>Good</source>
+        <translation>İyi</translation>
+    </message>
+    <message>
+        <source>Check</source>
+        <translation>Göz atın</translation>
+    </message>
+    <message>
+        <source>Needs attention</source>
+        <translation>İlgilenin</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Aç</translation>
+    </message>
 </context>
 <context>
     <name>StubPage</name>

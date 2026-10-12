@@ -1,19 +1,24 @@
-"""Genel Bakış sayfası: hızlı işlemler ve sistem durum kartları."""
+"""Genel Bakış sayfası: sistem sağlığı özeti, hızlı işlemler ve sistem durum kartları."""
 
 from __future__ import annotations
 
-from PySide6.QtCore import QCoreApplication, Signal
+from pathlib import Path
+
+from PySide6.QtCore import QCoreApplication, QLocale, Qt, Signal
 from PySide6.QtWidgets import (
     QFrame,
     QGridLayout,
     QHBoxLayout,
     QLabel,
+    QProgressBar,
+    QPushButton,
     QScrollArea,
     QSizePolicy,
     QVBoxLayout,
     QWidget,
 )
 
+from linwas.backend import health
 from linwas.ui import icons
 from linwas.ui.widgets.card import Card
 
@@ -107,6 +112,122 @@ class _StatusCard(Card):
         self._status.setText(text)
 
 
+def _size(n: int) -> str:
+    return QLocale().formattedDataSize(n, 1, QLocale.DataSizeFormat.DataSizeSIFormat)
+
+
+# Durum → (metin, yazı rengi, zemin); renkler açık ve koyu temada okunur
+_STATE_STYLE = {
+    health.OK: ("#1e7b34", "#e3f5e1"),
+    health.WARN: ("#8a5300", "#fff1cc"),
+    health.BAD: ("#a4161a", "#fde2e4"),
+}
+
+
+def _state_text(state: str) -> str:
+    return {
+        health.OK: tr("Good"),
+        health.WARN: tr("Check"),
+        health.BAD: tr("Needs attention"),
+    }[state]
+
+
+class _HealthCard(Card):
+    """Sistem sağlığı: her satırda ad, doluluk çubuğu, değer ve durum rozeti."""
+
+    page_requested = Signal(str)
+
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self._grid = QGridLayout()
+        self._grid.setHorizontalSpacing(16)
+        self._grid.setVerticalSpacing(12)
+        self._grid.setColumnStretch(1, 1)
+        self.layout.addLayout(self._grid)
+        self._rows = 0
+
+    def refresh(self) -> None:
+        while self._grid.count():
+            item = self._grid.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+        self._rows = 0
+
+        root = health.disk_usage(Path("/"))
+        if root:
+            self._add(
+                tr("System disk"),
+                root.percent,
+                tr("%1 free of %2")
+                .replace("%1", _size(root.total - root.used))
+                .replace("%2", _size(root.total)),
+                health.state_for(root.percent, 80, 90),
+                "cleanup",
+            )
+        if health.home_is_separate():
+            home = health.disk_usage(Path.home())
+            if home:
+                self._add(
+                    tr("Personal files disk"),
+                    home.percent,
+                    tr("%1 free of %2")
+                    .replace("%1", _size(home.total - home.used))
+                    .replace("%2", _size(home.total)),
+                    health.state_for(home.percent, 80, 90),
+                    "cleanup",
+                )
+        mem = health.memory_usage()
+        if mem:
+            self._add(
+                tr("Memory (RAM)"),
+                mem.percent,
+                tr("%1 of %2 in use")
+                .replace("%1", _size(mem.used))
+                .replace("%2", _size(mem.total)),
+                health.state_for(mem.percent, 80, 92),
+                "taskmgr",
+            )
+        from linwas.backend.power import list_batteries
+
+        for bat in list_batteries():
+            if bat.health is None:
+                continue
+            self._add(
+                tr("Battery health"),
+                bat.health,
+                tr("%1% of its original capacity").replace("%1", str(bat.health)),
+                health.battery_state(bat.health),
+                "power",
+            )
+
+    def _add(self, name: str, percent: int, detail: str, state: str, page_id: str) -> None:
+        r = self._rows
+        label = QLabel(name, self)
+        label.setMinimumWidth(170)
+        self._grid.addWidget(label, r, 0)
+        bar = QProgressBar(self)
+        bar.setRange(0, 100)
+        bar.setValue(max(0, min(100, percent)))
+        bar.setTextVisible(False)
+        bar.setAccessibleName(name)
+        self._grid.addWidget(bar, r, 1, Qt.AlignmentFlag.AlignVCenter)
+        value = QLabel(detail, self)
+        value.setObjectName("Secondary")
+        self._grid.addWidget(value, r, 2)
+        fg, bg = _STATE_STYLE[state]
+        pill = QLabel(_state_text(state), self)
+        pill.setStyleSheet(
+            f"background:{bg}; color:{fg}; border-radius:10px; padding:2px 10px;"
+            " font-size: 13px; font-weight: bold;"
+        )
+        self._grid.addWidget(pill, r, 3)
+        more = QPushButton(tr("Open"), self)
+        more.setAccessibleName(tr("Open") + " " + name)
+        more.clicked.connect(lambda _=False, pid=page_id: self.page_requested.emit(pid))
+        self._grid.addWidget(more, r, 4)
+        self._rows += 1
+
+
 class OverviewPage(QWidget):
     """Genel Bakış sayfası."""
 
@@ -128,6 +249,15 @@ class OverviewPage(QWidget):
         title = QLabel(tr("Overview"), content)
         title.setObjectName("H1")
         outer.addWidget(title)
+
+        # Sistem sağlığı (gerçek değerler; sayfa her açıldığında yenilenir)
+        health_label = QLabel(tr("System health"), content)
+        health_label.setObjectName("Secondary")
+        outer.addWidget(health_label)
+        self._health = _HealthCard(content)
+        self._health.page_requested.connect(self.page_requested)
+        self._health.refresh()
+        outer.addWidget(self._health)
 
         # Hızlı işlemler (2×2 ızgara)
         quick_label = QLabel(tr("Quick actions"), content)
@@ -181,3 +311,7 @@ class OverviewPage(QWidget):
         page_layout = QVBoxLayout(self)
         page_layout.setContentsMargins(0, 0, 0, 0)
         page_layout.addWidget(scroll)
+
+    def showEvent(self, event: object) -> None:  # type: ignore[override]
+        self._health.refresh()
+        super().showEvent(event)  # type: ignore[misc]

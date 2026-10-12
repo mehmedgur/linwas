@@ -44,8 +44,8 @@ def pixmap(name: str, color: str, size: int = 20) -> QPixmap:
     return pm
 
 
-def tile_pixmap(name: str, background: str, size: int = 26) -> QPixmap:
-    """macOS System Settings gibi: renkli yuvarlak kare içinde beyaz simge."""
+def tile_pixmap(name: str, background: str, size: int = 26, glyph: str = "#ffffff") -> QPixmap:
+    """Yuvarlak kare içinde simge (kenar çubuğu)."""
     app = QGuiApplication.instance()
     dpr = app.devicePixelRatio() if isinstance(app, QGuiApplication) else 1.0
     pm = QPixmap(int(size * dpr), int(size * dpr))
@@ -57,17 +57,23 @@ def tile_pixmap(name: str, background: str, size: int = 26) -> QPixmap:
     side = float(pm.width())
     painter.drawRoundedRect(QRectF(0, 0, side, side), side * 0.26, side * 0.26)
     inset = side * 0.2
-    renderer = QSvgRenderer(QByteArray(svg(name, "#ffffff", 2.0).encode()))
+    renderer = QSvgRenderer(QByteArray(svg(name, glyph, 1.8).encode()))
     renderer.render(painter, QRectF(inset, inset, side - 2 * inset, side - 2 * inset))
     painter.end()
     pm.setDevicePixelRatio(dpr)
     return pm
 
 
+def _tile(name: str, role: str, size: int) -> QPixmap:
+    # "tile": nötr kutu; "tile_active": seçili öğede beyaz kutu + vurgu renkli simge
+    if role == "tile_active":
+        return tile_pixmap(name, "#ffffff", size, _palette.accent)
+    return tile_pixmap(name, _palette.tile_bg, size, _palette.tile_fg)
+
+
 def icon(name: str, role: str = "normal", size: int = 20) -> QIcon:
-    # "#rrggbb" rolü: renkli kutu içinde beyaz simge (kenar çubuğu)
-    if role.startswith("#"):
-        return QIcon(tile_pixmap(name, role, size))
+    if role.startswith("tile"):
+        return QIcon(_tile(name, role, size))
     return QIcon(pixmap(name, color_for(role), size))
 
 
@@ -76,8 +82,8 @@ def _apply(widget: QWidget, name: str, role: str, size: int) -> None:
         widget.setIcon(icon(name, role, size))
         widget.setIconSize(QSize(size, size))
     elif isinstance(widget, QLabel):
-        if role.startswith("#"):
-            widget.setPixmap(tile_pixmap(name, role, size))
+        if role.startswith("tile"):
+            widget.setPixmap(_tile(name, role, size))
         else:
             widget.setPixmap(pixmap(name, color_for(role), size))
 
