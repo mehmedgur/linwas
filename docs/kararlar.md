@@ -226,6 +226,26 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
    - Yer imleri/profiller otomatik aktarılır. Hedef tarayıcı açıksa uyarı ve "Tarayıcıyı kapat" butonu. Kapatılmazsa aktarım beklemeye alınır.
    - **Sadece rehberle:** Chrome/Edge kayıtlı şifreleri (Windows'ta CSV dışa aktar → Linwas aktarır), Wi-Fi şifreleri, Outlook (.pst) e-postaları.
    - **Taşınmaz:** Windows programlarının kendisi, duvar kağıdı, oyunlar.
+   - **Başka Linux'a taşıma (12 Ekim 2026, kullanıcı kararı):** Windows'tan taşıma ile tek sayfada birleşir
+     (menü adı "Taşıma"; kaynak: Windows ya da Linux). Linux'ta iki yön: **Dışa aktar** (bu sistemden paket
+     oluştur) ve **İçe aktar** (paketi ya da eski bölümü yeni sisteme al); yeni sistemde ilk açılış sihirbazı
+     bulduğu paketi önerir.
+     - **Yol:** harici disk / USB (paket dosyası); aynı bilgisayardaki diğer bölüm (çift açılış ya da yeniden
+       kurulumda eski `/home`); bulut (GNOME Çevrimiçi Hesaplar ile bağlı Google Drive vb.; büyük veride
+       yavaşlık uyarısı).
+     - **Kapsam:** kişisel dosyalar; program listesi (yeni dağıtımda karşılığı kurulur, adı depoda
+       doğrulanır); program ayarları (tarayıcı profilleri, Thunderbird, LibreOffice, `~/.config`);
+       masaüstü düzeni (tema, duvar kağıdı, yazı tipleri, kısayollar, görev çubuğu, Linwas klasör/grupları);
+       sistem bilgileri (Wi-Fi şifreleri, yazıcılar, SSH/GPG anahtarları).
+     - **Hedef:** Linwas'ın desteklediği aileler (Ubuntu, Debian, Pardus, Mint); yeni sistemde de Linwas
+       kurulu olmalı.
+     - **Masaüstü farklıysa** (ör. GNOME → XFCE): ortak ayarlar karşılığına çevrilir (tema rengi, açık/koyu,
+       duvar kağıdı, yazı tipi, klavye düzeni); masaüstüne özel olanlar atlanır ve sonuçta listelenir.
+     - **Depo paketi mi Flatpak mı:** ikisi de varsa kullanıcıya sorulur (eski sistemdeki kuruluş biçimi
+       önerilen olarak işaretlenir).
+     - **Seçim:** hazır işaretli liste, her satırda boyut; hedef diskte yer yetiyor mu gösterilir.
+     - **Şifreleme:** isteğe bağlı; paket şifre/anahtar (Wi-Fi, tarayıcı şifreleri, SSH/GPG) içeriyorsa
+       zorunlu (parola sorulur; unutulursa açılamayacağı söylenir).
 2. **Görev Yöneticisi:** "Kapat" doğrudan zorla kapatır; masaüstü ve sistem süreçleri kapatılamaz. CPU/RAM, başlangıç programları.
 3. **Disk temizliği:** yalnızca elle; kazanılacak alan önceden gösterilir.
 4. **Yazıcı ve tarayıcı:** otomatik bulma; bulunamazsa AI çözüm üretir, görevleri kuyruğa hazır koyar, kullanıcı tek onayla uygular.
