@@ -173,8 +173,8 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Güç ve Pil</translation>
     </message>
     <message>
-        <source>Import from Windows</source>
-        <translation>Windows'tan Taşı</translation>
+        <source>Transfer</source>
+        <translation>Taşıma</translation>
     </message>
     <message>
         <source>All Settings</source>
@@ -303,12 +303,12 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Kişisel dosyaları harici diske yedekle</translation>
     </message>
     <message>
-        <source>Import from Windows</source>
-        <translation>Windows'tan Taşı</translation>
+        <source>Transfer</source>
+        <translation>Taşıma</translation>
     </message>
     <message>
-        <source>Bring bookmarks, settings and files from Windows</source>
-        <translation>Yer imlerini, ayarları ve dosyaları Windows'tan getir</translation>
+        <source>Bring files and settings from Windows or another Linux</source>
+        <translation>Windows'tan ya da başka bir Linux'tan dosya ve ayarları getirin</translation>
     </message>
     <message>
         <source>System status</source>
@@ -1430,6 +1430,50 @@ Windows sürücünüzün bağlı olduğundan emin olun.</translation>
     <message>
         <source>Windows settings could not be read.</source>
         <translation>Windows ayarları okunamadı.</translation>
+    </message>
+    <message>
+        <source>Bring from Windows</source>
+        <translation>Windows'tan getir</translation>
+    </message>
+    <message>
+        <source>Bring from another Linux</source>
+        <translation>Başka Linux'tan getir</translation>
+    </message>
+    <message>
+        <source>Bring your files and settings to this computer, or prepare them for a new one.</source>
+        <translation>Dosyalarınızı ve ayarlarınızı bu bilgisayara getirin ya da yeni bir bilgisayar için hazırlayın.</translation>
+    </message>
+    <message>
+        <source>Create package</source>
+        <translation>Paket oluştur</translation>
+    </message>
+    <message>
+        <source>Files, browser bookmarks and settings from a Windows drive or backup.</source>
+        <translation>Windows diskinden ya da yedeğinden dosyalar, tarayıcı yer imleri ve ayarlar.</translation>
+    </message>
+    <message>
+        <source>From a Linwas transfer package (USB drive or cloud) or from the old system's partition on this computer.</source>
+        <translation>Linwas taşıma paketinden (USB disk ya da bulut) veya bu bilgisayardaki eski sistemin bölümünden.</translation>
+    </message>
+    <message>
+        <source>Move this computer to another Linux</source>
+        <translation>Bu bilgisayarı başka bir Linux'a taşı</translation>
+    </message>
+    <message>
+        <source>Pack files, program settings, desktop look and the program list for Ubuntu, Debian, Pardus or Mint.</source>
+        <translation>Dosyaları, program ayarlarını, masaüstü görünümünü ve program listesini Ubuntu, Debian, Pardus ya da Mint için paketleyin.</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Başla</translation>
+    </message>
+    <message>
+        <source>Transfer</source>
+        <translation>Taşıma</translation>
+    </message>
+    <message>
+        <source>‹ Transfer</source>
+        <translation>‹ Taşıma</translation>
     </message>
 </context>
 <context>
@@ -4481,8 +4525,8 @@ Değişiklikler alttaki kuyrukta toplanır. Uygula'ya basıp şifrenizi bir kez 
         <translation>İleri</translation>
     </message>
     <message>
-        <source>Open “Import from Windows” after this</source>
-        <translation>Bundan sonra “Windows'tan Taşı” sayfasını aç</translation>
+        <source>Open “Transfer” after this</source>
+        <translation>Ardından “Taşıma”yı aç</translation>
     </message>
     <message>
         <source>Quick system check</source>
@@ -6445,6 +6489,417 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>Delete the window group "{name}"? Its programs return to the taskbar; they are not removed.</source>
         <translation>"{name}" pencere grubu silinsin mi? Programları görev çubuğuna geri döner; programlar kaldırılmaz.</translation>
+    </message>
+</context>
+<context>
+    <name>LinuxTransfer</name>
+    <message>
+        <source>%1 Wi-Fi network(s) added.</source>
+        <translation>%1 Wi-Fi ağı eklendi.</translation>
+    </message>
+    <message>
+        <source>%1 Wi-Fi network(s) skipped (already present or unsupported).</source>
+        <translation>%1 Wi-Fi ağı atlandı (zaten var ya da desteklenmiyor).</translation>
+    </message>
+    <message>
+        <source>%1 program(s) can be installed both ways; choose for each.</source>
+        <translation>%1 program iki yolla da kurulabilir; her biri için seçin.</translation>
+    </message>
+    <message>
+        <source>%1 · %2 · %3</source>
+        <translation>%1 · %2 · %3</translation>
+    </message>
+    <message>
+        <source>(as before)</source>
+        <translation>(eskisi gibi)</translation>
+    </message>
+    <message>
+        <source>Already installed</source>
+        <translation>Zaten kurulu</translation>
+    </message>
+    <message>
+        <source>Bring from another Linux</source>
+        <translation>Başka Linux'tan getir</translation>
+    </message>
+    <message>
+        <source>Bringing your data…</source>
+        <translation>Verileriniz getiriliyor…</translation>
+    </message>
+    <message>
+        <source>Check that the destination is writable and try again.</source>
+        <translation>Hedefe yazılabildiğini denetleyip yeniden deneyin.</translation>
+    </message>
+    <message>
+        <source>Checking which programs are available here…</source>
+        <translation>Hangi programların burada bulunduğuna bakılıyor…</translation>
+    </message>
+    <message>
+        <source>Choose folder</source>
+        <translation>Klasör seçin</translation>
+    </message>
+    <message>
+        <source>Choose folder…</source>
+        <translation>Klasör seç…</translation>
+    </message>
+    <message>
+        <source>Choose how each program is installed.</source>
+        <translation>Her programın nasıl kurulacağını seçin.</translation>
+    </message>
+    <message>
+        <source>Choose package or old home folder…</source>
+        <translation>Paketi ya da eski ev klasörünü seç…</translation>
+    </message>
+    <message>
+        <source>Choose where to save the package.</source>
+        <translation>Paketin nereye kaydedileceğini seçin.</translation>
+    </message>
+    <message>
+        <source>Chromium profile</source>
+        <translation>Chromium profili</translation>
+    </message>
+    <message>
+        <source>Cloud: %1</source>
+        <translation>Bulut: %1</translation>
+    </message>
+    <message>
+        <source>Could not be added: %1</source>
+        <translation>Eklenemeyenler: %1</translation>
+    </message>
+    <message>
+        <source>Could not be opened (wrong password or damaged file).</source>
+        <translation>Açılamadı (yanlış parola ya da bozuk dosya).</translation>
+    </message>
+    <message>
+        <source>Create package</source>
+        <translation>Paket oluştur</translation>
+    </message>
+    <message>
+        <source>Creating the package…</source>
+        <translation>Paket oluşturuluyor…</translation>
+    </message>
+    <message>
+        <source>Data of Flatpak programs</source>
+        <translation>Flatpak programlarının verileri</translation>
+    </message>
+    <message>
+        <source>Desktop</source>
+        <translation>Masaüstü</translation>
+    </message>
+    <message>
+        <source>Desktop look (theme, wallpaper, fonts, shortcuts)</source>
+        <translation>Masaüstü görünümü (tema, duvar kağıdı, yazı tipleri, kısayollar)</translation>
+    </message>
+    <message>
+        <source>Desktop settings are not supported on this desktop.</source>
+        <translation>Bu masaüstünde masaüstü ayarları desteklenmiyor.</translation>
+    </message>
+    <message>
+        <source>Don't install</source>
+        <translation>Kurma</translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation>Bitti</translation>
+    </message>
+    <message>
+        <source>Encryption needs the “gnupg” package.</source>
+        <translation>Şifreleme için “gnupg” paketi gerekiyor.</translation>
+    </message>
+    <message>
+        <source>Enter the password you chose when creating the package:</source>
+        <translation>Paketi oluştururken seçtiğiniz parolayı girin:</translation>
+    </message>
+    <message>
+        <source>External drive: %1</source>
+        <translation>Harici disk: %1</translation>
+    </message>
+    <message>
+        <source>Files and settings are copied directly; the program list is not available.</source>
+        <translation>Dosyalar ve ayarlar doğrudan kopyalanır; program listesi bu yolla gelmez.</translation>
+    </message>
+    <message>
+        <source>Firefox (bookmarks, passwords, history, add-ons)</source>
+        <translation>Firefox (yer imleri, şifreler, geçmiş, eklentiler)</translation>
+    </message>
+    <message>
+        <source>Flatpak (Flathub)</source>
+        <translation>Flatpak (Flathub)</translation>
+    </message>
+    <message>
+        <source>Fonts you installed</source>
+        <translation>Kurduğunuz yazı tipleri</translation>
+    </message>
+    <message>
+        <source>From %1 (%2), created %3.</source>
+        <translation>Kaynak: %1 (%2), oluşturma: %3.</translation>
+    </message>
+    <message>
+        <source>From the folder %1.</source>
+        <translation>Kaynak klasör: %1.</translation>
+    </message>
+    <message>
+        <source>Google Chrome profile</source>
+        <translation>Google Chrome profili</translation>
+    </message>
+    <message>
+        <source>Icon theme “%1” is not installed here; it was skipped.</source>
+        <translation>“%1” simge teması burada kurulu değil; atlandı.</translation>
+    </message>
+    <message>
+        <source>Install as</source>
+        <translation>Kurulum biçimi</translation>
+    </message>
+    <message>
+        <source>Install encryption tool</source>
+        <translation>Şifreleme aracını kur</translation>
+    </message>
+    <message>
+        <source>Install it</source>
+        <translation>Kur</translation>
+    </message>
+    <message>
+        <source>Install programs from the old system</source>
+        <translation>Eski sistemdeki programları kur</translation>
+    </message>
+    <message>
+        <source>Install the encryption tool first.</source>
+        <translation>Önce şifreleme aracını kurun.</translation>
+    </message>
+    <message>
+        <source>Installed programs (list; installed again on the new system)</source>
+        <translation>Kurulu programlar (liste; yeni sistemde yeniden kurulur)</translation>
+    </message>
+    <message>
+        <source>LibreOffice settings</source>
+        <translation>LibreOffice ayarları</translation>
+    </message>
+    <message>
+        <source>Linwas packs your files, program settings, desktop look and program list into one folder. On the new system, open Linwas › Transfer › Bring from another Linux.</source>
+        <translation>Linwas dosyalarınızı, program ayarlarınızı, masaüstü görünümünüzü ve program listenizi tek bir klasörde toplar. Yeni sistemde Linwas › Taşıma › Başka Linux'tan getir'i açın.</translation>
+    </message>
+    <message>
+        <source>Linwas settings, app folders and groups</source>
+        <translation>Linwas ayarları, program klasörleri ve gruplar</translation>
+    </message>
+    <message>
+        <source>Log out and back in to see the desktop settings.</source>
+        <translation>Masaüstü ayarlarını görmek için oturumu kapatıp yeniden açın.</translation>
+    </message>
+    <message>
+        <source>Menu shortcuts you created</source>
+        <translation>Oluşturduğunuz menü kısayolları</translation>
+    </message>
+    <message>
+        <source>Move this computer to another Linux</source>
+        <translation>Bu bilgisayarı başka bir Linux'a taşı</translation>
+    </message>
+    <message>
+        <source>Next: install Linwas on the new system, plug in this drive and open Transfer › Bring from another Linux.</source>
+        <translation>Sonraki adım: yeni sisteme Linwas'ı kurun, bu diski takın ve Taşıma › Başka Linux'tan getir'i açın.</translation>
+    </message>
+    <message>
+        <source>No external drive found — plug one in or choose a folder</source>
+        <translation>Harici disk bulunamadı — bir disk takın ya da klasör seçin</translation>
+    </message>
+    <message>
+        <source>Not available when copying from another partition.</source>
+        <translation>Başka bölümden kopyalarken kullanılamaz.</translation>
+    </message>
+    <message>
+        <source>Not enough free space at the destination.</source>
+        <translation>Hedefte yeterli boş alan yok.</translation>
+    </message>
+    <message>
+        <source>Not found here — skip</source>
+        <translation>Burada bulunamadı — atla</translation>
+    </message>
+    <message>
+        <source>Nothing found. Plug in the drive or choose a folder.</source>
+        <translation>Bir şey bulunamadı. Diski takın ya da klasör seçin.</translation>
+    </message>
+    <message>
+        <source>Old system on this computer</source>
+        <translation>Bu bilgisayardaki eski sistem</translation>
+    </message>
+    <message>
+        <source>Opening this package needs the “gnupg” package.</source>
+        <translation>Bu paketi açmak için “gnupg” paketi gerekiyor.</translation>
+    </message>
+    <message>
+        <source>Package from the repository</source>
+        <translation>Depodan paket</translation>
+    </message>
+    <message>
+        <source>Package password</source>
+        <translation>Paket parolası</translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <translation>Parola</translation>
+    </message>
+    <message>
+        <source>Password again</source>
+        <translation>Parola (yeniden)</translation>
+    </message>
+    <message>
+        <source>Personal files</source>
+        <translation>Kişisel dosyalar</translation>
+    </message>
+    <message>
+        <source>Plug in the drive with the Linwas transfer package, or choose the old system's partition if it is on this computer.</source>
+        <translation>Linwas taşıma paketinin bulunduğu diski takın ya da eski sistem bu bilgisayardaysa onun bölümünü seçin.</translation>
+    </message>
+    <message>
+        <source>Printers on the old system: %1. Add them in Hardware &amp; Printers.</source>
+        <translation>Eski sistemdeki yazıcılar: %1. Donanım ve yazıcılar'dan ekleyin.</translation>
+    </message>
+    <message>
+        <source>Program</source>
+        <translation>Program</translation>
+    </message>
+    <message>
+        <source>Program settings</source>
+        <translation>Program ayarları</translation>
+    </message>
+    <message>
+        <source>Programs</source>
+        <translation>Programlar</translation>
+    </message>
+    <message>
+        <source>Programs will be installed after you confirm (password needed).</source>
+        <translation>Programlar onayınızdan sonra kurulacak (parola gerekir).</translation>
+    </message>
+    <message>
+        <source>Protect the package with a password</source>
+        <translation>Paketi parolayla koru</translation>
+    </message>
+    <message>
+        <source>Protection</source>
+        <translation>Koruma</translation>
+    </message>
+    <message>
+        <source>Reading…</source>
+        <translation>Okunuyor…</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>Yenile</translation>
+    </message>
+    <message>
+        <source>SSH and GPG keys</source>
+        <translation>SSH ve GPG anahtarları</translation>
+    </message>
+    <message>
+        <source>Saved to: %1</source>
+        <translation>Kaydedildiği yer: %1</translation>
+    </message>
+    <message>
+        <source>Search again</source>
+        <translation>Yeniden ara</translation>
+    </message>
+    <message>
+        <source>Searching drives and partitions…</source>
+        <translation>Diskler ve bölümler aranıyor…</translation>
+    </message>
+    <message>
+        <source>Select at least one item.</source>
+        <translation>En az bir öğe seçin.</translation>
+    </message>
+    <message>
+        <source>Selected items contain passwords or keys, so the package must have a password. If you forget it, the package cannot be opened.</source>
+        <translation>Seçilen öğelerde şifre ya da anahtar var; bu yüzden paket parolalı olmalı. Parolayı unutursanız paket açılamaz.</translation>
+    </message>
+    <message>
+        <source>Selected: %1</source>
+        <translation>Seçilen: %1</translation>
+    </message>
+    <message>
+        <source>Selected: %1 · Free space there: %2</source>
+        <translation>Seçilen: %1 · Hedefteki boş alan: %2</translation>
+    </message>
+    <message>
+        <source>Set the wallpaper yourself: %1</source>
+        <translation>Duvar kağıdını kendiniz ayarlayın: %1</translation>
+    </message>
+    <message>
+        <source>Some files could not be copied.</source>
+        <translation>Bazı dosyalar kopyalanamadı.</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Başla</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>Sistem</translation>
+    </message>
+    <message>
+        <source>The old system used a different desktop; common look settings will be converted and the rest listed at the end.</source>
+        <translation>Eski sistem farklı bir masaüstü kullanıyordu; ortak görünüm ayarları çevrilecek, kalanlar sonda listelenecek.</translation>
+    </message>
+    <message>
+        <source>The old system used a different desktop; common settings were converted.</source>
+        <translation>Eski sistem farklı bir masaüstü kullanıyordu; ortak ayarlar çevrildi.</translation>
+    </message>
+    <message>
+        <source>The package could not be created</source>
+        <translation>Paket oluşturulamadı</translation>
+    </message>
+    <message>
+        <source>The package is ready</source>
+        <translation>Paket hazır</translation>
+    </message>
+    <message>
+        <source>The password must be at least 8 characters.</source>
+        <translation>Parola en az 8 karakter olmalı.</translation>
+    </message>
+    <message>
+        <source>The passwords do not match.</source>
+        <translation>Parolalar aynı değil.</translation>
+    </message>
+    <message>
+        <source>Theme “%1” is not installed here; it was skipped.</source>
+        <translation>“%1” teması burada kurulu değil; atlandı.</translation>
+    </message>
+    <message>
+        <source>This folder is neither a Linwas transfer package nor a home folder.</source>
+        <translation>Bu klasör ne Linwas taşıma paketi ne de ev klasörü.</translation>
+    </message>
+    <message>
+        <source>Thunderbird (e-mail accounts and messages)</source>
+        <translation>Thunderbird (e-posta hesapları ve iletiler)</translation>
+    </message>
+    <message>
+        <source>Transfer packages</source>
+        <translation>Taşıma paketleri</translation>
+    </message>
+    <message>
+        <source>What to bring</source>
+        <translation>Neler getirilsin</translation>
+    </message>
+    <message>
+        <source>Where to save</source>
+        <translation>Nereye kaydedilsin</translation>
+    </message>
+    <message>
+        <source>Wi-Fi networks and passwords</source>
+        <translation>Wi-Fi ağları ve şifreleri</translation>
+    </message>
+    <message>
+        <source>Wrong password. Try again.</source>
+        <translation>Parola yanlış. Yeniden deneyin.</translation>
+    </message>
+    <message>
+        <source>contains passwords</source>
+        <translation>şifre içerir</translation>
+    </message>
+    <message>
+        <source>‹ Back</source>
+        <translation>‹ Geri</translation>
+    </message>
+    <message>
+        <source>‹ Transfer</source>
+        <translation>‹ Taşıma</translation>
     </message>
 </context>
 </TS>

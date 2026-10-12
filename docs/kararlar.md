@@ -252,6 +252,23 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
      - **Seçim:** hazır işaretli liste, her satırda boyut; hedef diskte yer yetiyor mu gösterilir.
      - **Şifreleme:** isteğe bağlı; paket şifre/anahtar (Wi-Fi, tarayıcı şifreleri, SSH/GPG) içeriyorsa
        zorunlu (parola sorulur; unutulursa açılamayacağı söylenir).
+     - **Uygulama (12 Ekim 2026):** `backend/linux_transfer.py`, arayüz `ui/pages/linux_transfer.py`
+       (Taşıma sayfasının başlangıç ekranında üç yol: Windows'tan getir / Başka Linux'tan getir / Bu
+       bilgisayarı başka Linux'a taşı). Paket klasörü `Linwas-Tasima-<bilgisayar>-<tarih>/`:
+       `linwas-transfer.json` + öğe başına `tar.gz` (şifreliyse `.tar.gz.gpg`, GnuPG simetrik AES256,
+       parola boruyla verilir, diske yazılmaz) + parola denetimi için `check.gpg`. Önbellek, kilit ve
+       soket dosyaları alınmaz. İçe aktarmada kişisel klasörler var olan dosyaların üstüne yazmaz ve
+       yeni sistemdeki klasör adına çevrilir (ör. Belgeler → Documents); program/masaüstü ayar
+       klasörlerinin var olan hâli silinmez, `<ad>.linwas-onceki-<tarih>` olarak kenara alınır. Aynı
+       masaüstünde dconf dalları (GNOME/Cinnamon) ya da xfconf dosyaları (XFCE) birebir; farklı
+       masaüstünde tema, simge teması, yazı tipi, açık/koyu, duvar kağıdı çevrilir (kurulu olmayan tema
+       atlanır ve listelenir). Wi-Fi: `nmcli -s -g` ile dışa, `nmcli connection add` ile içe (aynı adlı
+       ağ atlanır; 802.1X atlanır). Programlar: APT kökenliyse depoda aday + Flathub'da aynı ad;
+       Flatpak kökenliyse Flathub + depoda tahmini paket adı; ikisi varsa tabloda seçim (eskisi gibi
+       önerilir), kurulum tek görevle (gerekirse önce `flatpak.setup`). Bulut: gvfs bağlantıları
+       (`/run/user/<uid>/gvfs`). Diğer bölüm: `/proc/mounts`'taki `/media`, `/run/media`, `/mnt`
+       altında ev klasörü aranır; program listesi ve masaüstü/Wi-Fi bu yolla gelmez. Menü adı
+       "Windows'tan taşı" → "Taşıma".
 2. **Görev Yöneticisi:** "Kapat" doğrudan zorla kapatır; masaüstü ve sistem süreçleri kapatılamaz. CPU/RAM, başlangıç programları.
 3. **Disk temizliği:** yalnızca elle; kazanılacak alan önceden gösterilir.
 4. **Yazıcı ve tarayıcı:** otomatik bulma; bulunamazsa AI çözüm üretir, görevleri kuyruğa hazır koyar, kullanıcı tek onayla uygular.

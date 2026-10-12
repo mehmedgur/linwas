@@ -276,8 +276,8 @@ class OverviewPage(QWidget):
             ),
             (
                 "migrate",
-                tr("Import from Windows"),
-                tr("Bring bookmarks, settings and files from Windows"),
+                tr("Transfer"),
+                tr("Bring files and settings from Windows or another Linux"),
             ),
         ]
         for i, (page_id, label, desc) in enumerate(quick_actions):

@@ -1,4 +1,4 @@
-"""Windows'tan Taşı sayfası — 3 adımlı sihirbaz."""
+"""Taşıma sayfası: Windows'tan getir, başka Linux'a taşı ve başka Linux'tan getir."""
 
 from __future__ import annotations
 
@@ -484,26 +484,106 @@ class _ProgressStep(QWidget):
 # --- Ana sayfa ---
 
 
+class _ChoiceCard(Card):
+    """Başlangıç ekranındaki seçenek kartı."""
+
+    def __init__(self, title: str, text: str, button: str, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        h = QLabel(title, self)
+        h.setObjectName("H2")
+        self.layout.addWidget(h)
+        d = QLabel(text, self)
+        d.setObjectName("Secondary")
+        d.setWordWrap(True)
+        self.layout.addWidget(d)
+        row = QHBoxLayout()
+        row.addStretch(1)
+        self.button = QPushButton(button, self)
+        self.button.setProperty("primary", True)
+        row.addWidget(self.button)
+        self.layout.addLayout(row)
+
+
 class MigratePage(BasePage):
-    """Windows'tan Taşı sayfası."""
+    """Taşıma sayfası: Windows'tan ya da başka bir Linux'tan / Linux'a."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        from linwas.ui.pages.linux_transfer import ExportWizard, ImportWizard
+
         self._user: WindowsUser | None = None
 
         outer = QVBoxLayout(self)
         outer.setContentsMargins(36, 28, 36, 28)
+        self._top = QStackedWidget(self)
+        outer.addWidget(self._top)
+
+        # Başlangıç: üç yol
+        landing = QWidget()
+        ll = QVBoxLayout(landing)
+        ll.setContentsMargins(0, 0, 0, 0)
+        ll.setSpacing(16)
+        title = QLabel(tr("Transfer"), landing)
+        title.setObjectName("H1")
+        ll.addWidget(title)
+        intro = QLabel(
+            tr("Bring your files and settings to this computer, or prepare them for a new one."),
+            landing,
+        )
+        intro.setObjectName("Secondary")
+        intro.setWordWrap(True)
+        ll.addWidget(intro)
+        win = _ChoiceCard(
+            tr("Bring from Windows"),
+            tr("Files, browser bookmarks and settings from a Windows drive or backup."),
+            tr("Start"),
+            landing,
+        )
+        win.button.clicked.connect(lambda: self._top.setCurrentIndex(1))
+        ll.addWidget(win)
+        imp = _ChoiceCard(
+            tr("Bring from another Linux"),
+            tr(
+                "From a Linwas transfer package (USB drive or cloud) or from the old system's "
+                "partition on this computer."
+            ),
+            tr("Start"),
+            landing,
+        )
+        imp.button.clicked.connect(lambda: self._top.setCurrentIndex(3))
+        ll.addWidget(imp)
+        exp = _ChoiceCard(
+            tr("Move this computer to another Linux"),
+            tr(
+                "Pack files, program settings, desktop look and the program list for Ubuntu, "
+                "Debian, Pardus or Mint."
+            ),
+            tr("Create package"),
+            landing,
+        )
+        exp.button.clicked.connect(lambda: self._top.setCurrentIndex(2))
+        ll.addWidget(exp)
+        ll.addStretch(1)
+        self._top.addWidget(landing)
+
+        # Windows'tan getir (mevcut sihirbaz)
+        windows = QWidget()
+        wl = QVBoxLayout(windows)
+        wl.setContentsMargins(0, 0, 0, 0)
 
         # Diskten okunamayanlar için rehberler (şifreler, Wi-Fi, Outlook)
         guide_row = QHBoxLayout()
+        back = QPushButton(tr("‹ Transfer"), windows)
+        back.clicked.connect(lambda: self._top.setCurrentIndex(0))
+        guide_row.addWidget(back)
         guide_row.addStretch(1)
-        guides = QPushButton(tr("Passwords, Wi-Fi and Outlook guides…"), self)
+        guides = QPushButton(tr("Passwords, Wi-Fi and Outlook guides…"), windows)
         guides.clicked.connect(self._open_guides)
         guide_row.addWidget(guides)
-        outer.addLayout(guide_row)
+        wl.addLayout(guide_row)
 
-        self._stack = QStackedWidget(self)
-        outer.addWidget(self._stack)
+        self._stack = QStackedWidget(windows)
+        wl.addWidget(self._stack)
 
         self._step1 = _SourceStep(self._stack)
         self._step2 = _SelectStep(self._stack)
@@ -520,6 +600,15 @@ class MigratePage(BasePage):
         self._step3.done.connect(lambda ok, tot: None)
 
         self._stack.setCurrentWidget(self._step1)
+        self._top.addWidget(windows)
+
+        # Başka Linux'a taşı / başka Linux'tan getir
+        self._export = ExportWizard()
+        self._import = ImportWizard()
+        for wizard in (self._export, self._import):
+            wizard.back.connect(lambda: self._top.setCurrentIndex(0))
+            wizard.task_run_now.connect(self.task_run_now)
+            self._top.addWidget(wizard)
 
     def _open_guides(self) -> None:
         from linwas.ui.dialogs.migrate_guides import MigrateGuidesDialog

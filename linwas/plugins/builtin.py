@@ -57,9 +57,7 @@ def _plugin(
 
 
 BUILTIN_PLUGINS: tuple[type[_PagePlugin], ...] = (
-    _plugin(
-        "linwas.migrate", "Import from Windows", "migrate", "linwas.ui.pages.migrate:MigratePage"
-    ),
+    _plugin("linwas.migrate", "Transfer", "migrate", "linwas.ui.pages.migrate:MigratePage"),
     _plugin("linwas.taskmgr", "Task Manager", "taskmgr", "linwas.ui.pages.taskmgr:TaskMgrPage"),
     _plugin("linwas.cleanup", "Disk Cleanup", "cleanup", "linwas.ui.pages.cleanup:CleanupPage"),
     _plugin(

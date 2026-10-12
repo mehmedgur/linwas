@@ -66,7 +66,7 @@ MENU: list[MenuItem] = [
             MenuItem("cleanup", "Disk Cleanup"),
             MenuItem("personal_backup", "Personal Backup"),
             MenuItem("power", "Power & Battery"),
-            MenuItem("migrate", "Import from Windows"),
+            MenuItem("migrate", "Transfer"),
             MenuItem("all_settings", "All Settings"),
         ],
     ),
@@ -361,7 +361,7 @@ def _translation_markers() -> None:
     tr("Personal Backup")
     tr("Power & Battery")
     tr("Power")
-    tr("Import from Windows")
+    tr("Transfer")
     tr("All Settings")
     tr("Interface")
     tr("Windows Appearance")

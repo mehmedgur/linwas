@@ -96,7 +96,7 @@ _STUB_PAGES = {
     "cleanup": "Disk Cleanup",
     "personal_backup": "Personal Backup",
     "power": "Power & Battery",
-    "migrate": "Import from Windows",
+    "migrate": "Transfer",
     "all_settings": "All Settings",
     "appearance": "Windows Appearance",
     "theme": "Theme & Wallpaper",

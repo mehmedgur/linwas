@@ -96,7 +96,7 @@ class OnboardingWizard(QWizard):
                 "partition or an external disk."
             ),
         )
-        self._migrate = QCheckBox(tr("Open “Import from Windows” after this"), page)
+        self._migrate = QCheckBox(tr("Open “Transfer” after this"), page)
         layout.addWidget(self._migrate)
         self.addPage(page)
 
