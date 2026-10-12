@@ -9,6 +9,13 @@ from dataclasses import dataclass
 from enum import Enum
 
 
+class UiStyle(Enum):
+    """Linwas'ın kendi düzeni (tema = açık/koyu; düzen = macOS / Windows görünümü)."""
+
+    MACOS = "macos"
+    WINDOWS = "windows"
+
+
 class Theme(Enum):
     LIGHT = "light"
     DARK = "dark"
@@ -126,23 +133,130 @@ HIGH_CONTRAST = ColorSet(
     segment_bg="#000000",
 )
 
+# Windows düzeni (12 Ekim 2026 öncesi görünüm; Ayarlar › Görünüm › Düzen ile seçilir)
+WINDOWS_LIGHT = ColorSet(
+    accent="#0067c0",
+    accent_hover="#005ba6",
+    accent_pressed="#004e8f",
+    background="#f3f3f3",
+    surface="#ffffff",
+    surface_hover="#f5f5f5",
+    border="#e0e3e7",
+    text_primary="#1a1a1a",
+    text_secondary="#6b6b6b",
+    text_disabled="#a0a0a0",
+    text_on_accent="#ffffff",
+    danger="#c42b1c",
+    danger_bg="#fde7e9",
+    warning="#9d5d00",
+    success="#0e7a0e",
+    sidebar_bg="#f3f3f3",
+    sidebar_item_hover="#e8eaed",
+    sidebar_item_active="#dce6f5",
+    status_bar_bg="#eaeaea",
+    sidebar_text_active="#0067c0",
+    separator="#ebebeb",
+    field_bg="#ffffff",
+    soft_accent="#dce6f5",
+    segment_bg="#e8eaed",
+)
+
+WINDOWS_DARK = ColorSet(
+    accent="#60cdff",
+    accent_hover="#4db8f0",
+    accent_pressed="#3aa3db",
+    background="#202020",
+    surface="#2d2d2d",
+    surface_hover="#383838",
+    border="#404040",
+    text_primary="#f5f5f5",
+    text_secondary="#a0a0a0",
+    text_disabled="#6b6b6b",
+    text_on_accent="#000000",
+    danger="#ff6b6b",
+    danger_bg="#4a1515",
+    warning="#ffd700",
+    success="#4caf50",
+    sidebar_bg="#1c1c1c",
+    sidebar_item_hover="#2a2a2a",
+    sidebar_item_active="#1d3557",
+    status_bar_bg="#181818",
+    sidebar_text_active="#60cdff",
+    separator="#383838",
+    field_bg="#2d2d2d",
+    soft_accent="#1d3557",
+    segment_bg="#2a2a2a",
+)
+
 THEMES: dict[Theme, ColorSet] = {
     Theme.LIGHT: LIGHT,
     Theme.DARK: DARK,
     Theme.HIGH_CONTRAST: HIGH_CONTRAST,
 }
 
+WINDOWS_THEMES: dict[Theme, ColorSet] = {
+    Theme.LIGHT: WINDOWS_LIGHT,
+    Theme.DARK: WINDOWS_DARK,
+    Theme.HIGH_CONTRAST: HIGH_CONTRAST,
+}
+
+
+def colors(theme: Theme, style: UiStyle = UiStyle.MACOS) -> ColorSet:
+    table = WINDOWS_THEMES if style is UiStyle.WINDOWS else THEMES
+    return table.get(theme, table[Theme.LIGHT])
+
+
+@dataclass(frozen=True)
+class Metrics:
+    """Düzene göre ölçüler (yazı, köşe, kenar çubuğu)."""
+
+    font_px: int
+    secondary_px: int
+    caption_px: int
+    h1_px: int
+    h2_px: int
+    radius: int  # düğme, giriş kutusu
+    card_radius: int
+    sidebar_width: int
+    sidebar_icon: int
+    sidebar_tiles: bool  # renkli simge kutuları (macOS)
+    active_bar: bool  # seçili öğenin solunda vurgu çizgisi (Windows)
+    segmented_tabs: bool  # sekmeler segmented control gibi (macOS)
+
+
+# Yazı küçük kalmasın (kullanıcı kararı, 12 Ekim 2026)
+METRICS: dict[UiStyle, Metrics] = {
+    UiStyle.MACOS: Metrics(
+        font_px=16,
+        secondary_px=14,
+        caption_px=13,
+        h1_px=32,
+        h2_px=20,
+        radius=8,
+        card_radius=12,
+        sidebar_width=280,
+        sidebar_icon=26,
+        sidebar_tiles=True,
+        active_bar=False,
+        segmented_tabs=True,
+    ),
+    UiStyle.WINDOWS: Metrics(
+        font_px=15,
+        secondary_px=13,
+        caption_px=13,
+        h1_px=28,
+        h2_px=19,
+        radius=6,
+        card_radius=8,
+        sidebar_width=270,
+        sidebar_icon=20,
+        sidebar_tiles=False,
+        active_bar=True,
+        segmented_tabs=False,
+    ),
+}
+
 # Yazı tipi tercihi — sistem Noto Sans yüklü değilse sistem yazı tipine düşer
 FONT_FAMILY = "Noto Sans, sans-serif"
-# Yazı küçük kalmasın (kullanıcı kararı, 12 Ekim 2026): gövde 16 px, başlık 32 px
-FONT_SIZE_PX = 16
-FONT_SIZE_SECONDARY_PX = 14
-FONT_SIZE_CAPTION_PX = 13
-FONT_SIZE_H1_PX = 32
-FONT_SIZE_H2_PX = 20
-CORNER_RADIUS = 8  # düğme, giriş kutusu
-CARD_RADIUS = 12
-SIDEBAR_WIDTH = 280
-SIDEBAR_ICON_SIZE = 26  # renkli simge kutusu
 SIDEBAR_COLLAPSED_WIDTH = 48
 CARD_PADDING = 16

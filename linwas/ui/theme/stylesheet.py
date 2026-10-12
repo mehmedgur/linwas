@@ -8,33 +8,98 @@ macOS havası (12 Ekim 2026): yumuşak gri zemin, beyaz kartlar, büyük köşel
 from __future__ import annotations
 
 from linwas.ui.theme.icon_data import asset_path
-from linwas.ui.theme.tokens import (
-    CARD_RADIUS,
-    CORNER_RADIUS,
-    FONT_SIZE_CAPTION_PX,
-    FONT_SIZE_H1_PX,
-    FONT_SIZE_H2_PX,
-    FONT_SIZE_PX,
-    FONT_SIZE_SECONDARY_PX,
-    THEMES,
-    ColorSet,
-    Theme,
-)
+from linwas.ui.theme.tokens import METRICS, ColorSet, Metrics, Theme, UiStyle, colors
 
 
-def build(theme: Theme = Theme.LIGHT) -> str:
-    c = THEMES.get(theme, THEMES[Theme.LIGHT])
-    return _qss(c)
+def build(theme: Theme = Theme.LIGHT, style: UiStyle = UiStyle.MACOS) -> str:
+    return _qss(colors(theme, style), METRICS[style])
 
 
-def _qss(c: ColorSet) -> str:
+def _tabs(c: ColorSet, m: Metrics) -> str:
+    if m.segmented_tabs:
+        # macOS: segmented control (gri şerit, seçili sekme beyaz)
+        r = m.radius
+        return f"""
+QTabWidget::pane {{
+    border: none;
+    top: 8px;
+}}
+QTabBar {{
+    background: transparent;
+}}
+QTabBar::tab {{
+    background: {c.segment_bg};
+    color: {c.text_primary};
+    border: 1px solid {c.segment_bg};
+    padding: 7px 18px;
+    margin-right: 0;
+}}
+QTabBar::tab:first {{
+    border-top-left-radius: {r}px;
+    border-bottom-left-radius: {r}px;
+}}
+QTabBar::tab:last {{
+    border-top-right-radius: {r}px;
+    border-bottom-right-radius: {r}px;
+}}
+QTabBar::tab:only-one {{
+    border-radius: {r}px;
+}}
+QTabBar::tab:hover {{
+    background: {c.sidebar_item_hover};
+}}
+QTabBar::tab:selected {{
+    background: {c.surface};
+    border-color: {c.border};
+    border-radius: {r}px;
+    font-weight: 600;
+}}
+"""
+    # Windows: altı çizili sekmeler
+    return f"""
+QTabWidget::pane {{
+    border: none;
+    border-top: 1px solid {c.border};
+    top: -1px;
+}}
+QTabBar {{
+    background: transparent;
+}}
+QTabBar::tab {{
+    background: transparent;
+    color: {c.text_secondary};
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 8px 16px;
+    margin-right: 4px;
+}}
+QTabBar::tab:hover {{
+    color: {c.text_primary};
+}}
+QTabBar::tab:selected {{
+    color: {c.text_primary};
+    border-bottom-color: {c.accent};
+    font-weight: bold;
+}}
+"""
+
+
+def _qss(c: ColorSet, m: Metrics) -> str:
     check = asset_path("check", c.text_on_accent)
     chevron = asset_path("chevron_down", c.text_secondary)
-    r = CORNER_RADIUS
-    rc = CARD_RADIUS
-    fs = FONT_SIZE_PX
-    fs2 = FONT_SIZE_SECONDARY_PX
-    fs3 = FONT_SIZE_CAPTION_PX
+    r = m.radius
+    rc = m.card_radius
+    fs = m.font_px
+    fs2 = m.secondary_px
+    fs3 = m.caption_px
+    # Windows: seçili menü öğesinin solunda vurgu çizgisi
+    active_bar = f"border-left: 3px solid {c.accent}; padding-left: 9px;" if m.active_bar else ""
+    menu_selected = (
+        f"background-color: {c.accent}; color: {c.text_on_accent};"
+        if m.sidebar_tiles
+        else f"background-color: {c.sidebar_item_hover};"
+    )
+    search_border = c.field_bg if m.sidebar_tiles else c.border
     return f"""
 /* === Temel === */
 QWidget {{
@@ -146,7 +211,7 @@ QLabel#Brand {{
 }}
 QWidget#Sidebar QLineEdit#SidebarSearch {{
     background-color: {c.field_bg};
-    border: 1px solid {c.field_bg};
+    border: 1px solid {search_border};
     border-radius: 9px;
     padding: 7px 12px;
 }}
@@ -171,6 +236,7 @@ QPushButton#SidebarItem[active="true"] {{
     background-color: {c.sidebar_item_active};
     color: {c.sidebar_text_active};
     font-weight: 600;
+    {active_bar}
 }}
 QPushButton#SidebarGroup {{
     background-color: transparent;
@@ -245,12 +311,12 @@ QProgressBar::chunk {{
 
 /* === Etiketler (başlıklar) === */
 QLabel#H1 {{
-    font-size: {FONT_SIZE_H1_PX}px;
+    font-size: {m.h1_px}px;
     font-weight: bold;
     color: {c.text_primary};
 }}
 QLabel#H2 {{
-    font-size: {FONT_SIZE_H2_PX}px;
+    font-size: {m.h2_px}px;
     font-weight: bold;
     color: {c.text_primary};
 }}
@@ -440,42 +506,8 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled {{
     background-color: {c.surface_hover};
 }}
 
-/* === Sekmeler (macOS segmented control gibi) === */
-QTabWidget::pane {{
-    border: none;
-    top: 8px;
-}}
-QTabBar {{
-    background: transparent;
-}}
-QTabBar::tab {{
-    background: {c.segment_bg};
-    color: {c.text_primary};
-    border: 1px solid {c.segment_bg};
-    padding: 7px 18px;
-    margin-right: 0;
-}}
-QTabBar::tab:first {{
-    border-top-left-radius: {r}px;
-    border-bottom-left-radius: {r}px;
-}}
-QTabBar::tab:last {{
-    border-top-right-radius: {r}px;
-    border-bottom-right-radius: {r}px;
-}}
-QTabBar::tab:only-one {{
-    border-radius: {r}px;
-}}
-QTabBar::tab:hover {{
-    background: {c.sidebar_item_hover};
-}}
-QTabBar::tab:selected {{
-    background: {c.surface};
-    border-color: {c.border};
-    border-radius: {r}px;
-    font-weight: 600;
-}}
-
+/* === Sekmeler === */
+{_tabs(c, m)}
 /* === Listeler, ağaçlar, tablolar === */
 QListView, QTreeView, QTableView, QListWidget, QTreeWidget, QTableWidget {{
     background-color: {c.surface};
@@ -558,8 +590,7 @@ QMenu::item {{
     border-radius: 6px;
 }}
 QMenu::item:selected {{
-    background-color: {c.accent};
-    color: {c.text_on_accent};
+    {menu_selected}
 }}
 QMenu::separator {{
     height: 1px;

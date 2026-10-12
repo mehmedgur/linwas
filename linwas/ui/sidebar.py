@@ -24,7 +24,7 @@ from PySide6.QtWidgets import (
 )
 
 from linwas.ui import icons
-from linwas.ui.theme.tokens import SIDEBAR_ICON_SIZE, SIDEBAR_WIDTH
+from linwas.ui.theme.tokens import METRICS, UiStyle
 
 _LOGO = Path(__file__).resolve().parent.parent / "resources" / "linwas.svg"
 
@@ -92,6 +92,9 @@ BOTTOM_ITEMS: list[MenuItem] = [
     MenuItem("settings", "Settings"),
 ]
 
+# Geçerli düzenin ölçüleri; Sidebar.set_style() değiştirir
+_metrics = METRICS[UiStyle.MACOS]
+
 # Her öğenin simge kutusu rengi (macOS System Settings gibi); listede yoksa gri
 TILE_COLORS: dict[str, str] = {
     "ai_chat": "#af52de",
@@ -146,9 +149,12 @@ class _NavButton(QPushButton):
         if self._item.is_group:
             name = "chevron_down" if self._expanded else "chevron_right"
             icons.bind(self, name, "secondary", 14)
-        else:
+        elif _metrics.sidebar_tiles:
             color = TILE_COLORS.get(self._item.id, "#8e8e93")
-            icons.bind(self, self._item.icon or self._item.id, color, SIDEBAR_ICON_SIZE)
+            icons.bind(self, self._item.icon or self._item.id, color, _metrics.sidebar_icon)
+        else:
+            role = "accent" if self._active else "normal"
+            icons.bind(self, self._item.icon or self._item.id, role, _metrics.sidebar_icon)
 
     def set_expanded(self, expanded: bool) -> None:
         self._expanded = expanded
@@ -175,7 +181,7 @@ class Sidebar(QWidget):
         self.setObjectName("Sidebar")
         # QWidget alt sınıfı QSS zeminini ve kenarlığını ancak bu bayrakla çizer
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
-        self.setFixedWidth(SIDEBAR_WIDTH)
+        self.setFixedWidth(_metrics.sidebar_width)
 
         outer = QVBoxLayout(self)
         outer.setContentsMargins(12, 16, 12, 10)
@@ -341,6 +347,14 @@ class Sidebar(QWidget):
                 else:
                     btn.setVisible(True)
         self._apply_hidden()
+
+    def set_style(self, style: UiStyle) -> None:
+        """Düzeni değiştirir (macOS: renkli simge kutuları; Windows: düz simgeler)."""
+        global _metrics
+        _metrics = METRICS[style]
+        self.setFixedWidth(_metrics.sidebar_width)
+        for btn in self._buttons:
+            btn._update_icon()
 
     def set_active(self, page_id: str) -> None:
         """Programatik olarak aktif sayfayı değiştirir."""

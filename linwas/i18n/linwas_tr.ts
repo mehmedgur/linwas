@@ -3927,6 +3927,18 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Linwas teması:</translation>
     </message>
     <message>
+        <source>macOS style</source>
+        <translation>macOS düzeni</translation>
+    </message>
+    <message>
+        <source>Windows style</source>
+        <translation>Windows düzeni</translation>
+    </message>
+    <message>
+        <source>Layout:</source>
+        <translation>Düzen:</translation>
+    </message>
+    <message>
         <source>Developer</source>
         <translation>Geliştirici</translation>
     </message>

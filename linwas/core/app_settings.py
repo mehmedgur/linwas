@@ -13,6 +13,8 @@ from dataclasses import asdict, dataclass, fields
 from pathlib import Path
 
 THEMES = ("system", "light", "dark", "high_contrast")
+# Linwas'ın kendi düzeni: macOS havası (varsayılan) ya da Windows görünümü
+UI_STYLES = ("macos", "windows")
 # ask: pencere kapatılınca her seferinde sor (varsayılan); "auto" eski ayar dosyalarından
 # gelir, "ask" ile aynı davranır. tray: arka planda çalışmaya devam et (tepsi varsa simgeyle);
 # quit: Linwas'ı kapat.
@@ -33,6 +35,7 @@ def default_path() -> Path:
 @dataclass
 class AppSettings:
     theme: str = "system"
+    ui_style: str = "macos"
     close_action: str = "ask"
     language: str = "tr"
     send_errors_to_ai: str = "ask"
@@ -67,6 +70,7 @@ class AppSettings:
 
 _CHOICES = {
     "theme": THEMES,
+    "ui_style": UI_STYLES,
     "close_action": CLOSE_ACTIONS,
     "language": LANGUAGES,
     "send_errors_to_ai": ERROR_CONSENT,

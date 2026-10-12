@@ -44,7 +44,7 @@ from linwas.ui.pages.update_center import UpdateCenterPage
 from linwas.ui.sidebar import Sidebar
 from linwas.ui.status_bar import StatusBar
 from linwas.ui.theme.stylesheet import build as build_qss
-from linwas.ui.theme.tokens import THEMES, Theme
+from linwas.ui.theme.tokens import Theme, UiStyle, colors
 
 ICON_PATH = Path(__file__).resolve().parent.parent / "resources" / "linwas.svg"
 
@@ -135,8 +135,9 @@ class MainWindow(QMainWindow):
         self._quitting = False
 
         # Stil uygula (simge renkleri de temadan)
-        icons.set_palette(THEMES[self._current_theme])
-        self.setStyleSheet(build_qss(self._current_theme))
+        self._ui_style = self._resolve_style(self._settings.ui_style)
+        icons.set_palette(colors(self._current_theme, self._ui_style))
+        self.setStyleSheet(build_qss(self._current_theme, self._ui_style))
 
         # Merkezi widget
         central = QWidget(self)
@@ -173,6 +174,7 @@ class MainWindow(QMainWindow):
 
         # Sidebar
         self._sidebar = Sidebar(central)
+        self._sidebar.set_style(self._ui_style)
         self._sidebar.page_requested.connect(self._show_page)
         content_row.addWidget(self._sidebar)
 
@@ -261,10 +263,26 @@ class MainWindow(QMainWindow):
 
         return Theme.DARK if appearance.is_dark(detect_desktop(os.environ).value) else Theme.LIGHT
 
+    @staticmethod
+    def _resolve_style(name: str) -> UiStyle:
+        try:
+            return UiStyle(name)
+        except ValueError:
+            return UiStyle.MACOS
+
+    def _apply_look(self) -> None:
+        icons.set_palette(colors(self._current_theme, self._ui_style))
+        self.setStyleSheet(build_qss(self._current_theme, self._ui_style))
+        self._sidebar.set_style(self._ui_style)
+
+    def apply_style(self, name: str) -> None:
+        """Linwas düzeni: macOS havası ya da Windows görünümü."""
+        self._ui_style = self._resolve_style(name)
+        self._apply_look()
+
     def apply_theme(self, name: str) -> None:
         self._current_theme = self._resolve_theme(name)
-        icons.set_palette(THEMES[self._current_theme])
-        self.setStyleSheet(build_qss(self._current_theme))
+        self._apply_look()
 
     def _update_settings(self, **changes: object) -> None:
         """Ayarları diskten yeniden okuyup yalnızca verilen alanları yazar.
@@ -468,6 +486,7 @@ class MainWindow(QMainWindow):
         self._sidebar.guide_search.connect(self._open_guide)
         settings_page = SettingsPage(self._stack)
         settings_page.theme_changed.connect(self.apply_theme)
+        settings_page.style_changed.connect(self.apply_style)
         settings_page.close_action_changed.connect(self._on_close_action_changed)
         settings_page.onboarding_requested.connect(self.run_onboarding)
         settings_page.ai_settings_changed.connect(self._on_ai_settings_changed)

@@ -95,6 +95,7 @@ class _Section(QWidget):
 
 class SettingsPage(BasePage):
     theme_changed = Signal(str)  # app_settings.THEMES değerlerinden biri
+    style_changed = Signal(str)  # app_settings.UI_STYLES değerlerinden biri
     close_action_changed = Signal(str)
     consent_changed = Signal(str)
     onboarding_requested = Signal()
@@ -335,6 +336,17 @@ class SettingsPage(BasePage):
         )
         self._theme.currentIndexChanged.connect(self._on_theme)
         form.addRow(tr("Linwas theme:"), self._theme)
+        # Düzen: macOS havası ya da Windows görünümü (ayrıntıları sonra konuşulacak)
+        self._style = self._combo(
+            card,
+            [
+                ("macos", tr("macOS style")),
+                ("windows", tr("Windows style")),
+            ],
+            self._settings.ui_style,
+        )
+        self._style.currentIndexChanged.connect(self._on_style)
+        form.addRow(tr("Layout:"), self._style)
         card.layout.addLayout(form)
         note = QLabel(
             tr("The desktop's own theme and wallpaper are under Interface › Theme & Wallpaper."),
@@ -348,6 +360,11 @@ class SettingsPage(BasePage):
         self._settings.theme = self._theme.currentData()
         self._save()
         self.theme_changed.emit(self._settings.theme)
+
+    def _on_style(self) -> None:
+        self._settings.ui_style = self._style.currentData()
+        self._save()
+        self.style_changed.emit(self._settings.ui_style)
 
     # --- Yapay zekâ ---
 
@@ -683,6 +700,7 @@ class SettingsPage(BasePage):
         settings = app_settings.load()
         autostart.set_enabled(settings.autostart)
         self.theme_changed.emit(settings.theme)
+        self.style_changed.emit(settings.ui_style)
         self.close_action_changed.emit(settings.close_action)
         self.ai_settings_changed.emit()
         self._rebuild()

@@ -91,6 +91,12 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
   - **Ölçek ve okunabilirlik (12 Ekim 2026, kullanıcı):** yazı küçük kalmasın. Qt'ye aktarımda gövde
     16 px, başlık 32 px, ayar satırı en az 64 px, tıklama alanı en az 40 px. Her ekranda Windows / macOS /
     Linux'taki karşılığı karşılaştırılır, en anlaşılır çözüm seçilir.
+  - **Düzen seçimi (12 Ekim 2026, kullanıcı):** Linwas'ın içinde düzen seçilir: Ayarlar › Görünüm › Düzen
+    = **macOS düzeni** (varsayılan, yukarıdaki) / **Windows düzeni** (önceki görünüm: vurgu `#0067c0`,
+    köşe 6/8 px, düz simgeler, seçili öğede solda vurgu çizgisi, altı çizili sekmeler; yazı 15 px).
+    Tema (açık/koyu/yüksek kontrast) düzenden bağımsız. Kod: `tokens.UiStyle`, `tokens.METRICS`,
+    `tokens.colors(theme, style)`, `stylesheet.build(theme, style)`, ayar `ui_style`. Windows düzeninin
+    ayrıntılı tasarımı sonra konuşulacak.
   - Kenar çubuğu: üstte logo + ad, her öğede simge, gruplar (Sistem, Arayüz) küçük ikincil renkli başlık + aç/kapa oku. Genel bakış kartlarında vurgu renkli simge kutusu, tıklanabilir kartlarda üzerine gelince vurgu kenarlık; durum kartları ilgili sayfayı açar.
 
 ## Menü yapısı
