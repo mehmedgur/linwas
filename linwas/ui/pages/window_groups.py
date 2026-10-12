@@ -64,7 +64,7 @@ class WindowGroupsPage(BasePage):
         scroll.setFrameShape(QFrame.Shape.NoFrame)
         content = QWidget()
         outer = QVBoxLayout(content)
-        outer.setContentsMargins(24, 20, 24, 20)
+        outer.setContentsMargins(36, 28, 36, 28)
         outer.setSpacing(12)
 
         title = QLabel(tr("Window Groups"), content)

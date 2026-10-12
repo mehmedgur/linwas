@@ -12,8 +12,8 @@ class Card(QFrame):
         super().__init__(parent)
         self.setObjectName("Card")
         self._layout = QVBoxLayout(self)
-        self._layout.setContentsMargins(16, 14, 16, 14)
-        self._layout.setSpacing(8)
+        self._layout.setContentsMargins(20, 18, 20, 18)
+        self._layout.setSpacing(10)
 
     @property
     def layout(self) -> QVBoxLayout:  # type: ignore[override]

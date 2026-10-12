@@ -337,7 +337,7 @@ class _HardwareCard(Card):
         badge = QLabel(_status_text(card.status), self)
         badge.setStyleSheet(
             f"background-color: {bg}; color: {fg}; border-radius: 10px;"
-            " padding: 2px 10px; font-size: 11px; font-weight: bold;"
+            " padding: 2px 10px; font-size: 13px; font-weight: bold;"
         )
         head.addWidget(badge, 0, Qt.AlignmentFlag.AlignTop)
         self.layout.addLayout(head)
@@ -425,7 +425,7 @@ class _HardwareCard(Card):
         tag = QLabel(text, self)
         tag.setStyleSheet(
             f"background-color: {bg}; color: {fg}; border-radius: 4px;"
-            " padding: 1px 7px; font-size: 11px; font-weight: bold;"
+            " padding: 1px 7px; font-size: 13px; font-weight: bold;"
         )
         return tag
 
@@ -480,7 +480,7 @@ class DriversPage(BasePage):
 
         self._content = QWidget()
         self._outer = QVBoxLayout(self._content)
-        self._outer.setContentsMargins(24, 20, 24, 20)
+        self._outer.setContentsMargins(36, 28, 36, 28)
         self._outer.setSpacing(10)
 
         # Başlık + Yeniden tara butonu

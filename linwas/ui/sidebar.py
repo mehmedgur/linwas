@@ -24,7 +24,7 @@ from PySide6.QtWidgets import (
 )
 
 from linwas.ui import icons
-from linwas.ui.theme.tokens import SIDEBAR_WIDTH
+from linwas.ui.theme.tokens import SIDEBAR_ICON_SIZE, SIDEBAR_WIDTH
 
 _LOGO = Path(__file__).resolve().parent.parent / "resources" / "linwas.svg"
 
@@ -92,6 +92,33 @@ BOTTOM_ITEMS: list[MenuItem] = [
     MenuItem("settings", "Settings"),
 ]
 
+# Her öğenin simge kutusu rengi (macOS System Settings gibi); listede yoksa gri
+TILE_COLORS: dict[str, str] = {
+    "ai_chat": "#af52de",
+    "overview": "#5856d6",
+    "updates": "#8e8e93",
+    "network": "#007aff",
+    "backups": "#32ade6",
+    "hardware": "#636366",
+    "taskmgr": "#ff9500",
+    "cleanup": "#a2845e",
+    "personal_backup": "#30b0c7",
+    "power": "#34c759",
+    "migrate": "#0a84ff",
+    "all_settings": "#636366",
+    "appearance": "#ff2d55",
+    "theme": "#bf5af2",
+    "fonts": "#ff9f0a",
+    "display": "#007aff",
+    "app_folders": "#ff9500",
+    "workgroups": "#5856d6",
+    "window_groups": "#30b0c7",
+    "software": "#ff9500",
+    "troubleshoot": "#ff3b30",
+    "guide": "#0a84ff",
+    "settings": "#8e8e93",
+}
+
 
 class _NavButton(QPushButton):
     def __init__(self, item: MenuItem, indent: int = 0, parent: QWidget | None = None) -> None:
@@ -120,9 +147,8 @@ class _NavButton(QPushButton):
             name = "chevron_down" if self._expanded else "chevron_right"
             icons.bind(self, name, "secondary", 14)
         else:
-            icons.bind(
-                self, self._item.icon or self._item.id, "accent" if self._active else "normal", 18
-            )
+            color = TILE_COLORS.get(self._item.id, "#8e8e93")
+            icons.bind(self, self._item.icon or self._item.id, color, SIDEBAR_ICON_SIZE)
 
     def set_expanded(self, expanded: bool) -> None:
         self._expanded = expanded
@@ -152,15 +178,15 @@ class Sidebar(QWidget):
         self.setFixedWidth(SIDEBAR_WIDTH)
 
         outer = QVBoxLayout(self)
-        outer.setContentsMargins(8, 12, 8, 8)
-        outer.setSpacing(6)
+        outer.setContentsMargins(12, 16, 12, 10)
+        outer.setSpacing(10)
 
         # Uygulama adı ve simgesi
         brand = QHBoxLayout()
-        brand.setContentsMargins(8, 0, 0, 6)
+        brand.setContentsMargins(6, 0, 0, 4)
         brand.setSpacing(10)
         logo = QLabel(self)
-        logo.setPixmap(QIcon(str(_LOGO)).pixmap(26, 26))
+        logo.setPixmap(QIcon(str(_LOGO)).pixmap(30, 30))
         brand.addWidget(logo)
         name = QLabel("Linwas", self)
         name.setObjectName("Brand")
@@ -169,6 +195,7 @@ class Sidebar(QWidget):
 
         # Arama kutusu
         self._search = QLineEdit(self)
+        self._search.setObjectName("SidebarSearch")
         self._search.setPlaceholderText(tr("Search"))
         self._search.setClearButtonEnabled(True)
         self._search.textChanged.connect(self._filter)

@@ -578,7 +578,7 @@ class NetworkPage(BasePage):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setContentsMargins(36, 28, 36, 28)
         layout.setSpacing(12)
 
         title = QLabel(tr("Wi-Fi & Bluetooth"), self)

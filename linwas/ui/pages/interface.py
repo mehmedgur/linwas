@@ -67,7 +67,7 @@ class _InterfacePage(BasePage):
         scroll.setFrameShape(QFrame.Shape.NoFrame)
         content = QWidget()
         self.body = QVBoxLayout(content)
-        self.body.setContentsMargins(24, 20, 24, 20)
+        self.body.setContentsMargins(36, 28, 36, 28)
         self.body.setSpacing(12)
 
         header = QHBoxLayout()

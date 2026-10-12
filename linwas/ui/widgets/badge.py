@@ -21,6 +21,6 @@ class Badge(QLabel):
     def _update_style(self) -> None:
         self.setStyleSheet(
             "background-color: #0067c0; color: white; border-radius: 9px;"
-            " font-size: 11px; font-weight: bold; padding: 1px 6px;"
+            " font-size: 13px; font-weight: bold; padding: 1px 6px;"
             " min-width: 18px; min-height: 18px;"
         )

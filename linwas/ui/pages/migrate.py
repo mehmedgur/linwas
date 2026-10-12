@@ -492,7 +492,7 @@ class MigratePage(BasePage):
         self._user: WindowsUser | None = None
 
         outer = QVBoxLayout(self)
-        outer.setContentsMargins(24, 20, 24, 20)
+        outer.setContentsMargins(36, 28, 36, 28)
 
         # Diskten okunamayanlar için rehberler (şifreler, Wi-Fi, Outlook)
         guide_row = QHBoxLayout()

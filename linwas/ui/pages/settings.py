@@ -118,7 +118,7 @@ class SettingsPage(BasePage):
         self._settings = app_settings.load()
 
         outer = QVBoxLayout(self)
-        outer.setContentsMargins(24, 20, 24, 0)
+        outer.setContentsMargins(36, 28, 36, 0)
         outer.setSpacing(12)
         head = QHBoxLayout()
         title = QLabel(tr("Settings"), self)
@@ -534,7 +534,7 @@ class SettingsPage(BasePage):
             row = QHBoxLayout()
             size = locale.formattedDataSize(item.size, 1) if item.exists else tr("none")
             lbl = QLabel(
-                f"<b>{name}</b> · {size}<br><span style='font-size:11px'>{desc}</span>", self
+                f"<b>{name}</b> · {size}<br><span style='font-size: 13px'>{desc}</span>", self
             )
             lbl.setTextFormat(Qt.TextFormat.RichText)
             lbl.setWordWrap(True)

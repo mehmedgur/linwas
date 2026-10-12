@@ -59,13 +59,13 @@ class _BackupCard(Card):
             badge = QLabel("Timeshift", self)
             badge.setStyleSheet(
                 "background:#e3f2fd; color:#0067c0; border-radius:4px;"
-                " padding:1px 7px; font-size:11px; font-weight:bold;"
+                " padding:1px 7px; font-size: 13px; font-weight:bold;"
             )
         else:
             badge = QLabel(tr("Quick rollback"), self)
             badge.setStyleSheet(
                 "background:#e8f5e9; color:#0e7a0e; border-radius:4px;"
-                " padding:1px 7px; font-size:11px; font-weight:bold;"
+                " padding:1px 7px; font-size: 13px; font-weight:bold;"
             )
         title_row.addWidget(badge)
         title_row.addStretch(1)
@@ -119,7 +119,7 @@ class BackupsPage(BasePage):
 
         content = QWidget()
         outer = QVBoxLayout(content)
-        outer.setContentsMargins(24, 20, 24, 20)
+        outer.setContentsMargins(36, 28, 36, 28)
         outer.setSpacing(12)
 
         # Başlık + yenile + yeni yedek

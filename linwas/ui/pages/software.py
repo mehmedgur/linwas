@@ -294,7 +294,7 @@ class SoftwarePage(BasePage):
         self._tabs.addTab(self._windows_apps, tr("Windows programs"))
 
         page_layout = QVBoxLayout(self)
-        page_layout.setContentsMargins(24, 20, 24, 20)
+        page_layout.setContentsMargins(36, 28, 36, 28)
         page_layout.setSpacing(8)
         title = QLabel(tr("Software"), self)
         title.setObjectName("H1")

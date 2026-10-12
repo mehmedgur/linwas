@@ -119,7 +119,7 @@ class _AppRow(QWidget):
         badge = QLabel(source_badge_text(app.source), self)
         badge.setStyleSheet(
             f"background-color:{bg}; color:{fg}; border-radius:4px;"
-            " padding:1px 7px; font-size:11px; font-weight:bold;"
+            " padding:1px 7px; font-size: 13px; font-weight:bold;"
         )
         row.addWidget(badge)
 

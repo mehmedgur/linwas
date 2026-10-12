@@ -2,12 +2,24 @@
 
 Tasarım değerlerinden (tokens.py) QSS stringi üretir.
 `app.setStyleSheet(build(theme))` ile uygulanır.
+macOS havası (12 Ekim 2026): yumuşak gri zemin, beyaz kartlar, büyük köşeler, vurgu zeminli seçim.
 """
 
 from __future__ import annotations
 
 from linwas.ui.theme.icon_data import asset_path
-from linwas.ui.theme.tokens import THEMES, ColorSet, Theme
+from linwas.ui.theme.tokens import (
+    CARD_RADIUS,
+    CORNER_RADIUS,
+    FONT_SIZE_CAPTION_PX,
+    FONT_SIZE_H1_PX,
+    FONT_SIZE_H2_PX,
+    FONT_SIZE_PX,
+    FONT_SIZE_SECONDARY_PX,
+    THEMES,
+    ColorSet,
+    Theme,
+)
 
 
 def build(theme: Theme = Theme.LIGHT) -> str:
@@ -18,11 +30,16 @@ def build(theme: Theme = Theme.LIGHT) -> str:
 def _qss(c: ColorSet) -> str:
     check = asset_path("check", c.text_on_accent)
     chevron = asset_path("chevron_down", c.text_secondary)
+    r = CORNER_RADIUS
+    rc = CARD_RADIUS
+    fs = FONT_SIZE_PX
+    fs2 = FONT_SIZE_SECONDARY_PX
+    fs3 = FONT_SIZE_CAPTION_PX
     return f"""
 /* === Temel === */
 QWidget {{
     font-family: "Noto Sans", sans-serif;
-    font-size: 13px;
+    font-size: {fs}px;
     color: {c.text_primary};
     background-color: {c.background};
 }}
@@ -32,22 +49,39 @@ QLabel {{
     background-color: transparent;
 }}
 
-/* === Kaydırma çubuğu === */
+/* === Kaydırma çubuğu (macOS gibi ince, yuvarlak) === */
 QScrollBar:vertical {{
-    width: 8px;
+    width: 10px;
     background: transparent;
-    margin: 0;
+    margin: 2px;
 }}
 QScrollBar::handle:vertical {{
     background: {c.border};
-    border-radius: 4px;
-    min-height: 24px;
+    border-radius: 3px;
+    min-height: 32px;
 }}
 QScrollBar::handle:vertical:hover {{
-    background: {c.text_secondary};
+    background: {c.text_disabled};
 }}
-QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical,
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {{
     height: 0;
+    background: transparent;
+}}
+QScrollBar:horizontal {{
+    height: 10px;
+    background: transparent;
+    margin: 2px;
+}}
+QScrollBar::handle:horizontal {{
+    background: {c.border};
+    border-radius: 3px;
+    min-width: 32px;
+}}
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal,
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {{
+    width: 0;
+    background: transparent;
 }}
 
 /* === Düğmeler === */
@@ -55,16 +89,18 @@ QPushButton {{
     background-color: {c.surface};
     color: {c.text_primary};
     border: 1px solid {c.border};
-    border-radius: 6px;
-    padding: 6px 14px;
-    min-height: 28px;
+    border-radius: {r}px;
+    padding: 7px 18px;
+    min-height: 26px;
 }}
 QPushButton:hover {{
     background-color: {c.surface_hover};
-    border-color: {c.accent};
 }}
 QPushButton:pressed {{
     background-color: {c.border};
+}}
+QPushButton:focus {{
+    border-color: {c.accent};
 }}
 QPushButton:disabled {{
     color: {c.text_disabled};
@@ -74,8 +110,8 @@ QPushButton:disabled {{
 QPushButton[primary="true"] {{
     background-color: {c.accent};
     color: {c.text_on_accent};
-    border: none;
-    font-weight: bold;
+    border: 1px solid {c.accent};
+    font-weight: 600;
 }}
 QPushButton[primary="true"]:hover {{
     background-color: {c.accent_hover};
@@ -85,10 +121,15 @@ QPushButton[primary="true"]:pressed {{
 }}
 QPushButton[primary="true"]:disabled {{
     background-color: {c.border};
+    border-color: {c.border};
     color: {c.text_disabled};
 }}
+QToolButton {{
+    border-radius: {r}px;
+    padding: 4px;
+}}
 
-/* === Sidebar === */
+/* === Kenar çubuğu (System Settings gibi) === */
 QWidget#Sidebar, QWidget#Sidebar QScrollArea, QWidget#Sidebar QScrollArea > QWidget > QWidget {{
     background-color: {c.sidebar_bg};
 }}
@@ -99,40 +140,46 @@ QWidget#AIDock {{
     border-left: 1px solid {c.border};
 }}
 QLabel#Brand {{
-    font-size: 17px;
+    font-size: 18px;
     font-weight: bold;
     color: {c.text_primary};
+}}
+QWidget#Sidebar QLineEdit#SidebarSearch {{
+    background-color: {c.field_bg};
+    border: 1px solid {c.field_bg};
+    border-radius: 9px;
+    padding: 7px 12px;
+}}
+QWidget#Sidebar QLineEdit#SidebarSearch:focus {{
+    border-color: {c.accent};
 }}
 
 QPushButton#SidebarItem {{
     background-color: transparent;
     border: none;
-    border-radius: 6px;
-    padding: 7px 10px;
-    min-height: 22px;
+    border-radius: {r}px;
+    padding: 6px 10px 6px 8px;
+    min-height: 28px;
     text-align: left;
     color: {c.text_primary};
     font-weight: normal;
-}}
-QPushButton#SidebarItem[indent="1"] {{
-    padding-left: 22px;
 }}
 QPushButton#SidebarItem:hover {{
     background-color: {c.sidebar_item_hover};
 }}
 QPushButton#SidebarItem[active="true"] {{
     background-color: {c.sidebar_item_active};
-    color: {c.accent};
-    font-weight: bold;
+    color: {c.sidebar_text_active};
+    font-weight: 600;
 }}
 QPushButton#SidebarGroup {{
     background-color: transparent;
     border: none;
-    padding: 12px 10px 4px 8px;
+    padding: 16px 10px 4px 10px;
     min-height: 16px;
     text-align: left;
     color: {c.text_secondary};
-    font-size: 12px;
+    font-size: {fs3}px;
     font-weight: bold;
 }}
 QPushButton#SidebarGroup:hover {{
@@ -143,17 +190,17 @@ QPushButton#SidebarGroup:hover {{
 QFrame#Card {{
     background-color: {c.surface};
     border: 1px solid {c.border};
-    border-radius: 10px;
+    border-radius: {rc}px;
 }}
 QFrame#Card[clickable="true"]:hover {{
     border-color: {c.accent};
 }}
 QLabel#CardIcon {{
-    background-color: {c.sidebar_item_active};
+    background-color: {c.soft_accent};
     border-radius: 10px;
 }}
 QFrame#Card QLabel#CardIcon {{
-    background-color: {c.sidebar_item_active};
+    background-color: {c.soft_accent};
 }}
 /* Kart içindeki metinler kartın zeminini kullansın (genel QWidget zemini yerine).
    Saydam verilmez: seçim düğmesi/onay kutusu çerçevesi zeminle birlikte kaybolur. */
@@ -172,51 +219,54 @@ QWidget#StatusBar {{
 QLineEdit {{
     background-color: {c.surface};
     border: 1px solid {c.border};
-    border-radius: 6px;
-    padding: 5px 10px;
+    border-radius: {r}px;
+    padding: 7px 12px;
     color: {c.text_primary};
+    selection-background-color: {c.accent};
+    selection-color: {c.text_on_accent};
 }}
 QLineEdit:focus {{
-    border-color: {c.accent};
+    border: 2px solid {c.accent};
+    padding: 6px 11px;
 }}
 
 /* === İlerleme çubuğu === */
 QProgressBar {{
-    border: 1px solid {c.border};
+    border: none;
     border-radius: 4px;
-    background-color: {c.surface};
-    height: 6px;
+    background-color: {c.segment_bg};
+    max-height: 8px;
     text-align: center;
 }}
 QProgressBar::chunk {{
     background-color: {c.accent};
-    border-radius: 3px;
+    border-radius: 4px;
 }}
 
 /* === Etiketler (başlıklar) === */
 QLabel#H1 {{
-    font-size: 20px;
+    font-size: {FONT_SIZE_H1_PX}px;
     font-weight: bold;
     color: {c.text_primary};
 }}
 QLabel#H2 {{
-    font-size: 16px;
+    font-size: {FONT_SIZE_H2_PX}px;
     font-weight: bold;
     color: {c.text_primary};
 }}
 QLabel#Secondary {{
     color: {c.text_secondary};
-    font-size: 12px;
+    font-size: {fs2}px;
 }}
 
 /* === Program kartları (Programlar › Keşfet / arama) === */
 QLabel#AppName {{
-    font-size: 14px;
+    font-size: 17px;
     font-weight: bold;
 }}
 QLabel#Caption {{
     color: {c.text_secondary};
-    font-size: 11px;
+    font-size: {fs3}px;
 }}
 QLabel#Success {{
     color: {c.success};
@@ -224,14 +274,14 @@ QLabel#Success {{
 }}
 QLabel#Warning {{
     color: {c.warning};
-    font-size: 12px;
+    font-size: {fs2}px;
 }}
 QLabel#Pill {{
     background-color: {c.accent};
     color: {c.text_on_accent};
-    border-radius: 8px;
-    padding: 1px 8px;
-    font-size: 11px;
+    border-radius: 10px;
+    padding: 2px 10px;
+    font-size: {fs3}px;
     font-weight: bold;
 }}
 QListWidget#SettingsNav {{
@@ -240,21 +290,20 @@ QListWidget#SettingsNav {{
     outline: none;
 }}
 QListWidget#SettingsNav::item {{
-    padding: 8px 12px;
+    padding: 9px 12px;
     margin: 1px 8px 1px 0;
-    border-radius: 6px;
+    border-radius: {r}px;
 }}
 QListWidget#SettingsNav::item:hover {{
-    background-color: {c.surface_hover};
+    background-color: {c.sidebar_item_hover};
 }}
 QListWidget#SettingsNav::item:selected {{
-    background-color: {c.surface};
-    color: {c.accent};
-    font-weight: bold;
-    border-left: 3px solid {c.accent};
+    background-color: {c.sidebar_item_active};
+    color: {c.sidebar_text_active};
+    font-weight: 600;
 }}
 QLabel#TileNumber {{
-    font-size: 30px;
+    font-size: 34px;
     font-weight: bold;
     color: {c.success};
 }}
@@ -265,13 +314,13 @@ QLabel#TileNumber[attention="true"] {{
 QFrame#Card QToolButton#SettingLink {{
     background-color: {c.surface};
     border: 1px solid transparent;
-    border-radius: 6px;
-    padding: 5px 8px;
+    border-radius: {r}px;
+    padding: 6px 10px;
     color: {c.accent};
     text-align: left;
 }}
 QFrame#Card QToolButton#SettingLink:hover {{
-    background-color: {c.sidebar_item_hover};
+    background-color: {c.surface_hover};
     border-color: {c.border};
 }}
 QFrame#Card QToolButton#SettingLink:focus {{
@@ -290,7 +339,7 @@ QFrame#Card QToolButton#DetailsToggle:hover {{
     color: {c.accent};
 }}
 QFrame#Card QFrame#Separator {{
-    background-color: {c.border};
+    background-color: {c.separator};
     border: none;
     max-height: 1px;
 }}
@@ -299,16 +348,16 @@ QFrame#Card QLabel#CategoryIcon {{
     border-radius: 12px;
 }}
 QFrame#Card QLabel#LinwasTag {{
-    background-color: {c.sidebar_item_active};
+    background-color: {c.soft_accent};
     color: {c.accent};
     border-radius: 6px;
-    padding: 0 6px;
-    font-size: 10px;
+    padding: 1px 7px;
+    font-size: 12px;
     font-weight: bold;
 }}
 QPushButton#Chip {{
-    border-radius: 14px;
-    padding: 4px 14px;
+    border-radius: 16px;
+    padding: 6px 16px;
     min-height: 20px;
 }}
 QPushButton#Chip:checked {{
@@ -321,8 +370,8 @@ QPushButton#Chip:checked {{
 QTextEdit, QPlainTextEdit, QTextBrowser, QSpinBox, QDoubleSpinBox, QComboBox {{
     background-color: {c.surface};
     border: 1px solid {c.border};
-    border-radius: 6px;
-    padding: 4px 8px;
+    border-radius: {r}px;
+    padding: 6px 10px;
     color: {c.text_primary};
     selection-background-color: {c.accent};
     selection-color: {c.text_on_accent};
@@ -332,45 +381,47 @@ QComboBox:focus {{
     border-color: {c.accent};
 }}
 QComboBox {{
-    min-height: 24px;
-    padding-right: 24px;
+    min-height: 26px;
+    padding-right: 28px;
 }}
 QComboBox:hover {{
-    border-color: {c.accent};
+    background-color: {c.surface_hover};
 }}
 QComboBox::drop-down {{
     border: none;
-    width: 24px;
+    width: 28px;
 }}
 QComboBox::down-arrow {{
     image: url("{chevron}");
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
 }}
 QComboBox QAbstractItemView {{
     background-color: {c.surface};
     border: 1px solid {c.border};
-    selection-background-color: {c.sidebar_item_active};
-    selection-color: {c.text_primary};
+    border-radius: {r}px;
+    padding: 4px;
+    selection-background-color: {c.accent};
+    selection-color: {c.text_on_accent};
     outline: none;
 }}
 
 /* === Onay kutusu ve seçim düğmesi === */
 QCheckBox, QRadioButton {{
-    spacing: 8px;
+    spacing: 10px;
     background-color: transparent;
 }}
 QCheckBox::indicator, QRadioButton::indicator {{
-    width: 16px;
-    height: 16px;
-    border: 1px solid {c.text_secondary};
+    width: 18px;
+    height: 18px;
+    border: 1px solid {c.text_disabled};
     background-color: {c.surface};
 }}
 QCheckBox::indicator {{
-    border-radius: 4px;
+    border-radius: 5px;
 }}
 QRadioButton::indicator {{
-    border-radius: 9px;
+    border-radius: 10px;
 }}
 QCheckBox::indicator:hover, QRadioButton::indicator:hover {{
     border-color: {c.accent};
@@ -381,7 +432,7 @@ QCheckBox::indicator:checked {{
     image: url("{check}");
 }}
 QRadioButton::indicator:checked {{
-    border: 5px solid {c.accent};
+    border: 6px solid {c.accent};
     background-color: {c.text_on_accent};
 }}
 QCheckBox::indicator:disabled, QRadioButton::indicator:disabled {{
@@ -389,30 +440,40 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled {{
     background-color: {c.surface_hover};
 }}
 
-/* === Sekmeler === */
+/* === Sekmeler (macOS segmented control gibi) === */
 QTabWidget::pane {{
     border: none;
-    border-top: 1px solid {c.border};
-    top: -1px;
+    top: 8px;
 }}
 QTabBar {{
     background: transparent;
 }}
 QTabBar::tab {{
-    background: transparent;
-    color: {c.text_secondary};
-    border: none;
-    border-bottom: 2px solid transparent;
-    padding: 8px 14px;
-    margin-right: 4px;
+    background: {c.segment_bg};
+    color: {c.text_primary};
+    border: 1px solid {c.segment_bg};
+    padding: 7px 18px;
+    margin-right: 0;
+}}
+QTabBar::tab:first {{
+    border-top-left-radius: {r}px;
+    border-bottom-left-radius: {r}px;
+}}
+QTabBar::tab:last {{
+    border-top-right-radius: {r}px;
+    border-bottom-right-radius: {r}px;
+}}
+QTabBar::tab:only-one {{
+    border-radius: {r}px;
 }}
 QTabBar::tab:hover {{
-    color: {c.text_primary};
+    background: {c.sidebar_item_hover};
 }}
 QTabBar::tab:selected {{
-    color: {c.text_primary};
-    border-bottom-color: {c.accent};
-    font-weight: bold;
+    background: {c.surface};
+    border-color: {c.border};
+    border-radius: {r}px;
+    font-weight: 600;
 }}
 
 /* === Listeler, ağaçlar, tablolar === */
@@ -420,23 +481,30 @@ QListView, QTreeView, QTableView, QListWidget, QTreeWidget, QTableWidget {{
     background-color: {c.surface};
     alternate-background-color: {c.surface_hover};
     border: 1px solid {c.border};
-    border-radius: 8px;
-    selection-background-color: {c.sidebar_item_active};
-    selection-color: {c.text_primary};
+    border-radius: {rc}px;
+    padding: 4px;
+    selection-background-color: {c.accent};
+    selection-color: {c.text_on_accent};
     outline: none;
 }}
 QListView::item, QTreeView::item {{
-    padding: 4px;
+    padding: 6px 4px;
+    border-radius: 6px;
 }}
 QListView::item:hover, QTreeView::item:hover {{
     background-color: {c.surface_hover};
+}}
+QListView::item:selected, QTreeView::item:selected {{
+    background-color: {c.accent};
+    color: {c.text_on_accent};
 }}
 QHeaderView::section {{
     background-color: {c.surface};
     color: {c.text_secondary};
     border: none;
-    border-bottom: 1px solid {c.border};
-    padding: 6px 8px;
+    border-bottom: 1px solid {c.separator};
+    padding: 8px 10px;
+    font-size: {fs2}px;
     font-weight: bold;
 }}
 QTableCornerButton::section {{
@@ -447,22 +515,22 @@ QTableCornerButton::section {{
 /* === Grup kutusu === */
 QGroupBox {{
     border: 1px solid {c.border};
-    border-radius: 8px;
-    margin-top: 14px;
-    padding: 12px 10px 10px 10px;
+    border-radius: {rc}px;
+    margin-top: 16px;
+    padding: 14px 12px 12px 12px;
     font-weight: bold;
 }}
 QGroupBox::title {{
     subcontrol-origin: margin;
-    left: 12px;
+    left: 14px;
     padding: 0 4px;
     color: {c.text_secondary};
 }}
 
-/* === Kaydırıcı === */
+/* === Kaydırıcı (beyaz yuvarlak tutamak) === */
 QSlider::groove:horizontal {{
     height: 4px;
-    background: {c.border};
+    background: {c.segment_bg};
     border-radius: 2px;
 }}
 QSlider::sub-page:horizontal {{
@@ -470,33 +538,41 @@ QSlider::sub-page:horizontal {{
     border-radius: 2px;
 }}
 QSlider::handle:horizontal {{
-    background: {c.accent};
-    border: 3px solid {c.surface};
-    width: 12px;
-    height: 12px;
-    margin: -7px 0;
-    border-radius: 9px;
+    background: #ffffff;
+    border: 1px solid {c.border};
+    width: 18px;
+    height: 18px;
+    margin: -8px 0;
+    border-radius: 10px;
 }}
 
 /* === Menü ve ipucu === */
 QMenu {{
     background-color: {c.surface};
     border: 1px solid {c.border};
-    border-radius: 8px;
-    padding: 4px;
+    border-radius: 10px;
+    padding: 6px;
 }}
 QMenu::item {{
-    padding: 6px 20px 6px 12px;
-    border-radius: 4px;
+    padding: 7px 24px 7px 12px;
+    border-radius: 6px;
 }}
 QMenu::item:selected {{
-    background-color: {c.sidebar_item_hover};
+    background-color: {c.accent};
+    color: {c.text_on_accent};
+}}
+QMenu::separator {{
+    height: 1px;
+    background: {c.separator};
+    margin: 4px 8px;
 }}
 QToolTip {{
     background-color: {c.surface};
     color: {c.text_primary};
     border: 1px solid {c.border};
-    padding: 4px 8px;
+    border-radius: 6px;
+    padding: 5px 9px;
+    font-size: {fs2}px;
 }}
 
 /* === Diyalog === */
@@ -506,6 +582,6 @@ QDialog {{
 
 /* === Ayırıcı === */
 QFrame[frameShape="4"], QFrame[frameShape="5"] {{
-    color: {c.border};
+    color: {c.separator};
 }}
 """

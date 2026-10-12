@@ -190,7 +190,7 @@ class _HistoryView(QWidget):
         self._worker: _HistoryWorker | None = None
         content = QWidget()
         self._layout = QVBoxLayout(content)
-        self._layout.setContentsMargins(24, 8, 24, 20)
+        self._layout.setContentsMargins(36, 8, 36, 28)
         self._layout.setSpacing(8)
         title = QLabel(tr("Update history"), content)
         title.setObjectName("H1")
@@ -283,7 +283,7 @@ class _AdvancedView(QWidget):
         super().__init__(parent)
         content = QWidget()
         layout = QVBoxLayout(content)
-        layout.setContentsMargins(24, 8, 24, 20)
+        layout.setContentsMargins(36, 8, 36, 28)
         layout.setSpacing(12)
         title = QLabel(tr("Advanced options"), content)
         title.setObjectName("H1")
@@ -456,7 +456,7 @@ class UpdateCenterPage(BasePage):
     def _build_home(self) -> QWidget:
         content = QWidget()
         outer = QVBoxLayout(content)
-        outer.setContentsMargins(24, 20, 24, 20)
+        outer.setContentsMargins(36, 28, 36, 28)
         outer.setSpacing(14)
 
         # Başlık satırı: başlık + durum cümlesi solda, işlemler sağda
@@ -699,7 +699,7 @@ class UpdateCenterPage(BasePage):
             text = ", ".join(names[:3]) + (f" +{len(names) - 3}" if len(names) > 3 else "")
             mark = "↑" if record.kind == "upgrade" else "+" if record.kind == "install" else "−"
             lbl = QLabel(
-                f"<b>{mark}</b> {html.escape(text)}<br><span style='font-size:11px'>"
+                f"<b>{mark}</b> {html.escape(text)}<br><span style='font-size: 13px'>"
                 f"{html.escape(QLocale().toString(when, QLocale.FormatType.ShortFormat))}"
                 + (" · " + html.escape(tr("Automatic")) if record.automatic else "")
                 + "</span>",

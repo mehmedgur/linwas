@@ -223,7 +223,7 @@ class FolderPopup(QWidget):
 
         hint = QLabel(tr("Drag to reorder · right-click to remove"), self)
         hint.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        hint.setStyleSheet("color: palette(placeholder-text); font-size: 11px;")
+        hint.setStyleSheet("color: palette(placeholder-text); font-size: 13px;")
         layout.addWidget(hint)
         self._fill()
 

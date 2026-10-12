@@ -25,7 +25,7 @@ class StatusBar(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setObjectName("StatusBar")
-        self.setFixedHeight(44)
+        self.setFixedHeight(52)
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(12, 0, 12, 0)
@@ -51,7 +51,7 @@ class StatusBar(QWidget):
         self._apply_btn = QPushButton(tr("Apply"), self)
         self._apply_btn.setProperty("primary", True)
         self._apply_btn.setEnabled(False)
-        self._apply_btn.setFixedWidth(120)
+        self._apply_btn.setFixedWidth(150)
         # Yalnızca kuyrukta bekleyen görev varken görünür
         self._apply_btn.setVisible(False)
         self._apply_btn.clicked.connect(self.apply_clicked)

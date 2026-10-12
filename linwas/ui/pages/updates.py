@@ -66,7 +66,7 @@ class _PackageRow(QWidget):
             badge = QLabel(tr("Security"), self)
             badge.setStyleSheet(
                 "background-color: #c42b1c; color: white; border-radius: 4px;"
-                " padding: 1px 6px; font-size: 11px;"
+                " padding: 1px 6px; font-size: 13px;"
             )
             row.addWidget(badge)
 
@@ -87,7 +87,7 @@ class UpdatesPage(BasePage):
 
         content = QWidget()
         outer = QVBoxLayout(content)
-        outer.setContentsMargins(24, 20, 24, 20)
+        outer.setContentsMargins(36, 28, 36, 28)
         outer.setSpacing(12)
 
         # Başlık

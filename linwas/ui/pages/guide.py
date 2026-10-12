@@ -40,7 +40,7 @@ class GuidePage(BasePage):
         self._desktop = detect_desktop(os.environ).value
 
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setContentsMargins(36, 28, 36, 28)
         layout.setSpacing(10)
         title = QLabel(tr("How was it on Windows?"), self)
         title.setObjectName("H1")

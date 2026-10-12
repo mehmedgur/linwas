@@ -8,7 +8,7 @@ from __future__ import annotations
 import weakref
 
 from PySide6.QtCore import QByteArray, QRectF, QSize, Qt
-from PySide6.QtGui import QGuiApplication, QIcon, QPainter, QPixmap
+from PySide6.QtGui import QColor, QGuiApplication, QIcon, QPainter, QPixmap
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtWidgets import QAbstractButton, QLabel, QWidget
 
@@ -44,7 +44,30 @@ def pixmap(name: str, color: str, size: int = 20) -> QPixmap:
     return pm
 
 
+def tile_pixmap(name: str, background: str, size: int = 26) -> QPixmap:
+    """macOS System Settings gibi: renkli yuvarlak kare içinde beyaz simge."""
+    app = QGuiApplication.instance()
+    dpr = app.devicePixelRatio() if isinstance(app, QGuiApplication) else 1.0
+    pm = QPixmap(int(size * dpr), int(size * dpr))
+    pm.fill(Qt.GlobalColor.transparent)
+    painter = QPainter(pm)
+    painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+    painter.setPen(Qt.PenStyle.NoPen)
+    painter.setBrush(QColor(background))
+    side = float(pm.width())
+    painter.drawRoundedRect(QRectF(0, 0, side, side), side * 0.26, side * 0.26)
+    inset = side * 0.2
+    renderer = QSvgRenderer(QByteArray(svg(name, "#ffffff", 2.0).encode()))
+    renderer.render(painter, QRectF(inset, inset, side - 2 * inset, side - 2 * inset))
+    painter.end()
+    pm.setDevicePixelRatio(dpr)
+    return pm
+
+
 def icon(name: str, role: str = "normal", size: int = 20) -> QIcon:
+    # "#rrggbb" rolü: renkli kutu içinde beyaz simge (kenar çubuğu)
+    if role.startswith("#"):
+        return QIcon(tile_pixmap(name, role, size))
     return QIcon(pixmap(name, color_for(role), size))
 
 
@@ -53,7 +76,10 @@ def _apply(widget: QWidget, name: str, role: str, size: int) -> None:
         widget.setIcon(icon(name, role, size))
         widget.setIconSize(QSize(size, size))
     elif isinstance(widget, QLabel):
-        widget.setPixmap(pixmap(name, color_for(role), size))
+        if role.startswith("#"):
+            widget.setPixmap(tile_pixmap(name, role, size))
+        else:
+            widget.setPixmap(pixmap(name, color_for(role), size))
 
 
 def bind(widget: QWidget, name: str, role: str = "normal", size: int = 20) -> None:

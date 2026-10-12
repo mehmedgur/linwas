@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 
 from PySide6.QtCore import QCoreApplication
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QMainWindow,
@@ -117,8 +117,15 @@ class MainWindow(QMainWindow):
         self._background = background
         self.setWindowTitle("Linwas")
         self.setWindowIcon(QIcon.fromTheme("linwas", QIcon(str(ICON_PATH))))
-        self.setMinimumSize(900, 600)
-        self.resize(1100, 700)
+        self.setMinimumSize(960, 620)
+        # Büyük yazıya uygun açılış boyutu; küçük ekranda ekranın %90'ını aşmaz
+        screen = QGuiApplication.primaryScreen()
+        avail = screen.availableGeometry() if screen else None
+        width, height = 1320, 860
+        if avail is not None:
+            width = min(width, int(avail.width() * 0.9))
+            height = min(height, int(avail.height() * 0.9))
+        self.resize(width, height)
 
         self._queue = TaskQueue()
         self._running_tasks: list[Task] = []

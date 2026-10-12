@@ -48,7 +48,7 @@ class AIChatPage(BasePage):
         self._history = ChatHistoryDB()
 
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(24, 20, 24, 20)
+        layout.setContentsMargins(36, 28, 36, 28)
         layout.setSpacing(8)
 
         header = QHBoxLayout()

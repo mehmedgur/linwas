@@ -73,7 +73,7 @@ class _CleanupCard(Card):
             badge = QLabel(tr("Requires password"), self)
             badge.setStyleSheet(
                 "background-color: #fff3cc; color: #9d5d00; border-radius: 4px;"
-                " padding: 1px 7px; font-size: 11px;"
+                " padding: 1px 7px; font-size: 13px;"
             )
             row.addWidget(badge)
 
@@ -118,7 +118,7 @@ class CleanupPage(BasePage):
 
         content = QWidget()
         outer = QVBoxLayout(content)
-        outer.setContentsMargins(24, 20, 24, 20)
+        outer.setContentsMargins(36, 28, 36, 28)
         outer.setSpacing(12)
 
         # Başlık + yenile
