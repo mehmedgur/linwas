@@ -81,6 +81,7 @@ MENU: list[MenuItem] = [
             MenuItem("app_folders", "App Folders"),
             MenuItem("workgroups", "Work Groups"),
             MenuItem("window_groups", "Window Groups"),
+            MenuItem("taskbar", "Taskbar"),
         ],
     ),
     MenuItem("software", "Software"),
@@ -377,6 +378,7 @@ def _translation_markers() -> None:
     tr("App Folders")
     tr("Work Groups")
     tr("Window Groups")
+    tr("Taskbar")
     tr("Software")
     tr("Troubleshooting")
     tr("How was it on Windows?")

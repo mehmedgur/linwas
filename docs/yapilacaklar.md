@@ -44,9 +44,10 @@ Son güncelleme: 12 Ekim 2026
   4. [ ] D. Görev çubuğu ayarları: hazır düzen (Windows/macOS gibi), sağ tıkta son dosyalar, saydam/mat/bulanık,
      konum/boyut/gizleme/önizleme (12 Ekim 2026).
   5. [ ] E. Klasör renkleri (Nautilus; sağ tık için python3-nautilus eklentisi) (12 Ekim 2026).
-  6. [ ] F. Linwas görev çubuğu eklentisi (Dash to Panel üstüne; D buraya katılır) + medya widget'ı
-     (görev çubuğu küçük kontrol + takvim menüsü kartı; tema/kapak rengi; saydam/mat/bulanık) (13 Ekim 2026).
-  7. [ ] G. Tema (vurgu) rengi seçimi — yalnızca Linwas ve eklentileri (13 Ekim 2026).
+  6. [x] F. Linwas görev çubuğu eklentisi (Dash to Panel üstüne; D buraya katılır) + medya widget'ı
+     (görev çubuğu küçük kontrol + takvim menüsü kartı; tema/kapak rengi; saydam/mat/bulanık) —
+     kodlandı 13 Ekim 2026, deneme bekliyor. Kalan: sağ tıkta son açılan dosyalar.
+  7. [x] G. Tema (vurgu) rengi seçimi — yalnızca Linwas ve eklentileri; kodlandı 13 Ekim 2026, deneme bekliyor.
 - [x] **Başka Linux'a taşıma** (kararlar.md › Yeni özellikler › 1, 12 Ekim 2026): Windows'tan taşıma ile
   tek "Taşıma" sayfası; dışa/içe aktarma, USB / diğer bölüm / bulut, şifreli paket. Kodlandı 12 Ekim
   2026, deneme bekliyor (Pardus → Ubuntu sanal makinesi: USB ile paket; şifreli/şifresiz).

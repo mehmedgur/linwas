@@ -207,9 +207,84 @@ WINDOWS_THEMES: dict[Theme, ColorSet] = {
 }
 
 
-def colors(theme: Theme, style: UiStyle = UiStyle.MACOS) -> ColorSet:
+def colors(theme: Theme, style: UiStyle = UiStyle.MACOS, accent: str = "") -> ColorSet:
     table = WINDOWS_THEMES if style is UiStyle.WINDOWS else THEMES
-    return table.get(theme, table[Theme.LIGHT])
+    base = table.get(theme, table[Theme.LIGHT])
+    if not accent or theme is Theme.HIGH_CONTRAST:
+        return base
+    return with_accent(base, accent, style)
+
+
+# Ayarlar › Görünüm'deki hazır vurgu renkleri (kimlik → renk)
+ACCENT_PRESETS: dict[str, str] = {
+    "blue": "#0066d6",
+    "purple": "#7d4cdb",
+    "pink": "#c2185b",
+    "red": "#c62828",
+    "orange": "#c25400",
+    "green": "#1e7b34",
+    "teal": "#00796b",
+    "graphite": "#5a5a5f",
+}
+
+
+def _rgb(hex_color: str) -> tuple[int, int, int]:
+    h = hex_color.lstrip("#")
+    return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+
+
+def _hex(rgb: tuple[float, float, float]) -> str:
+    return "#" + "".join(f"{max(0, min(255, round(c))):02x}" for c in rgb)
+
+
+def _luminance(hex_color: str) -> float:
+    def lin(c: int) -> float:
+        v = c / 255
+        return v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4
+
+    r, g, b = (lin(c) for c in _rgb(hex_color))
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def contrast(a: str, b: str) -> float:
+    la, lb = _luminance(a), _luminance(b)
+    return (max(la, lb) + 0.05) / (min(la, lb) + 0.05)
+
+
+def mix(a: str, b: str, amount: float) -> str:
+    """a'dan b'ye doğru `amount` (0–1) kadar karışım."""
+    ra, rb = _rgb(a), _rgb(b)
+    return _hex(tuple(x + (y - x) * amount for x, y in zip(ra, rb, strict=True)))
+
+
+def readable_accent(accent: str, text: str = "#ffffff", ratio: float = 4.5) -> str:
+    """Vurgu rengi üzerindeki yazı okunur olsun diye gerekirse rengi koyulaştırır."""
+    color = accent
+    # Açık yazıda renk koyulaşır, koyu yazıda açılır
+    toward = "#000000" if _luminance(text) > 0.5 else "#ffffff"
+    for _ in range(20):
+        if contrast(color, text) >= ratio:
+            return color
+        color = mix(color, toward, 0.08)
+    return color
+
+
+def with_accent(base: ColorSet, accent: str, style: UiStyle = UiStyle.MACOS) -> ColorSet:
+    """Renk setine kullanıcının vurgu rengini uygular (Linwas içi; sistem rengi değişmez)."""
+    from dataclasses import replace
+
+    a = readable_accent(accent, base.text_on_accent)
+    soft = mix(base.surface, a, 0.16)
+    active = a if style is UiStyle.MACOS else mix(base.surface, a, 0.2)
+    return replace(
+        base,
+        accent=a,
+        accent_hover=mix(a, "#000000", 0.1),
+        accent_pressed=mix(a, "#000000", 0.2),
+        sidebar_item_active=active,
+        sidebar_text_active="#ffffff" if style is UiStyle.MACOS else a,
+        soft_accent=soft,
+    )
 
 
 @dataclass(frozen=True)

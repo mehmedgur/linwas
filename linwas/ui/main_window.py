@@ -136,8 +136,10 @@ class MainWindow(QMainWindow):
 
         # Stil uygula (simge renkleri de temadan)
         self._ui_style = self._resolve_style(self._settings.ui_style)
-        icons.set_palette(colors(self._current_theme, self._ui_style))
-        self.setStyleSheet(build_qss(self._current_theme, self._ui_style))
+        self._accent = self._settings.accent_color
+        icons.set_palette(colors(self._current_theme, self._ui_style, self._accent))
+        self.setStyleSheet(build_qss(self._current_theme, self._ui_style, self._accent))
+        self._sync_taskbar_palette()
 
         # Merkezi widget
         central = QWidget(self)
@@ -272,9 +274,31 @@ class MainWindow(QMainWindow):
             return UiStyle.MACOS
 
     def _apply_look(self) -> None:
-        icons.set_palette(colors(self._current_theme, self._ui_style))
-        self.setStyleSheet(build_qss(self._current_theme, self._ui_style))
+        icons.set_palette(colors(self._current_theme, self._ui_style, self._accent))
+        self.setStyleSheet(build_qss(self._current_theme, self._ui_style, self._accent))
         self._sidebar.set_style(self._ui_style)
+        self._sync_taskbar_palette()
+
+    def _sync_taskbar_palette(self) -> None:
+        """Linwas görev çubuğu eklentisi de aynı vurgu ve temayı kullanır."""
+        from linwas.backend import taskbar
+
+        def palette(theme: Theme) -> dict[str, str]:
+            c = colors(theme, self._ui_style, self._accent)
+            return {"panel": c.sidebar_bg, "card": c.surface, "accent": c.accent}
+
+        # Eklenti ayarı yazılamasa da tema uygulanır
+        with contextlib.suppress(Exception):
+            taskbar.sync_palette(
+                palette(Theme.LIGHT),
+                palette(Theme.DARK),
+                colors(self._current_theme, self._ui_style, self._accent).accent,
+            )
+
+    def apply_accent(self, color: str) -> None:
+        """Linwas vurgu rengi ("" = varsayılan)."""
+        self._accent = color
+        self._apply_look()
 
     def apply_style(self, name: str) -> None:
         """Linwas düzeni: macOS havası ya da Windows görünümü."""
@@ -492,6 +516,7 @@ class MainWindow(QMainWindow):
         settings_page = SettingsPage(self._stack)
         settings_page.theme_changed.connect(self.apply_theme)
         settings_page.style_changed.connect(self.apply_style)
+        settings_page.accent_changed.connect(self.apply_accent)
         settings_page.close_action_changed.connect(self._on_close_action_changed)
         settings_page.onboarding_requested.connect(self.run_onboarding)
         settings_page.ai_settings_changed.connect(self._on_ai_settings_changed)

@@ -244,6 +244,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <source>Assistant</source>
         <translation>Yardımcı</translation>
     </message>
+    <message>
+        <source>Taskbar</source>
+        <translation>Görev çubuğu</translation>
+    </message>
 </context>
 <context>
     <name>StatusBar</name>
@@ -4502,6 +4506,54 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <source>none</source>
         <translation>yok</translation>
     </message>
+    <message>
+        <source>Accent color</source>
+        <translation>Vurgu rengi</translation>
+    </message>
+    <message>
+        <source>Accent color:</source>
+        <translation>Vurgu rengi:</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation>Mavi</translation>
+    </message>
+    <message>
+        <source>Custom…</source>
+        <translation>Özel…</translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation>Varsayılan</translation>
+    </message>
+    <message>
+        <source>Graphite</source>
+        <translation>Grafit</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation>Yeşil</translation>
+    </message>
+    <message>
+        <source>Orange</source>
+        <translation>Turuncu</translation>
+    </message>
+    <message>
+        <source>Pink</source>
+        <translation>Pembe</translation>
+    </message>
+    <message>
+        <source>Purple</source>
+        <translation>Mor</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation>Kırmızı</translation>
+    </message>
+    <message>
+        <source>Teal</source>
+        <translation>Camgöbeği</translation>
+    </message>
 </context>
 <context>
     <name>TroubleshootPage</name>
@@ -7523,6 +7575,273 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>up to %1 GHz</source>
         <translation>en fazla %1 GHz</translation>
+    </message>
+</context>
+<context>
+    <name>TaskbarPage</name>
+    <message>
+        <source>Accent color</source>
+        <translation>Vurgu rengi</translation>
+    </message>
+    <message>
+        <source>Appearance</source>
+        <translation>Görünüm</translation>
+    </message>
+    <message>
+        <source>Background</source>
+        <translation>Arka plan</translation>
+    </message>
+    <message>
+        <source>Blurred</source>
+        <translation>Bulanık</translation>
+    </message>
+    <message>
+        <source>Blurred: the window and wallpaper behind show through softly.</source>
+        <translation>Bulanık: arkadaki pencere ve duvar kağıdı yumuşakça görünür.</translation>
+    </message>
+    <message>
+        <source>Bottom</source>
+        <translation>Alt</translation>
+    </message>
+    <message>
+        <source>Card background</source>
+        <translation>Kart arka planı</translation>
+    </message>
+    <message>
+        <source>Choose how the taskbar looks and add a media control. Changes appear on the desktop right away. (Windows: Taskbar settings · macOS: Dock &amp; Menu Bar)</source>
+        <translation>Görev çubuğunun görünümünü seçin ve medya kontrolü ekleyin. Değişiklikler masaüstünde hemen görünür. (Windows: Görev çubuğu ayarları · macOS: Dock ve Menü Çubuğu)</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation>Renk</translation>
+    </message>
+    <message>
+        <source>Cover of the playing song</source>
+        <translation>Çalan şarkının kapağı</translation>
+    </message>
+    <message>
+        <source>Follow the theme</source>
+        <translation>Temaya göre</translation>
+    </message>
+    <message>
+        <source>GNOME default</source>
+        <translation>GNOME varsayılanı</translation>
+    </message>
+    <message>
+        <source>Hide automatically</source>
+        <translation>Otomatik gizle</translation>
+    </message>
+    <message>
+        <source>Hides when a window covers it.</source>
+        <translation>Bir pencere üstüne gelince saklanır.</translation>
+    </message>
+    <message>
+        <source>In use</source>
+        <translation>Kullanılıyor</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Kur</translation>
+    </message>
+    <message>
+        <source>Install the Linwas taskbar extension to use these settings.</source>
+        <translation>Bu ayarları kullanmak için Linwas görev çubuğu eklentisini kurun.</translation>
+    </message>
+    <message>
+        <source>Install the Windows-style taskbar (Dash to Panel)</source>
+        <translation>Windows tarzı görev çubuğunu kur (Dash to Panel)</translation>
+    </message>
+    <message>
+        <source>Install the dock (Dash to Dock)</source>
+        <translation>Dock'u kur (Dash to Dock)</translation>
+    </message>
+    <message>
+        <source>Last played:</source>
+        <translation>Son çalınan:</translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation>Sol</translation>
+    </message>
+    <message>
+        <source>Like Windows</source>
+        <translation>Windows gibi</translation>
+    </message>
+    <message>
+        <source>Like macOS</source>
+        <translation>macOS gibi</translation>
+    </message>
+    <message>
+        <source>Linwas media card in the calendar menu</source>
+        <translation>Takvim menüsünde Linwas medya kartı</translation>
+    </message>
+    <message>
+        <source>Log out and back in once to start the extension.</source>
+        <translation>Eklentinin başlaması için oturumu bir kez kapatıp açın.</translation>
+    </message>
+    <message>
+        <source>Matte</source>
+        <translation>Mat</translation>
+    </message>
+    <message>
+        <source>Media</source>
+        <translation>Medya</translation>
+    </message>
+    <message>
+        <source>Not used with Matte.</source>
+        <translation>Mat seçiliyken kullanılmaz.</translation>
+    </message>
+    <message>
+        <source>Nothing is playing</source>
+        <translation>Şu an bir şey çalmıyor</translation>
+    </message>
+    <message>
+        <source>One panel at the bottom with the app menu</source>
+        <translation>Altta tek panel ve uygulama menüsü</translation>
+    </message>
+    <message>
+        <source>Open %1</source>
+        <translation>%1 aç</translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translation>Duraklat</translation>
+    </message>
+    <message>
+        <source>Placement</source>
+        <translation>Yerleşim</translation>
+    </message>
+    <message>
+        <source>Play</source>
+        <translation>Oynat</translation>
+    </message>
+    <message>
+        <source>Position</source>
+        <translation>Konum</translation>
+    </message>
+    <message>
+        <source>Ready-made layout</source>
+        <translation>Hazır düzen</translation>
+    </message>
+    <message>
+        <source>Reinstall</source>
+        <translation>Yeniden kur</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Kaldır</translation>
+    </message>
+    <message>
+        <source>Remove the Linwas taskbar</source>
+        <translation>Linwas görev çubuğunu kaldır</translation>
+    </message>
+    <message>
+        <source>Replaces GNOME's media card with a modern card with cover art.</source>
+        <translation>GNOME'un medya kartının yerine kapak resimli modern kart koyar.</translation>
+    </message>
+    <message>
+        <source>Return to the previous layout</source>
+        <translation>Önceki düzene dön</translation>
+    </message>
+    <message>
+        <source>Right</source>
+        <translation>Sağ</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Boyut</translation>
+    </message>
+    <message>
+        <source>Small media control on the taskbar</source>
+        <translation>Görev çubuğunda küçük medya kontrolü</translation>
+    </message>
+    <message>
+        <source>Song name and play/pause; click it for the large card.</source>
+        <translation>Şarkı adı ve oynat/duraklat; tıklayınca büyük kart açılır.</translation>
+    </message>
+    <message>
+        <source>Switch player</source>
+        <translation>Oynatıcıyı değiştir</translation>
+    </message>
+    <message>
+        <source>Taskbar</source>
+        <translation>Görev çubuğu</translation>
+    </message>
+    <message>
+        <source>The Linwas taskbar extension is on.</source>
+        <translation>Linwas görev çubuğu eklentisi açık.</translation>
+    </message>
+    <message>
+        <source>The Linwas taskbar extension is turned off.</source>
+        <translation>Linwas görev çubuğu eklentisi kapalı.</translation>
+    </message>
+    <message>
+        <source>The Linwas taskbar works on GNOME 42–48 for now.</source>
+        <translation>Linwas görev çubuğu şimdilik GNOME 42–48'de çalışıyor.</translation>
+    </message>
+    <message>
+        <source>The extension could not start. Reinstall it, then log out and back in.</source>
+        <translation>Eklenti başlayamadı. Yeniden kurun, sonra oturumu kapatıp açın.</translation>
+    </message>
+    <message>
+        <source>The taskbar returns to its normal look. Remove the extension?</source>
+        <translation>Görev çubuğu normal görünümüne döner. Eklenti kaldırılsın mı?</translation>
+    </message>
+    <message>
+        <source>Thin bar at the top, centred dock at the bottom</source>
+        <translation>Üstte ince çubuk, altta ortalanmış dock</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation>Üst</translation>
+    </message>
+    <message>
+        <source>Top bar and the Activities overview</source>
+        <translation>Üst çubuk ve Etkinlikler ekranı</translation>
+    </message>
+    <message>
+        <source>Transparency</source>
+        <translation>Saydamlık</translation>
+    </message>
+    <message>
+        <source>Transparent</source>
+        <translation>Saydam</translation>
+    </message>
+    <message>
+        <source>Turn on</source>
+        <translation>Aç</translation>
+    </message>
+    <message>
+        <source>Unknown artist</source>
+        <translation>Bilinmeyen sanatçı</translation>
+    </message>
+    <message>
+        <source>Unknown title</source>
+        <translation>Bilinmeyen parça</translation>
+    </message>
+    <message>
+        <source>Use</source>
+        <translation>Kullan</translation>
+    </message>
+    <message>
+        <source>Use the color of the cover art</source>
+        <translation>Kapak resminin rengini kullan</translation>
+    </message>
+    <message>
+        <source>Uses the light or dark theme and the Linwas accent color.</source>
+        <translation>Açık ya da koyu temayı ve Linwas vurgu rengini kullanır.</translation>
+    </message>
+    <message>
+        <source>When off, the theme color is used.</source>
+        <translation>Kapalıyken tema rengi kullanılır.</translation>
+    </message>
+    <message>
+        <source>Window preview on hover</source>
+        <translation>Üzerine gelince pencere önizlemesi</translation>
+    </message>
+    <message>
+        <source>Works with Spotify, YouTube Music and YouTube in the browser, Rhythmbox, VLC and every player that supports MPRIS. When nothing is playing, the last played song is shown.</source>
+        <translation>Spotify, tarayıcıda YouTube Music ve YouTube, Rhythmbox, VLC ve MPRIS destekleyen her oynatıcıyla çalışır. Bir şey çalmıyorsa son çalınan şarkı gösterilir.</translation>
     </message>
 </context>
 </TS>

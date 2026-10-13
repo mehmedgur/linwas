@@ -96,6 +96,7 @@ class _Section(QWidget):
 class SettingsPage(BasePage):
     theme_changed = Signal(str)  # app_settings.THEMES değerlerinden biri
     style_changed = Signal(str)  # app_settings.UI_STYLES değerlerinden biri
+    accent_changed = Signal(str)  # "#rrggbb" ya da "" (varsayılan)
     close_action_changed = Signal(str)
     consent_changed = Signal(str)
     onboarding_requested = Signal()
@@ -347,6 +348,7 @@ class SettingsPage(BasePage):
         )
         self._style.currentIndexChanged.connect(self._on_style)
         form.addRow(tr("Layout:"), self._style)
+        form.addRow(tr("Accent color:"), self._accent_row(card))
         card.layout.addLayout(form)
         note = QLabel(
             tr("The desktop's own theme and wallpaper are under Interface › Theme & Wallpaper."),
@@ -360,6 +362,72 @@ class SettingsPage(BasePage):
         self._settings.theme = self._theme.currentData()
         self._save()
         self.theme_changed.emit(self._settings.theme)
+
+    def _accent_row(self, parent: QWidget) -> QWidget:
+        """Hazır vurgu renkleri + özel renk; yalnızca Linwas ve eklentileri etkilenir."""
+        from PySide6.QtWidgets import QButtonGroup, QColorDialog
+
+        from linwas.ui.theme.tokens import ACCENT_PRESETS
+
+        names = {
+            "blue": tr("Blue"),
+            "purple": tr("Purple"),
+            "pink": tr("Pink"),
+            "red": tr("Red"),
+            "orange": tr("Orange"),
+            "green": tr("Green"),
+            "teal": tr("Teal"),
+            "graphite": tr("Graphite"),
+        }
+        box = QWidget(parent)
+        row = QHBoxLayout(box)
+        row.setContentsMargins(0, 0, 0, 0)
+        row.setSpacing(8)
+        group = QButtonGroup(box)
+        group.setExclusive(True)
+        current = self._settings.accent_color
+
+        def choose(color: str) -> None:
+            self._settings.accent_color = color
+            self._save()
+            self.accent_changed.emit(color)
+
+        default = QPushButton(tr("Default"), box)
+        default.setCheckable(True)
+        default.setChecked(current == "")
+        default.clicked.connect(lambda: choose(""))
+        group.addButton(default)
+        row.addWidget(default)
+        for key, color in ACCENT_PRESETS.items():
+            b = QPushButton(box)
+            b.setCheckable(True)
+            b.setFixedSize(30, 30)
+            b.setToolTip(names[key])
+            b.setAccessibleName(names[key])
+            b.setChecked(current == color)
+            b.setStyleSheet(
+                f"QPushButton {{ background: {color}; border: 2px solid transparent;"
+                " border-radius: 15px; min-height: 0; padding: 0; }"
+                f" QPushButton:checked {{ border: 3px solid palette(text); }}"
+            )
+            b.clicked.connect(lambda _=False, c=color: choose(c))
+            group.addButton(b)
+            row.addWidget(b)
+        custom = QPushButton(tr("Custom…"), box)
+
+        def pick() -> None:
+            from PySide6.QtGui import QColor
+
+            color = QColorDialog.getColor(QColor(current or "#0066d6"), self, tr("Accent color"))
+            if color.isValid():
+                for btn in group.buttons():
+                    btn.setChecked(False)
+                choose(color.name())
+
+        custom.clicked.connect(pick)
+        row.addWidget(custom)
+        row.addStretch(1)
+        return box
 
     def _on_style(self) -> None:
         self._settings.ui_style = self._style.currentData()
@@ -701,6 +769,7 @@ class SettingsPage(BasePage):
         autostart.set_enabled(settings.autostart)
         self.theme_changed.emit(settings.theme)
         self.style_changed.emit(settings.ui_style)
+        self.accent_changed.emit(settings.accent_color)
         self.close_action_changed.emit(settings.close_action)
         self.ai_settings_changed.emit()
         self._rebuild()

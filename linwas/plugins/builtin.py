@@ -96,6 +96,13 @@ BUILTIN_PLUGINS: tuple[type[PluginBase], ...] = (
         parent="interface",
     ),
     _plugin(
+        "linwas.taskbar",
+        "Taskbar",
+        "taskbar",
+        "linwas.ui.pages.taskbar:TaskbarPage",
+        parent="interface",
+    ),
+    _plugin(
         "linwas.power",
         "Power & Battery",
         "power",

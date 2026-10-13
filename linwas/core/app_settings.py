@@ -25,6 +25,7 @@ ERROR_CONSENT = ("ask", "yes", "no")  # hata kayıtlarını yardımcıya gönder
 AI_RETENTION = ("never", "7", "30", "forever")
 
 _CLOCK = re.compile(r"^([01][0-9]|2[0-3]):[0-5][0-9]$")
+_HEX_COLOR = re.compile(r"^#[0-9a-fA-F]{6}$")
 
 
 def default_path() -> Path:
@@ -36,6 +37,7 @@ def default_path() -> Path:
 class AppSettings:
     theme: str = "system"
     ui_style: str = "macos"
+    accent_color: str = ""  # Linwas vurgu rengi "#rrggbb"; boş = düzenin varsayılanı
     close_action: str = "ask"
     language: str = "tr"
     send_errors_to_ai: str = "ask"
@@ -90,6 +92,9 @@ def from_dict(data: dict) -> AppSettings:
         elif isinstance(default, bool):
             if isinstance(value, bool):
                 setattr(s, f.name, value)
+        elif f.name == "accent_color":
+            if isinstance(value, str) and (value == "" or _HEX_COLOR.match(value)):
+                setattr(s, f.name, value.lower())
         elif (
             f.name in ("quiet_start", "quiet_end")
             and isinstance(value, str)

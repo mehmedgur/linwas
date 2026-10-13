@@ -11,8 +11,8 @@ from linwas.ui.theme.icon_data import asset_path
 from linwas.ui.theme.tokens import METRICS, ColorSet, Metrics, Theme, UiStyle, colors
 
 
-def build(theme: Theme = Theme.LIGHT, style: UiStyle = UiStyle.MACOS) -> str:
-    return _qss(colors(theme, style), METRICS[style])
+def build(theme: Theme = Theme.LIGHT, style: UiStyle = UiStyle.MACOS, accent: str = "") -> str:
+    return _qss(colors(theme, style, accent), METRICS[style])
 
 
 def _tabs(c: ColorSet, m: Metrics) -> str:

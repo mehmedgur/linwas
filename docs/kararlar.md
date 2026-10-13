@@ -416,12 +416,33 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
        önceki/oynat/sonraki, oynatıcı değiştirme). Hızlı ayarlar menüsüne konmaz.
      - **Arka plan:** varsayılan temaya göre (açık/koyu + Linwas vurgu rengi); seçenek "kapak resminin
        rengini al". Görev çubuğu ve widget için ayrı ayrı Saydam / Mat / Bulanık + saydamlık kaydırıcısı.
-     - GNOME 43 Shell API'leri (takvim menüsündeki medya bölümü, MPRIS proxy) kodlarken resmi
-       kaynaktan doğrulanacak; GNOME 42–48 desteklenir (pencere grupları eklentisiyle aynı yapı).
+     - GNOME 42–48 desteklenir (pencere grupları eklentisiyle aynı yapı).
+     - **Uygulama (13 Ekim 2026):** eklenti `linwas-taskbar@linwas`, kaynağı
+       `linwas/resources/gnome-taskbar/` (ortak `core.js` + eski/ESM başı-sonu), Python
+       `backend/taskbar.py`, sayfa Arayüz › Görev çubuğu (`ui/pages/taskbar.py`, yerleşik eklenti
+       `linwas.taskbar`). Ayar dosyası `~/.local/share/linwas/taskbar.json` (eklenti izler; Linwas'ın
+       açık/koyu renkleri ve vurgu rengi `palette`, çevrilmiş metinler `strings`). GNOME 43 kaynağından
+       (libgnome-shell.so gresource) doğrulandı: `Main.panel.statusArea.dateMenu._messageList`
+       `._sectionList` ve `._mediaSection` (MessageListSection, görünürlüğü `_sync` ile), MPRIS istemcisi
+       GNOME'unkine benzer `Gio.DBusProxy.makeProxyWrapper` ile (satır içi arayüz XML'i; `...Remote`
+       çağrıları tüm sürümlerde var), `Shell.BlurEffect` GNOME 43'te `sigma` (46+ `radius`; ikisi de
+       denenir). Dash to Panel açıksa arka plan onun `trans-use-custom-bg`, `trans-bg-color`,
+       `trans-use-custom-opacity`, `trans-panel-opacity` anahtarlarıyla, bulanıklık
+       `global.dashToPanel.panels[].panelBox`'a efekt olarak; kapalıysa `Main.panel` doğrudan boyanır.
+       Kapak resmi `~/.cache/linwas/covers/` altına önbelleklenir (http adresleri gvfs ile), ortalama
+       rengi GdkPixbuf ile. Oynatıcı seçimi: çalan > en son etkin; kapanan oynatıcı "son çalınan" olarak
+       kartta kalır ("%1 aç"). Yerleşim yalnızca Windows düzeninde (Dash to Panel): `panel-position`,
+       `panel-size`, `intellihide`, `show-window-previews`. macOS düzeni Dash to Dock'u (kimliği kurulu
+       klasörden bulunur, `dash-to-dock@…`) açar; kurulu değilse `package.install` görevi istenir;
+       Dash to Dock anahtarları (`dock-position`, `extend-height`, `dock-fixed`) yoksa yok sayılır
+       (kurulunca doğrulanacak). Henüz yok: sağ tıkta son dosyalar (D) — sonraki adım.
    - **G. Tema (vurgu) rengi seçimi (13 Ekim 2026, kullanıcı kararı):** yalnızca **Linwas** penceresi ve
      Linwas eklentileri (görev çubuğu, medya widget'ı) renk alır; masaüstünün sistem rengi değişmez.
      Ayarlar › Görünüm'de hazır renkler + özel renk; seçilen renk açık ve koyu temada okunur kontrastta
      tutulur (gerekirse otomatik koyulaştırılır).
+     - **Uygulama (13 Ekim 2026):** ayar `accent_color` (boş = düzenin rengi), `tokens.with_accent` /
+       `readable_accent` (yazıyla en az 4.5:1 kontrast), 8 hazır renk (`ACCENT_PRESETS`) + özel renk
+       (QColorDialog); seçilen renk görev çubuğu eklentisine `palette` ile gider.
    - **E. Klasör renkleri (12 Ekim 2026, kullanıcı kararı):** Dosyalar'da (Nautilus) klasöre renk verme;
      Windows'ta yok, macOS'ta etiket rengi gibi. `gio set <klasör> metadata::custom-icon-name folder-<renk>`
      (kullanıcı makinesinde çalıştığı doğrulandı; Nautilus 43.2, simge teması breeze: folder-red/blue/
