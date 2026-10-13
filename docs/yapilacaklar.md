@@ -47,6 +47,12 @@ Son güncelleme: 12 Ekim 2026
 - [x] **Başka Linux'a taşıma** (kararlar.md › Yeni özellikler › 1, 12 Ekim 2026): Windows'tan taşıma ile
   tek "Taşıma" sayfası; dışa/içe aktarma, USB / diğer bölüm / bulut, şifreli paket. Kodlandı 12 Ekim
   2026, deneme bekliyor (Pardus → Ubuntu sanal makinesi: USB ile paket; şifreli/şifresiz).
+- [ ] **Donanım ve yazıcılar yenilemesi** (kararlar.md › Donanım ve yazıcılar yenilemesi, 13 Ekim 2026):
+  tasarım onaylandı, donanım bilgisi ayrı eklenti olarak yazılacak; kullanıcı "devam" deyince
+  kodlanacak. Kodlamada doğrulananlar: DMI `/sys/class/dmi/id` (product_family "103C_5335M7 HP
+  Victus" → baştaki kod atılır), sıcaklık hwmon `coretemp` temp1 = "Package id 0" (AMD: `k10temp`),
+  NVMe sıcaklığı hwmon `nvme` (device → .../nvme/nvme0), `/usr/sbin/dmidecode` kurulu (3.4), CUPS
+  test sayfası `/usr/share/cups/data/default-testpage.pdf`, `simple-scan` kurulu.
 - [x] **macOS düzeni ilkeleri** (sakin kenar çubuğu, Genel bakış'ta sistem sağlığı) — 12 Ekim 2026, deneme bekliyor.
 - [x] **Arayüz yenileme — macOS havası** (kararlar.md › Arayüz tasarımı, 12 Ekim 2026): `tokens.py` + QSS +
   kenar çubuğu renkli simge kutuları; yazı 16 px, başlık 32 px. Kodlandı 12 Ekim 2026, deneme bekliyor
@@ -223,3 +229,9 @@ Son güncelleme: 12 Ekim 2026
   postinst/postrm, imzalı APT deposu betiği, imza anahtarı betiği, yayın iş akışı, CI APT testi
   (debian:12 ve ubuntu:22.04 kapsayıcılarında yerelde de geçti).
 - [x] Ubuntu 20.04 / Debian 11 kararı → seçenek A: destekten çıkarıldı (PR #1).
+
+## En sona eklenecekler (kullanıcı kararı, 13 Ekim 2026)
+- [ ] **Linwas işlemlerinde şifre sormama:** Linwas'ın kendi işlemleri (root helper) için parola
+  istenmesin. Güvenlik etkisi konuşulacak (ör. yalnızca etkin yerel oturum için polkit kuralı,
+  yüksek riskli işlemlerde yine sorma seçeneği).
+

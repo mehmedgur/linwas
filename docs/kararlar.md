@@ -403,6 +403,27 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
      rengi" için `python3-nautilus` (Pardus deposunda 4.0-1+b1) + Linwas Nautilus eklentisi; kurulu değilse
      yalnızca Linwas sayfasından (klasör seç → renk). "Varsayılana dön" metadata'yı siler.
 
+## Donanım ve yazıcılar yenilemesi (13 Ekim 2026, kullanıcı onayı)
+- Taslak: tuval "Linwas macOS Görünümü" › "Donanım ve yazıcılar · Genel bakış" ve "· Yazıcılar"
+  (claude.ai artifact AYgNY1TjwxLtui1ERsfg1D).
+- Sayfada sekmeler: **Genel bakış / Aygıtlar / Yazıcılar ve tarayıcılar**.
+  - Genel bakış: bilgisayar kartı (DMI: üretici, model, aile, anakart, BIOS sürümü/tarihi, kasa türü;
+    dağıtım ve masaüstü; "Her şey çalışıyor · N aygıt" özeti), bileşen kartları (işlemci, bellek, ekran
+    kartları, depolama, ekran, pil, ağ ve Bluetooth, ses ve kamera) durum rozeti ve "Ayrıntılar" ile;
+    üstte "Sistem raporu" (HTML) ve "Bilgileri kopyala".
+  - Aygıtlar: Aygıt Yöneticisi; arama, "Tümü / Sorunlu / Sürücüsüz" süzgeci, açılır kategoriler.
+  - Yazıcılar: yazıcı kartı (durum, varsayılan, mürekkep/toner düzeyi varsa, Test sayfası / Kuyruk /
+    Seçenekler / Kaldır), bulunan ama kurulmamış yazıcı için tek "Kur", boş durum, tarayıcılar, sorun
+    giderme.
+- **Ayrıntılar ayrı pencerede** açılır.
+- **İşlemci yükü ve sıcaklık sayfa açıkken 2 saniyede bir** güncellenir.
+- **Bellek ayrıntısı** (tür, hız, yuva) görünür; "Göster" denince yönetici parolası sorulur (root helper
+  işlemi, `dmidecode -t memory`; seri numaraları yazılmaz).
+- **Donanım bilgisi ayrı bir eklenti olarak yazılır** (kullanıcı kararı): okuma işlevleri ve bileşen
+  kartları/ayrıntı pencereleri Donanım eklentisinin parçası; sayfa ve başka eklentiler (Genel bakış'ın
+  sistem sağlığı, AI bağlamı, sistem raporu) bu eklentinin sağladığı arayüzden okur. Mimari kodlamaya
+  başlarken netleşir.
+
 ## AI
 - Sağlayıcılar: Gemini, ChatGPT, DeepSeek. AI isteğe bağlı; anahtar yoksa gizlenir.
 - AI yalnızca görev önerir (tanımlı işlem adı + parametre); "Kuyruğa ekle"ye kullanıcı basar.
