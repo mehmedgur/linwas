@@ -140,11 +140,6 @@ class MainWindow(QMainWindow):
         icons.set_palette(colors(self._current_theme, self._ui_style, self._accent))
         self.setStyleSheet(build_qss(self._current_theme, self._ui_style, self._accent))
         self._sync_taskbar_palette()
-        # Masaüstü sağ tık eylemleri (program klasörü) geçerli dilde; yazılamasa da açılış sürer
-        with contextlib.suppress(Exception):
-            from linwas.ui.folder_actions import install_menu_actions
-
-            install_menu_actions()
 
         # Merkezi widget
         central = QWidget(self)

@@ -104,6 +104,15 @@ def main(argv: list[str] | None = None) -> int:
     else:
         message = "background" if background else "show"
 
+    # Masaüstü sağ tık eylemleri (program klasörü) geçerli dilde. Tek kopya denetiminden önce:
+    # arkada eski bir Linwas çalışsa da her açılışta yazılır. Yazılamasa da açılış sürer.
+    import contextlib
+
+    with contextlib.suppress(Exception):
+        from linwas.ui.folder_actions import install_menu_actions
+
+        install_menu_actions()
+
     # Tek kopya: Linwas zaten çalışıyorsa (ör. arka planda) iletiyi ona gönderip çık
     from linwas.ui.single_instance import SingleInstance
 
