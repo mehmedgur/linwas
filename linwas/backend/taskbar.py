@@ -262,6 +262,9 @@ def current_preset() -> str:
 
 
 def _save_before() -> None:
+    """Hazır düzene geçmeden önceki durum; "Önceki düzene dön" kullanılana dek ilk kayıt korunur."""
+    if _before_file().is_file():
+        return
     snap = {
         "enabled": _enabled_extensions(),
         "dtp": {k: dtp_get(k) for k in ("panel-position", "panel-size")},
@@ -295,8 +298,23 @@ def restore_previous() -> bool:
     return True
 
 
+def _wait_active(uuid: str, seconds: float = 3.0) -> bool:
+    """Kabuk eklentiyi gerçekten çalıştırdı mı (yeni kurulan eklenti oturum yeniden açılmadan
+    yüklenmez; o durumda durum "kapalı" kalır)."""
+    import time
+
+    deadline = time.monotonic() + seconds
+    while True:
+        if window_groups._shell_state(uuid) == 1:
+            return True
+        if time.monotonic() >= deadline:
+            return False
+        time.sleep(0.3)
+
+
 def apply_preset(name: str) -> str:
-    """ "ok" | "need_dock" (Dash to Dock kurulmalı) | "need_dtp" | "unsupported"."""
+    """ "ok" | "need_dock" (Dash to Dock kurulmalı) | "need_dtp" | "restart" (yeni kurulan eklenti
+    için oturum yeniden açılmalı; düzen değiştirilmedi) | "unsupported"."""
     if name not in PRESETS:
         return "unsupported"
     dock = dock_uuid()
@@ -306,13 +324,19 @@ def apply_preset(name: str) -> str:
         return "need_dock"
     _save_before()
     if name == "windows":
+        set_extension_enabled(DTP_UUID, True)
+        if not _wait_active(DTP_UUID):
+            return "restart"
         if dock:
             set_extension_enabled(dock, False)
-        set_extension_enabled(DTP_UUID, True)
         set_position("BOTTOM")
     elif name == "macos":
-        set_extension_enabled(DTP_UUID, False)
+        # Önce dock açılır; çalışmazsa Dash to Panel kapatılmaz (ekran görev çubuğusuz kalmasın)
         set_extension_enabled(dock, True)
+        if not _wait_active(dock):
+            set_extension_enabled(dock, False)
+            return "restart"
+        set_extension_enabled(DTP_UUID, False)
         schema = _schema_dir("dash-to-dock@")
         for key, value in (
             ("dock-position", "'BOTTOM'"),

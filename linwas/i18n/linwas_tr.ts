@@ -7803,5 +7803,13 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
         <source>Your desktop already looks like Windows</source>
         <translation>Masaüstünüz zaten Windows'a benziyor</translation>
     </message>
+    <message>
+        <source>Log out and back in first</source>
+        <translation>Önce oturumu kapatıp açın</translation>
+    </message>
+    <message>
+        <source>The newly installed taskbar starts after you log out and back in once. Nothing was changed; choose this layout again afterwards.</source>
+        <translation>Yeni kurulan görev çubuğu oturumu bir kez kapatıp açınca çalışır. Hiçbir şey değiştirilmedi; sonra bu düzeni yeniden seçin.</translation>
+    </message>
 </context>
 </TS>

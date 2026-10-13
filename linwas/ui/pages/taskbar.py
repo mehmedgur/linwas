@@ -350,6 +350,17 @@ class TaskbarPage(BasePage):
                 )
             )
             return
+        if result == "restart":
+            QMessageBox.information(
+                self,
+                tr("Log out and back in first"),
+                tr(
+                    "The newly installed taskbar starts after you log out and back in once. "
+                    "Nothing was changed; choose this layout again afterwards."
+                ),
+            )
+            self._refresh()
+            return
         if result == "need_dtp":
             self.task_run_now.emit(
                 Task(
