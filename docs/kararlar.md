@@ -406,6 +406,22 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
        doğrulanacak). Desteklenmeyen masaüstünde seçenek gizlenir.
      - Ayrıca (Linux'ta dağınık, tek sayfada): konum (alt/üst/sol/sağ: `panel-positions`), boyut
        (`panel-sizes`), otomatik gizleme (`intellihide`), pencere önizlemesi (`show-window-previews`).
+   - **F. Linwas görev çubuğu eklentisi + medya widget'ı (13 Ekim 2026, kullanıcı kararı):** D maddesi bu
+     eklentiye katılır. Görev çubuğunu Dash to Panel çizer; **Linwas'ın GNOME Shell eklentisi** onu
+     yönetir ve üstüne ekler (pencere grupları eklentisi gibi Linwas tarafından kurulur, sürümle
+     güncellenir; ayrı Linwas eklentisi olarak açılıp kapatılır).
+     - **Medya widget'ı** (MPRIS: Spotify, tarayıcıda YouTube Music, son çalan oynatıcı): (1) görev
+       çubuğunda küçük kontrol (şarkı adı + oynat/duraklat; tıklayınca büyük kart), (2) bildirim/takvim
+       menüsünde GNOME'un medya kartının yerine Linwas'ın modern kartı (kapak resmi, sanatçı, ilerleme,
+       önceki/oynat/sonraki, oynatıcı değiştirme). Hızlı ayarlar menüsüne konmaz.
+     - **Arka plan:** varsayılan temaya göre (açık/koyu + Linwas vurgu rengi); seçenek "kapak resminin
+       rengini al". Görev çubuğu ve widget için ayrı ayrı Saydam / Mat / Bulanık + saydamlık kaydırıcısı.
+     - GNOME 43 Shell API'leri (takvim menüsündeki medya bölümü, MPRIS proxy) kodlarken resmi
+       kaynaktan doğrulanacak; GNOME 42–48 desteklenir (pencere grupları eklentisiyle aynı yapı).
+   - **G. Tema (vurgu) rengi seçimi (13 Ekim 2026, kullanıcı kararı):** yalnızca **Linwas** penceresi ve
+     Linwas eklentileri (görev çubuğu, medya widget'ı) renk alır; masaüstünün sistem rengi değişmez.
+     Ayarlar › Görünüm'de hazır renkler + özel renk; seçilen renk açık ve koyu temada okunur kontrastta
+     tutulur (gerekirse otomatik koyulaştırılır).
    - **E. Klasör renkleri (12 Ekim 2026, kullanıcı kararı):** Dosyalar'da (Nautilus) klasöre renk verme;
      Windows'ta yok, macOS'ta etiket rengi gibi. `gio set <klasör> metadata::custom-icon-name folder-<renk>`
      (kullanıcı makinesinde çalıştığı doğrulandı; Nautilus 43.2, simge teması breeze: folder-red/blue/
