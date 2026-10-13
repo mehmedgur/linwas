@@ -238,18 +238,12 @@ QPushButton#SidebarItem[active="true"] {{
     font-weight: 600;
     {active_bar}
 }}
-QPushButton#SidebarGroup {{
+QLabel#SidebarSection {{
     background-color: transparent;
-    border: none;
-    padding: 16px 10px 4px 10px;
-    min-height: 16px;
-    text-align: left;
+    padding: 14px 10px 4px 10px;
     color: {c.text_secondary};
-    font-size: {fs3}px;
-    font-weight: bold;
-}}
-QPushButton#SidebarGroup:hover {{
-    color: {c.text_primary};
+    font-size: {fs2}px;
+    font-weight: 600;
 }}
 
 /* === Kartlar === */

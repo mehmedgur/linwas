@@ -351,7 +351,10 @@ class SettingsPage(BasePage):
         form.addRow(tr("Accent color:"), self._accent_row(card))
         card.layout.addLayout(form)
         note = QLabel(
-            tr("The desktop's own theme and wallpaper are under Interface › Theme & Wallpaper."),
+            tr(
+                "The desktop's own theme and wallpaper are under "
+                "Personalization › Theme & Wallpaper."
+            ),
             card,
         )
         note.setObjectName("Secondary")

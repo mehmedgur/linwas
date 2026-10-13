@@ -98,8 +98,8 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
     `tokens.colors(theme, style)`, `stylesheet.build(theme, style)`, ayar `ui_style`. Windows düzeninin
     ayrıntılı tasarımı sonra konuşulacak.
   - **macOS düzeni ilkeleri (12 Ekim 2026, kullanıcı; dış görüş):** birebir kopya değil. Tek tip simgeler
-    (aynı çizgi kalınlığı 1.8, aynı boyut); sakin kenar çubuğu: simge kutuları nötr gri, yalnızca seçili
-    öğe vurgu zeminli (renkli kutular kaldırıldı); kartlarda tek köşe/kenarlık/boşluk sistemi; pencere
+    (aynı çizgi kalınlığı 1.8, aynı boyut); kenar çubuğu simgeleri 13 Ekim'de yeniden
+    renkli yapıldı (aşağıya bakın); kartlarda tek köşe/kenarlık/boşluk sistemi; pencere
     başlığını masaüstü çizer (çift başlık çubuğu yok); Genel bakış'ta gerçek **sistem sağlığı** özeti
     (sistem diski, ayrıysa kişisel dosyalar diski, bellek, pil sağlığı; durum rozeti İyi / Göz atın /
     İlgilenin; `backend/health.py`).
@@ -114,7 +114,16 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
     (dar şerit kaldırıldı); kenar çubuğunun altındaki "Yardımcı" ya da F1 açar/kapatır (yapay zekâ
     ayarlı değilse AI sayfası açılır). Alt durum çubuğu yalnızca bekleyen ya da çalışan görev varken
     görünür.
-  - Kenar çubuğu: üstte logo + ad, her öğede simge, gruplar (Sistem, Arayüz) küçük ikincil renkli başlık + aç/kapa oku. Genel bakış kartlarında vurgu renkli simge kutusu, tıklanabilir kartlarda üzerine gelince vurgu kenarlık; durum kartları ilgili sayfayı açar.
+  - **Kenar çubuğu (13 Ekim 2026, kullanıcı):** macOS Sistem Ayarları gibi kategoriler, aç/kapa yok:
+    başlıksız üst grup (Genel bakış, Yapay zekâ sorusu) · Sistem (Güncelleme merkezi, Programlar, Görev
+    yöneticisi, Disk temizliği, Güç) · Bağlantılar ve aygıtlar (Wi-Fi/Bluetooth, Donanım ve yazıcılar,
+    Ekran) · Kişiselleştirme (Tema, Görev çubuğu, Yazı tipleri) · Düzenleme (Program klasörleri, Çalışma
+    grupları, Pencere grupları) · Yedekleme ve taşıma · Yardım (Sorun giderme, Windows'ta nasıldı?, Tüm
+    ayarlar) · eklenti sayfaları "Eklentiler" altında. Basit tek renkli simge yok: macOS düzeninde her
+    öğenin kendi renkli, üstten alta degradeli kutusu + beyaz kalın simge (seçiliyken de renk korunur);
+    Windows düzeninde düz simge. Kategori başlığı 14 px yarı kalın ikincil renk; tüm öğeleri gizliyse
+    başlık da gizlenir.
+  - Kenar çubuğu (eski): üstte logo + ad, her öğede simge. Genel bakış kartlarında vurgu renkli simge kutusu, tıklanabilir kartlarda üzerine gelince vurgu kenarlık; durum kartları ilgili sayfayı açar.
 
 ## Menü yapısı
 - **AI Soru** (geniş sohbet ekranı; ayrıca her sayfada yardımcı panel)

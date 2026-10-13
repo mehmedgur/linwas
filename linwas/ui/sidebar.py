@@ -1,7 +1,7 @@
 """Sol gezinme menüsü.
 
-Genişleyebilir alt menüler, arama kutusu, sistem durumu kartı ve
-altta Ayarlar düğmesi içerir. Daraltılabilir (220 px ↔ 48 px).
+macOS Sistem Ayarları gibi: kategori başlıkları altında renkli simge kutulu
+öğeler, arama kutusu ve altta Yardımcı/Ayarlar düğmeleri.
 """
 
 from __future__ import annotations
@@ -44,6 +44,7 @@ class MenuItem:
     id: str
     label: str
     icon: str = ""
+    color: str = ""  # simge kutusunun rengi (macOS düzeni)
     children: list[MenuItem] = field(default_factory=list)
 
     @property
@@ -51,68 +52,99 @@ class MenuItem:
         return bool(self.children)
 
 
+# Kategoriler (macOS Sistem Ayarları gibi); boş başlıklı ilk grup başlıksız en üstte durur.
+# Renkler Apple'ın sistem renklerinden; kutu üstten alta hafif degradeli çizilir.
 MENU: list[MenuItem] = [
-    MenuItem("ai_chat", "AI Question"),
+    MenuItem(
+        "top",
+        "",
+        children=[
+            MenuItem("overview", "Overview", color="#0a84ff"),
+            MenuItem("ai_chat", "AI Question", color="#bf5af2"),
+        ],
+    ),
     MenuItem(
         "system",
         "System",
         children=[
-            MenuItem("overview", "Overview"),
-            MenuItem("updates", "Update center"),
-            MenuItem("network", "Wi-Fi & Bluetooth"),
-            MenuItem("backups", "Backups & Rollback"),
-            MenuItem("hardware", "Hardware & Printers"),
-            MenuItem("taskmgr", "Task Manager"),
-            MenuItem("cleanup", "Disk Cleanup"),
-            MenuItem("personal_backup", "Personal Backup"),
-            MenuItem("power", "Power & Battery"),
-            MenuItem("migrate", "Transfer"),
-            MenuItem("all_settings", "All Settings"),
+            MenuItem("updates", "Update center", color="#ff453a"),
+            MenuItem("software", "Software", color="#5e5ce6"),
+            MenuItem("taskmgr", "Task Manager", color="#30b158"),
+            MenuItem("cleanup", "Disk Cleanup", color="#ff9f0a"),
+            MenuItem("power", "Power & Battery", color="#34c759"),
         ],
     ),
     MenuItem(
-        "interface",
-        "Interface",
+        "devices",
+        "Connections & Devices",
         children=[
-            MenuItem("theme", "Theme & Wallpaper"),
-            MenuItem("fonts", "Fonts"),
-            MenuItem("display", "Display & Scaling"),
-            MenuItem("app_folders", "App Folders"),
-            MenuItem("workgroups", "Work Groups"),
-            MenuItem("window_groups", "Window Groups"),
-            MenuItem("taskbar", "Taskbar"),
+            MenuItem("network", "Wi-Fi & Bluetooth", color="#007aff"),
+            MenuItem("hardware", "Hardware & Printers", color="#8e8e93"),
+            MenuItem("display", "Display & Scaling", color="#32ade6"),
         ],
     ),
-    MenuItem("software", "Software"),
-    MenuItem("troubleshoot", "Troubleshooting"),
-    MenuItem("guide", "How was it on Windows?"),
+    MenuItem(
+        "personalize",
+        "Personalization",
+        children=[
+            MenuItem("theme", "Theme & Wallpaper", color="#ff375f"),
+            MenuItem("taskbar", "Taskbar", color="#3a3a3c"),
+            MenuItem("fonts", "Fonts", color="#a2845e"),
+        ],
+    ),
+    MenuItem(
+        "organize",
+        "Organize",
+        children=[
+            MenuItem("app_folders", "App Folders", color="#0a84ff"),
+            MenuItem("workgroups", "Work Groups", color="#ff9f0a"),
+            MenuItem("window_groups", "Window Groups", color="#64d2ff"),
+        ],
+    ),
+    MenuItem(
+        "backup",
+        "Backup & Transfer",
+        children=[
+            MenuItem("backups", "Backups & Rollback", color="#30b0c7"),
+            MenuItem("personal_backup", "Personal Backup", color="#007aff"),
+            MenuItem("migrate", "Transfer", color="#34c759"),
+        ],
+    ),
+    MenuItem(
+        "help",
+        "Help",
+        children=[
+            MenuItem("troubleshoot", "Troubleshooting", color="#ff9500"),
+            MenuItem("guide", "How was it on Windows?", color="#0a84ff"),
+            MenuItem("all_settings", "All Settings", color="#8e8e93"),
+        ],
+    ),
 ]
 
 BOTTOM_ITEMS: list[MenuItem] = [
-    MenuItem("assistant", "Assistant", icon="ai_chat"),  # sağ paneli açar/kapatır (sayfa değil)
-    MenuItem("settings", "Settings"),
+    # sağ paneli açar/kapatır (sayfa değil)
+    MenuItem("assistant", "Assistant", icon="ai_chat", color="#bf5af2"),
+    MenuItem("settings", "Settings", color="#8e8e93"),
 ]
+
+_PLUGIN_COLOR = "#636366"  # eklenti sayfaları
 
 # Geçerli düzenin ölçüleri; Sidebar.set_style() değiştirir
 _metrics = METRICS[UiStyle.MACOS]
 
 
 class _NavButton(QPushButton):
-    def __init__(self, item: MenuItem, indent: int = 0, parent: QWidget | None = None) -> None:
+    def __init__(self, item: MenuItem, parent: QWidget | None = None) -> None:
         label = tr(item.label)
         if item.id == "power" and not _is_laptop():
             label = tr("Power")  # masaüstü bilgisayar: pil bölümleri yok
         super().__init__(label, parent)
         self._item = item
         self._active = False
-        self._expanded = False
-        # Grup başlığı ayrı görünür (küçük, ikincil renk, aç/kapa oku)
-        self.setObjectName("SidebarGroup" if item.is_group else "SidebarItem")
+        self.setObjectName("SidebarItem")
         self.setProperty("active", False)
-        self.setProperty("indent", str(indent))
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        self.setCheckable(False)
         self._update_icon()
 
     @property
@@ -120,20 +152,15 @@ class _NavButton(QPushButton):
         return self._item.id
 
     def _update_icon(self) -> None:
-        if self._item.is_group:
-            name = "chevron_down" if self._expanded else "chevron_right"
-            icons.bind(self, name, "secondary", 14)
-        elif _metrics.sidebar_tiles:
-            # Sakin kenar çubuğu: simgeler nötr, yalnızca seçili öğe vurgulu
-            role = "tile_active" if self._active else "tile"
-            icons.bind(self, self._item.icon or self._item.id, role, _metrics.sidebar_icon)
+        name = self._item.icon or self._item.id
+        if _metrics.sidebar_tiles:
+            # macOS: her öğenin kendi renkli kutusu; seçiliyken de renk korunur
+            icons.bind(
+                self, name, f"tile:{self._item.color or _PLUGIN_COLOR}", _metrics.sidebar_icon
+            )
         else:
             role = "accent" if self._active else "normal"
-            icons.bind(self, self._item.icon or self._item.id, role, _metrics.sidebar_icon)
-
-    def set_expanded(self, expanded: bool) -> None:
-        self._expanded = expanded
-        self._update_icon()
+            icons.bind(self, name, role, _metrics.sidebar_icon)
 
     def set_active(self, active: bool) -> None:
         if active == self._active:
@@ -143,6 +170,14 @@ class _NavButton(QPushButton):
         self._update_icon()
         self.style().unpolish(self)
         self.style().polish(self)
+
+
+class _SectionHeader(QLabel):
+    """Kategori başlığı (tıklanmaz)."""
+
+    def __init__(self, text: str, parent: QWidget | None = None) -> None:
+        super().__init__(text, parent)
+        self.setObjectName("SidebarSection")
 
 
 class Sidebar(QWidget):
@@ -207,45 +242,44 @@ class Sidebar(QWidget):
         sep.setFrameShape(QFrame.Shape.HLine)
         outer.addWidget(sep)
 
-        # Alt menü (Ayarlar)
+        # Alt menü (Yardımcı, Ayarlar)
         self._bottom_layout = QVBoxLayout()
         self._bottom_layout.setSpacing(2)
         outer.addLayout(self._bottom_layout)
 
         self._buttons: list[_NavButton] = []
-        self._expanded: set[str] = {"system"}  # Sistem varsayılan açık
+        # Kategori başlığı → altındaki düğmeler (arama/gizleme sonrası boş başlık saklanır)
+        self._sections: list[tuple[_SectionHeader | None, list[_NavButton]]] = []
+        self._plugin_section: tuple[_SectionHeader, list[_NavButton]] | None = None
         self._hidden: set[str] = set()  # bu sistemde gösterilmeyen öğeler
         self._active_id: str = "overview"
 
         self._build_menu()
 
-    def _build_menu(self) -> None:
-        layout = self._menu_layout
+    def _insert(self, widget: QWidget) -> None:
         # Stretch'in önüne ekle
-        stretch = layout.takeAt(layout.count() - 1)
+        self._menu_layout.insertWidget(self._menu_layout.count() - 1, widget)
 
-        for item in MENU:
-            btn = _NavButton(item)
-            btn.clicked.connect(self._on_click)
-            btn.set_expanded(item.id in self._expanded)
-            layout.addWidget(btn)
-            self._buttons.append(btn)
+    def _new_button(self, item: MenuItem) -> _NavButton:
+        btn = _NavButton(item)
+        btn.clicked.connect(self._on_click)
+        self._buttons.append(btn)
+        return btn
 
-            if item.is_group:
-                for child in item.children:
-                    child_btn = _NavButton(child, indent=1)
-                    child_btn.clicked.connect(self._on_click)
-                    child_btn.setVisible(item.id in self._expanded)
-                    layout.addWidget(child_btn)
-                    self._buttons.append(child_btn)
-
-        layout.addItem(stretch)
+    def _build_menu(self) -> None:
+        for group in MENU:
+            header = _SectionHeader(tr(group.label)) if group.label else None
+            if header is not None:
+                self._insert(header)
+            members = []
+            for child in group.children:
+                btn = self._new_button(child)
+                self._insert(btn)
+                members.append(btn)
+            self._sections.append((header, members))
 
         for item in BOTTOM_ITEMS:
-            btn = _NavButton(item)
-            btn.clicked.connect(self._on_click)
-            self._bottom_layout.addWidget(btn)
-            self._buttons.append(btn)
+            self._bottom_layout.addWidget(self._new_button(item))
 
         self._refresh_active()
 
@@ -254,82 +288,53 @@ class Sidebar(QWidget):
         if not isinstance(btn, _NavButton):
             return
         item_id = btn.item_id
-
-        # Grup tıklaması → aç/kapa
-        group = next((m for m in MENU if m.id == item_id and m.is_group), None)
-        if group:
-            if item_id in self._expanded:
-                self._expanded.discard(item_id)
-            else:
-                self._expanded.add(item_id)
-            self._update_visibility()
-            return
-
         if item_id == "assistant":
             self.assistant_toggled.emit()
             return
-
-        # Yaprak tıklaması → sayfa değiştir
         self._active_id = item_id
         self._refresh_active()
         self.page_requested.emit(item_id)
 
-    def _update_visibility(self) -> None:
+    def _update_visibility(self, text: str = "") -> None:
         for btn in self._buttons:
-            if btn.objectName() == "SidebarGroup":
-                btn.set_expanded(btn.item_id in self._expanded)
-            # Alt menü öğesi mi? Üst grubunu bul
-            parent_group = next(
-                (m for m in MENU if any(c.id == btn.item_id for c in m.children)),
-                None,
-            )
-            if parent_group:
-                btn.setVisible(parent_group.id in self._expanded)
-        self._apply_hidden()
-
-    def _apply_hidden(self) -> None:
-        for btn in self._buttons:
-            if btn.item_id in self._hidden:
-                btn.setVisible(False)
+            visible = btn.item_id not in self._hidden
+            if text and visible:
+                visible = text in btn.text().lower()
+            btn.setVisible(visible)
+        # Bütün öğeleri gizli kategorinin başlığı da gizlenir
+        for header, members in self._sections:
+            if header is not None:
+                header.setVisible(any(not b.isHidden() for b in members))
 
     def has_item(self, item_id: str) -> bool:
         return any(btn.item_id == item_id for btn in self._buttons)
 
     def add_item(self, item_id: str, label: str) -> None:
-        """Eklenti sayfası için menüye öğe ekler (menünün sonuna, ayırıcıdan önce)."""
-        btn = _NavButton(MenuItem(item_id, label))
-        btn.clicked.connect(self._on_click)
-        self._menu_layout.insertWidget(self._menu_layout.count() - 1, btn)
-        self._buttons.append(btn)
+        """Eklenti sayfası için menüye öğe ekler ("Eklentiler" kategorisine)."""
+        if self._plugin_section is None:
+            header = _SectionHeader(tr("Plugins"))
+            self._insert(header)
+            self._plugin_section = (header, [])
+            self._sections.append(self._plugin_section)
+        btn = self._new_button(MenuItem(item_id, label, icon="plugin"))
+        self._insert(btn)
+        self._plugin_section[1].append(btn)
+        self._update_visibility(self._search.text().strip().lower())
 
     def hide_item(self, item_id: str) -> None:
         """Öğeyi menüden gizler (ör. masaüstü bilgisayarda Güç ve pil)."""
         self._hidden.add(item_id)
-        self._apply_hidden()
+        self._update_visibility(self._search.text().strip().lower())
 
     def _refresh_active(self) -> None:
         for btn in self._buttons:
             btn.set_active(btn.item_id == self._active_id)
 
     def _filter(self, text: str) -> None:
-        text = text.strip().lower()
-        for btn in self._buttons:
-            if text:
-                btn.setVisible(text in btn.text().lower())
-            else:
-                # Filtre temizlendi → normal görünürlük
-                parent_group = next(
-                    (m for m in MENU if any(c.id == btn.item_id for c in m.children)),
-                    None,
-                )
-                if parent_group:
-                    btn.setVisible(parent_group.id in self._expanded)
-                else:
-                    btn.setVisible(True)
-        self._apply_hidden()
+        self._update_visibility(text.strip().lower())
 
     def set_style(self, style: UiStyle) -> None:
-        """Düzeni değiştirir (macOS: simge kutuları; Windows: düz simgeler)."""
+        """Düzeni değiştirir (macOS: renkli simge kutuları; Windows: düz simgeler)."""
         global _metrics
         _metrics = METRICS[style]
         self.setFixedWidth(_metrics.sidebar_width)
@@ -340,12 +345,6 @@ class Sidebar(QWidget):
         """Programatik olarak aktif sayfayı değiştirir."""
         self._active_id = page_id
         self._refresh_active()
-        # İlgili grubu otomatik aç
-        for m in MENU:
-            if any(c.id == page_id for c in m.children):
-                self._expanded.add(m.id)
-                self._update_visibility()
-                break
 
 
 def _translation_markers() -> None:
@@ -369,7 +368,12 @@ def _translation_markers() -> None:
     tr("Power")
     tr("Transfer")
     tr("All Settings")
-    tr("Interface")
+    tr("Connections & Devices")
+    tr("Personalization")
+    tr("Organize")
+    tr("Backup & Transfer")
+    tr("Help")
+    tr("Plugins")
     tr("Theme & Wallpaper")
     tr("Fonts")
     tr("Display & Scaling")

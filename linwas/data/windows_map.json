@@ -235,8 +235,8 @@
     "Resolution",
     "Ölçek"
    ],
-   "tr": "Linwas › Arayüz › Ekran ve Ölçekleme.",
-   "en": "Linwas › Interface › Display & Scaling.",
+   "tr": "Linwas › Bağlantılar ve Aygıtlar › Ekran ve Ölçekleme.",
+   "en": "Linwas › Connections & Devices › Display & Scaling.",
    "action": {
     "page": "display"
    }
@@ -253,8 +253,8 @@
     "Koyu mod",
     "Dark mode"
    ],
-   "tr": "Linwas › Arayüz › Tema ve Duvar Kâğıdı.",
-   "en": "Linwas › Interface › Theme & Wallpaper.",
+   "tr": "Linwas › Kişiselleştirme › Tema ve Duvar Kâğıdı.",
+   "en": "Linwas › Personalization › Theme & Wallpaper.",
    "action": {
     "page": "theme"
    }
@@ -267,8 +267,8 @@
     "Başlat menüsü",
     "Start menu"
    ],
-   "tr": "Linwas › Arayüz › Windows Görünümü.",
-   "en": "Linwas › Interface › Windows Appearance.",
+   "tr": "Linwas › Kişiselleştirme › Görev Çubuğu.",
+   "en": "Linwas › Personalization › Taskbar.",
    "action": {
     "page": "appearance"
    }
@@ -282,8 +282,8 @@
     "Arial",
     "Times New Roman"
    ],
-   "tr": "Linwas › Arayüz › Yazı Tipleri.",
-   "en": "Linwas › Interface › Fonts.",
+   "tr": "Linwas › Kişiselleştirme › Yazı Tipleri.",
+   "en": "Linwas › Personalization › Fonts.",
    "action": {
     "page": "fonts"
    }

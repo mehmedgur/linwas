@@ -1,4 +1,6 @@
-"""Arayüz › Görev çubuğu: hazır düzen, pencere düğmeleri, görünüm, yerleşim ve medya widget'ı.
+"""Kişiselleştirme › Görev çubuğu.
+
+Hazır düzen, pencere düğmeleri, görünüm, yerleşim ve medya widget'ı.
 
 Eski "Windows görünümü" sayfası buraya katıldı (Windows tarzı görev çubuğu = "Windows gibi" düzeni).
 Görünüm ve medya Linwas görev çubuğu eklentisi ister (GNOME, Dash to Panel üstüne); hazır düzen,

@@ -181,10 +181,6 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Tüm Ayarlar</translation>
     </message>
     <message>
-        <source>Interface</source>
-        <translation>Arayüz</translation>
-    </message>
-    <message>
         <source>Theme &amp; Wallpaper</source>
         <translation>Tema ve Duvar Kağıdı</translation>
     </message>
@@ -243,6 +239,30 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     <message>
         <source>Taskbar</source>
         <translation>Görev çubuğu</translation>
+    </message>
+    <message>
+        <source>Connections &amp; Devices</source>
+        <translation>Bağlantılar ve Aygıtlar</translation>
+    </message>
+    <message>
+        <source>Personalization</source>
+        <translation>Kişiselleştirme</translation>
+    </message>
+    <message>
+        <source>Organize</source>
+        <translation>Düzenleme</translation>
+    </message>
+    <message>
+        <source>Backup &amp; Transfer</source>
+        <translation>Yedekleme ve Taşıma</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>Yardım</translation>
+    </message>
+    <message>
+        <source>Plugins</source>
+        <translation>Eklentiler</translation>
     </message>
 </context>
 <context>
@@ -4383,8 +4403,8 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Teknik ayarlar, tanılama ve günlükler</translation>
     </message>
     <message>
-        <source>The desktop's own theme and wallpaper are under Interface › Theme &amp; Wallpaper.</source>
-        <translation>Masaüstünün kendi teması ve duvar kâğıdı Arayüz › Tema ve duvar kâğıdı altında.</translation>
+        <source>The desktop's own theme and wallpaper are under Personalization › Theme &amp; Wallpaper.</source>
+        <translation>Masaüstünün kendi teması ve duvar kâğıdı Kişiselleştirme › Tema ve duvar kâğıdı altında.</translation>
     </message>
     <message>
         <source>The language changes the next time Linwas starts.</source>
