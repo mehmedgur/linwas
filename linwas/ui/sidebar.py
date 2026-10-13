@@ -74,7 +74,6 @@ MENU: list[MenuItem] = [
         "interface",
         "Interface",
         children=[
-            MenuItem("appearance", "Windows Appearance"),
             MenuItem("theme", "Theme & Wallpaper"),
             MenuItem("fonts", "Fonts"),
             MenuItem("display", "Display & Scaling"),
@@ -371,7 +370,6 @@ def _translation_markers() -> None:
     tr("Transfer")
     tr("All Settings")
     tr("Interface")
-    tr("Windows Appearance")
     tr("Theme & Wallpaper")
     tr("Fonts")
     tr("Display & Scaling")

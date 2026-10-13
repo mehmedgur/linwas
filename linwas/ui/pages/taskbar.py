@@ -1,7 +1,9 @@
-"""Arayüz › Görev çubuğu: Linwas görev çubuğu eklentisi (GNOME, Dash to Panel üstüne).
+"""Arayüz › Görev çubuğu: hazır düzen, pencere düğmeleri, görünüm, yerleşim ve medya widget'ı.
 
-Hazır düzen, görünüm (saydam / mat / bulanık, renk kaynağı), yerleşim ve medya widget'ı.
-Değişiklikler anında uygulanır (kararlar.md › Yeni özellikler › 9 › F).
+Eski "Windows görünümü" sayfası buraya katıldı (Windows tarzı görev çubuğu = "Windows gibi" düzeni).
+Görünüm ve medya Linwas görev çubuğu eklentisi ister (GNOME, Dash to Panel üstüne); hazır düzen,
+pencere düğmeleri ve yerleşim eklentisiz de çalışır. Değişiklikler anında uygulanır
+(kararlar.md › Yeni özellikler › 9 › F).
 """
 
 from __future__ import annotations
@@ -22,7 +24,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from linwas.backend import taskbar, window_groups
+from linwas.backend import appearance, taskbar, window_groups, workgroups
 from linwas.core.tasks import Task, TaskStep
 from linwas.ui.pages.base import BasePage
 from linwas.ui.widgets.card import Card
@@ -61,6 +63,7 @@ class _Status(QThread):
             taskbar.install(version)  # Linwas güncellenince eklenti dosyaları yenilenir
         self.done.emit(
             {
+                "desktop": workgroups.desktop_kind(),
                 "state": taskbar.state(version),
                 "dtp": taskbar.dtp_installed(),
                 "dock": bool(taskbar.dock_uuid()),
@@ -173,14 +176,37 @@ class TaskbarPage(BasePage):
     def _on_status(self, s: dict) -> None:
         self._status = s
         self._clear(self._body)
-        self._build_setup(s)
-        if s["state"] == "unsupported":
+        if s["desktop"] in ("cinnamon", "xfce"):
+            card = Card()
+            t = QLabel(tr("Your desktop already looks like Windows"), card)
+            t.setStyleSheet("font-weight: 600;")
+            card.layout.addWidget(t)
+            d = QLabel(
+                tr(
+                    "It has a taskbar at the bottom, a start menu and minimize/maximize buttons. "
+                    "You can fine-tune it in the system settings."
+                ),
+                card,
+            )
+            d.setObjectName("Secondary")
+            d.setWordWrap(True)
+            card.layout.addWidget(d)
+            self._body.addWidget(card)
             return
+        if s["state"] == "unsupported":
+            self._build_setup(s)
+            return
+        # Eklentisiz çalışanlar
         self._build_presets(s)
-        self._build_look()
+        self._build_window_buttons()
         if s["dtp"] and s["preset"] == "windows":
             self._build_layout(s["layout"])
-        self._build_media()
+        # Linwas eklentisi gerekenler
+        self._section(tr("Look and media (Linwas taskbar extension)"))
+        self._build_setup(s)
+        if s["state"] in ("active", "restart"):
+            self._build_look()
+            self._build_media()
 
     def _section(self, text: str) -> None:
         lbl = QLabel(text)
@@ -207,7 +233,11 @@ class TaskbarPage(BasePage):
             ),
             "restart": (
                 False,
-                tr("Log out and back in once to start the extension."),
+                tr(
+                    "Installed. GNOME starts new extensions after a restart: log out and back in "
+                    "once. (On X11 you can also press Alt+F2, type r and press Enter; open windows "
+                    "stay open.)"
+                ),
                 "",
                 None,
             ),
@@ -238,6 +268,26 @@ class TaskbarPage(BasePage):
             remove = QPushButton(tr("Remove"), card)
             remove.clicked.connect(self._remove)
             row.addWidget(remove)
+        card.layout.addLayout(row)
+        self._body.addWidget(card)
+
+    def _build_window_buttons(self) -> None:
+        self._section(tr("Window buttons"))
+        card = Card()
+        d = QLabel(tr("Show minimize and maximize buttons on every window, like Windows."), card)
+        d.setObjectName("Secondary")
+        d.setWordWrap(True)
+        card.layout.addWidget(d)
+        row = QHBoxLayout()
+        on = QPushButton(tr("Show minimize and maximize"), card)
+        on.clicked.connect(
+            lambda: appearance.set_value("gnome", "buttons", appearance.WINDOWS_BUTTON_LAYOUT)
+        )
+        row.addWidget(on)
+        off = QPushButton(tr("Only close button (GNOME default)"), card)
+        off.clicked.connect(lambda: appearance.set_value("gnome", "buttons", "appmenu:close"))
+        row.addWidget(off)
+        row.addStretch(1)
         card.layout.addLayout(row)
         self._body.addWidget(card)
 

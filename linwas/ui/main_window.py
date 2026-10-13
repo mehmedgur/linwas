@@ -33,7 +33,7 @@ from linwas.ui.pages.all_settings import AllSettingsPage
 from linwas.ui.pages.backups import BackupsPage
 from linwas.ui.pages.base import BasePage
 from linwas.ui.pages.guide import GuidePage
-from linwas.ui.pages.interface import DisplayPage, FontsPage, ThemePage, WindowsAppearancePage
+from linwas.ui.pages.interface import DisplayPage, FontsPage, ThemePage
 from linwas.ui.pages.network import NetworkPage
 from linwas.ui.pages.overview import OverviewPage
 from linwas.ui.pages.settings import SettingsPage
@@ -98,7 +98,6 @@ _STUB_PAGES = {
     "power": "Power & Battery",
     "migrate": "Transfer",
     "all_settings": "All Settings",
-    "appearance": "Windows Appearance",
     "theme": "Theme & Wallpaper",
     "fonts": "Fonts",
     "display": "Display & Scaling",
@@ -500,7 +499,6 @@ class MainWindow(QMainWindow):
         self._add_page("backups", BackupsPage(self._stack))
         self._add_page("network", NetworkPage(self._stack))
         self._add_page("all_settings", AllSettingsPage(self._stack))
-        self._add_page("appearance", WindowsAppearancePage(self._stack))
         self._add_page("theme", ThemePage(self._stack))
         self._add_page("fonts", FontsPage(self._stack))
         self._add_page("display", DisplayPage(self._stack))
@@ -548,6 +546,8 @@ class MainWindow(QMainWindow):
             self._pages[page_id] = stub
 
     def _show_page(self, page_id: str) -> None:
+        if page_id == "appearance":  # eski "Windows görünümü" sayfası görev çubuğuna katıldı
+            page_id = "taskbar"
         if page_id == "drivers":
             page_id = "updates"
             center = self._pages.get("updates")

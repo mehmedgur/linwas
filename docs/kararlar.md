@@ -436,6 +436,14 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
        klasörden bulunur, `dash-to-dock@…`) açar; kurulu değilse `package.install` görevi istenir;
        Dash to Dock anahtarları (`dock-position`, `extend-height`, `dock-fixed`) yoksa yok sayılır
        (kurulunca doğrulanacak). Henüz yok: sağ tıkta son dosyalar (D) — sonraki adım.
+     - **Düzeltme ve birleştirme (13 Ekim 2026, kullanıcı denemesi):** "Windows görünümü" sayfası
+       menüden kalktı, Görev çubuğu sayfasına katıldı (Windows tarzı görev çubuğu = "Windows gibi"
+       düzeni; pencere düğmeleri bölümü taşındı; `appearance` bağlantıları `taskbar`'ı açar). Sayfa
+       iki kısım: eklentisiz çalışanlar (hazır düzen, pencere düğmeleri, yerleşim) ve Linwas eklentisi
+       isteyenler (görünüm, medya). Dash to Panel yalnızca `panel-positions` / `panel-sizes`
+       (ekran başına JSON, ör. `{"0":"BOTTOM"}`) değişimini dinliyor (panelManager.js); konum/boyut
+       artık bu anahtarlara her ekran için yazılıyor (ekranlar `available-monitors`). Yeni GNOME
+       eklentisi kabuk yeniden başlayınca yüklenir: sayfada "oturumu kapatıp açın; X11'de Alt+F2 › r".
    - **G. Tema (vurgu) rengi seçimi (13 Ekim 2026, kullanıcı kararı):** yalnızca **Linwas** penceresi ve
      Linwas eklentileri (görev çubuğu, medya widget'ı) renk alır; masaüstünün sistem rengi değişmez.
      Ayarlar › Görünüm'de hazır renkler + özel renk; seçilen renk açık ve koyu temada okunur kontrastta

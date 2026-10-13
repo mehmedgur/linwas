@@ -163,31 +163,67 @@ class Layout:
     previews: bool = True
 
 
+def _monitors() -> list[str]:
+    """Dash to Panel'in bildiği ekran sıraları ("available-monitors"; yoksa ["0"])."""
+    raw = (dtp_get("available-monitors") or "").replace("@ai", "").strip()
+    nums = re.findall(r"\d+", raw)
+    return nums or ["0"]
+
+
+def _json_setting(key: str) -> dict:
+    raw = (dtp_get(key) or "").strip()
+    if raw.startswith("'") and raw.endswith("'"):
+        raw = raw[1:-1]
+    try:
+        value = json.loads(raw or "{}")
+    except ValueError:
+        return {}
+    return value if isinstance(value, dict) else {}
+
+
+def _set_json(key: str, value: dict) -> bool:
+    text = json.dumps(value, separators=(",", ":"))
+    return dtp_set(key, "'" + text.replace("'", "") + "'")
+
+
 def read_layout() -> Layout:
+    """Dash to Panel ekran başına ayarı (panel-positions / panel-sizes) önce okur."""
     lay = Layout()
-    pos = (dtp_get("panel-position") or "").strip("'")
+    first = _monitors()[0]
+    pos = _json_setting("panel-positions").get(first) or (dtp_get("panel-position") or "").strip(
+        "'"
+    )
     if pos in POSITIONS:
         lay.position = pos
-    size = dtp_get("panel-size") or ""
-    if size.isdigit():
-        lay.size = int(size)
+    size = _json_setting("panel-sizes").get(first)
+    if not isinstance(size, int):
+        raw = dtp_get("panel-size") or ""
+        size = int(raw) if raw.isdigit() else 48
+    lay.size = size
     lay.autohide = dtp_get("intellihide") == "true"
     lay.previews = dtp_get("show-window-previews") != "false"
     return lay
 
 
 def set_position(position: str) -> bool:
+    """Dash to Panel yalnızca "panel-positions" değişimini dinler (panelManager.js); her ekrana
+    aynı konum yazılır."""
     if position not in POSITIONS:
         return False
-    # Ekran başına ayar (panel-positions) boşsa genel değer kullanılır
-    dtp_set("panel-positions", "'{}'")
-    return dtp_set("panel-position", f"'{position}'")
+    value = _json_setting("panel-positions")
+    for m in _monitors():
+        value[m] = position
+    dtp_set("panel-position", f"'{position}'")
+    return _set_json("panel-positions", value)
 
 
 def set_size(size: int) -> bool:
     size = max(SIZE_RANGE[0], min(SIZE_RANGE[1], size))
-    dtp_set("panel-sizes", "'{}'")
-    return dtp_set("panel-size", str(size))
+    value = _json_setting("panel-sizes")
+    for m in _monitors():
+        value[m] = size
+    dtp_set("panel-size", str(size))
+    return _set_json("panel-sizes", value)
 
 
 def set_autohide(on: bool) -> bool:

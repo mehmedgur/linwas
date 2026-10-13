@@ -185,10 +185,6 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Arayüz</translation>
     </message>
     <message>
-        <source>Windows Appearance</source>
-        <translation>Windows Görünümü</translation>
-    </message>
-    <message>
         <source>Theme &amp; Wallpaper</source>
         <translation>Tema ve Duvar Kağıdı</translation>
     </message>
@@ -3908,10 +3904,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
 <context>
     <name>InterfacePages</name>
     <message>
-        <source>Adds a Windows-style taskbar at the bottom of the screen with your open windows, pinned apps and the clock (Dash to Panel).</source>
-        <translation>Ekranın altına açık pencereleri, sabitlenmiş uygulamaları ve saati gösteren Windows tarzı bir görev çubuğu ekler (Dash to Panel).</translation>
-    </message>
-    <message>
         <source>Carlito (same size as Calibri), Caladea (Cambria) and Liberation (Arial, Times New Roman, Courier New). Documents from Windows keep their layout.</source>
         <translation>Carlito (Calibri ile aynı ölçüde), Caladea (Cambria) ve Liberation (Arial, Times New Roman, Courier New). Windows'tan gelen belgelerin sayfa düzeni bozulmaz.</translation>
     </message>
@@ -3956,24 +3948,8 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Office uyumlu yazı tiplerini kur</translation>
     </message>
     <message>
-        <source>Install Windows-style taskbar</source>
-        <translation>Windows tarzı görev çubuğunu kur</translation>
-    </message>
-    <message>
         <source>Install fonts</source>
         <translation>Yazı tiplerini kur</translation>
-    </message>
-    <message>
-        <source>Install taskbar</source>
-        <translation>Görev çubuğunu kur</translation>
-    </message>
-    <message>
-        <source>Installed. Log out and back in once, then turn it on here.</source>
-        <translation>Kuruldu. Bir kez oturumu kapatıp yeniden açın, sonra buradan açın.</translation>
-    </message>
-    <message>
-        <source>It has a taskbar at the bottom, a start menu and minimize/maximize buttons. You can fine-tune it in the system settings.</source>
-        <translation>Altta görev çubuğu, başlat menüsü ve küçült/büyüt düğmeleri var. İnce ayarları sistem ayarlarından yapabilirsiniz.</translation>
     </message>
     <message>
         <source>Light</source>
@@ -3988,10 +3964,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Linwas bunu GNOME ve Cinnamon'da değiştirebilir. Bu masaüstünde “Sistem ayarlarında aç” düğmesini kullanın.</translation>
     </message>
     <message>
-        <source>Make the desktop look and work more like Windows.</source>
-        <translation>Masaüstünü görünüş ve kullanım olarak Windows'a yaklaştırın.</translation>
-    </message>
-    <message>
         <source>Makes text bigger or smaller everywhere, without blurring.</source>
         <translation>Yazıları her yerde bulanıklaştırmadan büyütür veya küçültür.</translation>
     </message>
@@ -4002,10 +3974,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>Not installed: {names}</source>
         <translation>Kurulu değil: {names}</translation>
-    </message>
-    <message>
-        <source>Only close button (GNOME default)</source>
-        <translation>Yalnızca kapat düğmesi (GNOME varsayılanı)</translation>
     </message>
     <message>
         <source>Open in system settings</source>
@@ -4020,52 +3988,16 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Ekran çözünürlüğü ve birden fazla monitör sistemin ekran ayarlarından yapılır.</translation>
     </message>
     <message>
-        <source>Show minimize and maximize</source>
-        <translation>Küçült ve büyüt düğmelerini göster</translation>
-    </message>
-    <message>
-        <source>Show minimize and maximize buttons on every window, like Windows.</source>
-        <translation>Windows'taki gibi her pencerede küçült ve büyüt düğmelerini göster.</translation>
-    </message>
-    <message>
-        <source>Taskbar</source>
-        <translation>Görev çubuğu</translation>
-    </message>
-    <message>
         <source>Text size</source>
         <translation>Yazı boyutu</translation>
-    </message>
-    <message>
-        <source>The taskbar is on.</source>
-        <translation>Görev çubuğu açık.</translation>
     </message>
     <message>
         <source>Theme &amp; Wallpaper</source>
         <translation>Tema ve Duvar Kâğıdı</translation>
     </message>
     <message>
-        <source>Turn off taskbar</source>
-        <translation>Görev çubuğunu kapat</translation>
-    </message>
-    <message>
-        <source>Turn on taskbar</source>
-        <translation>Görev çubuğunu aç</translation>
-    </message>
-    <message>
         <source>Wallpaper</source>
         <translation>Duvar kâğıdı</translation>
-    </message>
-    <message>
-        <source>Window buttons</source>
-        <translation>Pencere düğmeleri</translation>
-    </message>
-    <message>
-        <source>Windows Appearance</source>
-        <translation>Windows Görünümü</translation>
-    </message>
-    <message>
-        <source>Your desktop already looks like Windows</source>
-        <translation>Masaüstünüz zaten Windows'a benziyor</translation>
     </message>
     <message>
         <source>✓ Installed</source>
@@ -7676,10 +7608,6 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
         <translation>Takvim menüsünde Linwas medya kartı</translation>
     </message>
     <message>
-        <source>Log out and back in once to start the extension.</source>
-        <translation>Eklentinin başlaması için oturumu bir kez kapatıp açın.</translation>
-    </message>
-    <message>
         <source>Matte</source>
         <translation>Mat</translation>
     </message>
@@ -7842,6 +7770,38 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>Works with Spotify, YouTube Music and YouTube in the browser, Rhythmbox, VLC and every player that supports MPRIS. When nothing is playing, the last played song is shown.</source>
         <translation>Spotify, tarayıcıda YouTube Music ve YouTube, Rhythmbox, VLC ve MPRIS destekleyen her oynatıcıyla çalışır. Bir şey çalmıyorsa son çalınan şarkı gösterilir.</translation>
+    </message>
+    <message>
+        <source>Installed. GNOME starts new extensions after a restart: log out and back in once. (On X11 you can also press Alt+F2, type r and press Enter; open windows stay open.)</source>
+        <translation>Kuruldu. GNOME yeni eklentileri yeniden başlayınca çalıştırır: oturumu bir kez kapatıp açın. (X11'de Alt+F2'ye basıp r yazıp Enter'a da basabilirsiniz; açık pencereler kapanmaz.)</translation>
+    </message>
+    <message>
+        <source>It has a taskbar at the bottom, a start menu and minimize/maximize buttons. You can fine-tune it in the system settings.</source>
+        <translation>Altta görev çubuğu, başlat menüsü ve küçült/büyüt düğmeleri zaten var. İnce ayarları sistem ayarlarından yapabilirsiniz.</translation>
+    </message>
+    <message>
+        <source>Look and media (Linwas taskbar extension)</source>
+        <translation>Görünüm ve medya (Linwas görev çubuğu eklentisi)</translation>
+    </message>
+    <message>
+        <source>Only close button (GNOME default)</source>
+        <translation>Yalnızca kapat düğmesi (GNOME varsayılanı)</translation>
+    </message>
+    <message>
+        <source>Show minimize and maximize</source>
+        <translation>Küçült ve büyüt düğmelerini göster</translation>
+    </message>
+    <message>
+        <source>Show minimize and maximize buttons on every window, like Windows.</source>
+        <translation>Windows'taki gibi her pencerede küçült ve büyüt düğmeleri gösterilsin.</translation>
+    </message>
+    <message>
+        <source>Window buttons</source>
+        <translation>Pencere düğmeleri</translation>
+    </message>
+    <message>
+        <source>Your desktop already looks like Windows</source>
+        <translation>Masaüstünüz zaten Windows'a benziyor</translation>
     </message>
 </context>
 </TS>
