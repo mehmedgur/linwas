@@ -89,6 +89,7 @@ MENU: list[MenuItem] = [
 ]
 
 BOTTOM_ITEMS: list[MenuItem] = [
+    MenuItem("assistant", "Assistant", icon="ai_chat"),  # sağ paneli açar/kapatır (sayfa değil)
     MenuItem("settings", "Settings"),
 ]
 
@@ -148,6 +149,7 @@ class Sidebar(QWidget):
     """Sol gezinme menüsü."""
 
     guide_search = Signal(str)
+    assistant_toggled = Signal()  # "Yardımcı" düğmesi: yapay zekâ panelini aç/kapat
     page_requested = Signal(str)  # menü öğesi ID'si
 
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -263,6 +265,10 @@ class Sidebar(QWidget):
             self._update_visibility()
             return
 
+        if item_id == "assistant":
+            self.assistant_toggled.emit()
+            return
+
         # Yaprak tıklaması → sayfa değiştir
         self._active_id = item_id
         self._refresh_active()
@@ -375,3 +381,4 @@ def _translation_markers() -> None:
     tr("Troubleshooting")
     tr("How was it on Windows?")
     tr("Settings")
+    tr("Assistant")

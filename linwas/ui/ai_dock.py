@@ -1,9 +1,12 @@
-"""Sayfaların sağındaki AI yardımcısı: ayırıcıyla genişletilebilir, şeride daraltılabilir."""
+"""Sayfaların sağındaki AI yardımcısı: ayırıcıyla genişletilebilir, kapatılabilir.
+
+Kapalıyken yer kaplamaz (dar şerit yok); kenar çubuğundaki "Yardımcı" düğmesi ya da F1 açar.
+"""
 
 from __future__ import annotations
 
-from PySide6.QtCore import QCoreApplication, Qt
-from PySide6.QtWidgets import QHBoxLayout, QPushButton, QSizePolicy, QSplitter, QWidget
+from PySide6.QtCore import QCoreApplication, Qt, Signal
+from PySide6.QtWidgets import QHBoxLayout, QSplitter, QWidget
 
 from linwas.ai import prefs as ai_prefs
 from linwas.ui.ai_panel import AIPanel
@@ -13,16 +16,14 @@ def tr(text: str) -> str:
     return QCoreApplication.translate("AIDock", text)
 
 
-_STRIP_WIDTH = 32
 _MIN_WIDTH = 260
 _MAX_WIDTH = 900
 
 
 class AIDock(QWidget):
-    """Açık hâlde AIPanel, daraltılmış hâlde dar bir "AI" şeridi gösterir.
+    """AIPanel kabı. Genişlik ve açık/kapalı durumu ~/.config/linwas/ai.json içinde hatırlanır."""
 
-    Genişlik ve daraltma durumu ~/.config/linwas/ai.json içinde hatırlanır.
-    """
+    collapsed_changed = Signal(bool)
 
     def __init__(self, splitter: QSplitter, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -33,24 +34,14 @@ class AIDock(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
-        self._strip = QPushButton("«\nA\nI", self)
-        self._strip.setFixedWidth(_STRIP_WIDTH)
-        # Dar düğmede temanın iç boşluğu metne yer bırakmaz
-        self._strip.setStyleSheet("padding: 0px; font-weight: bold;")
-        self._strip.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
-        self._strip.setToolTip(tr("Open the assistant"))
-        self._strip.setAccessibleName(tr("Open the assistant"))
-        self._strip.clicked.connect(self.expand)
-        layout.addWidget(self._strip)
-
         self.panel = AIPanel(self)
         self.panel.collapse_requested.connect(self.collapse)
         layout.addWidget(self.panel, 1)
 
         self._prefs = ai_prefs.load()
-        self._collapsed = False
+        self._collapsed = bool(self._prefs.panel_collapsed)
+        self.panel.setVisible(not self._collapsed)
         splitter.splitterMoved.connect(self._on_splitter_moved)
-        self._apply(self._prefs.panel_collapsed)
 
     @property
     def collapsed(self) -> bool:
@@ -62,21 +53,24 @@ class AIDock(QWidget):
     def expand(self) -> None:
         self._apply(False)
 
+    def toggle(self) -> None:
+        self._apply(not self._collapsed)
+
     def _apply(self, collapsed: bool) -> None:
+        changed = collapsed != self._collapsed
         self._collapsed = collapsed
         self.panel.setVisible(not collapsed)
-        self._strip.setVisible(collapsed)
-        if collapsed:
-            self.setFixedWidth(_STRIP_WIDTH)
-            # Boşalan alan sayfaya verilir
-            self._set_width(_STRIP_WIDTH)
-        else:
+        if not collapsed:
             self.setMinimumWidth(_MIN_WIDTH)
             self.setMaximumWidth(_MAX_WIDTH)
-            self._resize_to(self._prefs.panel_width)
+            if self.isVisible():
+                self._resize_to(self._prefs.panel_width)
         if self._prefs.panel_collapsed != collapsed:
             self._prefs.panel_collapsed = collapsed
             ai_prefs.update(panel_collapsed=collapsed)
+        if changed:
+            # Ana pencere kabı gizler/gösterir; kapalıyken alanın tamamı sayfaya kalır
+            self.collapsed_changed.emit(collapsed)
 
     def _resize_to(self, width: int) -> None:
         total = sum(self._splitter.sizes())
@@ -94,10 +88,8 @@ class AIDock(QWidget):
 
     def showEvent(self, event: object) -> None:  # type: ignore[override]
         super().showEvent(event)  # type: ignore[arg-type]
-        # Pencere ilk gösterildiğinde kayıtlı genişlik/daraltma uygulanır
-        if self._collapsed:
-            self._set_width(_STRIP_WIDTH)
-        else:
+        # Pencere ilk gösterildiğinde kayıtlı genişlik uygulanır
+        if not self._collapsed:
             self._resize_to(self._prefs.panel_width)
 
     def _on_splitter_moved(self, _pos: int, _index: int) -> None:

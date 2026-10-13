@@ -240,6 +240,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <source>Window Groups</source>
         <translation>Pencere grupları</translation>
     </message>
+    <message>
+        <source>Assistant</source>
+        <translation>Yardımcı</translation>
+    </message>
 </context>
 <context>
     <name>StatusBar</name>
@@ -299,20 +303,12 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Dosyalarımı Yedekle</translation>
     </message>
     <message>
-        <source>Back up personal files to an external drive</source>
-        <translation>Kişisel dosyaları harici diske yedekle</translation>
-    </message>
-    <message>
         <source>Transfer</source>
         <translation>Taşıma</translation>
     </message>
     <message>
         <source>Bring files and settings from Windows or another Linux</source>
         <translation>Windows'tan ya da başka bir Linux'tan dosya ve ayarları getirin</translation>
-    </message>
-    <message>
-        <source>System status</source>
-        <translation>Sistem durumu</translation>
     </message>
     <message>
         <source>Updates</source>
@@ -377,6 +373,146 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     <message>
         <source>Open</source>
         <translation>Aç</translation>
+    </message>
+    <message>
+        <source>%1 RAM</source>
+        <translation>%1 RAM</translation>
+    </message>
+    <message>
+        <source>%1 device(s) have no driver</source>
+        <translation>%1 aygıtın sürücüsü yok</translation>
+    </message>
+    <message>
+        <source>%1 security</source>
+        <translation>%1 güvenlik</translation>
+    </message>
+    <message>
+        <source>%1 update(s) ready</source>
+        <translation>%1 güncelleme hazır</translation>
+    </message>
+    <message>
+        <source>Action needed</source>
+        <translation>İşlem gerekiyor</translation>
+    </message>
+    <message>
+        <source>All devices have a driver</source>
+        <translation>Bütün aygıtların sürücüsü var</translation>
+    </message>
+    <message>
+        <source>An update is available for %1.</source>
+        <translation>%1 için güncelleme var.</translation>
+    </message>
+    <message>
+        <source>Battery health is %1%. Charge limiting can slow further wear.</source>
+        <translation>Pil sağlığı %%1. Şarj sınırı yıpranmayı yavaşlatabilir.</translation>
+    </message>
+    <message>
+        <source>Bluetooth off</source>
+        <translation>Bluetooth kapalı</translation>
+    </message>
+    <message>
+        <source>Bluetooth on</source>
+        <translation>Bluetooth açık</translation>
+    </message>
+    <message>
+        <source>Checking what needs your attention…</source>
+        <translation>İlgilenmeniz gereken bir şey var mı bakılıyor…</translation>
+    </message>
+    <message>
+        <source>Connected to %1</source>
+        <translation>%1 ağına bağlı</translation>
+    </message>
+    <message>
+        <source>Copy personal files to an external drive (not a system restore point)</source>
+        <translation>Kişisel dosyaları harici diske kopyalayın (sistem geri yükleme noktası değildir)</translation>
+    </message>
+    <message>
+        <source>Could not be read</source>
+        <translation>Okunamadı</translation>
+    </message>
+    <message>
+        <source>Devices could not be read</source>
+        <translation>Aygıtlar okunamadı</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>Hata</translation>
+    </message>
+    <message>
+        <source>Firmware update</source>
+        <translation>Firmware güncellemesi</translation>
+    </message>
+    <message>
+        <source>Hardware details</source>
+        <translation>Donanım ayrıntıları</translation>
+    </message>
+    <message>
+        <source>Install updates</source>
+        <translation>Güncellemeleri kurun</translation>
+    </message>
+    <message>
+        <source>Network status could not be read</source>
+        <translation>Ağ durumu okunamadı</translation>
+    </message>
+    <message>
+        <source>No Wi-Fi adapter</source>
+        <translation>Wi-Fi kartı yok</translation>
+    </message>
+    <message>
+        <source>Not connected</source>
+        <translation>Bağlı değil</translation>
+    </message>
+    <message>
+        <source>Not supported</source>
+        <translation>Desteklenmiyor</translation>
+    </message>
+    <message>
+        <source>Nothing needs your attention right now.</source>
+        <translation>Şu an ilgilenmeniz gereken bir şey yok.</translation>
+    </message>
+    <message>
+        <source>Protect the battery</source>
+        <translation>Pili koruyun</translation>
+    </message>
+    <message>
+        <source>Set up</source>
+        <translation>Kur</translation>
+    </message>
+    <message>
+        <source>Set up system restore</source>
+        <translation>Sistem geri yüklemeyi kurun</translation>
+    </message>
+    <message>
+        <source>Suggestions</source>
+        <translation>Öneriler</translation>
+    </message>
+    <message>
+        <source>The system is up to date</source>
+        <translation>Sistem güncel</translation>
+    </message>
+    <message>
+        <source>This computer</source>
+        <translation>Bu bilgisayar</translation>
+    </message>
+    <message>
+        <source>Timeshift is not installed; there is no way back if an update breaks the system.</source>
+        <translation>Timeshift kurulu değil; bir güncelleme sistemi bozarsa geri dönüş yolu yok.</translation>
+    </message>
+    <message>
+        <source>Try again</source>
+        <translation>Yeniden dene</translation>
+    </message>
+    <message>
+        <source>Up to date</source>
+        <translation>Güncel</translation>
+    </message>
+    <message>
+        <source>Updates could not be checked</source>
+        <translation>Güncellemeler denetlenemedi</translation>
+    </message>
+    <message>
+        <source>Wi-Fi is off</source>
+        <translation>Wi-Fi kapalı</translation>
     </message>
 </context>
 <context>
@@ -3593,10 +3729,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
 </context>
 <context>
     <name>AIDock</name>
-    <message>
-        <source>Open the assistant</source>
-        <translation>Yardımcıyı aç</translation>
-    </message>
 </context>
 <context>
     <name>AllSettingsPage</name>

@@ -103,6 +103,17 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
     başlığını masaüstü çizer (çift başlık çubuğu yok); Genel bakış'ta gerçek **sistem sağlığı** özeti
     (sistem diski, ayrıysa kişisel dosyalar diski, bellek, pil sağlığı; durum rozeti İyi / Göz atın /
     İlgilenin; `backend/health.py`).
+  - **Ana ekran düzeltmeleri (13 Ekim 2026, dış görüş üzerine):** Genel bakış: bilgisayar kartı (ad ›
+    model › dağıtım · masaüstü › işlemci · RAM · ekran kartları; "Donanım ayrıntıları"), aynı hizada üç
+    durum kartı (Güncellemeler, Sürücüler, Wi-Fi ve Bluetooth; durumlar: denetleniyor / güncel /
+    işlem gerekiyor / desteklenmiyor / hata + "Yeniden dene" — önceden hiç doldurulmuyordu),
+    **Öneriler** ayrı ve yalnızca doğrulanmış olanlar (APT'de güncelleme var, Timeshift kurulu değil,
+    fwupd'nin bildirdiği firmware güncellemesi, pil sağlığı < %80; yoksa "Şu an ilgilenmeniz gereken
+    bir şey yok"), Hızlı işlemler (kişisel yedeğin sistem geri yükleme olmadığı yazılı), en altta
+    Sistem sağlığı. Kartlar klavyeyle açılır (Enter/Boşluk). Yapay zekâ paneli kapalıyken yer kaplamaz
+    (dar şerit kaldırıldı); kenar çubuğunun altındaki "Yardımcı" ya da F1 açar/kapatır (yapay zekâ
+    ayarlı değilse AI sayfası açılır). Alt durum çubuğu yalnızca bekleyen ya da çalışan görev varken
+    görünür.
   - Kenar çubuğu: üstte logo + ad, her öğede simge, gruplar (Sistem, Arayüz) küçük ikincil renkli başlık + aç/kapa oku. Genel bakış kartlarında vurgu renkli simge kutusu, tıklanabilir kartlarda üzerine gelince vurgu kenarlık; durum kartları ilgili sayfayı açar.
 
 ## Menü yapısı

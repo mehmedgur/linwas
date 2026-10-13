@@ -7,8 +7,8 @@ import logging
 import os
 from pathlib import Path
 
-from PySide6.QtCore import QCoreApplication
-from PySide6.QtGui import QGuiApplication, QIcon
+from PySide6.QtCore import QCoreApplication, Qt
+from PySide6.QtGui import QGuiApplication, QIcon, QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QMainWindow,
@@ -191,6 +191,7 @@ class MainWindow(QMainWindow):
 
         # AI yardımcı paneli (sağlayıcı yoksa gizli)
         self._ai_panel = self._ai_dock.panel
+        self._ai_dock.collapsed_changed.connect(lambda _c: self._check_ai_panel())
         self._ai_panel.task_add_requested.connect(self._on_ai_task_requested)
         self._ai_panel.settings_changed.connect(self._on_ai_settings_changed)
         self._ai_panel.settings_requested.connect(lambda: self.open_settings_section("ai"))
@@ -484,6 +485,10 @@ class MainWindow(QMainWindow):
         guide.search_software.connect(self._search_software)
         self._add_page("guide", guide)
         self._sidebar.guide_search.connect(self._open_guide)
+        self._sidebar.assistant_toggled.connect(self._toggle_assistant)
+        # F1: yardımcı panelini aç/kapat
+        assistant_key = QShortcut(QKeySequence(Qt.Key.Key_F1), self)
+        assistant_key.activated.connect(self._toggle_assistant)
         settings_page = SettingsPage(self._stack)
         settings_page.theme_changed.connect(self.apply_theme)
         settings_page.style_changed.connect(self.apply_style)
@@ -846,7 +851,19 @@ class MainWindow(QMainWindow):
         from linwas.ai.manager import available_providers
 
         on_ai_page = self._stack.currentWidget() is self._pages.get("ai_chat")
-        self._ai_dock.setVisible(bool(available_providers()) and not on_ai_page)
+        self._ai_dock.setVisible(
+            bool(available_providers()) and not on_ai_page and not self._ai_dock.collapsed
+        )
+
+    def _toggle_assistant(self) -> None:
+        """Yardımcı panelini açar/kapatır; yapay zekâ ayarlı değilse AI sayfası açılır."""
+        from linwas.ai.manager import available_providers
+
+        on_ai_page = self._stack.currentWidget() is self._pages.get("ai_chat")
+        if not available_providers() or on_ai_page:
+            self._show_page("ai_chat")
+            return
+        self._ai_dock.toggle()
 
     def _on_ai_settings_changed(self) -> None:
         """Anahtarlar bir panelde değişince diğerini de günceller."""

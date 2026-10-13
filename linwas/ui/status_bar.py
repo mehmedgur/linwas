@@ -26,6 +26,10 @@ class StatusBar(QWidget):
         super().__init__(parent)
         self.setObjectName("StatusBar")
         self.setFixedHeight(52)
+        # Yalnızca bekleyen ya da çalışan görev varken yer kaplar
+        self._pending = 0
+        self._running = False
+        self.setVisible(False)
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(12, 0, 12, 0)
@@ -57,8 +61,13 @@ class StatusBar(QWidget):
         self._apply_btn.clicked.connect(self.apply_clicked)
         layout.addWidget(self._apply_btn)
 
+    def _update_visibility(self) -> None:
+        self.setVisible(self._pending > 0 or self._running)
+
     def update_queue(self, count: int) -> None:
         """Kuyruktaki görev sayısını günceller."""
+        self._pending = count
+        self._update_visibility()
         if count == 0:
             self._queue_label.setText(tr("Nothing pending"))
             self._apply_btn.setText(tr("Apply"))
@@ -72,6 +81,8 @@ class StatusBar(QWidget):
 
     def set_running(self, running: bool, step_label: str = "") -> None:
         """Görev çalışıyor/bitti durumunu gösterir."""
+        self._running = running
+        self._update_visibility()
         self._progress.setVisible(running)
         self._detail_btn.setVisible(running)
         self._apply_btn.setEnabled(not running)
