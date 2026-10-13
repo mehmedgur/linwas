@@ -444,6 +444,9 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
        (ekran başına JSON, ör. `{"0":"BOTTOM"}`) değişimini dinliyor (panelManager.js); konum/boyut
        artık bu anahtarlara her ekran için yazılıyor (ekranlar `available-monitors`). Yeni GNOME
        eklentisi kabuk yeniden başlayınca yüklenir: sayfada "oturumu kapatıp açın; X11'de Alt+F2 › r".
+       Kart saydamlığı: kart GNOME menüsünün opak zemini üstünde durduğu için fark görünmüyordu;
+       görev çubuğundaki medya menüsünde saydam/bulanık seçilince menü zemini kaldırılır (görünen yüzey
+       kart). Takvim menüsündeki kart menünün içinde kalır; orada saydamlık yalnızca menü rengine göre.
    - **G. Tema (vurgu) rengi seçimi (13 Ekim 2026, kullanıcı kararı):** yalnızca **Linwas** penceresi ve
      Linwas eklentileri (görev çubuğu, medya widget'ı) renk alır; masaüstünün sistem rengi değişmez.
      Ayarlar › Görünüm'de hazır renkler + özel renk; seçilen renk açık ve koyu temada okunur kontrastta

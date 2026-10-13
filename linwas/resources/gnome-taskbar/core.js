@@ -524,6 +524,13 @@ class LinwasMediaButton extends PanelMenu.Button {
         this.menu.connect('open-state-changed', (menu, open) => this.card.setOpen(open));
     }
 
+    setChromeless(on) {
+        // Saydam/bulanık kartta menünün kendi opak zemini kaldırılır; görünen yüzey kart olur
+        this.menu.box.set_style(on
+            ? 'background-color: transparent; box-shadow: none; border: none; padding: 0;'
+            : null);
+    }
+
     update(player, strings, coverFile, accessibleLabel) {
         this.visible = !!player;
         if (!player)
@@ -668,9 +675,13 @@ class LinwasTaskbar {
         const pal = this._palette();
         const style = this._cfg.card_style || 'matte';
         const base = this._cfg.cover_color ? this._baseColor('cover', pal.card) : pal.card;
-        const alpha = style === 'matte' ? 1 : this._alpha(style) * 0.85;
+        // Saydam/bulanık: görev çubuğuyla aynı saydamlık; mat: tamamen opak
+        const alpha = style === 'matte' ? 1 : this._alpha(style);
         const fg = fgFor(base);
-        return { bg: rgba(base, alpha), fg, fgRgb: hexToRgb(fg), accent: pal.accent, blur: style === 'blur' };
+        return {
+            bg: rgba(base, alpha), fg, fgRgb: hexToRgb(fg), accent: pal.accent,
+            blur: style === 'blur', chromeless: style !== 'matte',
+        };
     }
 
     // Görev çubuğu arka planı
@@ -839,6 +850,7 @@ class LinwasTaskbar {
             }
             const label = player && player.playing ? strings.pause : strings.play;
             this._button.update(player, strings, this._coverFile, label || '');
+            this._button.setChromeless(colors.chromeless);
             this._button.card.update(player, last, strings, colors, this._coverFile);
         } else {
             this._removeButton();
