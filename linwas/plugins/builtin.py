@@ -10,6 +10,7 @@ import importlib
 from collections.abc import Callable
 
 from linwas.core.plugins import PageSpec, PluginBase, PluginMeta
+from linwas.plugins.hardware_info import HardwareInfoPlugin
 
 
 class _PagePlugin(PluginBase):
@@ -56,7 +57,8 @@ def _plugin(
     return type(f"{page_id.title().replace('_', '')}Plugin", (_PagePlugin,), attrs)
 
 
-BUILTIN_PLUGINS: tuple[type[_PagePlugin], ...] = (
+BUILTIN_PLUGINS: tuple[type[PluginBase], ...] = (
+    HardwareInfoPlugin,  # sayfasız: donanım bilgisi (Donanım sayfası kullanır)
     _plugin("linwas.migrate", "Transfer", "migrate", "linwas.ui.pages.migrate:MigratePage"),
     _plugin("linwas.taskmgr", "Task Manager", "taskmgr", "linwas.ui.pages.taskmgr:TaskMgrPage"),
     _plugin("linwas.cleanup", "Disk Cleanup", "cleanup", "linwas.ui.pages.cleanup:CleanupPage"),

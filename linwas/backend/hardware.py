@@ -152,6 +152,153 @@ def list_printers() -> list[Printer]:
     return parse_lpstat(_run(["lpstat", "-p", "-d"]))
 
 
+# --- Yazıcı ayrıntıları (kullanıcı yetkisiyle; CUPS komutları) ---
+
+# CUPS test sayfası (Debian 12 / Ubuntu 22.04 cups paketinde; kullanıcı makinesinde doğrulandı)
+TEST_PAGES = (
+    Path("/usr/share/cups/data/default-testpage.pdf"),
+    Path("/usr/share/cups/data/testprint"),
+)
+
+
+@dataclass
+class Supply:
+    name: str
+    level: int  # 0–100
+    color: str = ""
+
+
+@dataclass
+class PrinterDetails:
+    name: str
+    model: str = ""
+    location: str = ""
+    connection: str = ""  # usb | network | other
+    uri: str = ""
+    supplies: list[Supply] = field(default_factory=list)
+    jobs: int = 0
+
+
+def parse_lpstat_v(output: str) -> dict[str, str]:
+    """`lpstat -v`: "device for NAME: URI" → {ad: uri}."""
+    uris = {}
+    for line in output.splitlines():
+        m = re.match(r"^device for ([^:]+): (\S+)", line.strip())
+        if m:
+            uris[m.group(1)] = m.group(2)
+    return uris
+
+
+def connection_kind(uri: str) -> str:
+    scheme = uri.split(":", 1)[0].lower()
+    if scheme in ("usb", "hp", "ippusb"):
+        return "usb"
+    if scheme in ("ipp", "ipps", "http", "https", "socket", "lpd", "dnssd", "implicitclass", "smb"):
+        return "network"
+    return "other"
+
+
+def parse_lpoptions(output: str) -> dict[str, str]:
+    """`lpoptions -p NAME`: boşlukla ayrılmış anahtar=değer (tırnaklı/kaçışlı değerler)."""
+    import shlex
+
+    try:
+        parts = shlex.split(output)
+    except ValueError:
+        return {}
+    return dict(p.split("=", 1) for p in parts if "=" in p)
+
+
+def parse_supplies(options: dict[str, str]) -> list[Supply]:
+    names = options.get("marker-names", "")
+    levels = options.get("marker-levels", "")
+    colors = options.get("marker-colors", "")
+    if not names or not levels:
+        return []
+    name_list = [n.strip() for n in names.split(",")]
+    level_list = levels.split(",")
+    color_list = colors.split(",") if colors else []
+    supplies = []
+    for i, name in enumerate(name_list):
+        try:
+            level = int(level_list[i])
+        except (IndexError, ValueError):
+            continue
+        if level < 0:  # bilinmiyor
+            continue
+        color = color_list[i].strip() if i < len(color_list) else ""
+        supplies.append(Supply(name=name, level=min(level, 100), color=color))
+    return supplies
+
+
+def printer_details(printers: list[Printer]) -> list[PrinterDetails]:
+    uris = parse_lpstat_v(_run(["lpstat", "-v"]))
+    result = []
+    for p in printers:
+        opts = parse_lpoptions(_run(["lpoptions", "-p", p.name]))
+        jobs = [ln for ln in _run(["lpstat", "-o", p.name]).splitlines() if ln.strip()]
+        uri = uris.get(p.name, "")
+        result.append(
+            PrinterDetails(
+                name=p.name,
+                model=opts.get("printer-make-and-model", ""),
+                location=opts.get("printer-location", ""),
+                connection=connection_kind(uri) if uri else "",
+                uri=uri,
+                supplies=parse_supplies(opts),
+                jobs=len(jobs),
+            )
+        )
+    return result
+
+
+def print_test_page(name: str) -> bool:
+    page = next((p for p in TEST_PAGES if p.is_file()), None)
+    if page is None:
+        return False
+    try:
+        r = subprocess.run(
+            ["lp", "-d", name, "-t", "Linwas test", "--", str(page)],
+            capture_output=True,
+            timeout=30,
+            shell=False,
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return False
+    return r.returncode == 0
+
+
+def set_default_printer(name: str) -> bool:
+    """Kullanıcının varsayılan yazıcısı (~/.cups/lpoptions; root gerekmez)."""
+    try:
+        r = subprocess.run(["lpoptions", "-d", name], capture_output=True, timeout=15, shell=False)
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return False
+    return r.returncode == 0
+
+
+def list_jobs(name: str) -> list[str]:
+    return [ln.strip() for ln in _run(["lpstat", "-o", name]).splitlines() if ln.strip()]
+
+
+def cancel_jobs(name: str) -> bool:
+    """Kullanıcının bu yazıcıdaki kendi işlerini iptal eder."""
+    try:
+        r = subprocess.run(["cancel", "-a", name], capture_output=True, timeout=15, shell=False)
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return False
+    return r.returncode == 0
+
+
+def scan_app_command() -> list[str] | None:
+    import shutil
+
+    for cmd in ("simple-scan", "skanlite", "xsane"):
+        if shutil.which(cmd):
+            return [cmd]
+    return None
+
+
 def detect_usb_printers(devices_dir: Path = USB_DEVICES) -> list[str]:
     """Takılı USB yazıcıların adları (arayüz sınıfı 07 = Printer)."""
     names: list[str] = []

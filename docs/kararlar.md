@@ -421,8 +421,18 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
   işlemi, `dmidecode -t memory`; seri numaraları yazılmaz).
 - **Donanım bilgisi ayrı bir eklenti olarak yazılır** (kullanıcı kararı): okuma işlevleri ve bileşen
   kartları/ayrıntı pencereleri Donanım eklentisinin parçası; sayfa ve başka eklentiler (Genel bakış'ın
-  sistem sağlığı, AI bağlamı, sistem raporu) bu eklentinin sağladığı arayüzden okur. Mimari kodlamaya
-  başlarken netleşir.
+  sistem sağlığı, AI bağlamı, sistem raporu) bu eklentinin sağladığı arayüzden okur.
+- **Uygulama (13 Ekim 2026):** yerleşik eklenti `linwas.hardware_info` (`linwas/plugins/hardware_info/`):
+  `probe.py` (Qt'siz okuma: DMI, lscpu, /proc/stat yükü, hwmon sıcaklığı, /proc/meminfo, lsblk +
+  NVMe sıcaklığı, xrandr, pil), `widgets.py` (bilgisayar kartı, bileşen kartları, 2 sn zamanlayıcı —
+  yalnızca sekme görünürken, ayrıntı penceresi, HTML sistem raporu `~/.cache/linwas/system-report.html`,
+  panoya özet), `ai_context()` donanım özeti. Sayfasız eklentiler `BUILTIN_PLUGINS`'te sayfa denetimine
+  takılmaz. Root işlemi `hardware.memory_report`: `dmidecode -t memory` çıktısı ilerleme olarak
+  gönderilmez; seri numarasız özet `/var/lib/linwas/memory-modules.json` (0644). Yazıcılar: `lpstat -v`
+  (bağlantı türü), `lpoptions -p` (model, konum, `marker-*` düzeyleri), `lpstat -o` (kuyruk), test sayfası
+  `lp`, varsayılan `lpoptions -d` (kullanıcı düzeyi), kendi işlerini iptal `cancel -a`; kaldırma ve
+  seçenekler sistem yazıcı ayarlarında (root gerektirir). Taslaktaki ayrı "Seçenekler" ve "Kaldır"
+  düğmeleri tek "Seçenekler ve kaldırma…" düğmesinde birleşti.
 
 ## AI
 - Sağlayıcılar: Gemini, ChatGPT, DeepSeek. AI isteğe bağlı; anahtar yoksa gizlenir.

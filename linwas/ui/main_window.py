@@ -598,8 +598,9 @@ class MainWindow(QMainWindow):
                     self._sidebar.add_item(spec.id, spec.label)
         # Yerleşik eklentisi bu sistemde sayfa sunmayan menü öğeleri gizlenir (ör. Güç ve Pil)
         for cls in BUILTIN_PLUGINS:
-            if cls.page.id not in offered:
-                self._sidebar.hide_item(cls.page.id)
+            spec = getattr(cls, "page", None)  # sayfasız eklentiler (ör. donanım bilgisi) atlanır
+            if spec is not None and spec.id not in offered:
+                self._sidebar.hide_item(spec.id)
 
     def open_deb(self, path: str) -> None:
         """Programlar sayfasında .deb risk analizini başlatır."""

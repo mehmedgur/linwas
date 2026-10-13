@@ -158,6 +158,30 @@ PATHS: dict[str, str] = {
         '<rect x="9" y="7" width="10" height="7" rx="1.5"/>'
     ),
     "plugin": '<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 12h6M12 9v6"/>',
+    # Donanım bileşenleri (Donanım ve yazıcılar sayfası)
+    "cpu": (
+        '<rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/>'
+        '<path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>'
+    ),
+    "memory": (
+        '<rect x="2" y="7" width="20" height="10" rx="1.5"/>'
+        '<path d="M6 11v2M10 11v2M14 11v2M18 11v2M5 17v3M19 17v3"/>'
+    ),
+    "gpu": (
+        '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="9" cy="12" r="3"/>'
+        '<path d="M15 10h4M15 14h4"/>'
+    ),
+    "storage": (
+        '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 14h18"/>'
+        '<circle cx="17" cy="17" r="0.8" fill="{c}"/>'
+    ),
+    "battery": '<rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/>',
+    "laptop": '<rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/>',
+    "printer": (
+        '<path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/>'
+        '<path d="M6 14h12v7H6z"/>'
+    ),
+    "scanner": '<rect x="3" y="12" width="18" height="7" rx="2"/><path d="M5 12 18 4M7 16h4"/>',
     "chevron_right": '<path d="M9 6l6 6-6 6"/>',
     "chevron_down": '<path d="M6 9l6 6 6-6"/>',
     "check": '<path d="M5 12.5l4.5 4.5L19 7.5" stroke-width="3"/>',

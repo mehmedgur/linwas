@@ -47,9 +47,8 @@ Son güncelleme: 12 Ekim 2026
 - [x] **Başka Linux'a taşıma** (kararlar.md › Yeni özellikler › 1, 12 Ekim 2026): Windows'tan taşıma ile
   tek "Taşıma" sayfası; dışa/içe aktarma, USB / diğer bölüm / bulut, şifreli paket. Kodlandı 12 Ekim
   2026, deneme bekliyor (Pardus → Ubuntu sanal makinesi: USB ile paket; şifreli/şifresiz).
-- [ ] **Donanım ve yazıcılar yenilemesi** (kararlar.md › Donanım ve yazıcılar yenilemesi, 13 Ekim 2026):
-  tasarım onaylandı, donanım bilgisi ayrı eklenti olarak yazılacak; kullanıcı "devam" deyince
-  kodlanacak. Kodlamada doğrulananlar: DMI `/sys/class/dmi/id` (product_family "103C_5335M7 HP
+- [x] **Donanım ve yazıcılar yenilemesi** (kararlar.md › Donanım ve yazıcılar yenilemesi, 13 Ekim 2026):
+  kodlandı 13 Ekim 2026 (donanım bilgisi eklentisi + sayfa), deneme bekliyor. Kodlamada doğrulananlar: DMI `/sys/class/dmi/id` (product_family "103C_5335M7 HP
   Victus" → baştaki kod atılır), sıcaklık hwmon `coretemp` temp1 = "Package id 0" (AMD: `k10temp`),
   NVMe sıcaklığı hwmon `nvme` (device → .../nvme/nvme0), `/usr/sbin/dmidecode` kurulu (3.4), CUPS
   test sayfası `/usr/share/cups/data/default-testpage.pdf`, `simple-scan` kurulu.

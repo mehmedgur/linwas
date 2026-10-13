@@ -2094,36 +2094,12 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
 <context>
     <name>HardwarePage</name>
     <message>
-        <source>({n} threads)</source>
-        <translation>({n} iş parçacığı)</translation>
-    </message>
-    <message>
-        <source>Add or manage printers</source>
-        <translation>Yazıcı ekle veya yönet</translation>
-    </message>
-    <message>
-        <source>Connected but not set up: {name}. Press “Add or manage printers”.</source>
-        <translation>Takılı ama kurulmamış: {name}. “Yazıcı ekle veya yönet” düğmesine basın.</translation>
-    </message>
-    <message>
         <source>Find scanners</source>
         <translation>Tarayıcıları bul</translation>
     </message>
     <message>
-        <source>Graphics card</source>
-        <translation>Ekran kartı</translation>
-    </message>
-    <message>
-        <source>Hard disk</source>
-        <translation>Sabit disk</translation>
-    </message>
-    <message>
         <source>Hardware &amp; Printers</source>
         <translation>Donanım ve Yazıcılar</translation>
-    </message>
-    <message>
-        <source>Hardware information could not be read.</source>
-        <translation>Donanım bilgisi okunamadı.</translation>
     </message>
     <message>
         <source>Install printer drivers</source>
@@ -2146,32 +2122,12 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Tarayıcılar aranıyor… bu birkaç saniye sürebilir.</translation>
     </message>
     <message>
-        <source>Memory (RAM)</source>
-        <translation>Bellek (RAM)</translation>
-    </message>
-    <message>
-        <source>My computer</source>
-        <translation>Bilgisayarım</translation>
-    </message>
-    <message>
-        <source>No printers are set up yet.</source>
-        <translation>Henüz kurulu yazıcı yok.</translation>
-    </message>
-    <message>
-        <source>No scanner found. Make sure it is switched on and connected, then try “Install scanner support”.</source>
-        <translation>Tarayıcı bulunamadı. Açık ve bağlı olduğundan emin olun, sonra “Tarayıcı desteğini kur” düğmesini deneyin.</translation>
-    </message>
-    <message>
         <source>Press “Find scanners” to look for connected scanners.</source>
         <translation>Bağlı tarayıcıları aramak için “Tarayıcıları bul” düğmesine basın.</translation>
     </message>
     <message>
         <source>Printers</source>
         <translation>Yazıcılar</translation>
-    </message>
-    <message>
-        <source>Processor</source>
-        <translation>İşlemci</translation>
     </message>
     <message>
         <source>Ready</source>
@@ -2182,20 +2138,12 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Yazdırma servisini yeniden başlat</translation>
     </message>
     <message>
-        <source>SSD</source>
-        <translation>SSD</translation>
-    </message>
-    <message>
         <source>Scanners</source>
         <translation>Tarayıcılar</translation>
     </message>
     <message>
         <source>Stopped</source>
         <translation>Durduruldu</translation>
-    </message>
-    <message>
-        <source>default</source>
-        <translation>varsayılan</translation>
     </message>
     <message>
         <source>Bluetooth</source>
@@ -2208,10 +2156,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>Device</source>
         <translation>Aygıt</translation>
-    </message>
-    <message>
-        <source>Device Manager</source>
-        <translation>Aygıt Yöneticisi</translation>
     </message>
     <message>
         <source>Device information could not be read.</source>
@@ -2228,10 +2172,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>Driver</source>
         <translation>Sürücü</translation>
-    </message>
-    <message>
-        <source>Driver available but not loaded</source>
-        <translation>Sürücü var ama yüklenmemiş</translation>
     </message>
     <message>
         <source>Find drivers</source>
@@ -2258,24 +2198,12 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Ağ bağdaştırıcıları</translation>
     </message>
     <message>
-        <source>No driver</source>
-        <translation>Sürücü yok</translation>
-    </message>
-    <message>
-        <source>No driver needed</source>
-        <translation>Sürücü gerekmiyor</translation>
-    </message>
-    <message>
         <source>Other devices</source>
         <translation>Diğer aygıtlar</translation>
     </message>
     <message>
         <source>Printers and scanners</source>
         <translation>Yazıcılar ve tarayıcılar</translation>
-    </message>
-    <message>
-        <source>Recommended driver for {device}: {pkg}</source>
-        <translation>{device} için önerilen sürücü: {pkg}</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -2302,16 +2230,204 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>USB denetleyicileri ve çoklayıcılar</translation>
     </message>
     <message>
-        <source>Working</source>
-        <translation>Çalışıyor</translation>
-    </message>
-    <message>
         <source>{n} device(s) have no driver. Press “Find drivers”.</source>
         <translation>{n} aygıtın sürücüsü yok. “Sürücü bul”a basın.</translation>
     </message>
     <message>
         <source>{n} devices found; all important devices have a driver.</source>
         <translation>{n} aygıt bulundu; önemli aygıtların hepsinin sürücüsü var.</translation>
+    </message>
+    <message>
+        <source>%1 document(s) waiting</source>
+        <translation>%1 belge bekliyor</translation>
+    </message>
+    <message>
+        <source>+ Add printer</source>
+        <translation>+ Yazıcı ekle</translation>
+    </message>
+    <message>
+        <source>A printer is connected but not set up: %1</source>
+        <translation>Takılı ama kurulmamış bir yazıcı var: %1</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Ekle</translation>
+    </message>
+    <message>
+        <source>All %1</source>
+        <translation>Tümü %1</translation>
+    </message>
+    <message>
+        <source>Cancel all my documents</source>
+        <translation>Belgelerimin hepsini iptal et</translation>
+    </message>
+    <message>
+        <source>Checks the connection, driver and printing service.</source>
+        <translation>Bağlantıyı, sürücüyü ve yazdırma hizmetini denetler.</translation>
+    </message>
+    <message>
+        <source>Connect the printer with USB or to the same Wi-Fi; Linwas finds it. Then press “Add printer”.</source>
+        <translation>Yazıcıyı USB ile takın ya da aynı Wi-Fi'ye bağlayın; Linwas bulur. Sonra “Yazıcı ekle”ye basın.</translation>
+    </message>
+    <message>
+        <source>Connected with USB</source>
+        <translation>USB ile bağlı</translation>
+    </message>
+    <message>
+        <source>Copies a hardware summary, e.g. to paste into a help forum.</source>
+        <translation>Donanım özetini kopyalar; örneğin bir yardım forumuna yapıştırmak için.</translation>
+    </message>
+    <message>
+        <source>Copy details</source>
+        <translation>Bilgileri kopyala</translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation>Varsayılan</translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>Ayrıntılar</translation>
+    </message>
+    <message>
+        <source>Devices</source>
+        <translation>Aygıtlar</translation>
+    </message>
+    <message>
+        <source>Documents</source>
+        <translation>Belgeler</translation>
+    </message>
+    <message>
+        <source>Double-click a device to see its details.</source>
+        <translation>Ayrıntılarını görmek için aygıta çift tıklayın.</translation>
+    </message>
+    <message>
+        <source>Having trouble?</source>
+        <translation>Sorun mu var?</translation>
+    </message>
+    <message>
+        <source>Helps when the print queue is stuck.</source>
+        <translation>Yazdırma kuyruğu takıldığında işe yarar.</translation>
+    </message>
+    <message>
+        <source>Make default</source>
+        <translation>Varsayılan yap</translation>
+    </message>
+    <message>
+        <source>Network printer</source>
+        <translation>Ağ yazıcısı</translation>
+    </message>
+    <message>
+        <source>No documents waiting</source>
+        <translation>Bekleyen belge yok</translation>
+    </message>
+    <message>
+        <source>No driver %1</source>
+        <translation>Sürücüsüz %1</translation>
+    </message>
+    <message>
+        <source>No printers yet</source>
+        <translation>Henüz yazıcı yok</translation>
+    </message>
+    <message>
+        <source>No scanner found. Make sure it is switched on and connected, then try installing scanner support.</source>
+        <translation>Tarayıcı bulunamadı. Açık ve bağlı olduğundan emin olun, sonra tarayıcı desteğini kurmayı deneyin.</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Aç</translation>
+    </message>
+    <message>
+        <source>Opens a summary of this computer's hardware in the browser.</source>
+        <translation>Bu bilgisayarın donanım özetini tarayıcıda açar.</translation>
+    </message>
+    <message>
+        <source>Options and removal…</source>
+        <translation>Seçenekler ve kaldırma…</translation>
+    </message>
+    <message>
+        <source>Overview</source>
+        <translation>Genel bakış</translation>
+    </message>
+    <message>
+        <source>Package %1 is in the repository. Press Install, then add the printer.</source>
+        <translation>%1 paketi depoda var. Kur'a basın, sonra yazıcıyı ekleyin.</translation>
+    </message>
+    <message>
+        <source>Press Add to set it up.</source>
+        <translation>Kurmak için Ekle'ye basın.</translation>
+    </message>
+    <message>
+        <source>Print queue: %1</source>
+        <translation>Yazdırma kuyruğu: %1</translation>
+    </message>
+    <message>
+        <source>Printer drivers</source>
+        <translation>Yazıcı sürücüleri</translation>
+    </message>
+    <message>
+        <source>Printer troubleshooter</source>
+        <translation>Yazıcı sorun gidericisi</translation>
+    </message>
+    <message>
+        <source>Printers &amp; scanners</source>
+        <translation>Yazıcılar ve tarayıcılar</translation>
+    </message>
+    <message>
+        <source>Problems %1</source>
+        <translation>Sorunlu %1</translation>
+    </message>
+    <message>
+        <source>Queue</source>
+        <translation>Kuyruk</translation>
+    </message>
+    <message>
+        <source>Read memory module details</source>
+        <translation>Bellek modülü ayrıntılarını oku</translation>
+    </message>
+    <message>
+        <source>Recommended driver for %1</source>
+        <translation>%1 için önerilen sürücü</translation>
+    </message>
+    <message>
+        <source>Restart</source>
+        <translation>Yeniden başlat</translation>
+    </message>
+    <message>
+        <source>Run</source>
+        <translation>Çalıştır</translation>
+    </message>
+    <message>
+        <source>Scanner support: drivers for most brands (SANE, driverless)</source>
+        <translation>Tarayıcı desteği: çoğu marka için sürücüler (SANE, sürücüsüz)</translation>
+    </message>
+    <message>
+        <source>Scanning program</source>
+        <translation>Tarama programı</translation>
+    </message>
+    <message>
+        <source>Search devices</source>
+        <translation>Aygıt ara</translation>
+    </message>
+    <message>
+        <source>System report</source>
+        <translation>Sistem raporu</translation>
+    </message>
+    <message>
+        <source>Test page</source>
+        <translation>Test sayfası</translation>
+    </message>
+    <message>
+        <source>The test page could not be sent. Try “Printer troubleshooter”.</source>
+        <translation>Test sayfası gönderilemedi. “Yazıcı sorun gidericisi”ni deneyin.</translation>
+    </message>
+    <message>
+        <source>The test page was sent to %1.</source>
+        <translation>Test sayfası %1 yazıcısına gönderildi.</translation>
+    </message>
+    <message>
+        <source>empty</source>
+        <translation>boş</translation>
     </message>
 </context>
 <context>
@@ -6900,6 +7016,381 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>‹ Transfer</source>
         <translation>‹ Taşıma</translation>
+    </message>
+</context>
+<context>
+    <name>HardwareInfo</name>
+    <message>
+        <source>%1 charge cycles</source>
+        <translation>%1 şarj döngüsü</translation>
+    </message>
+    <message>
+        <source>%1 cores</source>
+        <translation>%1 çekirdek</translation>
+    </message>
+    <message>
+        <source>%1 device(s) without a driver</source>
+        <translation>%1 aygıtın sürücüsü yok</translation>
+    </message>
+    <message>
+        <source>%1 devices</source>
+        <translation>%1 aygıt</translation>
+    </message>
+    <message>
+        <source>%1 of %2 slots used</source>
+        <translation>%2 yuvanın %1 tanesi dolu</translation>
+    </message>
+    <message>
+        <source>%1 threads</source>
+        <translation>%1 iş parçacığı</translation>
+    </message>
+    <message>
+        <source>%1 usable</source>
+        <translation>%1 kullanılabilir</translation>
+    </message>
+    <message>
+        <source>Available module</source>
+        <translation>Kullanılabilir modül</translation>
+    </message>
+    <message>
+        <source>BIOS</source>
+        <translation>BIOS</translation>
+    </message>
+    <message>
+        <source>BIOS %1</source>
+        <translation>BIOS %1</translation>
+    </message>
+    <message>
+        <source>Battery</source>
+        <translation>Pil</translation>
+    </message>
+    <message>
+        <source>Battery care</source>
+        <translation>Pil koruma</translation>
+    </message>
+    <message>
+        <source>Board %1</source>
+        <translation>Anakart %1</translation>
+    </message>
+    <message>
+        <source>Built-in display</source>
+        <translation>Dahili ekran</translation>
+    </message>
+    <message>
+        <source>Capacity</source>
+        <translation>Kapasite</translation>
+    </message>
+    <message>
+        <source>Check</source>
+        <translation>Göz atın</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Kapat</translation>
+    </message>
+    <message>
+        <source>Components</source>
+        <translation>Bileşenler</translation>
+    </message>
+    <message>
+        <source>Computer</source>
+        <translation>Bilgisayar</translation>
+    </message>
+    <message>
+        <source>Connection</source>
+        <translation>Bağlantı</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Kopyala</translation>
+    </message>
+    <message>
+        <source>Cores</source>
+        <translation>Çekirdek</translation>
+    </message>
+    <message>
+        <source>Desktop computer</source>
+        <translation>Masaüstü bilgisayar</translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>Ayrıntılar</translation>
+    </message>
+    <message>
+        <source>Device</source>
+        <translation>Aygıt</translation>
+    </message>
+    <message>
+        <source>Disk</source>
+        <translation>Disk</translation>
+    </message>
+    <message>
+        <source>Disk Cleanup</source>
+        <translation>Disk temizliği</translation>
+    </message>
+    <message>
+        <source>Display</source>
+        <translation>Ekran</translation>
+    </message>
+    <message>
+        <source>Display &amp; Scaling</source>
+        <translation>Ekran ve ölçekleme</translation>
+    </message>
+    <message>
+        <source>Display details are not available in this session.</source>
+        <translation>Bu oturumda ekran bilgisi okunamıyor.</translation>
+    </message>
+    <message>
+        <source>Driver</source>
+        <translation>Sürücü</translation>
+    </message>
+    <message>
+        <source>Driver %1 · working</source>
+        <translation>Sürücü %1 · çalışıyor</translation>
+    </message>
+    <message>
+        <source>Driver available but not loaded</source>
+        <translation>Sürücü var ama yüklenmemiş</translation>
+    </message>
+    <message>
+        <source>Everything is working</source>
+        <translation>Her şey çalışıyor</translation>
+    </message>
+    <message>
+        <source>External (USB)</source>
+        <translation>Harici (USB)</translation>
+    </message>
+    <message>
+        <source>Find drivers</source>
+        <translation>Sürücü bul</translation>
+    </message>
+    <message>
+        <source>Good</source>
+        <translation>İyi</translation>
+    </message>
+    <message>
+        <source>Graphics cards</source>
+        <translation>Ekran kartları</translation>
+    </message>
+    <message>
+        <source>Hard disk</source>
+        <translation>Sabit disk</translation>
+    </message>
+    <message>
+        <source>Hardware information could not be read.</source>
+        <translation>Donanım bilgisi okunamadı.</translation>
+    </message>
+    <message>
+        <source>Health %1%</source>
+        <translation>Sağlık %%1</translation>
+    </message>
+    <message>
+        <source>Hybrid graphics settings</source>
+        <translation>Hibrit grafik ayarları</translation>
+    </message>
+    <message>
+        <source>In use</source>
+        <translation>Kullanımda</translation>
+    </message>
+    <message>
+        <source>Internal</source>
+        <translation>Dahili</translation>
+    </message>
+    <message>
+        <source>Laptop</source>
+        <translation>Dizüstü bilgisayar</translation>
+    </message>
+    <message>
+        <source>Load</source>
+        <translation>Yük</translation>
+    </message>
+    <message>
+        <source>Loaded driver</source>
+        <translation>Yüklü sürücü</translation>
+    </message>
+    <message>
+        <source>Manufacturer</source>
+        <translation>Üretici</translation>
+    </message>
+    <message>
+        <source>Maximum speed</source>
+        <translation>En yüksek hız</translation>
+    </message>
+    <message>
+        <source>Maximum supported</source>
+        <translation>Desteklenen en fazla</translation>
+    </message>
+    <message>
+        <source>Memory (RAM)</source>
+        <translation>Bellek (RAM)</translation>
+    </message>
+    <message>
+        <source>Memory modules</source>
+        <translation>Bellek modülleri</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>Module</source>
+        <translation>Modül</translation>
+    </message>
+    <message>
+        <source>NVMe SSD</source>
+        <translation>NVMe SSD</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Ad</translation>
+    </message>
+    <message>
+        <source>Needs attention</source>
+        <translation>İlgilenin</translation>
+    </message>
+    <message>
+        <source>Network and Bluetooth</source>
+        <translation>Ağ ve Bluetooth</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>Hayır</translation>
+    </message>
+    <message>
+        <source>No device found.</source>
+        <translation>Aygıt bulunamadı.</translation>
+    </message>
+    <message>
+        <source>No driver</source>
+        <translation>Sürücü yok</translation>
+    </message>
+    <message>
+        <source>No driver needed</source>
+        <translation>Sürücü gerekmiyor</translation>
+    </message>
+    <message>
+        <source>No graphics card found.</source>
+        <translation>Ekran kartı bulunamadı.</translation>
+    </message>
+    <message>
+        <source>Part number</source>
+        <translation>Parça numarası</translation>
+    </message>
+    <message>
+        <source>Processor</source>
+        <translation>İşlemci</translation>
+    </message>
+    <message>
+        <source>Product ID</source>
+        <translation>Ürün kimliği</translation>
+    </message>
+    <message>
+        <source>Reading hardware…</source>
+        <translation>Donanım okunuyor…</translation>
+    </message>
+    <message>
+        <source>SSD</source>
+        <translation>SSD</translation>
+    </message>
+    <message>
+        <source>Show module details…</source>
+        <translation>Modül ayrıntılarını göster…</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Boyut</translation>
+    </message>
+    <message>
+        <source>Slots</source>
+        <translation>Yuvalar</translation>
+    </message>
+    <message>
+        <source>Sound and camera</source>
+        <translation>Ses ve kamera</translation>
+    </message>
+    <message>
+        <source>Speed</source>
+        <translation>Hız</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>Durum</translation>
+    </message>
+    <message>
+        <source>Storage</source>
+        <translation>Depolama</translation>
+    </message>
+    <message>
+        <source>Swap</source>
+        <translation>Takas alanı</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>Sistem</translation>
+    </message>
+    <message>
+        <source>System disk</source>
+        <translation>Sistem diski</translation>
+    </message>
+    <message>
+        <source>System report</source>
+        <translation>Sistem raporu</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Sıcaklık</translation>
+    </message>
+    <message>
+        <source>This computer</source>
+        <translation>Bu bilgisayar</translation>
+    </message>
+    <message>
+        <source>Threads</source>
+        <translation>İş parçacığı</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>Tür</translation>
+    </message>
+    <message>
+        <source>Type, speed and slots; needs the administrator password.</source>
+        <translation>Tür, hız ve yuvalar; yönetici parolası gerekir.</translation>
+    </message>
+    <message>
+        <source>Unknown processor</source>
+        <translation>Bilinmeyen işlemci</translation>
+    </message>
+    <message>
+        <source>Usable</source>
+        <translation>Kullanılabilir</translation>
+    </message>
+    <message>
+        <source>Usage</source>
+        <translation>Kullanım</translation>
+    </message>
+    <message>
+        <source>Vendor ID</source>
+        <translation>Üretici kimliği</translation>
+    </message>
+    <message>
+        <source>Working</source>
+        <translation>Çalışıyor</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>Evet</translation>
+    </message>
+    <message>
+        <source>none</source>
+        <translation>yok</translation>
+    </message>
+    <message>
+        <source>system disk</source>
+        <translation>sistem diski</translation>
+    </message>
+    <message>
+        <source>up to %1 GHz</source>
+        <translation>en fazla %1 GHz</translation>
     </message>
 </context>
 </TS>

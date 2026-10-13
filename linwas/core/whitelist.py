@@ -449,6 +449,9 @@ OPERATIONS: dict[str, OperationSpec] = {
     "power.powertop_report": OperationSpec(
         params=[], risk=RiskLevel.LOW, label="Measure power use in detail (powertop)"
     ),
+    "hardware.memory_report": OperationSpec(
+        params=[], risk=RiskLevel.LOW, label="Read memory module details"
+    ),
     "rollback.restore_files": _op(
         ("record_id", ParamKind.RECORD_ID),
         risk=RiskLevel.MEDIUM,

@@ -574,6 +574,35 @@ def _exec_power_powertop_report(seq: int, params: dict[str, str]) -> bool:
     return True
 
 
+def _exec_hardware_memory_report(seq: int, params: dict[str, str]) -> bool:
+    """Bellek modüllerini okur (dmidecode); seri numarasız özeti herkesin okuyabileceği
+    dosyaya yazar. Çıktı ilerleme olarak gönderilmez (seri numaraları içerir)."""
+    from linwas.plugins.hardware_info import probe
+
+    try:
+        r = subprocess.run(
+            ["dmidecode", "-t", "memory"], capture_output=True, text=True, timeout=30, shell=False
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
+        _error(seq, f"dmidecode çalıştırılamadı: {exc}")
+        return False
+    if r.returncode != 0:
+        _error(seq, f"dmidecode başarısız (kod {r.returncode})")
+        return False
+    report = probe.parse_dmidecode_memory(r.stdout)
+    target = probe.MEMORY_REPORT
+    try:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.parent.chmod(0o755)
+        target.write_text(probe.report_to_json(report), encoding="utf-8")
+        target.chmod(0o644)
+    except OSError as exc:
+        _error(seq, f"Rapor yazılamadı: {exc}")
+        return False
+    _ok(seq, f"{len(report.modules)} modül")
+    return True
+
+
 def _exec_fonts_install_microsoft(seq: int, params: dict[str, str]) -> bool:
     """Kullanıcı lisansı Linwas penceresinde kabul etti; Ubuntu'daki debconf sorusu
     önceden yanıtlanır (Debian/Pardus paketinde bu soru yok, satır yok sayılır)."""
@@ -851,6 +880,7 @@ _EXECUTORS: dict[str, Any] = {
         seq, "power", _POWER_FILES, lambda: _exec_power_save_config(seq, p)
     ),
     "power.powertop_report": _exec_power_powertop_report,
+    "hardware.memory_report": _exec_hardware_memory_report,
     "fonts.install_microsoft": _exec_fonts_install_microsoft,
     "package.update_index": _exec_package_update_index,
     "package.fix_broken": _exec_package_fix_broken,
