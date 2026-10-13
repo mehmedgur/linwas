@@ -59,6 +59,13 @@ def setting_name(sid: str) -> str:
 def setting_help(sid: str) -> str:
     return {
         "ppd_profile": tr("The Power saver / Balanced / Performance mode in the system menu."),
+        "screen_dim": tr("Makes the screen darker shortly before it turns off."),
+        "screen_off": tr("The screen turns off when you do not use the computer for this long."),
+        "sleep_after": tr("The computer sleeps when you do not use it for this long."),
+        "battery_critical": tr("Below this level the battery is shown as critical."),
+        "battery_action": tr("What the computer does when the battery is almost empty."),
+        "pci_runtime_pm": tr("Idle internal devices are switched off to save power."),
+        "sata_alpm": tr("Lets SATA disks save power when idle; may slow some disks slightly."),
         "sleep_action": tr("Hibernate saves your work to disk and turns the computer off."),
         "wake_timers": tr("Lets scheduled tasks wake the computer from sleep."),
         "lid": tr("Takes effect after the next restart."),

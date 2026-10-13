@@ -160,8 +160,9 @@ def collect() -> PowerReport:
     findings: list[Finding] = []
 
     # Servis
-    installed = Path("/usr/lib/systemd/system/linwas-power.service").exists()
-    running = bool(status) and power_apply.PID_FILE.exists()
+    service = power_apply.service_state()
+    installed = service != "missing"
+    running = service == "running" and bool(status)
     if installed and not running:
         findings.append(
             Finding(

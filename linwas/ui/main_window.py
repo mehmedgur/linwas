@@ -129,6 +129,7 @@ class MainWindow(QMainWindow):
         self._queue = TaskQueue()
         self._running_tasks: list[Task] = []
         self._settings = app_settings.load()
+        self._theme_setting = self._settings.theme
         self._current_theme = self._resolve_theme(self._settings.theme)
         self._tray = None
         self._quitting = False
@@ -292,6 +293,8 @@ class MainWindow(QMainWindow):
                 palette(Theme.LIGHT),
                 palette(Theme.DARK),
                 colors(self._current_theme, self._ui_style, self._accent).accent,
+                # Linwas'ta açık/koyu seçildiyse panel de ona uyar (keskin geçiş olmasın)
+                {"light": "light", "dark": "dark"}.get(self._theme_setting, "system"),
             )
 
     def apply_accent(self, color: str) -> None:
@@ -305,6 +308,7 @@ class MainWindow(QMainWindow):
         self._apply_look()
 
     def apply_theme(self, name: str) -> None:
+        self._theme_setting = name
         self._current_theme = self._resolve_theme(name)
         self._apply_look()
 

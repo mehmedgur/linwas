@@ -58,6 +58,28 @@ class Battery:
     health: int | None  # tam kapasite / tasarım kapasitesi, yüzde
     cycle_count: int | None
     charge_limit: int | None  # charge_control_end_threshold; desteklenmiyorsa None
+    minutes_left: int | None = None  # boşalmaya/dolmaya kalan dakika; çekirdek vermiyorsa None
+
+
+def _minutes_left(base: Path, status: str) -> int | None:
+    """Kalan süre: enerji/akım değerlerinden (µWh/µW ya da µAh/µA). Ölçülemiyorsa None."""
+    for now_f, full_f, rate_f in (
+        ("energy_now", "energy_full", "power_now"),
+        ("charge_now", "charge_full", "current_now"),
+    ):
+        now, full, rate = (_read_int(base / f) for f in (now_f, full_f, rate_f))
+        if now is None or not rate or rate <= 0:
+            continue
+        if status == "Discharging":
+            left = now / rate
+        elif status == "Charging" and full:
+            left = max(full - now, 0) / rate
+        else:
+            return None
+        minutes = round(left * 60)
+        # Anlık ölçüm saçma bir değer verdiyse (ör. 2 gün) gösterme
+        return minutes if 0 < minutes < 24 * 60 else None
+    return None
 
 
 def _battery_health(base: Path) -> int | None:
@@ -88,6 +110,7 @@ def list_batteries(root: Path = POWER_SUPPLY) -> list[Battery]:
                 health=_battery_health(base),
                 cycle_count=cycles or None,  # 0 = bilgi yok (ABI)
                 charge_limit=_read_int(base / "charge_control_end_threshold"),
+                minutes_left=_minutes_left(base, _read(base / "status")),
             )
         )
     return batteries

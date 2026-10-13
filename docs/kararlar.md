@@ -335,8 +335,19 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
        Güç düğmesinde "kapat" yok (GNOME bunu sunmuyor). USB askıya almada fare/klavye (HID) ve Bluetooth
        hariç. Tanılama: `backend/power_report.py` + root işlemi `power.powertop_report`
        (`/var/lib/linwas-power/powertop.csv`).
+     - **Geri bildirim düzeltmeleri (13 Ekim 2026):** servis durumu `power_apply.service_state()`
+       ("missing" kurulu değil / "stopped" / "running"). Çalışmıyorsa sayfanın üstünde neden kartı;
+       plan, sık ayarlar, gelişmiş ayarlar ve otomatik geçiş kartları kilitli (uygulanamayan ayar
+       değiştirilemez); durmuşsa "Servisi başlat" (`service.enable` + `service.restart`). Pil: yüzde
+       çubuğun sağında; altında durum · kalan süre (yalnızca çekirdek enerji/akım verirse,
+       `Battery.minutes_left`) ve ayrı satırda sağlık · döngü. Gelişmiş ayarlar varsayılan kapalı
+       ("Gelişmiş ayarları göster"); her satırda ad + kısa açıklama, değiştirilmiş satırda "Varsayılan"
+       düğmesi (yerleşik planda fabrika değeri, özel planda Sistem varsayılanı).
 
-9. **Görev çubuğu ve masaüstü gruplama (10 Ekim 2026, kullanıcı kararı):** amaç, çok pencereyle
+9. **Görev çubuğu Linwas temasını izler (13 Ekim 2026):** Linwas'ta Açık/Koyu seçiliyse paletin
+   `mode` alanıyla görev çubuğu ve menüler de o temada çizilir (uygulama ile panel arasında keskin
+   geçiş olmasın); "Sistem" seçiliyse masaüstünün açık/koyu ayarı izlenir.
+10. **Görev çubuğu ve masaüstü gruplama (10 Ekim 2026, kullanıcı kararı):** amaç, çok pencereyle
    çalışırken görev çubuğunu sade tutmak. Üç ayrı, isteğe bağlı eklenti; kullanıcı istediğini açar
    (çizimli karşılaştırma: claude.ai artifact "Görev Çubuğu Gruplama Seçenekleri").
    - **Ortak:** aynı programın pencereleri varsayılan olarak tek düğmede toplanır (GNOME: Dash to Panel,

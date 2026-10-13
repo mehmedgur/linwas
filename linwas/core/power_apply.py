@@ -545,15 +545,31 @@ def read_status() -> dict[str, object]:
 
 # --- Servis ---
 
+SERVICE_NAME = "linwas-power.service"
+SERVICE_UNIT = Path("/usr/lib/systemd/system") / SERVICE_NAME
 
-def notify_service() -> bool:
-    """Çalışan servise "ayar değişti" der. Servis yoksa False (çağıran apply_once yapar)."""
+
+def _service_pid() -> int | None:
+    """Çalışan servisin PID'i (PID dosyası var ve süreç gerçekten bu servisse)."""
     try:
         pid = int(_read(PID_FILE))
         cmdline = Path(f"/proc/{pid}/cmdline").read_bytes()
     except (ValueError, OSError):
-        return False
-    if b"linwas.core.power_apply" not in cmdline:
+        return None
+    return pid if b"linwas.core.power_apply" in cmdline else None
+
+
+def service_state() -> str:
+    """ "missing": servis kurulu değil (ör. kaynak koddan çalıştırma), "stopped", "running"."""
+    if not SERVICE_UNIT.exists():
+        return "missing"
+    return "running" if _service_pid() is not None else "stopped"
+
+
+def notify_service() -> bool:
+    """Çalışan servise "ayar değişti" der. Servis yoksa False (çağıran apply_once yapar)."""
+    pid = _service_pid()
+    if pid is None:
         return False
     try:
         os.kill(pid, signal.SIGUSR1)

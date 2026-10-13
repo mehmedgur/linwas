@@ -28,6 +28,7 @@ from PySide6.QtWidgets import (
     QScrollArea,
     QSpinBox,
     QTimeEdit,
+    QToolButton,
     QTreeWidget,
     QTreeWidgetItem,
     QVBoxLayout,
@@ -53,6 +54,15 @@ def tr(text: str) -> str:
     return QCoreApplication.translate("PowerPage", text)
 
 
+def _duration_text(minutes: int) -> str:
+    hours, mins = divmod(minutes, 60)
+    if hours and mins:
+        return tr("{h} h {m} min").format(h=hours, m=mins)
+    if hours:
+        return tr("{h} h").format(h=hours)
+    return tr("{m} min").format(m=mins)
+
+
 def _status_text(status: str) -> str:
     return {
         "Charging": tr("Charging"),
@@ -75,6 +85,7 @@ class _LoadWorker(QThread):
                 "status": power_apply.read_status(),
                 "ppd": power.power_profiles()[1],
                 "state": powerplan.read_power_state(),
+                "service": power_apply.service_state(),
             }
         )
 
@@ -113,6 +124,7 @@ class PowerPage(BasePage):
         self._edit_plan = powerplan.DEFAULT_PLAN
         self._filling = False
         self._pending_save = False
+        self._service_ok = True  # linwas-power.service çalışıyor mu (değilse ayarlar kilitli)
 
         scroll = QScrollArea(self)
         self._scroll = scroll
@@ -129,11 +141,15 @@ class PowerPage(BasePage):
 
         self._conflict_card = self._build_conflict_card(content)
         outer.addWidget(self._conflict_card)
+        self._service_card = self._build_service_card(content)
+        outer.addWidget(self._service_card)
         self._battery_card = self._build_battery_card(content)
         outer.addWidget(self._battery_card)
         self._battery_card.setVisible(self._laptop)
-        outer.addWidget(self._build_plan_card(content))
-        outer.addWidget(self._build_quick_card(content))
+        self._plan_card = self._build_plan_card(content)
+        outer.addWidget(self._plan_card)
+        self._quick_card = self._build_quick_card(content)
+        outer.addWidget(self._quick_card)
         self._advanced_card = self._build_advanced_card(content)
         outer.addWidget(self._advanced_card)
         self._automation_card = self._build_automation_card(content)
@@ -192,15 +208,43 @@ class PowerPage(BasePage):
         card.hide()
         return card
 
+    def _build_service_card(self, parent: QWidget) -> Card:
+        # Plan ayarlarını linwas-power.service uygular; çalışmıyorsa ayarlar kilitlenir
+        card = Card(parent)
+        self._service_title = self._h2("", card)
+        card.layout.addWidget(self._service_title)
+        self._service_lbl = QLabel("", card)
+        self._service_lbl.setObjectName("Warning")
+        self._service_lbl.setWordWrap(True)
+        card.layout.addWidget(self._service_lbl)
+        row = QHBoxLayout()
+        self._service_btn = QPushButton(tr("Start the service"), card)
+        self._service_btn.clicked.connect(self._start_service)
+        row.addWidget(self._service_btn)
+        row.addStretch(1)
+        card.layout.addLayout(row)
+        card.hide()
+        return card
+
     def _build_battery_card(self, parent: QWidget) -> Card:
         card = Card(parent)
         card.layout.addWidget(self._h2(tr("Battery"), card))
+        # Yüzde çubuğun içinde değil sağında; altında durum · kalan süre · sağlık satırı
+        row = QHBoxLayout()
+        row.setSpacing(14)
         self._level = QProgressBar(card)
         self._level.setRange(0, 100)
-        card.layout.addWidget(self._level)
+        self._level.setTextVisible(False)
+        row.addWidget(self._level, 1)
+        self._level_pct = QLabel("", card)
+        self._level_pct.setObjectName("H2")
+        row.addWidget(self._level_pct)
+        card.layout.addLayout(row)
         self._bat_lbl = QLabel(tr("Reading battery information…"), card)
         self._bat_lbl.setWordWrap(True)
         card.layout.addWidget(self._bat_lbl)
+        self._bat_detail = self._secondary("", card)
+        card.layout.addWidget(self._bat_detail)
 
         # Pil koruma (yalnızca destekleyen cihazlarda)
         self._limit_box = QWidget(card)
@@ -292,6 +336,25 @@ class PowerPage(BasePage):
     def _build_advanced_card(self, parent: QWidget) -> Card:
         card = Card(parent)
         card.layout.addWidget(self._h2(tr("Advanced power settings"), card))
+        card.layout.addWidget(
+            self._secondary(
+                tr(
+                    "Every setting of the plans, like Windows' advanced power options. Most "
+                    "people do not need to change these."
+                ),
+                card,
+            )
+        )
+        self._adv_toggle = QToolButton(card)
+        self._adv_toggle.setObjectName("DetailsToggle")
+        self._adv_toggle.setCheckable(True)
+        self._adv_toggle.toggled.connect(self._on_advanced_toggled)
+        card.layout.addWidget(self._adv_toggle)
+        self._adv_body = QWidget(card)
+        body = QVBoxLayout(self._adv_body)
+        body.setContentsMargins(0, 0, 0, 0)
+        card.layout.addWidget(self._adv_body)
+
         row = QHBoxLayout()
         row.addWidget(QLabel(tr("Plan:"), card))
         self._edit_combo = QComboBox(card)
@@ -306,21 +369,23 @@ class PowerPage(BasePage):
         export_btn = QPushButton(tr("Export…"), card)
         export_btn.clicked.connect(self._export_plan)
         row.addWidget(export_btn)
-        card.layout.addLayout(row)
+        body.addLayout(row)
 
         self._tree = QTreeWidget(card)
-        self._tree.setColumnCount(3)
-        self._tree.setHeaderLabels([tr("Setting"), tr("Plugged in"), tr("On battery")])
+        self._tree.setColumnCount(4)
+        self._tree.setHeaderLabels([tr("Setting"), tr("Plugged in"), tr("On battery"), ""])
         header = self._tree.header()
         header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
         header.setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
         header.setStretchLastSection(False)
         self._tree.setMinimumHeight(420)
         self._tree.setRootIsDecorated(True)
-        card.layout.addWidget(self._tree)
+        body.addWidget(self._tree)
         self._tree_combos: dict[tuple[str, str], QComboBox] = {}
         self._tree_items: dict[str, QTreeWidgetItem] = {}
+        self._reset_btns: dict[str, QToolButton] = {}
 
         row = QHBoxLayout()
         reset = QPushButton(tr("Restore plan defaults"), card)
@@ -330,8 +395,8 @@ class PowerPage(BasePage):
         reset_all.clicked.connect(self._reset_all)
         row.addWidget(reset_all)
         row.addStretch(1)
-        card.layout.addLayout(row)
-        card.layout.addWidget(
+        body.addLayout(row)
+        body.addWidget(
             self._secondary(
                 tr(
                     '"System default" means Linwas does not change that setting. Settings '
@@ -340,6 +405,7 @@ class PowerPage(BasePage):
                 card,
             )
         )
+        self._on_advanced_toggled(False)
         return card
 
     def _build_automation_card(self, parent: QWidget) -> Card:
@@ -434,6 +500,7 @@ class PowerPage(BasePage):
             self._edit_plan = self._draft.active
         self._fill_all()
         self._fill_status(data["status"], data["ppd"], data["state"])
+        self._fill_service(data["service"])
         self._fill_conflicts(self._support.conflicts)
         self._fill_hibernate(self._support.hibernate)
 
@@ -444,7 +511,16 @@ class PowerPage(BasePage):
         bat: power.Battery = batteries[0]
         self._battery_name = bat.name
         self._level.setValue(bat.capacity or 0)
-        lines = [_status_text(bat.status)]
+        self._level_pct.setText(f"{bat.capacity}%" if bat.capacity is not None else "")
+        status = _status_text(bat.status)
+        if bat.minutes_left:
+            left = _duration_text(bat.minutes_left)
+            if bat.status == "Charging":
+                status += " · " + tr("full in about {t}").format(t=left)
+            else:
+                status += " · " + tr("about {t} left").format(t=left)
+        self._bat_lbl.setText(status)
+        lines = []
         if bat.health is not None:
             if bat.health >= 80:
                 verdict = tr("good")
@@ -459,7 +535,8 @@ class PowerPage(BasePage):
             )
         if bat.cycle_count:
             lines.append(tr("Charge cycles: {n}").format(n=bat.cycle_count))
-        self._bat_lbl.setText("\n".join(lines))
+        self._bat_detail.setText(" · ".join(lines))
+        self._bat_detail.setVisible(bool(lines))
         if bat.charge_limit is not None:
             self._limit_box.show()
             idx = self._limit.findData(bat.charge_limit)
@@ -470,11 +547,9 @@ class PowerPage(BasePage):
         source = tr("plugged in") if state.on_ac else tr("on battery")
         if not status:
             plan, reason = powerplan.effective_plan(self._saved, state)
-            note = tr("The power plan service is not running; some settings are not applied.")
         else:
             plan = self._saved.plan(str(status.get("plan"))) or self._saved.plan(self._saved.active)
             reason = str(status.get("reason", "active"))
-            note = ""
         if plan is None:
             return
         line = tr("Now using: {plan} ({source})").format(plan=texts.plan_name(plan), source=source)
@@ -482,7 +557,7 @@ class PowerPage(BasePage):
             line += " — " + tr("because the battery is low")
         elif reason == "schedule":
             line += " — " + tr("because of the schedule")
-        self._now_lbl.setText(line + (f"\n{note}" if note else ""))
+        self._now_lbl.setText(line)
 
         # Sistem menüsünden güç kipi değiştirildiyse uyar
         want = self._saved.value(plan, "ppd_profile", "ac" if state.on_ac else "bat")
@@ -500,6 +575,111 @@ class PowerPage(BasePage):
             self._ppd_warn.show()
         else:
             self._ppd_warn.hide()
+
+    def _fill_service(self, service: str) -> None:
+        """Servis çalışmıyorsa nedenini söyler ve uygulanamayacak ayarları kilitler."""
+        if service == "running":
+            self._service_card.hide()
+        elif service == "missing":
+            self._service_title.setText(tr("Power plans are not available"))
+            self._service_lbl.setText(
+                tr(
+                    "Power plans are applied by the Linwas power service, which comes with the "
+                    "installed Linwas package. Linwas is running from source code here, so the "
+                    "plan settings are locked. Battery information still works."
+                )
+            )
+            self._service_btn.hide()
+            self._service_card.show()
+        else:
+            self._service_title.setText(tr("The power service is stopped"))
+            self._service_lbl.setText(
+                tr(
+                    "The Linwas power service is not running, so plan settings would not be "
+                    "applied. They are locked until the service runs again."
+                )
+            )
+            self._service_btn.show()
+            self._service_card.show()
+        usable = service == "running"
+        self._service_ok = usable
+        for card in (self._plan_card, self._quick_card, self._advanced_card, self._automation_card):
+            card.setEnabled(usable)
+            card.setToolTip("" if usable else tr("Needs the Linwas power service"))
+        self._update_dirty()
+
+    def _start_service(self) -> None:
+        name = power_apply.SERVICE_NAME
+        self.task_run_now.emit(
+            Task(
+                label=tr("Start the power service"),
+                steps=[
+                    TaskStep(op_id="service.enable", params={"name": name}),
+                    TaskStep(op_id="service.restart", params={"name": name}),
+                ],
+            )
+        )
+
+    def _setting_cell(self, name: str, help_text: str) -> QWidget:
+        cell = QWidget(self._tree)
+        box = QVBoxLayout(cell)
+        box.setContentsMargins(4, 6, 8, 6)
+        box.setSpacing(2)
+        box.addWidget(QLabel(name, cell))
+        if help_text:
+            box.addWidget(self._secondary(help_text, cell))
+        return cell
+
+    def _on_advanced_toggled(self, shown: bool) -> None:
+        self._adv_body.setVisible(shown)
+        self._adv_toggle.setText(
+            tr("Hide advanced settings") if shown else tr("Show advanced settings")
+        )
+
+    def _default_value(self, sid: str, src: str) -> str:
+        plan = self._draft.plan(self._edit_plan)
+        if plan is None:
+            return AUTO
+        # Yerleşik plan: fabrika değeri; özel plan: "Sistem varsayılanı"
+        base = powerplan.factory_plan(plan.id) if plan.builtin else powerplan.PowerPlan(plan.id)
+        return powerplan.default_config().value(base, sid, src)
+
+    def _update_reset_buttons(self) -> None:
+        plan = self._draft.plan(self._edit_plan)
+        if plan is None:
+            return
+        unsupported = self._support.unsupported if self._support else {}
+        for sid, btn in self._reset_btns.items():
+            changed = any(
+                self._draft.value(plan, sid, src) != self._default_value(sid, src)
+                for src in powerplan.SOURCES
+            )
+            # Varsayılandaysa düğme görünmez ama yer tutar (sütun zıplamasın)
+            btn.setText(tr("Default") if changed else "")
+            btn.setEnabled(changed and sid not in unsupported)
+
+    def _reset_setting(self, sid: str) -> None:
+        plan = self._draft.plan(self._edit_plan)
+        if plan is None:
+            return
+        spec = SPECS[sid]
+        target = plan.values if spec.per_plan else self._draft.globals
+        pair = {src: self._default_value(sid, src) for src in powerplan.SOURCES}
+        if pair == {"ac": AUTO, "bat": AUTO}:
+            target.pop(sid, None)
+        else:
+            target[sid] = pair
+        self._filling = True
+        try:
+            for combos in (self._quick_combos, self._tree_combos):
+                for src in powerplan.SOURCES:
+                    combo = combos.get((sid, src))
+                    if combo is not None:
+                        self._fill_combo(combo, sid, pair[src])
+        finally:
+            self._filling = False
+        self._update_reset_buttons()
+        self._update_dirty()
 
     def _fill_conflicts(self, tools: list[power_support.ConflictTool]) -> None:
         while self._conflict_btns.count():
@@ -606,6 +786,7 @@ class PowerPage(BasePage):
         self._tree.clear()
         self._tree_combos.clear()
         self._tree_items.clear()
+        self._reset_btns.clear()
         split_cols = self._laptop
         self._tree.setColumnHidden(2, not split_cols)
         self._tree.setHeaderLabels(
@@ -622,14 +803,23 @@ class PowerPage(BasePage):
             font.setBold(True)
             top.setFont(0, font)
             for spec in specs:
-                item = QTreeWidgetItem(top, [texts.setting_name(spec.id)])
+                item = QTreeWidgetItem(top, [""])
                 reason = unsupported.get(spec.id, "")
-                tip = texts.setting_help(spec.id)
+                name = texts.setting_name(spec.id)
                 if reason:
-                    tip = texts.reason_text(reason) + (f"\n{tip}" if tip else "")
-                    item.setText(0, f"{texts.setting_name(spec.id)} ({texts.reason_text(reason)})")
-                item.setToolTip(0, tip)
+                    name = f"{name} ({texts.reason_text(reason)})"
+                # Ad + altında kısa açıklama (temel kullanıcı da ne işe yaradığını görsün)
+                self._tree.setItemWidget(
+                    item, 0, self._setting_cell(name, texts.setting_help(spec.id))
+                )
                 self._tree_items[spec.id] = item
+                reset = QToolButton(self._tree)
+                reset.setObjectName("SettingLink")
+                reset.setText(tr("Default"))
+                reset.setToolTip(tr("Restore the default value of this setting"))
+                reset.clicked.connect(lambda _c=False, s=spec.id: self._reset_setting(s))
+                self._tree.setItemWidget(item, 3, reset)
+                self._reset_btns[spec.id] = reset
                 sources = powerplan.SOURCES if (spec.split and split_cols) else ("ac",)
                 for col, src in enumerate(sources, start=1):
                     combo = QComboBox(self._tree)
@@ -641,6 +831,7 @@ class PowerPage(BasePage):
                     self._tree.setItemWidget(item, col, combo)
                     self._tree_combos[(spec.id, src)] = combo
             top.setExpanded(section in ("display", "buttons", "cpu"))
+        self._update_reset_buttons()
 
     def _fill_quick(self) -> None:
         plan = self._draft.plan(self._edit_plan)
@@ -674,7 +865,7 @@ class PowerPage(BasePage):
         return powerplan.dumps(self._draft) != powerplan.dumps(self._saved)
 
     def _update_dirty(self) -> None:
-        self._save_bar.setVisible(self._dirty())
+        self._save_bar.setVisible(self._service_ok and self._dirty())
 
     def _on_combo(self, sid: str, src: str, combo: QComboBox) -> None:
         if self._filling:
@@ -702,6 +893,7 @@ class PowerPage(BasePage):
                         other.setCurrentIndex(max(0, other.findData(value)))
         finally:
             self._filling = False
+        self._update_reset_buttons()
         self._update_dirty()
 
     def _on_edit_plan_changed(self, index: int) -> None:
@@ -929,6 +1121,8 @@ class PowerPage(BasePage):
             "automation": self._automation_card,
             "advanced": self._advanced_card,
         }.get(action)
+        if target is self._advanced_card:
+            self._adv_toggle.setChecked(True)
         if target is not None:
             self._scroll.ensureWidgetVisible(target, 0, 40)
 

@@ -634,6 +634,12 @@ class LinwasTaskbar {
     // Renkler
 
     _dark() {
+        // Linwas'ta açık/koyu tema seçildiyse görev çubuğu da onu izler
+        const mode = (this._cfg.palette || {}).mode;
+        if (mode === 'dark')
+            return true;
+        if (mode === 'light')
+            return false;
         const scheme = this._iface.get_string('color-scheme');
         if (scheme === 'prefer-dark')
             return true;

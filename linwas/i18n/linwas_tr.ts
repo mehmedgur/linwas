@@ -3268,10 +3268,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Güç planı değiştirilemedi.</translation>
     </message>
     <message>
-        <source>The power plan service is not running; some settings are not applied.</source>
-        <translation>Güç planı servisi çalışmıyor; bazı ayarlar uygulanmıyor.</translation>
-    </message>
-    <message>
         <source>The schedule start and end times are the same.</source>
         <translation>Zamanlamanın başlangıç ve bitiş saatleri aynı.</translation>
     </message>
@@ -3606,6 +3602,102 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>{n} devices can wake the computer from sleep.</source>
         <translation>{n} aygıt bilgisayarı uykudan uyandırabiliyor.</translation>
+    </message>
+    <message>
+        <source>Below this level the battery is shown as critical.</source>
+        <translation>Pil bu seviyenin altında kritik olarak gösterilir.</translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation>Varsayılan</translation>
+    </message>
+    <message>
+        <source>Every setting of the plans, like Windows' advanced power options. Most people do not need to change these.</source>
+        <translation>Planların bütün ayarları; Windows'taki gelişmiş güç seçenekleri gibi. Çoğu kişinin bunları değiştirmesi gerekmez.</translation>
+    </message>
+    <message>
+        <source>Hide advanced settings</source>
+        <translation>Gelişmiş ayarları gizle</translation>
+    </message>
+    <message>
+        <source>Show advanced settings</source>
+        <translation>Gelişmiş ayarları göster</translation>
+    </message>
+    <message>
+        <source>Idle internal devices are switched off to save power.</source>
+        <translation>Boştaki dahili aygıtlar enerji tasarrufu için kapatılır.</translation>
+    </message>
+    <message>
+        <source>Lets SATA disks save power when idle; may slow some disks slightly.</source>
+        <translation>SATA diskler boştayken enerji tasarrufu yapar; bazı diskleri biraz yavaşlatabilir.</translation>
+    </message>
+    <message>
+        <source>Makes the screen darker shortly before it turns off.</source>
+        <translation>Ekran kapanmadan kısa süre önce kararır.</translation>
+    </message>
+    <message>
+        <source>Needs the Linwas power service</source>
+        <translation>Linwas güç servisi gerekli</translation>
+    </message>
+    <message>
+        <source>Power plans are applied by the Linwas power service, which comes with the installed Linwas package. Linwas is running from source code here, so the plan settings are locked. Battery information still works.</source>
+        <translation>Güç planlarını Linwas paketiyle kurulan Linwas güç servisi uygular. Linwas burada kaynak koddan çalışıyor, bu yüzden plan ayarları kilitli. Pil bilgileri yine çalışır.</translation>
+    </message>
+    <message>
+        <source>Power plans are not available</source>
+        <translation>Güç planları kullanılamıyor</translation>
+    </message>
+    <message>
+        <source>Restore the default value of this setting</source>
+        <translation>Bu ayarı varsayılan değerine döndür</translation>
+    </message>
+    <message>
+        <source>Start the power service</source>
+        <translation>Güç servisini başlat</translation>
+    </message>
+    <message>
+        <source>Start the service</source>
+        <translation>Servisi başlat</translation>
+    </message>
+    <message>
+        <source>The Linwas power service is not running, so plan settings would not be applied. They are locked until the service runs again.</source>
+        <translation>Linwas güç servisi çalışmıyor, bu yüzden plan ayarları uygulanmaz. Servis yeniden çalışana kadar ayarlar kilitli.</translation>
+    </message>
+    <message>
+        <source>The computer sleeps when you do not use it for this long.</source>
+        <translation>Bilgisayarı bu süre kullanmazsanız uyku moduna geçer.</translation>
+    </message>
+    <message>
+        <source>The power service is stopped</source>
+        <translation>Güç servisi durdu</translation>
+    </message>
+    <message>
+        <source>The screen turns off when you do not use the computer for this long.</source>
+        <translation>Bilgisayarı bu süre kullanmazsanız ekran kapanır.</translation>
+    </message>
+    <message>
+        <source>What the computer does when the battery is almost empty.</source>
+        <translation>Pil bitmek üzereyken bilgisayarın ne yapacağı.</translation>
+    </message>
+    <message>
+        <source>about {t} left</source>
+        <translation>yaklaşık {t} kaldı</translation>
+    </message>
+    <message>
+        <source>full in about {t}</source>
+        <translation>yaklaşık {t} içinde dolacak</translation>
+    </message>
+    <message>
+        <source>{h} h</source>
+        <translation>{h} sa</translation>
+    </message>
+    <message>
+        <source>{h} h {m} min</source>
+        <translation>{h} sa {m} dk</translation>
+    </message>
+    <message>
+        <source>{m} min</source>
+        <translation>{m} dk</translation>
     </message>
 </context>
 <context>

@@ -94,18 +94,26 @@ def save_config(cfg: TaskbarConfig) -> None:
         pass
 
 
-def write_palette(light: dict[str, str], dark: dict[str, str], accent: str) -> None:
-    """Linwas'ın açık/koyu renklerini ve vurgu rengini eklentiye verir."""
+def write_palette(
+    light: dict[str, str], dark: dict[str, str], accent: str, mode: str = "system"
+) -> None:
+    """Linwas'ın açık/koyu renklerini ve vurgu rengini eklentiye verir.
+
+    mode: "light" / "dark" = Linwas'ın seçili teması (görev çubuğu da ona uyar);
+    "system" = masaüstünün açık/koyu ayarı izlenir.
+    """
     cfg = load_config()
-    palette = {"light": light, "dark": dark, "accent": accent}
+    palette = {"light": light, "dark": dark, "accent": accent, "mode": mode}
     if cfg.palette != palette:
         cfg.palette = palette
         save_config(cfg)
 
 
-def sync_palette(light: dict[str, str], dark: dict[str, str], accent: str) -> None:
+def sync_palette(
+    light: dict[str, str], dark: dict[str, str], accent: str, mode: str = "system"
+) -> None:
     """Renkleri günceller (değişmediyse dosyaya yazılmaz)."""
-    write_palette(light, dark, accent)
+    write_palette(light, dark, accent, mode)
 
 
 # --- Dash to Panel / Dash to Dock ayarları ---
