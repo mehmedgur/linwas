@@ -23,6 +23,7 @@ from linwas.backend import app_folders
 from linwas.backend.app_folders import AppFolder
 from linwas.core.tasks import Task, TaskStep
 from linwas.ui.app_folder_popup import AppPicker, FolderPopup, save_and_refresh
+from linwas.ui.folder_actions import install_menu_actions
 from linwas.ui.pages.base import BasePage
 from linwas.ui.widgets.card import Card
 
@@ -129,6 +130,7 @@ class AppFoldersPage(BasePage):
                 item.widget().deleteLater()
         folders = app_folders.load_folders()
         app_folders.refresh_launchers(folders)
+        install_menu_actions()  # masaüstü sağ tık: grupla / klasöre ekle / klasörü çöz
         self._empty.setVisible(not folders)
         for folder in folders:
             self._list.addWidget(self._folder_card(folder))

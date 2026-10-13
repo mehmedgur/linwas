@@ -4,6 +4,7 @@ Komut satırı seçenekleri:
   --version      Sürümü yazdırır.
   --self-check   Pencere açmadan temel kontrolleri yapar (CI'da paket testi için).
   --app-folder KİMLİK [DOSYALAR]  Program klasörünü açar; bırakılan kısayolları ekler.
+  --folder-action EYLEM DOSYALAR  Masaüstü sağ tık: group / add / ungroup (program klasörü).
   --open-group KİMLİK             Çalışma grubuna geçer, programlarını başlatır.
   --workgroups-agent              Yeni pencereleri kendi grubuna taşır (X11; oturumla başlar).
 """
@@ -60,6 +61,11 @@ def main(argv: list[str] | None = None) -> int:
         from linwas.backend import workgroups
 
         return 0 if workgroups.open_group(workgroups.load_groups(), argv[2]) else 1
+    if len(argv) > 2 and argv[1] == "--folder-action":
+        # Masaüstü sağ tık eylemi (grupla / klasöre ekle / klasörü çöz)
+        from linwas.ui.folder_actions import run as folder_action
+
+        return folder_action(argv[2], argv[3:])
     if len(argv) > 2 and argv[1] == "--app-folder":
         # Program klasörü açılır penceresi; ana pencereden bağımsız, hafif süreç
         from linwas.ui.app_folder_popup import run

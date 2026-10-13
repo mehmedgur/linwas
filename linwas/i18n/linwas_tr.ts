@@ -7928,4 +7928,75 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
         <translation>Görev çubuğundan açılan bütün menüler: hızlı ayarlar, takvim, ses, ağ, medya ve diğer programların simgeleri.</translation>
     </message>
 </context>
+<context>
+    <name>FolderActions</name>
+    <message>
+        <source>Add to a folder</source>
+        <translation>Klasöre ekle</translation>
+    </message>
+    <message>
+        <source>Add to a folder (Linwas)</source>
+        <translation>Klasöre ekle (Linwas)</translation>
+    </message>
+    <message>
+        <source>Adds the selected programs to a program folder</source>
+        <translation>Seçilen programları bir program klasörüne ekler</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>Klasör</translation>
+    </message>
+    <message>
+        <source>Folder name:</source>
+        <translation>Klasör adı:</translation>
+    </message>
+    <message>
+        <source>Folder:</source>
+        <translation>Klasör:</translation>
+    </message>
+    <message>
+        <source>Group in a folder (Linwas)</source>
+        <translation>Klasörde grupla (Linwas)</translation>
+    </message>
+    <message>
+        <source>New folder</source>
+        <translation>Yeni klasör</translation>
+    </message>
+    <message>
+        <source>Program folder</source>
+        <translation>Program klasörü</translation>
+    </message>
+    <message>
+        <source>Puts the selected programs into a new program folder</source>
+        <translation>Seçilen programları yeni bir program klasörüne koyar</translation>
+    </message>
+    <message>
+        <source>Removes the folder; its programs return to the desktop</source>
+        <translation>Klasörü kaldırır; içindeki programlar masaüstüne döner</translation>
+    </message>
+    <message>
+        <source>Select a Linwas program folder to ungroup it.</source>
+        <translation>Çözmek için bir Linwas program klasörü seçin.</translation>
+    </message>
+    <message>
+        <source>Select program shortcuts on the desktop to put them in a folder.</source>
+        <translation>Klasöre koymak için masaüstünde program kısayollarını seçin.</translation>
+    </message>
+    <message>
+        <source>There are no folders yet. Use "Group in a folder" to create one.</source>
+        <translation>Henüz klasör yok. Oluşturmak için "Klasörde grupla"yı kullanın.</translation>
+    </message>
+    <message>
+        <source>Ungroup "{name}"? Its programs return to the desktop.</source>
+        <translation>"{name}" klasörü çözülsün mü? İçindeki programlar masaüstüne döner.</translation>
+    </message>
+    <message>
+        <source>Ungroup folder</source>
+        <translation>Klasörü çöz</translation>
+    </message>
+    <message>
+        <source>Ungroup folder (Linwas)</source>
+        <translation>Klasörü çöz (Linwas)</translation>
+    </message>
+</context>
 </TS>

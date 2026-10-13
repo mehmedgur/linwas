@@ -369,6 +369,16 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
        kapalıysa: kurulu ama kapalı → `gnome-extensions enable`; kurulu değil → `package.install`
        (`gnome-shell-extension-desktop-icons-ng`, UUID `ding@rastersoft.com`), sonra `enabled-extensions`'a
        yazılır, oturum yeniden açılınca görünür.
+     - **Masaüstünde sağ tık (13 Ekim 2026, kullanıcı):** seçili program simgelerinde "Klasörde grupla
+       (Linwas)" (ad sorulur, simgeler klasöre taşınır), "Klasöre ekle (Linwas)" (var olan klasör seçilir),
+       klasör simgesinde "Klasörü çöz (Linwas)" (programlar masaüstüne döner). XFCE: Thunar özel eylemleri
+       `~/.config/Thunar/uca.xml` (xfdesktop thunar-uca'yı yükler; Linwas eylemleri `unique-id`
+       "linwas-folder-…", kullanıcınınkilere dokunulmaz; `%F`). GNOME (DING) ve Nautilus: Betikler alt
+       menüsü `~/.local/share/nautilus/scripts` (seçili dosyalar argüman). Komut `linwas --folder-action
+       <group|add|ungroup> <dosyalar>` (`backend/folder_menu.py`, `ui/folder_actions.py`); Linwas açılışında
+       ve klasör sayfasında geçerli dilde yazılır. XFCE güveni: kısayola `metadata::xfce-exe-checksum` =
+       içeriğin SHA-256'sı (libxfce4util), GNOME'un `metadata::trusted`'ı ile birlikte. Görev çubuğuna
+       sabitleme XFCE'de henüz yok.
    - **Masaüstü kapsamı (10 Ekim 2026, kullanıcı kararı):** çalışma grupları GNOME, XFCE ve Cinnamon için
      birlikte yazılır (kullanıcı üçünü de kullanıyor); KDE sonraki sürümde. Ortak: X11'de `wmctrl` ile geçiş,
      pencere taşıma ve "program hep kendi grubunda açılsın" ajanı; masaüstüne özel: masaüstü sayısı/adları,

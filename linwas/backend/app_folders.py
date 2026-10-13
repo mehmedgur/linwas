@@ -13,12 +13,17 @@ tıklanınca Linwas'ın açılır penceresi (`linwas --app-folder <kimlik>`) pro
   Masaüstündeki bir program simgesi bırakılınca Android'deki gibi klasöre taşınır
   (~/.local/share/linwas/folder-items/), klasörden çıkarılınca masaüstüne geri döner.
 
+XFCE (xfdesktop) kısayolu ancak çalıştırılabilir ve `metadata::xfce-exe-checksum` içeriğin
+SHA-256'sına eşitse güvenilir sayar (libxfce4util xfce_g_file_set_trusted).
+Masaüstünde sağ tık eylemleri (grupla / klasöre ekle / klasörü çöz): backend/folder_menu.py.
+
 Görev çubuğuna sabitleme şimdilik GNOME'da (org.gnome.shell favorite-apps; Dash to Panel de bunu
 kullanır); KDE ve XFCE sonraki sürümde.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
@@ -319,9 +324,18 @@ def launcher_text(folder: AppFolder) -> str:
 
 
 def _trust(path: Path) -> None:
-    """DING'in çalıştırması için: grup/diğerleri yazamaz + çalıştırılabilir + güvenilir."""
+    """Masaüstünün çalıştırması için: grup/diğerleri yazamaz + çalıştırılabilir + güvenilir.
+
+    GNOME (DING) `metadata::trusted`, XFCE `metadata::xfce-exe-checksum` (içeriğin SHA-256'sı;
+    içerik değişince yeniden onay ister) bakar; ikisi de yazılır.
+    """
     path.chmod(0o755)
     _run(["gio", "set", str(path), "metadata::trusted", "true"])
+    try:
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    except OSError:
+        return
+    _run(["gio", "set", str(path), "metadata::xfce-exe-checksum", digest])
 
 
 def write_launchers(folder: AppFolder) -> None:
@@ -348,6 +362,10 @@ def refresh_launchers(folders: list[AppFolder]) -> None:
             current = ""
         if current != launcher_text(folder):
             write_launchers(folder)
+            continue
+        desk = desktop_dir() / launcher_name(folder)
+        if folder.on_desktop and desk.is_file():
+            _trust(desk)  # eski sürümün yazdığı kopyada XFCE onayı yoktu
 
 
 def remove_launchers(folder: AppFolder) -> None:
@@ -458,6 +476,27 @@ def add_dropped(folder: AppFolder, uris: list[str]) -> int:
             folder.apps.append(ref)
             added += 1
     return added
+
+
+def group_paths(name: str, paths: list[str]) -> AppFolder | None:
+    """Masaüstünde seçilen program kısayollarından yeni klasör (sağ tık › Klasörde grupla).
+
+    Hiçbiri program kısayolu değilse klasör oluşturulmaz (None)."""
+    folder = new_folder(name)
+    if not add_dropped(folder, paths):
+        save_folders([f for f in load_folders() if f.id != folder.id])
+        return None
+    folder.pinned = can_pin()
+    update_folder(folder)
+    return folder
+
+
+def folder_of_launcher(path: str) -> AppFolder | None:
+    """Klasör kısayolunun (linwas-folder-<kimlik>.desktop) klasörü."""
+    p = _uri_to_path(path)
+    if p is None or not p.name.startswith(LAUNCHER_PREFIX) or p.suffix != ".desktop":
+        return None
+    return get_folder(p.stem.removeprefix(LAUNCHER_PREFIX))
 
 
 def remove_app(folder: AppFolder, ref: str) -> None:
