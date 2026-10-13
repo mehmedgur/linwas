@@ -561,6 +561,7 @@ class LinwasTaskbar {
         this._sectionSignal = 0;
         this._styledPanel = null;
         this._blurred = [];
+        this._styledMenus = [];
 
         const path = GLib.build_filenamev([GLib.get_user_data_dir(), 'linwas', 'taskbar.json']);
         this._file = Gio.File.new_for_path(path);
@@ -570,10 +571,8 @@ class LinwasTaskbar {
         this._iface = new Gio.Settings({ schema_id: 'org.gnome.desktop.interface' });
         this._connect(this._iface, 'changed::color-scheme', () => this._queueApply(false));
         this._connect(this._iface, 'changed::gtk-theme', () => this._queueApply(false));
-        this._connect(Main.extensionManager, 'extension-state-changed', (mgr, ext) => {
-            if (ext && ext.uuid === DTP_UUID)
-                this._queueApply(false);
-        });
+        this._connect(Main.extensionManager, 'extension-state-changed', () =>
+            this._queueApply(false));
 
         this._media = new MediaManager(() => this._onMediaChanged());
         this._load();
@@ -714,6 +713,59 @@ class LinwasTaskbar {
     _apply() {
         this._applyPanel();
         this._onMediaChanged();
+        this._applyMenus();
+    }
+
+    // Görev çubuğundaki bütün açılır menüler (hızlı ayarlar, takvim, ses, ağ, diğer simgeler)
+
+    _menuBoxes() {
+        const boxes = [];
+        for (const key in Main.panel.statusArea) {
+            const item = Main.panel.statusArea[key];
+            if (!item || item === this._button)
+                continue; // medya menüsünün zemini kart olur (ayrıca ayarlanır)
+            const box = item.menu && item.menu.box;
+            if (box && typeof box.set_style === 'function' && !boxes.includes(box))
+                boxes.push(box);
+        }
+        return boxes;
+    }
+
+    _menuStyle() {
+        const pal = this._palette();
+        const style = this._cfg.card_style || 'matte';
+        const alpha = style === 'matte' ? 1 : this._alpha(style);
+        return {
+            css: `background-color: ${rgba(pal.card, alpha)}; color: ${fgFor(pal.card)};`,
+            blur: style === 'blur',
+        };
+    }
+
+    _applyMenus() {
+        const boxes = this._menuBoxes();
+        const look = this._menuStyle();
+        for (const box of this._styledMenus) {
+            if (!boxes.includes(box))
+                this._resetMenu(box);
+        }
+        for (const box of boxes) {
+            try {
+                box.set_style(look.css);
+                const effect = box.get_effect(BLUR_NAME);
+                if (look.blur && !effect)
+                    box.add_effect_with_name(BLUR_NAME, makeBlur());
+                else if (!look.blur && effect)
+                    box.remove_effect_by_name(BLUR_NAME);
+            } catch (e) {}
+        }
+        this._styledMenus = boxes;
+    }
+
+    _resetMenu(box) {
+        try {
+            box.set_style(null);
+            box.remove_effect_by_name(BLUR_NAME);
+        } catch (e) {}
     }
 
     _applyPanel() {
@@ -780,6 +832,9 @@ class LinwasTaskbar {
     _resetPanel() {
         this._resetMainPanel();
         this._setBlur([], false);
+        for (const box of this._styledMenus || [])
+            this._resetMenu(box);
+        this._styledMenus = [];
     }
 
     // Medya

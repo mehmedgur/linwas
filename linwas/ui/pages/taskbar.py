@@ -420,6 +420,15 @@ class TaskbarPage(BasePage):
             tr("Uses the light or dark theme and the Linwas accent color."),
             color,
         )
+        _row(
+            card,
+            tr("Menus and cards"),
+            tr(
+                "Every menu opened from the taskbar: quick settings, calendar, sound, network, "
+                "media and the icons of other programs."
+            ),
+            _segmented(card, styles, self._cfg.card_style, lambda k: self._set("card_style", k)),
+        )
         self._body.addWidget(card)
 
     def _set_style(self, style: str) -> None:
@@ -499,17 +508,6 @@ class TaskbarPage(BasePage):
             cb.setAccessibleName(title)
             cb.toggled.connect(lambda on, n=name: self._set(n, on))
             _row(card, title, desc, cb)
-        styles = [
-            ("transparent", tr("Transparent")),
-            ("matte", tr("Matte")),
-            ("blur", tr("Blurred")),
-        ]
-        _row(
-            card,
-            tr("Card background"),
-            "",
-            _segmented(card, styles, self._cfg.card_style, lambda k: self._set("card_style", k)),
-        )
         note = QLabel(
             tr(
                 "Works with Spotify, YouTube Music and YouTube in the browser, Rhythmbox, VLC and "

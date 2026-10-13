@@ -7536,10 +7536,6 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
         <translation>Alt</translation>
     </message>
     <message>
-        <source>Card background</source>
-        <translation>Kart arka planı</translation>
-    </message>
-    <message>
         <source>Choose how the taskbar looks and add a media control. Changes appear on the desktop right away. (Windows: Taskbar settings · macOS: Dock &amp; Menu Bar)</source>
         <translation>Görev çubuğunun görünümünü seçin ve medya kontrolü ekleyin. Değişiklikler masaüstünde hemen görünür. (Windows: Görev çubuğu ayarları · macOS: Dock ve Menü Çubuğu)</translation>
     </message>
@@ -7810,6 +7806,14 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>The newly installed taskbar starts after you log out and back in once. Nothing was changed; choose this layout again afterwards.</source>
         <translation>Yeni kurulan görev çubuğu oturumu bir kez kapatıp açınca çalışır. Hiçbir şey değiştirilmedi; sonra bu düzeni yeniden seçin.</translation>
+    </message>
+    <message>
+        <source>Menus and cards</source>
+        <translation>Menüler ve kartlar</translation>
+    </message>
+    <message>
+        <source>Every menu opened from the taskbar: quick settings, calendar, sound, network, media and the icons of other programs.</source>
+        <translation>Görev çubuğundan açılan bütün menüler: hızlı ayarlar, takvim, ses, ağ, medya ve diğer programların simgeleri.</translation>
     </message>
 </context>
 </TS>

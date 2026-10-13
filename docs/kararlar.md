@@ -447,6 +447,11 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
        Kart saydamlığı: kart GNOME menüsünün opak zemini üstünde durduğu için fark görünmüyordu;
        görev çubuğundaki medya menüsünde saydam/bulanık seçilince menü zemini kaldırılır (görünen yüzey
        kart). Takvim menüsündeki kart menünün içinde kalır; orada saydamlık yalnızca menü rengine göre.
+       **Menüler ve kartlar (13 Ekim 2026, kullanıcı):** Saydam / Mat / Bulanık seçimi görev çubuğundaki
+       bütün açılır menülere uygulanır (`Main.panel.statusArea[*].menu.box`: hızlı ayarlar, takvim, ses,
+       ağ, diğer eklentilerin simgeleri; başka eklenti açılıp kapanınca yeniden taranır). Renk Linwas'ın
+       kart rengi (açık/koyu), saydamlık görev çubuğuyla aynı; mat = opak Linwas rengi. Eklenti
+       kapanınca menüler GNOME'un kendi görünümüne döner. Ayar sayfada Görünüm › "Menüler ve kartlar".
    - **G. Tema (vurgu) rengi seçimi (13 Ekim 2026, kullanıcı kararı):** yalnızca **Linwas** penceresi ve
      Linwas eklentileri (görev çubuğu, medya widget'ı) renk alır; masaüstünün sistem rengi değişmez.
      Ayarlar › Görünüm'de hazır renkler + özel renk; seçilen renk açık ve koyu temada okunur kontrastta
