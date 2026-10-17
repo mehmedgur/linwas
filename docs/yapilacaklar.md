@@ -136,7 +136,12 @@ Son güncelleme: 12 Ekim 2026
 - [x] **LibreOffice'i Microsoft Office gibi göstermek:** `linwas-office-look` paketi ve
   Office › Office görünümü sayfası (kararlar.md › Office görünümü). Kodlandı 17 Ekim 2026,
   deneme bekliyor. Kalanlar:
-  - [ ] Paketi Linwas APT deposunun yayın iş akışına (`release.yml`) eklemek.
+  - [x] Paket Linwas APT deposunun yayın iş akışında (`release.yml`; sürüm
+    `packaging/plugins/office-look/VERSION`). 17 Ekim 2026: yerel imzalı depoyla denendi
+    (apt imzayı kabul ediyor, paket listede). Pardus 23'e .deb ile kuruldu.
+  - [ ] Bilinen sınır: paket kurulduktan sonra LibreOffice'in **ilk** açılışında (paket eklentisi
+    o sırada kullanıcıya kaydediliyor) Dosya sekmesi menüyü açmıyor; ikinci açılıştan itibaren
+    açıyor. Dosya düğmesi ve kısayollar ilk açılışta da çalışıyor.
   - [ ] Ubuntu 22.04/24.04 ve Debian 13'te (LibreOffice 7.3 / 24.x) sade şerit üretimini denemek.
   - [ ] LibreOffice eklentisinin arayüz metinleri yalnız Türkçe; İngilizce karşılıklar.
   - [ ] Calc tasarımındaki "İşlevler" sekmesi ve ilk açılış ipucu paneli.

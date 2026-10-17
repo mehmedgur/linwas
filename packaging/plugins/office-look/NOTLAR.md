@@ -147,3 +147,14 @@ Paket adı `pardus-libreoffice-writer-sade` yerine `pardus-ofis-deneyimi` oldu (
 - Şerit dosyası: Dosya sekmesinin özgün bölümleri **kalmalı**, öğe başa eklenir. İçerik boşaltılırsa (boyut grupları temizlense bile) sekmeye tıklanınca şeridin tamamı kayboluyor.
 - Writer ve Calc'ta denendi: Dosya sekmesi menüyü açıyor, Esc ile kapanıyor. Başka sekmeden Dosya'ya dönülünce yeniden açılıyor, Sayfa sekmesine geçince kapanıyor. Sol üstteki düğmeyle açılan menü şeritte gezinince açık kalıyor.
 - Linwas entegrasyon planı: `docs/linwas-plani.md`.
+
+## Sistem kurulumu (linwas-office-look 0.4.0, 17 Ekim 2026)
+
+- Pardus 23'e kuruldu. postinst üç uygulamanın sade şeridini üretti:
+  `modules/{swriter,scalc,simpress}/ui/linwas_simple.ui` ve `registry/linwas-office-look-ribbon.xcd`.
+  Eski `pardus-ofis-deneyimi` paketi `Conflicts`/`Replaces` sayesinde kaldırıldı.
+- Boş profille denendi: sade şerit varsayılan geliyor, Ctrl+S Dosya menüsünü açıyor,
+  `.docx` olarak kaydediyor, başlıkta "Kaydedildi" yazıyor.
+- **İlk açılış sınırı:** Paketle gelen eklenti, profilin ilk açılışında kullanıcıya
+  kaydediliyor. Şerit bu kayıttan önce kurulduğu için o oturumda Dosya sekmesinin denetçisi
+  çalışmıyor. LibreOffice kapatılıp açılınca sekme menüyü açıyor.

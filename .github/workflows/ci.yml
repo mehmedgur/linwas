@@ -64,7 +64,8 @@ jobs:
       # Derleme betiği paket ağacını ve bu LibreOffice'ten üretilen sade şeridi denetler.
       - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends
           libreoffice-writer libreoffice-calc libreoffice-impress python3-uno fakeroot
-      - run: bash packaging/plugins/office-look/build-deb.sh "0.4.0~dev${{ github.run_number }}" build
+      - run: bash packaging/plugins/office-look/build-deb.sh
+          "$(cat packaging/plugins/office-look/VERSION)~dev${{ github.run_number }}" build
       - uses: actions/upload-artifact@v4
         with:
           name: linwas-office-look-deb

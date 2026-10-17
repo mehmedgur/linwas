@@ -1,13 +1,13 @@
 #!/bin/bash
 # linwas-office-look .deb paketini derler.
-# Kullanım: packaging/plugins/office-look/build-deb.sh <paket-sürümü> [çıktı-klasörü]
-#   ör. packaging/plugins/office-look/build-deb.sh 0.4.0 build
+# Kullanım: packaging/plugins/office-look/build-deb.sh [paket-sürümü] [çıktı-klasörü]
+#   Sürüm verilmezse VERSION dosyasındaki kullanılır. ör. build-deb.sh "" build
 # Gereken: python3, dpkg-deb, fakeroot. LibreOffice (writer, calc, impress) kuruluysa paket
 # ağacı ve bu makinede üretilen sade şerit denetlenir; değilse denetim atlanır (CI'da kurulu).
 set -euo pipefail
 
 HERE=$(cd "$(dirname "$0")" && pwd)
-VERSION=${1:?Kullanım: build-deb.sh <paket-sürümü> [çıktı-klasörü]}
+VERSION=${1:-$(cat "$HERE/VERSION")}
 OUT=${2:-$HERE/../../../build}
 PKG=$(mktemp -d)
 trap 'rm -rf "$PKG"' EXIT

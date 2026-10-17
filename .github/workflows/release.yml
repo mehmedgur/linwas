@@ -47,12 +47,18 @@ jobs:
           echo "SIGNING_FPR=$FPR" >> "$GITHUB_ENV"
           # Pakete giren açık anahtar her zaman imzalayan anahtarla aynı olsun.
           gpg --batch --export "$FPR" > packaging/linwas-archive-keyring.gpg
-      - run: sudo apt-get update && sudo apt-get install -y apt-utils
+      # LibreOffice: Office görünümü paketinin derleme denetimi (sade şerit üretimi) için.
+      - run: sudo apt-get update && sudo apt-get install -y apt-utils fakeroot python3-uno
+          libreoffice-writer libreoffice-calc libreoffice-impress
       # Tam PySide6 yalnızca çeviri derleyicisi (lrelease) için; pakete Essentials girer.
       - run: pip install "PySide6>=6.8,<7"
       - run: sh scripts/compile-translations.sh python
       - run: bash packaging/build-deb.sh "${VERSION#v}"
+      # Resmi eklentiler aynı depodan ayrı paketler olarak (kararlar.md › Eklenti mimarisi);
+      # eklentinin sürümü kendi VERSION dosyasından.
+      - run: bash packaging/plugins/office-look/build-deb.sh "" build
       - run: bash packaging/build-apt-repo.sh "$SIGNING_FPR" build/apt-repo build/linwas_*.deb
+          build/linwas-office-look_*.deb
       - uses: actions/upload-artifact@v4
         with:
           name: linwas-apt-repo
