@@ -93,6 +93,13 @@ MENU: list[MenuItem] = [
         ],
     ),
     MenuItem(
+        "office",
+        "Office",
+        children=[
+            MenuItem("office_look", "Office Look", color="#d24726"),
+        ],
+    ),
+    MenuItem(
         "organize",
         "Organize",
         children=[
@@ -370,6 +377,8 @@ def _translation_markers() -> None:
     tr("All Settings")
     tr("Connections & Devices")
     tr("Personalization")
+    tr("Office")
+    tr("Office Look")
     tr("Organize")
     tr("Backup & Transfer")
     tr("Help")

@@ -129,6 +129,14 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
 <context>
     <name>Sidebar</name>
     <message>
+        <source>Office</source>
+        <translation>Office</translation>
+    </message>
+    <message>
+        <source>Office Look</source>
+        <translation>Office görünümü</translation>
+    </message>
+    <message>
         <source>Search</source>
         <translation>Ara</translation>
     </message>
@@ -7997,6 +8005,173 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>Ungroup folder (Linwas)</source>
         <translation>Klasörü çöz (Linwas)</translation>
+    </message>
+</context>
+<context>
+    <name>OfficeLookPage</name>
+    <message>
+        <source>Apply</source>
+        <translation>Uygula</translation>
+    </message>
+    <message>
+        <source>Applying…</source>
+        <translation>Uygulanıyor…</translation>
+    </message>
+    <message>
+        <source>Carlito, same size as Calibri (like Word)</source>
+        <translation>Carlito, Calibri ile aynı boyutta (Word'deki gibi)</translation>
+    </message>
+    <message>
+        <source>Checking…</source>
+        <translation>Denetleniyor…</translation>
+    </message>
+    <message>
+        <source>Classic: menus and toolbars, no ribbon</source>
+        <translation>Klasik: menüler ve araç çubukları, şerit yok</translation>
+    </message>
+    <message>
+        <source>Close LibreOffice before applying; it reads these when it starts.</source>
+        <translation>Uygulamadan önce LibreOffice'i kapat; bu ayarları açılırken okur.</translation>
+    </message>
+    <message>
+        <source>Close all LibreOffice windows first, then try again.</source>
+        <translation>Önce bütün LibreOffice pencerelerini kapat, sonra yeniden dene.</translation>
+    </message>
+    <message>
+        <source>Could not apply: {error}</source>
+        <translation>Uygulanamadı: {error}</translation>
+    </message>
+    <message>
+        <source>Default font in new documents</source>
+        <translation>Yeni belgelerde yazı tipi</translation>
+    </message>
+    <message>
+        <source>Every {n} minutes</source>
+        <translation>{n} dakikada bir</translation>
+    </message>
+    <message>
+        <source>File menu inside the window (save, open, print without separate dialogs)</source>
+        <translation>Pencere içinde Dosya menüsü (ayrı pencere açmadan kaydet, aç, yazdır)</translation>
+    </message>
+    <message>
+        <source>Full ribbon: every LibreOffice tool in tabs</source>
+        <translation>Tam şerit: LibreOffice'in bütün araçları sekmelerde</translation>
+    </message>
+    <message>
+        <source>Install LibreOffice and the Office look</source>
+        <translation>LibreOffice'i ve Office görünümünü kur</translation>
+    </message>
+    <message>
+        <source>Install Office look</source>
+        <translation>Office görünümünü kur</translation>
+    </message>
+    <message>
+        <source>Install the Office look for LibreOffice</source>
+        <translation>LibreOffice için Office görünümünü kur</translation>
+    </message>
+    <message>
+        <source>Liberation Serif (LibreOffice default)</source>
+        <translation>Liberation Serif (LibreOffice'in varsayılanı)</translation>
+    </message>
+    <message>
+        <source>LibreOffice and the Office look</source>
+        <translation>LibreOffice ve Office görünümü</translation>
+    </message>
+    <message>
+        <source>LibreOffice is not installed. It is installed together with the Office look.</source>
+        <translation>LibreOffice kurulu değil. Office görünümüyle birlikte kurulur.</translation>
+    </message>
+    <message>
+        <source>LibreOffice {version} is installed.</source>
+        <translation>LibreOffice {version} kurulu.</translation>
+    </message>
+    <message>
+        <source>LibreOffice's own formats (.odt, .ods, .odp)</source>
+        <translation>LibreOffice'in kendi biçimleri (.odt, .ods, .odp)</translation>
+    </message>
+    <message>
+        <source>Makes LibreOffice look and work like Microsoft Office: a simple ribbon, a File menu inside the window, Word/Excel/PowerPoint formats and automatic saving. Your settings here only affect you.</source>
+        <translation>LibreOffice'i Microsoft Office gibi gösterir ve çalıştırır: sade şerit, pencere içinde Dosya menüsü, Word/Excel/PowerPoint biçimleri ve otomatik kaydetme. Buradaki ayarların yalnız seni etkiler.</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>Kapalı</translation>
+    </message>
+    <message>
+        <source>Office Look</source>
+        <translation>Office görünümü</translation>
+    </message>
+    <message>
+        <source>Remove for all users</source>
+        <translation>Bütün kullanıcılar için kaldır</translation>
+    </message>
+    <message>
+        <source>Remove the Office look</source>
+        <translation>Office görünümünü kaldır</translation>
+    </message>
+    <message>
+        <source>Ribbon</source>
+        <translation>Şerit</translation>
+    </message>
+    <message>
+        <source>Save automatically</source>
+        <translation>Otomatik kaydet</translation>
+    </message>
+    <message>
+        <source>Save new documents as</source>
+        <translation>Yeni belgeleri şu biçimde kaydet</translation>
+    </message>
+    <message>
+        <source>Simple ribbon: few tabs with named groups</source>
+        <translation>Sade şerit: az sekme, adlı gruplar</translation>
+    </message>
+    <message>
+        <source>The Office look is not installed.</source>
+        <translation>Office görünümü kurulu değil.</translation>
+    </message>
+    <message>
+        <source>The Office look is turned off for you; LibreOffice uses its original settings.</source>
+        <translation>Office görünümü senin için kapalı; LibreOffice özgün ayarlarını kullanıyor.</translation>
+    </message>
+    <message>
+        <source>Turn back on for me</source>
+        <translation>Benim için yeniden aç</translation>
+    </message>
+    <message>
+        <source>Turn off</source>
+        <translation>Kapat</translation>
+    </message>
+    <message>
+        <source>Turn off for me</source>
+        <translation>Yalnız benim için kapat</translation>
+    </message>
+    <message>
+        <source>Turning it off for you needs no password and does not affect other users. Removing it for everyone needs an administrator password.</source>
+        <translation>Yalnız senin için kapatmak parola istemez, diğer kullanıcıları etkilemez. Herkes için kaldırmak yönetici parolası ister.</translation>
+    </message>
+    <message>
+        <source>Word, Excel and PowerPoint files (.docx, .xlsx, .pptx)</source>
+        <translation>Word, Excel ve PowerPoint dosyaları (.docx, .xlsx, .pptx)</translation>
+    </message>
+    <message>
+        <source>Your settings</source>
+        <translation>Ayarların</translation>
+    </message>
+    <message>
+        <source>none</source>
+        <translation>yok</translation>
+    </message>
+    <message>
+        <source>✓ Applied. Open LibreOffice to see the change.</source>
+        <translation>✓ Uygulandı. Değişikliği görmek için LibreOffice'i aç.</translation>
+    </message>
+    <message>
+        <source>✓ Done.</source>
+        <translation>✓ Tamam.</translation>
+    </message>
+    <message>
+        <source>✓ Office look {version} is installed. Simple ribbon: {apps}.</source>
+        <translation>✓ Office görünümü {version} kurulu. Sade şerit: {apps}.</translation>
     </message>
 </context>
 </TS>

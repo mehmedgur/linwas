@@ -75,6 +75,10 @@ PATHS: dict[str, str] = {
         '<path d="M14 6.5h1M17 6.5h1"/>'
     ),
     "theme": '<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="{c}"/>',
+    "office_look": (
+        '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 8h16"/>'
+        '<path d="M8 12h8M8 15.5h8M8 19h5"/>'
+    ),
     "fonts": '<path d="M4 7V5h16v2"/><path d="M12 5v14"/><path d="M9 19h6"/>',
     "display": (
         '<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>'

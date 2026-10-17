@@ -55,6 +55,23 @@ jobs:
             packaging/debian/postinst.in
           retention-days: 1
 
+  office-look:
+    name: Office görünümü paketi
+    needs: test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      # Derleme betiği paket ağacını ve bu LibreOffice'ten üretilen sade şeridi denetler.
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends
+          libreoffice-writer libreoffice-calc libreoffice-impress python3-uno fakeroot
+      - run: bash packaging/plugins/office-look/build-deb.sh "0.4.0~dev${{ github.run_number }}" build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linwas-office-look-deb
+          path: build/linwas-office-look_*.deb
+          if-no-files-found: error
+          retention-days: 14
+
   install-test:
     name: Kurulum testi (${{ matrix.image }})
     needs: build-deb

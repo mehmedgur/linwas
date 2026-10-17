@@ -97,7 +97,11 @@ def main(argv: list[str] | None = None) -> int:
         None,
     )
     background = "--background" in argv[1:]
-    if deb:
+    # "--page <kimlik>": belirli bir sayfayı aç (ör. LibreOffice'ten Office görünümü ayarları)
+    page = argv[argv.index("--page") + 1] if "--page" in argv[1:-1] else None
+    if page:
+        message = "page:" + page
+    elif deb:
         message = "deb:" + os.path.abspath(deb)
     elif exe:
         message = "exe:" + os.path.abspath(exe)
@@ -125,6 +129,8 @@ def main(argv: list[str] | None = None) -> int:
     instance.message_received.connect(window.on_instance_message)
     if not window.is_background:
         window.show()
+    if page:
+        window.open_page(page)
     if deb:
         window.open_deb(os.path.abspath(deb))
     if exe:

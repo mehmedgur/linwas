@@ -497,6 +497,33 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
      rengi" için `python3-nautilus` (Pardus deposunda 4.0-1+b1) + Linwas Nautilus eklentisi; kurulu değilse
      yalnızca Linwas sayfasından (klasör seç → renk). "Varsayılana dön" metadata'yı siler.
 
+## Office görünümü (17 Ekim 2026, kullanıcı onayı)
+
+- **Amaç:** LibreOffice'i Microsoft Office benzeri yapmak, tek tıkla kurulum ve geri dönüş.
+  Tasarım "Writer Sade Arayüz Taslağı" (claude.ai Design tuvali).
+- **Paket:** `linwas-office-look` (Architecture: all, Linwas APT deposundan resmi eklenti),
+  kaynak `packaging/plugins/office-look/`. LibreOffice'e (writer, calc, impress) bağımlıdır,
+  bu yüzden kurulum LibreOffice'i de kurar. Önceki deneme paketi `pardus-ofis-deneyimi`'nin
+  yerine geçer (`Conflicts`/`Replaces`/`Provides`). Teknik bulgular: `packaging/plugins/office-look/NOTLAR.md`.
+- **İçerik:** LibreOffice eklentisi (Python UNO): pencere içi Dosya menüsü (Kaydet, Farklı
+  kaydet biçim kartları, Aç, son dosyalar, şablonlar, Yazdır önizlemesi, parola, ağ/bulut
+  konumları), şeridin sol üstünde Dosya düğmesi, Dosya sekmesine tıklayınca menü, kayıt
+  durumu rozeti ve otomatik kaydetme; varsayılanlar xcd (OOXML, Carlito, Impress şablon
+  penceresi kapalı); sade şerit (Writer: Dosya, Yaz, Ekle, Sayfa, Gözden geçir, Görünüm;
+  Calc: Dosya, Tablo, Ekle, Veri, Görünüm).
+- **Sade şerit kurulumda üretilir:** postinst, kurulu `notebookbar.ui` dosyasından
+  `linwas_simple.ui` ve onu etkinleştiren `linwas-office-look-ribbon.xcd` dosyasını üretir;
+  dpkg tetikleyicisi LibreOffice güncellenince yeniden üretir. Üretim başarısız olan uygulama
+  tam şeritte kalır (var olmayan .ui'ye işaret eden ayar LibreOffice'i askıda bırakır).
+- **Ayarlar kullanıcı başına:** şerit (sade/tam/klasik), Dosya menüsü, otomatik kaydetme,
+  kayıt biçimi, yazı tipi; "Yalnız benim için kapat" parola istemez. Hepsi paketteki
+  `linwas-office-look` aracında (LibreOffice kapalıyken kullanıcının profilini yazar);
+  Linwas `backend/office_look.py` ile bu aracı çağırır. Kurma/kaldırma kuyrukta
+  `package.install`/`package.remove`; yeni root işlemi yok.
+- **Linwas sayfası:** kenar çubuğunda yeni "Office" grubu › "Office görünümü"
+  (`ui/pages/office_look.py`). LibreOffice'teki "Office görünümü ayarları" öğesi
+  `linwas --page office_look` ile bu sayfayı açar; Linwas yoksa aracın zenity penceresi açılır.
+
 ## Donanım ve yazıcılar yenilemesi (13 Ekim 2026, kullanıcı onayı)
 - Taslak: tuval "Linwas macOS Görünümü" › "Donanım ve yazıcılar · Genel bakış" ve "· Yazıcılar"
   (claude.ai artifact AYgNY1TjwxLtui1ERsfg1D).

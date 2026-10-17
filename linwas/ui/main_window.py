@@ -35,6 +35,7 @@ from linwas.ui.pages.base import BasePage
 from linwas.ui.pages.guide import GuidePage
 from linwas.ui.pages.interface import DisplayPage, FontsPage, ThemePage
 from linwas.ui.pages.network import NetworkPage
+from linwas.ui.pages.office_look import OfficeLookPage
 from linwas.ui.pages.overview import OverviewPage
 from linwas.ui.pages.settings import SettingsPage
 from linwas.ui.pages.software import SoftwarePage
@@ -357,14 +358,21 @@ class MainWindow(QMainWindow):
             QTimer.singleShot(300, self.run_onboarding)
 
     def on_instance_message(self, message: str) -> None:
-        """Tek kopya iletileri: "show", "deb:<yol>", "exe:<yol>"."""
+        """Tek kopya iletileri: "show", "page:<kimlik>", "deb:<yol>", "exe:<yol>"."""
         if message == "background":
             return
         self.show_window()
-        if message.startswith("deb:"):
+        if message.startswith("page:"):
+            self.open_page(message[5:])
+        elif message.startswith("deb:"):
             self.open_deb(message[4:])
         elif message.startswith("exe:"):
             self.open_exe(message[4:])
+
+    def open_page(self, page_id: str) -> None:
+        """Dışarıdan (ör. LibreOffice'teki Office görünümü ayarları) bir sayfayı açar."""
+        if page_id in self._pages:
+            self._show_page(page_id)
 
     def open_settings_section(self, key: str) -> None:
         self._show_page("settings")
@@ -505,6 +513,7 @@ class MainWindow(QMainWindow):
         self._add_page("all_settings", AllSettingsPage(self._stack))
         self._add_page("theme", ThemePage(self._stack))
         self._add_page("fonts", FontsPage(self._stack))
+        self._add_page("office_look", OfficeLookPage(self._stack))
         self._add_page("display", DisplayPage(self._stack))
         self._add_page("troubleshoot", TroubleshootPage(self._stack))
         guide = GuidePage(self._stack)

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Office Look
+Name[tr]=Office Görünümü
+Comment=Change or turn off the Office-like look of LibreOffice
+Comment[tr]=LibreOffice'in Office benzeri görünümünü değiştir ya da kapat
+Exec=linwas-office-look settings-window
+Icon=libreoffice-startcenter
+Terminal=false
+Categories=Office;

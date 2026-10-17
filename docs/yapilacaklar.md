@@ -133,9 +133,13 @@ Son güncelleme: 12 Ekim 2026
 - [ ] **"Linwas Hazırlık" Windows aracı:** Geçişten önce Windows'ta çalışan küçük bir araç.
   Chrome/Edge şifrelerini, Wi-Fi şifrelerini ve Outlook verisini güvenli bir pakete aktarır; Linwas
   bu paketi içeri alır. (Ayrı Windows uygulaması gerektirir.)
-- [ ] **LibreOffice'i Microsoft Office gibi göstermek:** ilk adım, LibreOffice kurulurken "Sekmeli"
-  (Tabbed, şerit benzeri) arayüz kipinin ve Office uyumlu fontların otomatik açılması; daha ileri
-  Office görünümü ayrı bir gelecek projesi.
+- [x] **LibreOffice'i Microsoft Office gibi göstermek:** `linwas-office-look` paketi ve
+  Office › Office görünümü sayfası (kararlar.md › Office görünümü). Kodlandı 17 Ekim 2026,
+  deneme bekliyor. Kalanlar:
+  - [ ] Paketi Linwas APT deposunun yayın iş akışına (`release.yml`) eklemek.
+  - [ ] Ubuntu 22.04/24.04 ve Debian 13'te (LibreOffice 7.3 / 24.x) sade şerit üretimini denemek.
+  - [ ] LibreOffice eklentisinin arayüz metinleri yalnız Türkçe; İngilizce karşılıklar.
+  - [ ] Calc tasarımındaki "İşlevler" sekmesi ve ilk açılış ipucu paneli.
 - [ ] **Windows Uygulamaları eklentisi:** Wine tabanlı ayrı alan. Bottles gibi mevcut açık kaynak
   araçlarla entegrasyon araştırılacak. Mevcut EXE/Wine desteği buraya taşınabilir.
 - [ ] **KDE desteği** (masaüstü eklentisi). Kullanıcının bilgisayarında KDE oturumu olduğu için
