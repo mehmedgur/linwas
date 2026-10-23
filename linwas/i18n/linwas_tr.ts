@@ -5353,6 +5353,30 @@ Devam edilsin mi?</translation>
         <source>{n} problem(s) found.</source>
         <translation>{n} sorun bulundu.</translation>
     </message>
+    <message>
+        <source>Correct the clock</source>
+        <translation>Saati düzelt</translation>
+    </message>
+    <message>
+        <source>The clock is {amount} fast</source>
+        <translation>Saat {amount} ileri</translation>
+    </message>
+    <message>
+        <source>The clock is {amount} slow</source>
+        <translation>Saat {amount} geri</translation>
+    </message>
+    <message>
+        <source>{h} h</source>
+        <translation>{h} sa</translation>
+    </message>
+    <message>
+        <source>{h} h {m} min</source>
+        <translation>{h} sa {m} dk</translation>
+    </message>
+    <message>
+        <source>{m} min</source>
+        <translation>{m} dk</translation>
+    </message>
 </context>
 <context>
     <name>OnboardingWizard</name>
