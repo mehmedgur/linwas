@@ -32,7 +32,7 @@ def log_dir() -> Path:
 
 @dataclass
 class DataItem:
-    key: str  # "history" | "chats" | "usage" | "notifications" | "drivers" | "log"
+    key: str  # "history" | "chats" | "usage" | "notifications" | "drivers" | "network" | "log"
     path: Path
 
     @property
@@ -57,6 +57,7 @@ def items() -> list[DataItem]:
         DataItem("usage", d / "ai_usage.db"),
         DataItem("notifications", d / "notify_state.json"),
         DataItem("drivers", d / "driver_changes.json"),
+        DataItem("network", d / "net_quality.jsonl"),
         DataItem("log", log_dir()),
     ]
 

@@ -10,7 +10,7 @@ from __future__ import annotations
 import os
 from collections.abc import Callable
 
-from PySide6.QtCore import QCoreApplication, Qt, QThread, QTimer, Signal
+from PySide6.QtCore import QCoreApplication, Qt, QTimer, Signal
 from PySide6.QtGui import QColor, QGuiApplication, QPainter
 from PySide6.QtWidgets import (
     QCheckBox,
@@ -29,13 +29,17 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from linwas.backend import network
+from linwas.backend import netquality, network
 from linwas.backend.desktop import detect_desktop
 from linwas.backend.network import BluetoothDevice, WifiDetails, WifiNetwork, WifiStatus
 from linwas.backend.settings_launcher import command_for, open_settings
+from linwas.core import netlog
 from linwas.ui import icons
 from linwas.ui.pages.base import BasePage
+from linwas.ui.pages.network_quality import QualityCard
 from linwas.ui.widgets.card import Card
+from linwas.ui.widgets.jobs import Job as _Job
+from linwas.ui.widgets.jobs import Jobs as _Jobs
 
 
 def tr(text: str) -> str:
@@ -44,38 +48,6 @@ def tr(text: str) -> str:
 
 # Açık durumdaki simge kutusunun rengi (kenar çubuğundaki Wi-Fi & Bluetooth ile aynı)
 _ON_TILE = "tile:#007aff"
-
-
-# --- Arka plan işi ---
-
-
-class _Job(QThread):
-    done = Signal(object)
-
-    def __init__(self, fn: Callable[[], object]) -> None:
-        super().__init__()
-        self._fn = fn
-
-    def run(self) -> None:
-        try:
-            self.done.emit(self._fn())
-        except Exception:
-            self.done.emit(None)
-
-
-class _Jobs:
-    """İşleri referansta tutar (QThread çalışırken silinmesin)."""
-
-    def __init__(self) -> None:
-        self._jobs: list[_Job] = []
-
-    def run(self, fn: Callable[[], object], slot: Callable[[object], None]) -> _Job:
-        job = _Job(fn)
-        job.done.connect(slot)
-        job.finished.connect(lambda: self._jobs.remove(job))
-        self._jobs.append(job)
-        job.start()
-        return job
 
 
 # --- Ortak parçalar ---
@@ -456,6 +428,8 @@ class _DetailsCard(Card):
 
 
 class _WifiTab(QWidget):
+    ai_help_requested = Signal(str, str)  # bağlantı testi sonucu → asistana sor
+
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._jobs = _Jobs()
@@ -475,6 +449,10 @@ class _WifiTab(QWidget):
         self._details_card = _DetailsCard(content)
         self._details_card.setVisible(False)
         layout.addWidget(self._details_card)
+
+        self._quality = QualityCard(content)
+        self._quality.ai_help_requested.connect(self.ai_help_requested)
+        layout.addWidget(self._quality)
 
         self._list_card = _ListCard(tr("Networks"), content)
         hidden_btn = QPushButton(tr("Hidden network…"), self._list_card)
@@ -530,6 +508,7 @@ class _WifiTab(QWidget):
         self._status = status
         self._show_status(status)
         self._show_details(details)
+        self._quality.set_connection(status.connected, details.gateway if details else "")
         self._show_networks(nets)
 
     def _show_status(self, status: WifiStatus) -> None:
@@ -614,8 +593,15 @@ class _WifiTab(QWidget):
 
     def _toggle_wifi(self) -> None:
         enabled = self._status.enabled if self._status else True
+        ssid = self._status.ssid if self._status else ""
         self._status_card.set_busy()
-        self._start(lambda: network.wifi_set_enabled(not enabled), lambda _r: None)
+
+        def work() -> bool:
+            if enabled and ssid:  # kullanıcı kapatıyor: kopma sayılmasın
+                netquality.note_user_action(netlog.KIND_WIFI, ssid)
+            return network.wifi_set_enabled(not enabled)
+
+        self._start(work, lambda _r: None)
 
     def _connect(self, net: WifiNetwork, row: _Row, password: str = "") -> None:
         if net.security and not net.saved and not password:
@@ -670,13 +656,26 @@ class _WifiTab(QWidget):
         )
 
     def _disconnect(self) -> None:
-        self._start(network.wifi_disconnect, lambda _r: None)
+        ssid = self._status.ssid if self._status else ""
+
+        def work() -> bool:
+            netquality.note_user_action(netlog.KIND_WIFI, ssid)  # kopma sayılmasın
+            return network.wifi_disconnect()
+
+        self._start(work, lambda _r: None)
 
     def _forget(self, ssid: str) -> None:
         if _confirm_forget(
             self, ssid, tr("You will need the password to connect to this network again.")
         ):
-            self._start(lambda: network.wifi_forget(ssid), lambda _r: None)
+            active = self._status.ssid if self._status else ""
+
+            def work() -> bool:
+                if ssid == active:  # bağlı ağı unutmak bağlantıyı da keser
+                    netquality.note_user_action(netlog.KIND_WIFI, ssid)
+                return network.wifi_forget(ssid)
+
+            self._start(work, lambda _r: None)
 
     def showEvent(self, event: object) -> None:  # type: ignore[override]
         self._timer.start()
@@ -943,6 +942,8 @@ class NetworkPage(BasePage):
         layout.addWidget(title)
 
         tabs = QTabWidget(self)
-        tabs.addTab(_WifiTab(tabs), tr("Wi-Fi"))
+        wifi = _WifiTab(tabs)
+        wifi.ai_help_requested.connect(self.ai_help_requested)
+        tabs.addTab(wifi, tr("Wi-Fi"))
         tabs.addTab(_BtTab(tabs), tr("Bluetooth"))
         layout.addWidget(tabs, 1)

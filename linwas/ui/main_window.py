@@ -274,6 +274,10 @@ class MainWindow(QMainWindow):
         self._notifier = Notifier(self)
         self._notifier.open_requested.connect(self._open_from_notification)
         self._notifier.start()
+        # Bağlantı kalitesi ölçümü: yalnızca kullanıcı açtıysa (Wi-Fi sayfası)
+        from linwas.backend import netquality
+
+        netquality.SAMPLER.set_enabled(self._settings.net_measure)
         if background:
             self._ensure_background()
 
@@ -436,6 +440,9 @@ class MainWindow(QMainWindow):
         if self._tray is not None:
             self._tray.hide()
         self._notifier.stop()
+        from linwas.backend import netquality
+
+        netquality.SAMPLER.stop()
         self._wait_for_workers()
         QApplication.instance().quit()
 

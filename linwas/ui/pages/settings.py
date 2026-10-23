@@ -28,7 +28,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from linwas.backend import autostart, notify
+from linwas.backend import autostart, netquality, notify
 from linwas.core import app_settings
 from linwas.core.history import HistoryDB
 from linwas.ui.pages.base import BasePage
@@ -341,8 +341,11 @@ class SettingsPage(BasePage):
         self._save()
 
     def _sync_close_action(self) -> None:
-        """Kapatma sorusundaki "Seçimimi hatırla" diske yazar; eski kopya üzerine yazmasın."""
-        self._settings.close_action = app_settings.load().close_action
+        """Başka yerde diske yazılan ayarlar (kapatma sorusundaki "Seçimimi hatırla", Wi-Fi
+        sayfasındaki ölçüm anahtarı) eski kopya üzerine yazılmasın."""
+        fresh = app_settings.load()
+        self._settings.close_action = fresh.close_action
+        self._settings.net_measure = fresh.net_measure
         value = "ask" if self._settings.ask_on_close else self._settings.close_action
         index = self._close.findData(value)
         if index >= 0 and index != self._close.currentIndex():
@@ -642,6 +645,10 @@ class SettingsPage(BasePage):
                 tr("Driver change history"),
                 tr("Needed for “Return to the previous driver”"),
             ),
+            "network": (
+                tr("Connection quality notes"),
+                tr("Signal and delay measured once a minute while Linwas runs; kept for 7 days"),
+            ),
             "log": (tr("Log files"), tr("Written only when the detailed log is on")),
         }.get(key, (key, ""))
 
@@ -700,7 +707,8 @@ class SettingsPage(BasePage):
             tr("Delete all my Linwas data"),
             tr(
                 "Delete the activity history, AI conversations and usage counters, notification "
-                "state, driver change history and logs? Settings and API keys are kept."
+                "state, driver change history, connection quality notes and logs? Settings and "
+                "API keys are kept."
             ),
         )
         if answer != QMessageBox.StandardButton.Yes:
@@ -811,6 +819,7 @@ class SettingsPage(BasePage):
         """Diskteki yeni ayarları uygular: tema, başlangıç, kapatma davranışı, AI."""
         settings = app_settings.load()
         autostart.set_enabled(settings.autostart)
+        netquality.SAMPLER.set_enabled(settings.net_measure)
         self.theme_changed.emit(settings.theme)
         self.style_changed.emit(settings.ui_style)
         self.accent_changed.emit(settings.accent_color)

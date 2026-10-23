@@ -2173,6 +2173,142 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <source>Channel {channel}</source>
         <translation>Kanal {channel}</translation>
     </message>
+    <message>
+        <source>Disconnections: {n}</source>
+        <translation>Kopmalar: {n}</translation>
+    </message>
+    <message>
+        <source>Router stopped answering: {n}</source>
+        <translation>Router'ın yanıt vermediği an: {n}</translation>
+    </message>
+    <message>
+        <source>Average delay: {ms} ms</source>
+        <translation>Ortalama gecikme: {ms} ms</translation>
+    </message>
+    <message>
+        <source>Slowest around {hour}:00</source>
+        <translation>En yavaş saat: yaklaşık {hour}:00</translation>
+    </message>
+    <message>
+        <source>No router address was assigned</source>
+        <translation>Router adresi (ağ geçidi) atanmamış</translation>
+    </message>
+    <message>
+        <source>Router check skipped (the ping tool is not available)</source>
+        <translation>Router denetimi atlandı (ping aracı yok)</translation>
+    </message>
+    <message>
+        <source>The router ({gateway}) does not answer</source>
+        <translation>Router ({gateway}) yanıt vermiyor</translation>
+    </message>
+    <message>
+        <source>The router ({gateway}) answers, but {percent}% of the tests were lost</source>
+        <translation>Router ({gateway}) yanıt veriyor ama denemelerin %{percent}'i kayboldu</translation>
+    </message>
+    <message>
+        <source>The router ({gateway}) answers in {ms} ms</source>
+        <translation>Router ({gateway}) {ms} ms'de yanıt veriyor</translation>
+    </message>
+    <message>
+        <source>The network asks you to sign in first</source>
+        <translation>Ağ önce oturum açmanızı istiyor</translation>
+    </message>
+    <message>
+        <source>Name lookup works ({ms} ms)</source>
+        <translation>Ad çözümleme çalışıyor ({ms} ms)</translation>
+    </message>
+    <message>
+        <source>Name lookup failed (DNS)</source>
+        <translation>Ad çözümleme başarısız (DNS)</translation>
+    </message>
+    <message>
+        <source>The internet is reachable ({ms} ms)</source>
+        <translation>İnternete ulaşılıyor ({ms} ms)</translation>
+    </message>
+    <message>
+        <source>The internet could not be reached</source>
+        <translation>İnternete ulaşılamadı</translation>
+    </message>
+    <message>
+        <source>Everything looks fine: your connection works.</source>
+        <translation>Her şey yolunda görünüyor: bağlantınız çalışıyor.</translation>
+    </message>
+    <message>
+        <source>You are connected, but no network address was assigned. Disconnect and connect again; if it keeps happening, restart the router.</source>
+        <translation>Bağlısınız ama ağ adresi atanmamış. Bağlantıyı kesip yeniden bağlanın; sürerse router'ı yeniden başlatın.</translation>
+    </message>
+    <message>
+        <source>Your computer cannot reach the router. Move closer to it or restart the router.</source>
+        <translation>Bilgisayarınız router'a ulaşamıyor. Router'a yaklaşın ya da router'ı yeniden başlatın.</translation>
+    </message>
+    <message>
+        <source>The connection to the router is unstable. Move closer to the router, or use its 5 GHz network if it has one.</source>
+        <translation>Router'a bağlantı kararsız. Router'a yaklaşın ya da varsa 5 GHz ağını kullanın.</translation>
+    </message>
+    <message>
+        <source>The network wants you to sign in first. Open a web browser to sign in.</source>
+        <translation>Ağ önce oturum açmanızı istiyor. Oturum açmak için bir web tarayıcısı açın.</translation>
+    </message>
+    <message>
+        <source>The router answers, but names cannot be looked up (a DNS problem). Wait a minute and try again, or restart the router.</source>
+        <translation>Router yanıt veriyor ama adlar çözümlenemiyor (DNS sorunu). Bir dakika bekleyip yeniden deneyin ya da router'ı yeniden başlatın.</translation>
+    </message>
+    <message>
+        <source>The router answers, but the internet cannot be reached. The problem is probably with the internet provider or the router's own connection.</source>
+        <translation>Router yanıt veriyor ama internete ulaşılamıyor. Sorun büyük olasılıkla internet sağlayıcısında ya da router'ın kendi bağlantısında.</translation>
+    </message>
+    <message>
+        <source>The connection works, but the router answers slowly. Move closer to the router.</source>
+        <translation>Bağlantı çalışıyor ama router yavaş yanıt veriyor. Router'a yaklaşın.</translation>
+    </message>
+    <message>
+        <source>Connection quality</source>
+        <translation>Bağlantı kalitesi</translation>
+    </message>
+    <message>
+        <source>Test connection</source>
+        <translation>Bağlantıyı test et</translation>
+    </message>
+    <message>
+        <source>Measure my connection quality</source>
+        <translation>Bağlantı kalitemi ölç</translation>
+    </message>
+    <message>
+        <source>While Linwas is running, it notes your signal strength and the delay to your router once a minute. Nothing leaves this computer, and the notes are deleted after 7 days.</source>
+        <translation>Linwas çalışırken dakikada bir sinyal gücünü ve router'a gecikmeyi not eder. Hiçbir şey bu bilgisayardan çıkmaz; notlar 7 gün sonra silinir.</translation>
+    </message>
+    <message>
+        <source>Last 24 hours</source>
+        <translation>Son 24 saat</translation>
+    </message>
+    <message>
+        <source>Measuring is off, so no new notes are added.</source>
+        <translation>Ölçüm kapalı, bu yüzden yeni not eklenmiyor.</translation>
+    </message>
+    <message>
+        <source>The chart appears after a few minutes of measuring.</source>
+        <translation>Çizelge, birkaç dakikalık ölçümden sonra görünür.</translation>
+    </message>
+    <message>
+        <source>Turn on measuring to see how your connection did over the last 24 hours.</source>
+        <translation>Bağlantınızın son 24 saatte nasıl olduğunu görmek için ölçümü açın.</translation>
+    </message>
+    <message>
+        <source>Connect to a Wi-Fi network first.</source>
+        <translation>Önce bir Wi-Fi ağına bağlanın.</translation>
+    </message>
+    <message>
+        <source>Testing…</source>
+        <translation>Test ediliyor…</translation>
+    </message>
+    <message>
+        <source>Ask the assistant</source>
+        <translation>Asistana sor</translation>
+    </message>
+    <message>
+        <source>Connection test</source>
+        <translation>Bağlantı testi</translation>
+    </message>
 </context>
 <context>
     <name>InstalledAppsView</name>
@@ -4607,8 +4743,8 @@ Devam edilsin mi?</translation>
         <translation>Tüm Linwas verilerimi sil</translation>
     </message>
     <message>
-        <source>Delete the activity history, AI conversations and usage counters, notification state, driver change history and logs? Settings and API keys are kept.</source>
-        <translation>İşlem geçmişi, yapay zekâ sohbetleri ve kullanım sayaçları, bildirim durumu, sürücü değişikliği geçmişi ve günlükler silinsin mi? Ayarlar ve API anahtarları korunur.</translation>
+        <source>Delete the activity history, AI conversations and usage counters, notification state, driver change history, connection quality notes and logs? Settings and API keys are kept.</source>
+        <translation>İşlem geçmişi, yapay zekâ sohbetleri ve kullanım sayaçları, bildirim durumu, sürücü değişikliği geçmişi, bağlantı kalitesi notları ve günlükler silinsin mi? Ayarlar ve API anahtarları korunur.</translation>
     </message>
     <message>
         <source>Delete the whole activity history?</source>
@@ -4989,6 +5125,14 @@ Devam edilsin mi?</translation>
     <message>
         <source>Teal</source>
         <translation>Camgöbeği</translation>
+    </message>
+    <message>
+        <source>Connection quality notes</source>
+        <translation>Bağlantı kalitesi notları</translation>
+    </message>
+    <message>
+        <source>Signal and delay measured once a minute while Linwas runs; kept for 7 days</source>
+        <translation>Linwas açıkken dakikada bir ölçülen sinyal ve gecikme; 7 gün saklanır</translation>
     </message>
 </context>
 <context>
@@ -9410,6 +9554,45 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>{n} troubleshooting check(s)</source>
         <translation>{n} sorun giderme denetimi</translation>
+    </message>
+</context>
+<context>
+    <name>QualityChart</name>
+    <message>
+        <source>Good</source>
+        <translation>İyi</translation>
+    </message>
+    <message>
+        <source>Slow</source>
+        <translation>Yavaş</translation>
+    </message>
+    <message>
+        <source>Poor</source>
+        <translation>Kötü</translation>
+    </message>
+    <message>
+        <source>Disconnected</source>
+        <translation>Bağlantı yok</translation>
+    </message>
+    <message>
+        <source>Connected (no delay data)</source>
+        <translation>Bağlı (gecikme verisi yok)</translation>
+    </message>
+    <message>
+        <source>No data</source>
+        <translation>Veri yok</translation>
+    </message>
+    <message>
+        <source>{ms} ms</source>
+        <translation>{ms} ms</translation>
+    </message>
+    <message>
+        <source>signal {percent}%</source>
+        <translation>sinyal %{percent}</translation>
+    </message>
+    <message>
+        <source>Connection quality over the last 24 hours</source>
+        <translation>Son 24 saatte bağlantı kalitesi</translation>
     </message>
 </context>
 </TS>

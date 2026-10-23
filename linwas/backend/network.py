@@ -215,7 +215,7 @@ def band_from_frequency(mhz: int | None) -> str:
     return ""
 
 
-def _leading_int(text: str) -> int | None:
+def leading_int(text: str) -> int | None:
     """ "2412 MHz" → 2412, "130 Mbit/s" → 130; sayı yoksa None."""
     m = re.match(r"\s*(\d+)", text)
     return int(m.group(1)) if m else None
@@ -244,10 +244,10 @@ def build_wifi_details(ssid: str, device: str, show_out: str, list_out: str) -> 
     row = next((r for r in rows if r[1] == device), rows[0] if rows else None)
     if row is not None:
         details.bssid = row[2]
-        details.channel = _leading_int(row[4])
-        details.frequency = _leading_int(row[5])
-        details.rate = _leading_int(row[6])
-        details.signal = _leading_int(row[7]) or 0
+        details.channel = leading_int(row[4])
+        details.frequency = leading_int(row[5])
+        details.rate = leading_int(row[6])
+        details.signal = leading_int(row[7]) or 0
         details.security = row[8].strip()
         details.band = band_from_frequency(details.frequency)
     return details

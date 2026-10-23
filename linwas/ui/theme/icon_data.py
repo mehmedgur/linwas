@@ -214,6 +214,7 @@ PATHS: dict[str, str] = {
     "chevron_right": '<path d="M9 6l6 6-6 6"/>',
     "chevron_down": '<path d="M6 9l6 6 6-6"/>',
     "check": '<path d="M5 12.5l4.5 4.5L19 7.5" stroke-width="3"/>',
+    "close": '<path d="M6 6l12 12M18 6L6 18" stroke-width="3"/>',
     # Seçili radyo düğmesinin ortasındaki nokta
     "radio_dot": '<circle cx="12" cy="12" r="5" fill="{c}" stroke="none"/>',
     "info": (

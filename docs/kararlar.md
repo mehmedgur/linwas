@@ -645,6 +645,33 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
   seçenekler sistem yazıcı ayarlarında (root gerektirir). Taslaktaki ayrı "Seçenekler" ve "Kaldır"
   düğmeleri tek "Seçenekler ve kaldırma…" düğmesinde birleşti.
 
+## Wi-Fi ve Bluetooth geliştirmeleri (23 Ekim 2026, kullanıcı onayı)
+Kapsam (kullanıcı seçti): Wi-Fi — bağlantı ayrıntıları, ağ ayarları, şifre göster + QR, bağlantı testi +
+hotspot; Bluetooth — yeniden adlandır + otomatik bağlan, bilgisayarın görünürlüğü, ses çıkışı + dosya
+gönderme (tür simgesi ve pil yüzdesi sayfada zaten vardı). Fikir: durum fotoğrafı yerine **ölçülmüş
+deneyim** (son günlerde nasıldı, neden koptu). Her aşama ayrı commit; ayrıntı ve kalanlar `yapilacaklar.md`.
+- **Bağlantı ayrıntıları (aşama 1):** bağlı ağın IP, ağ geçidi, DNS, MAC, BSSID, bant (2,4/5/6 GHz), kanal ve
+  bağlantı hızı; "IP adresini kopyala" / "Tümünü kopyala". Bant `FREQ`'ten türetilir (nmcli'nin `BAND`
+  alanı eski sürümlerde yok). Alan adları NetworkManager kaynağından doğrulandı.
+- **Ölçüm ve kalite çizelgesi (aşama 2):**
+  - **Açık rıza, varsayılan kapalı:** Wi-Fi sekmesindeki "Bağlantı kalitemi ölç" kutusu (`net_measure`).
+  - **Ne ölçülür:** Linwas çalışırken (arka plan kipi dahil) dakikada bir: bağlı mı, sinyal, bant ve **yalnızca
+    yerel ağ geçidine** 3 ping (gecikme, kayıp). Dışarıya hiçbir şey gönderilmez. Wi-Fi kapalı/kart yoksa örnek
+    yazılmaz (çizelgede "veri yok"). Linwas kapalıyken de ölçülmez.
+  - **Saklama:** `~/.local/share/linwas/net_quality.jsonl`, 7 gün; ağ adı + sayılar (site/trafik yok).
+    Ayarlar › Kullanıcı verileri'nde görünür ve silinir.
+  - **Kopma sayımı:** bağlıyken bağlantı kopması; kullanıcının Linwas'tan yaptığı "Bağlantıyı kes / Kapat /
+    Unut" `user` işaretiyle yazılır, sayılmaz. Büyük zaman boşlukları (uyku, Linwas kapalı) sayılmaz.
+  - **Çizelge:** son 24 saat, 15 dakikalık dilimler; dilimin durumu en kötü örneğe göre (iyi / yavaş / kötü /
+    bağlantı yok [içi boş çubuk] / gecikme verisi yok / veri yok). Eşikler sezgiseldir: geçide gecikme ≤ 30 ms
+    iyi, ≤ 100 ms yavaş, üstü kötü; kayıp ≤ %2 iyi, ≤ %10 yavaş.
+  - **Bağlantı testi** (yalnız düğmeyle): ağ geçidine ping → `nmcli networking connectivity check` → ad
+    çözümleme ve TCP 443 (`example.com`, IANA belge alan adı) → tanı kodu (ok, no_address, gateway_down,
+    gateway_lossy, portal, dns_failed, internet_down, slow) sade dille; sorun varsa "Asistana sor".
+  - **Doğrulanan komutlar:** `ping -n -c N -i 0.4 -W 1.0 <IP>` (iputils belgesi; çıktı biçimine değil cevap
+    satırlarındaki `time=` değerine bakılır), `nmcli networking connectivity [check]` (full / limited / portal /
+    none / unknown). Yalnızca IP adresi ping'lenir (seçenek enjeksiyonuna karşı).
+
 ## AI
 - Sağlayıcılar: Gemini, ChatGPT, DeepSeek. AI isteğe bağlı; anahtar yoksa gizlenir.
 - AI yalnızca görev önerir (tanımlı işlem adı + parametre); "Kuyruğa ekle"ye kullanıcı basar.

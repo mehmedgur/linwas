@@ -57,6 +57,8 @@ class AppSettings:
     # Yapay zekâ
     ai_retention: str = "forever"
     ai_allow_system_info: bool = True
+    # Wi-Fi/Bluetooth sayfasında bağlantı kalitesi ölçümü (açık rıza; varsayılan kapalı)
+    net_measure: bool = False
     # Gelişmiş (teknik) ayarlar
     show_details: bool = False  # görev penceresinde komut çıktısı baştan açık
     debug_log: bool = False  # ayrıntılı günlük dosyası
