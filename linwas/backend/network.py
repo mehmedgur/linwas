@@ -464,6 +464,16 @@ def parse_info(mac: str, name: str, out: str) -> BluetoothDevice:
     )
 
 
+# BlueZ adı olmayan cihaza adresinden bir ad uydurur ("AA-BB-CC-DD-EE-FF")
+_RE_ADDRESS_NAME = re.compile(r"^[0-9A-Fa-f]{2}([-:][0-9A-Fa-f]{2}){5}$")
+
+
+def is_unnamed_device(device: BluetoothDevice) -> bool:
+    """Adı yok ya da yalnızca adresinden ibaret (çoğu zaman çevredeki rastgele BLE cihazları)."""
+    name = (device.name or "").strip()
+    return not name or bool(_RE_ADDRESS_NAME.match(name))
+
+
 def bluetooth_list_devices() -> list[BluetoothDevice]:
     """Bilinen cihazlar (eşleşmiş + taramada bulunan); bağlı ve eşleşmiş olanlar önce."""
     devices = [

@@ -25,6 +25,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QScrollArea,
     QTabWidget,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -38,8 +39,10 @@ from linwas.ui import icons
 from linwas.ui.pages.base import BasePage
 from linwas.ui.pages.network_quality import QualityCard
 from linwas.ui.widgets.card import Card
+from linwas.ui.widgets.details_toggle import DetailsToggle
 from linwas.ui.widgets.jobs import Job as _Job
 from linwas.ui.widgets.jobs import Jobs as _Jobs
+from linwas.ui.widgets.layout_utils import clear_layout
 
 
 def tr(text: str) -> str:
@@ -97,6 +100,24 @@ def _tile(name: str, role: str, size: int, parent: QWidget) -> QLabel:
     lbl.setFixedSize(size, size)
     icons.bind(lbl, name, role, size)
     return lbl
+
+
+def _more_button(parent: QWidget) -> QToolButton:
+    """Listenin altındaki "N tanesini göster" düğmesi (kartın "Ayrıntılar" düğmesiyle aynı stil)."""
+    btn = QToolButton(parent)
+    btn.setObjectName("DetailsToggle")
+    btn.setAutoRaise(True)
+    btn.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+    icons.bind(btn, "chevron_right", "secondary", 14)
+    btn.setVisible(False)
+    return btn
+
+
+def _set_more_button(btn: QToolButton, count: int, expanded: bool, show: str, hide: str) -> None:
+    """Gizlenen kayıt yoksa düğme görünmez; açıkken "gizle", kapalıyken "N tanesini göster"."""
+    btn.setVisible(count > 0)
+    btn.setText(hide if expanded else show.format(n=count))
+    icons.bind(btn, "chevron_down" if expanded else "chevron_right", "secondary", 14)
 
 
 def _repolish(widget: QWidget) -> None:
@@ -170,16 +191,17 @@ class _ListCard(Card):
     def add_header_button(self, button: QPushButton) -> None:
         self.header.addWidget(button)
 
+    def add_footer(self, widget: QWidget) -> None:
+        """Satırların altına (ör. "N zayıf ağı göster" düğmesi)."""
+        self.layout.addWidget(widget, 0, Qt.AlignmentFlag.AlignLeft)
+
     def set_rows(self, key: object, build: Callable[[], list[QWidget]], empty_text: str) -> None:
         """key değişmediyse yeniden kurulmaz (otomatik yenilemede titreme olmasın)."""
         if key == self._key:
             return
         self._key = key
         rows = build()
-        while self._rows.count():
-            item = self._rows.takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
+        clear_layout(self._rows)
         if not rows:
             lbl = QLabel(empty_text, self)
             lbl.setObjectName("Secondary")
@@ -326,37 +348,78 @@ class _PasswordDialog(QDialog):
 # --- Wi-Fi sekmesi ---
 
 
+def is_weak_unknown(net: WifiNetwork) -> bool:
+    """Çok zayıf sinyalli ve ne bağlı ne kayıtlı: gürültü sayılır, varsayılan gizlenir."""
+    return net.quality == "weak" and not net.active and not net.saved
+
+
 def _security_text(net: WifiNetwork) -> str:
-    if not net.security:
+    return security_label(net.security)
+
+
+def security_label(security: str) -> str:
+    """Güvenlik bilgisi sade dille: boş = açık ağ; "WPA2 WPA3" → "Şifreli (WPA2)"."""
+    if not security:
         return tr("Open network, not secured")
-    return tr("Secured ({kind})").format(kind=net.security.split()[0])
+    return tr("Secured ({kind})").format(kind=security.split()[0])
 
 
-def detail_rows(details: WifiDetails) -> list[tuple[str, str]]:
-    """Bağlantı ayrıntıları kartının (etiket, değer) satırları; boş değerler atlanır."""
-    if details.band and details.channel:
-        band = tr("{band} · channel {channel}").format(band=details.band, channel=details.channel)
-    elif details.band:
-        band = details.band
-    elif details.channel:
-        band = tr("Channel {channel}").format(channel=details.channel)
-    else:
-        band = ""
+def basic_rows(details: WifiDetails) -> list[tuple[str, str]]:
+    """Varsayılan görünen satırlar (süzülmüş): günlük kullanıcının işine yarayan üç bilgi."""
+    speed = " · ".join(
+        part for part in (f"{details.rate} Mbit/s" if details.rate else "", details.band) if part
+    )
     rows = [
+        (tr("Speed"), speed),
         (tr("IP address"), details.ip),
-        (tr("Gateway"), details.gateway),
-        (tr("DNS servers"), ", ".join(details.dns)),
-        (tr("Hardware address (MAC)"), details.mac),
-        (tr("Access point (BSSID)"), details.bssid),
-        (tr("Band"), band),
-        (tr("Link speed"), f"{details.rate} Mbit/s" if details.rate else ""),
-        (tr("Security"), details.security or tr("Open network, not secured")),
+        (tr("Security"), security_label(details.security)),
     ]
     return [(label, value) for label, value in rows if value]
 
 
+def advanced_rows(details: WifiDetails) -> list[tuple[str, str]]:
+    """ "Gelişmiş ayrıntılar" arkasındaki teknik satırlar."""
+    rows = [
+        (tr("Gateway"), details.gateway),
+        (tr("DNS servers"), ", ".join(details.dns)),
+        (tr("Channel"), str(details.channel) if details.channel else ""),
+        (tr("Hardware address (MAC)"), details.mac),
+        (tr("Access point (BSSID)"), details.bssid),
+    ]
+    return [(label, value) for label, value in rows if value]
+
+
+def detail_rows(details: WifiDetails) -> list[tuple[str, str]]:
+    """Tüm satırlar (\"Tümünü kopyala\" ve destek için); ekranda yalnızca temel olanlar görünür."""
+    return basic_rows(details) + advanced_rows(details)
+
+
+def _fill_grid(grid: QGridLayout, rows: list[tuple[str, str]], parent: QWidget) -> None:
+    """İki sütunlu ızgarayı (etiket üstte, değer altta) yeniden kurar."""
+    clear_layout(grid)
+    for index, (label, value) in enumerate(rows):
+        row, col = divmod(index, 2)
+        name = QLabel(label, parent)
+        name.setObjectName("Secondary")
+        text = QLabel(value, parent)
+        text.setWordWrap(True)
+        text.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+        text.setContentsMargins(0, 0, 0, 10)
+        grid.addWidget(name, row * 2, col)
+        grid.addWidget(text, row * 2 + 1, col)
+
+
+def _new_grid() -> QGridLayout:
+    grid = QGridLayout()
+    grid.setHorizontalSpacing(24)
+    grid.setVerticalSpacing(0)
+    grid.setColumnStretch(0, 1)
+    grid.setColumnStretch(1, 1)
+    return grid
+
+
 class _DetailsCard(Card):
-    """Bağlı ağın ayrıntıları: iki sütunlu ızgara; IP adresini ya da hepsini panoya kopyalar."""
+    """Bağlı ağın bilgileri: önce temel satırlar; teknik olanlar "Gelişmiş ayrıntılar" arkasında."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -372,13 +435,23 @@ class _DetailsCard(Card):
         self._copy_all.clicked.connect(lambda: self._copy(self._all_text(), self._copy_all))
         header.addWidget(self._copy_all)
         self.layout.addLayout(header)
-        self._grid = QGridLayout()
-        self._grid.setHorizontalSpacing(24)
-        self._grid.setVerticalSpacing(0)
-        self._grid.setColumnStretch(0, 1)
-        self._grid.setColumnStretch(1, 1)
-        self.layout.addLayout(self._grid)
-        self._rows: list[tuple[str, str]] = []
+
+        self._basic_grid = _new_grid()
+        self.layout.addLayout(self._basic_grid)
+
+        self._toggle = DetailsToggle(tr("Advanced details"), self)
+        self.layout.addWidget(self._toggle, 0, Qt.AlignmentFlag.AlignLeft)
+        self._advanced = QWidget(self)
+        self._advanced.setObjectName("DetailsBox")
+        # Genel "QWidget" zemini kartın içinde şeritler gibi görünmesin
+        self._advanced.setStyleSheet("QWidget#DetailsBox { background: transparent; }")
+        self._advanced_grid = _new_grid()
+        self._advanced.setLayout(self._advanced_grid)
+        self.layout.addWidget(self._advanced)
+        self._toggle.add_target(self._advanced)
+
+        self._basic: list[tuple[str, str]] = []
+        self._more: list[tuple[str, str]] = []
         self._ip = ""
         self._restore = QTimer(self)
         self._restore.setSingleShot(True)
@@ -387,33 +460,32 @@ class _DetailsCard(Card):
 
     @property
     def rows(self) -> list[tuple[str, str]]:
-        return list(self._rows)
+        """Varsayılan görünen satırlar."""
+        return list(self._basic)
+
+    @property
+    def advanced(self) -> list[tuple[str, str]]:
+        return list(self._more)
 
     def show_details(self, details: WifiDetails) -> None:
         """Satırlar değişmediyse yeniden kurulmaz (otomatik yenilemede titreme olmasın)."""
-        rows = detail_rows(details)
         self._ip = details.ip
         self._copy_ip.setVisible(bool(details.ip))
-        if rows == self._rows:
-            return
-        self._rows = rows
-        while self._grid.count():
-            item = self._grid.takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
-        for index, (label, value) in enumerate(rows):
-            row, col = divmod(index, 2)
-            name = QLabel(label, self)
-            name.setObjectName("Secondary")
-            text = QLabel(value, self)
-            text.setWordWrap(True)
-            text.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
-            text.setContentsMargins(0, 0, 0, 10)
-            self._grid.addWidget(name, row * 2, col)
-            self._grid.addWidget(text, row * 2 + 1, col)
+        basic, more = basic_rows(details), advanced_rows(details)
+        if basic != self._basic:
+            self._basic = basic
+            _fill_grid(self._basic_grid, basic, self)
+        if more != self._more:
+            self._more = more
+            _fill_grid(self._advanced_grid, more, self._advanced)
+        self._toggle.setVisible(bool(more))
+        if not more:
+            self._advanced.setVisible(False)
+        else:
+            self._advanced.setVisible(self._toggle.isChecked())
 
     def _all_text(self) -> str:
-        return "\n".join(f"{label}: {value}" for label, value in self._rows)
+        return "\n".join(f"{label}: {value}" for label, value in self._basic + self._more)
 
     def _copy(self, text: str, button: QPushButton) -> None:
         if not text:
@@ -436,6 +508,8 @@ class _WifiTab(QWidget):
         self._loading: _Job | None = None
         self._status: WifiStatus | None = None
         self._busy = False
+        self._show_weak = False  # çok zayıf (kullanılamaz) ağlar varsayılan gizli
+        self._nets: list[WifiNetwork] = []
 
         content = QWidget()
         layout = QVBoxLayout(content)
@@ -463,6 +537,9 @@ class _WifiTab(QWidget):
         icons.bind(self._refresh_btn, "refresh", "normal", 16)
         self._refresh_btn.clicked.connect(lambda: self._load(rescan=True))
         self._list_card.add_header_button(self._refresh_btn)
+        self._weak_btn = _more_button(self._list_card)
+        self._weak_btn.clicked.connect(self._toggle_weak)
+        self._list_card.add_footer(self._weak_btn)
         layout.addWidget(self._list_card)
 
         footer = QHBoxLayout()
@@ -545,12 +622,30 @@ class _WifiTab(QWidget):
             self._details_card.show_details(details)
 
     def _show_networks(self, nets: list[WifiNetwork]) -> None:
-        key = [(n.ssid, n.active, n.saved, n.quality, n.security) for n in nets]
-        self._list_card.set_rows(
-            key,
-            lambda: [self._row(net) for net in nets],
-            tr("No networks found. Move closer to the router and press Refresh."),
+        """Süzülmüş liste: bağlı, kayıtlı ve kullanılabilir ağlar; çok zayıf olanlar gizli."""
+        self._nets = nets
+        weak = [n for n in nets if is_weak_unknown(n)]
+        visible = [n for n in nets if self._show_weak or not is_weak_unknown(n)]
+        _set_more_button(
+            self._weak_btn,
+            len(weak),
+            self._show_weak,
+            tr("Show {n} weak networks"),
+            tr("Hide weak networks"),
         )
+        key = [(n.ssid, n.active, n.saved, n.quality, n.security) for n in visible]
+        key.append(self._show_weak)  # type: ignore[arg-type]
+        empty = (
+            tr("Only weak networks were found. Move closer to the router or show them below.")
+            if weak and not visible
+            else tr("No networks found. Move closer to the router and press Refresh.")
+        )
+        self._list_card.set_rows(key, lambda: [self._row(net) for net in visible], empty)
+
+    def _toggle_weak(self) -> None:
+        self._show_weak = not self._show_weak
+        self._list_card.reset()
+        self._show_networks(self._nets)
 
     def _row(self, net: WifiNetwork) -> _Row:
         if net.active:
@@ -716,6 +811,8 @@ class _BtTab(QWidget):
         self._state = ""
         self._busy = False
         self._scanning = False
+        self._show_unnamed = False  # adsız (yalnızca adresi olan) cihazlar varsayılan gizli
+        self._devices: list[BluetoothDevice] = []
 
         content = QWidget()
         layout = QVBoxLayout(content)
@@ -741,6 +838,9 @@ class _BtTab(QWidget):
         hint.setObjectName("Secondary")
         hint.setWordWrap(True)
         self._nearby.layout.insertWidget(1, hint)
+        self._unnamed_btn = _more_button(self._nearby)
+        self._unnamed_btn.clicked.connect(self._toggle_unnamed)
+        self._nearby.add_footer(self._unnamed_btn)
         layout.addWidget(self._nearby)
 
         footer = QHBoxLayout()
@@ -792,18 +892,37 @@ class _BtTab(QWidget):
         self._nearby.setVisible(on)
         if not on:
             return
-        paired = [d for d in devices if d.paired]
-        others = [d for d in devices if not d.paired]
+        self._devices = devices
+        self._show_devices()
+
+    def _show_devices(self) -> None:
+        """Eşleşmişler her zaman; yeni cihazlarda adsız olanlar ("AA-BB-…") varsayılan gizli."""
+        paired = [d for d in self._devices if d.paired]
+        others = [d for d in self._devices if not d.paired]
+        unnamed = [d for d in others if network.is_unnamed_device(d)]
+        shown = [d for d in others if self._show_unnamed or not network.is_unnamed_device(d)]
+        _set_more_button(
+            self._unnamed_btn,
+            len(unnamed),
+            self._show_unnamed,
+            tr("Show {n} unnamed devices"),
+            tr("Hide unnamed devices"),
+        )
         self._mine.set_rows(
             [(d.mac, d.name, d.connected, d.battery) for d in paired],
             lambda: [self._row(d) for d in paired],
             tr("No paired devices yet. Search for devices below to add one."),
         )
         self._nearby.set_rows(
-            [(d.mac, d.name, d.quality) for d in others],
-            lambda: [self._row(d) for d in others],
+            [(d.mac, d.name, d.quality, self._show_unnamed) for d in shown],
+            lambda: [self._row(d) for d in shown],
             tr("No new devices found yet."),
         )
+
+    def _toggle_unnamed(self) -> None:
+        self._show_unnamed = not self._show_unnamed
+        self._nearby.reset()
+        self._show_devices()
 
     def _show_state(self, state: str) -> None:
         if state == "missing":

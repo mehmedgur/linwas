@@ -2154,32 +2154,8 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Erişim noktası (BSSID)</translation>
     </message>
     <message>
-        <source>Band</source>
-        <translation>Bant</translation>
-    </message>
-    <message>
-        <source>Link speed</source>
-        <translation>Bağlantı hızı</translation>
-    </message>
-    <message>
         <source>Security</source>
         <translation>Güvenlik</translation>
-    </message>
-    <message>
-        <source>{band} · channel {channel}</source>
-        <translation>{band} · kanal {channel}</translation>
-    </message>
-    <message>
-        <source>Channel {channel}</source>
-        <translation>Kanal {channel}</translation>
-    </message>
-    <message>
-        <source>Disconnections: {n}</source>
-        <translation>Kopmalar: {n}</translation>
-    </message>
-    <message>
-        <source>Router stopped answering: {n}</source>
-        <translation>Router'ın yanıt vermediği an: {n}</translation>
     </message>
     <message>
         <source>Average delay: {ms} ms</source>
@@ -2188,46 +2164,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>Slowest around {hour}:00</source>
         <translation>En yavaş saat: yaklaşık {hour}:00</translation>
-    </message>
-    <message>
-        <source>No router address was assigned</source>
-        <translation>Router adresi (ağ geçidi) atanmamış</translation>
-    </message>
-    <message>
-        <source>Router check skipped (the ping tool is not available)</source>
-        <translation>Router denetimi atlandı (ping aracı yok)</translation>
-    </message>
-    <message>
-        <source>The router ({gateway}) does not answer</source>
-        <translation>Router ({gateway}) yanıt vermiyor</translation>
-    </message>
-    <message>
-        <source>The router ({gateway}) answers, but {percent}% of the tests were lost</source>
-        <translation>Router ({gateway}) yanıt veriyor ama denemelerin %{percent}'i kayboldu</translation>
-    </message>
-    <message>
-        <source>The router ({gateway}) answers in {ms} ms</source>
-        <translation>Router ({gateway}) {ms} ms'de yanıt veriyor</translation>
-    </message>
-    <message>
-        <source>The network asks you to sign in first</source>
-        <translation>Ağ önce oturum açmanızı istiyor</translation>
-    </message>
-    <message>
-        <source>Name lookup works ({ms} ms)</source>
-        <translation>Ad çözümleme çalışıyor ({ms} ms)</translation>
-    </message>
-    <message>
-        <source>Name lookup failed (DNS)</source>
-        <translation>Ad çözümleme başarısız (DNS)</translation>
-    </message>
-    <message>
-        <source>The internet is reachable ({ms} ms)</source>
-        <translation>İnternete ulaşılıyor ({ms} ms)</translation>
-    </message>
-    <message>
-        <source>The internet could not be reached</source>
-        <translation>İnternete ulaşılamadı</translation>
     </message>
     <message>
         <source>Everything looks fine: your connection works.</source>
@@ -2278,10 +2214,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Linwas çalışırken dakikada bir sinyal gücünü ve router'a gecikmeyi not eder. Hiçbir şey bu bilgisayardan çıkmaz; notlar 7 gün sonra silinir.</translation>
     </message>
     <message>
-        <source>Last 24 hours</source>
-        <translation>Son 24 saat</translation>
-    </message>
-    <message>
         <source>Measuring is off, so no new notes are added.</source>
         <translation>Ölçüm kapalı, bu yüzden yeni not eklenmiyor.</translation>
     </message>
@@ -2308,6 +2240,102 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>Connection test</source>
         <translation>Bağlantı testi</translation>
+    </message>
+    <message>
+        <source>Speed</source>
+        <translation>Hız</translation>
+    </message>
+    <message>
+        <source>Advanced details</source>
+        <translation>Gelişmiş ayrıntılar</translation>
+    </message>
+    <message>
+        <source>Channel</source>
+        <translation>Kanal</translation>
+    </message>
+    <message>
+        <source>Show {n} weak networks</source>
+        <translation>{n} zayıf ağı göster</translation>
+    </message>
+    <message>
+        <source>Hide weak networks</source>
+        <translation>Zayıf ağları gizle</translation>
+    </message>
+    <message>
+        <source>Only weak networks were found. Move closer to the router or show them below.</source>
+        <translation>Yalnızca zayıf ağlar bulundu. Router'a yaklaşın ya da aşağıdan zayıf ağları gösterin.</translation>
+    </message>
+    <message>
+        <source>Show {n} unnamed devices</source>
+        <translation>{n} adsız cihazı göster</translation>
+    </message>
+    <message>
+        <source>Hide unnamed devices</source>
+        <translation>Adsız cihazları gizle</translation>
+    </message>
+    <message>
+        <source>Stable over the last 24 hours.</source>
+        <translation>Bağlantı son 24 saatte kararlıydı.</translation>
+    </message>
+    <message>
+        <source>Mostly stable over the last 24 hours.</source>
+        <translation>Bağlantı son 24 saatte genel olarak kararlıydı.</translation>
+    </message>
+    <message>
+        <source>Unstable over the last 24 hours.</source>
+        <translation>Bağlantı son 24 saatte kararsızdı.</translation>
+    </message>
+    <message>
+        <source>Dropouts: {n}</source>
+        <translation>Kopmalar: {n}</translation>
+    </message>
+    <message>
+        <source>Measurements: {n}</source>
+        <translation>Ölçüm sayısı: {n}</translation>
+    </message>
+    <message>
+        <source>No network address was assigned.</source>
+        <translation>Ağ adresi atanmamış.</translation>
+    </message>
+    <message>
+        <source>Router check skipped (the ping tool is not available).</source>
+        <translation>Router denetimi atlandı (ping aracı yok).</translation>
+    </message>
+    <message>
+        <source>Your router does not respond.</source>
+        <translation>Router yanıt vermiyor.</translation>
+    </message>
+    <message>
+        <source>Your router responds, but many tests were lost.</source>
+        <translation>Router yanıt veriyor ama birçok deneme kayboldu.</translation>
+    </message>
+    <message>
+        <source>Your router responds.</source>
+        <translation>Router yanıt veriyor.</translation>
+    </message>
+    <message>
+        <source>The network asks you to sign in first.</source>
+        <translation>Ağ önce oturum açmanızı istiyor.</translation>
+    </message>
+    <message>
+        <source>Website names can be found.</source>
+        <translation>Web sitesi adları çözümlenebiliyor.</translation>
+    </message>
+    <message>
+        <source>Website names cannot be found (DNS).</source>
+        <translation>Web sitesi adları çözümlenemiyor (DNS).</translation>
+    </message>
+    <message>
+        <source>The internet is reachable.</source>
+        <translation>İnternete ulaşılıyor.</translation>
+    </message>
+    <message>
+        <source>The internet cannot be reached.</source>
+        <translation>İnternete ulaşılamıyor.</translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>Ayrıntılar</translation>
     </message>
 </context>
 <context>

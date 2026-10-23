@@ -78,6 +78,12 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - Tamamen yeni Linux kullanıcısı. Sade dil, teknik terim olursa yanında açıklama.
 - Terminal hiç kullanılmaz; kurulum dahil her şey GUI.
 - Komutlar varsayılan gizli, "Detay" ile görülür.
+- **Süzülmüş veri (23 Ekim 2026, kullanıcı kararı):** kullanıcıya ham veri değil, süzülmüş ve yorumlanmış bilgi
+  gösterilir. Önce sade özet ya da hüküm ("Bağlantı son 24 saatte kararlıydı"); sayılar, adresler ve teknik alanlar
+  "Ayrıntılar" / "Gelişmiş ayrıntılar" arkasındadır (varsayılan kapalı; `widgets/details_toggle.py`, kart
+  içinde `QToolButton#DetailsToggle`). Gürültülü kayıtlar (çok zayıf Wi-Fi ağları, adsız Bluetooth cihazları,
+  tekrarlar) varsayılan gizli, "N … göster" ile açılır; bağlı ve kayıtlı olanlar her zaman görünür. Destek
+  eylemleri ("Tümünü kopyala", "Asistana sor") ham veriyi içerir.
 - İlk açılış: kısa tanıtım turu → kurulum sihirbazı (sistem taraması, Windows'tan taşıma, Timeshift önerisi ve ilk tam yedek, isteğe bağlı AI anahtarı).
 - Tema: Windows benzeri tasarım; Açık / Koyu / Sistem (Ayarlar'dan).
 - Dil: Türkçe + İngilizce (Qt Linguist altyapısı).
@@ -650,9 +656,12 @@ Kapsam (kullanıcı seçti): Wi-Fi — bağlantı ayrıntıları, ağ ayarları,
 hotspot; Bluetooth — yeniden adlandır + otomatik bağlan, bilgisayarın görünürlüğü, ses çıkışı + dosya
 gönderme (tür simgesi ve pil yüzdesi sayfada zaten vardı). Fikir: durum fotoğrafı yerine **ölçülmüş
 deneyim** (son günlerde nasıldı, neden koptu). Her aşama ayrı commit; ayrıntı ve kalanlar `yapilacaklar.md`.
-- **Bağlantı ayrıntıları (aşama 1):** bağlı ağın IP, ağ geçidi, DNS, MAC, BSSID, bant (2,4/5/6 GHz), kanal ve
-  bağlantı hızı; "IP adresini kopyala" / "Tümünü kopyala". Bant `FREQ`'ten türetilir (nmcli'nin `BAND`
-  alanı eski sürümlerde yok). Alan adları NetworkManager kaynağından doğrulandı.
+- **Bağlantı ayrıntıları (aşama 1):** varsayılan görünen (süzülmüş): hız + bant, IP adresi, güvenlik (sade dille).
+  "Gelişmiş ayrıntılar" arkasında: ağ geçidi, DNS, kanal, MAC, BSSID. "IP adresini kopyala" / "Tümünü kopyala"
+  (hepsini kopyalar). Bant `FREQ`'ten türetilir (nmcli'nin `BAND` alanı eski sürümlerde yok). Alan adları
+  NetworkManager kaynağından doğrulandı.
+- **Ağ listesi:** çok zayıf (< %30) ve ne bağlı ne kayıtlı ağlar gizli, "N zayıf ağı göster" ile açılır.
+  Bluetooth'ta adsız (adı yalnızca adresinden ibaret) yeni cihazlar gizli, "N adsız cihazı göster" ile açılır.
 - **Ölçüm ve kalite çizelgesi (aşama 2):**
   - **Açık rıza, varsayılan kapalı:** Wi-Fi sekmesindeki "Bağlantı kalitemi ölç" kutusu (`net_measure`).
   - **Ne ölçülür:** Linwas çalışırken (arka plan kipi dahil) dakikada bir: bağlı mı, sinyal, bant ve **yalnızca
@@ -662,12 +671,16 @@ deneyim** (son günlerde nasıldı, neden koptu). Her aşama ayrı commit; ayrı
     Ayarlar › Kullanıcı verileri'nde görünür ve silinir.
   - **Kopma sayımı:** bağlıyken bağlantı kopması; kullanıcının Linwas'tan yaptığı "Bağlantıyı kes / Kapat /
     Unut" `user` işaretiyle yazılır, sayılmaz. Büyük zaman boşlukları (uyku, Linwas kapalı) sayılmaz.
-  - **Çizelge:** son 24 saat, 15 dakikalık dilimler; dilimin durumu en kötü örneğe göre (iyi / yavaş / kötü /
-    bağlantı yok [içi boş çubuk] / gecikme verisi yok / veri yok). Eşikler sezgiseldir: geçide gecikme ≤ 30 ms
-    iyi, ≤ 100 ms yavaş, üstü kötü; kayıp ≤ %2 iyi, ≤ %10 yavaş.
+  - **Çizelge ve hüküm:** üstte tek cümlelik hüküm (kararlıydı / genel olarak kararlıydı / kararsızdı; kopmalar
+    ve kötü dilimlerin payından), altında yalnızca işe yarayan not (kopma sayısı, en yavaş saat); sayılar
+    (ölçüm sayısı, ortalama gecikme) hükmün üzerine gelince ipucunda. Çizelge: son 24 saat, 15 dakikalık
+    dilimler; dilimin durumu en kötü örneğe göre (iyi / yavaş / kötü / bağlantı yok [içi boş çubuk] /
+    gecikme verisi yok / veri yok). Eşikler sezgiseldir: geçide gecikme ≤ 30 ms iyi, ≤ 100 ms yavaş, üstü
+    kötü; kayıp ≤ %2 iyi, ≤ %10 yavaş.
   - **Bağlantı testi** (yalnız düğmeyle): ağ geçidine ping → `nmcli networking connectivity check` → ad
     çözümleme ve TCP 443 (`example.com`, IANA belge alan adı) → tanı kodu (ok, no_address, gateway_down,
-    gateway_lossy, portal, dns_failed, internet_down, slow) sade dille; sorun varsa "Asistana sor".
+    gateway_lossy, portal, dns_failed, internet_down, slow). Sonuç sade dille üç satır (router, adlar,
+    internet) + hüküm; adresler ve süreler "Ayrıntılar" arkasında; sorun varsa "Asistana sor".
   - **Doğrulanan komutlar:** `ping -n -c N -i 0.4 -W 1.0 <IP>` (iputils belgesi; çıktı biçimine değil cevap
     satırlarındaki `time=` değerine bakılır), `nmcli networking connectivity [check]` (full / limited / portal /
     none / unknown). Yalnızca IP adresi ping'lenir (seçenek enjeksiyonuna karşı).

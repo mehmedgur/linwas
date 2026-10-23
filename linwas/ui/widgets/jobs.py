@@ -21,6 +21,11 @@ class Job(QThread):
             self.done.emit(None)
 
 
+# Çalışan işler: sahibi (sayfa/kart) önce yok edilse bile iş parçacığı bitene kadar yaşar;
+# "QThread: Destroyed while thread is still running" çökmesini önler.
+_ACTIVE: set[Job] = set()
+
+
 class Jobs:
     """İşleri referansta tutar (QThread çalışırken silinmesin)."""
 
@@ -30,7 +35,15 @@ class Jobs:
     def run(self, fn: Callable[[], object], slot: Callable[[object], None]) -> Job:
         job = Job(fn)
         job.done.connect(slot)
-        job.finished.connect(lambda: self._jobs.remove(job))
+        job.finished.connect(lambda: self._release(job))
         self._jobs.append(job)
+        _ACTIVE.add(job)
         job.start()
         return job
+
+    def _release(self, job: Job) -> None:
+        # "finished" iş parçacığı tamamen kapanmadan gelir: silmeden önce bitmesini bekle
+        job.wait()
+        _ACTIVE.discard(job)
+        if job in self._jobs:
+            self._jobs.remove(job)

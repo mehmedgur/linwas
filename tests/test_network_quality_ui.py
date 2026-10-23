@@ -61,18 +61,37 @@ def test_every_diagnosis_code_has_text(qapp):
     assert diagnosis_text("bilinmeyen") == ""
 
 
-def test_summary_text_pieces(qapp):
-    from linwas.ui.pages.network_quality import summary_text
+def test_verdict_levels_and_extras(qapp):
+    from linwas.ui.pages.network_quality import (
+        summary_text,
+        technical_text,
+        verdict_level,
+        verdict_text,
+    )
 
-    full = netlog.WifiSummary(100, 2, 1, 18.4, 40.0, 0.01, 21, ("Ev",))
-    text = summary_text(full)
-    assert "Disconnections: 2" in text and "Router stopped answering: 1" in text
-    assert "Average delay: 18 ms" in text and "Slowest around 21:00" in text
-    bare = summary_text(netlog.WifiSummary(10, 0, 0, None, None, None, None, ()))
-    assert bare == "Disconnections: 0"
+    ok = [Bucket(i * 900, "good") for i in range(90)] + [Bucket(90 * 900, "nodata")]
+    calm = netlog.WifiSummary(500, 0, 0, 8.0, 12.0, 0.0, None, ("Ev",))
+    assert verdict_level(calm, ok) == "good"
+    assert verdict_text("good") == "Stable over the last 24 hours."
+    assert summary_text(calm, "good") == ""  # sorun yoksa ek not yok
+
+    some = netlog.WifiSummary(500, 2, 1, 18.4, 40.0, 0.01, 21, ("Ev",))
+    assert verdict_level(some, ok) == "fair"
+    note = summary_text(some, "fair")
+    assert note == "Dropouts: 3 · Slowest around 21:00"
+
+    many = netlog.WifiSummary(500, 6, 0, 18.4, 40.0, 0.01, 21, ("Ev",))
+    assert verdict_level(many, ok) == "bad" and "Unstable" in verdict_text("bad")
+    # Çok sayıda kötü dilim, kopma olmasa da hükmü düşürür
+    poor = [Bucket(i * 900, "bad" if i < 30 else "good") for i in range(90)]
+    assert verdict_level(calm, poor) == "bad"
+    assert verdict_level(calm, []) == "good"
+    # Sayılar yalnızca ipucunda
+    assert technical_text(some) == "Measurements: 500 · Average delay: 18 ms"
+    assert "ms" not in verdict_text("fair") and "ms" not in note
 
 
-def test_report_rows_cover_outcomes(qapp):
+def test_report_rows_are_plain_language(qapp):
     from linwas.ui.pages.network_quality import report_rows
 
     ok = netquality.ConnectivityReport(
@@ -87,7 +106,10 @@ def test_report_rows_cover_outcomes(qapp):
     )
     rows = report_rows(ok)
     assert [r[0] for r in rows] == [True, True, True]
-    assert "answers in 3 ms" in rows[0][1] and "(12 ms)" in rows[1][1]
+    texts = " ".join(text for _, text in rows)
+    assert "Your router responds." in texts and "Website names can be found." in texts
+    # Süzülmüş görünüm: adres ve süre sayıları satırlarda yok
+    assert "192.168" not in texts and " ms" not in texts
 
     down = netquality.ConnectivityReport(
         gateway="192.168.1.1",
@@ -165,7 +187,9 @@ def test_card_hint_and_chart_follow_data(qapp, isolated, monkeypatch):
     monkeypatch.setattr(network_quality, "history_for_chart", lambda: real_history(now))
     card.refresh(force=True)
     assert wait_until(lambda: not card._chart.isHidden())
-    assert "Last 24 hours" in card._summary.text()
+    assert card._verdict.text() == "Stable over the last 24 hours."
+    assert "Measurements: 8" in card._verdict.toolTip()  # sayılar yalnızca ipucunda
+    assert card._summary.isHidden()  # sorun yoksa ek not da yok
     assert "Measuring is off" in card._hint.text()  # veri var ama ölçüm kapalı
 
 
@@ -200,6 +224,17 @@ def test_card_connection_test_flow(qapp, isolated, monkeypatch):
     assert len(buttons) == 1
     buttons[0].click()
     assert asked and asked[0][0] == "Connection test" and "Diagnosis: gateway_down" in asked[0][1]
+    # Ham sonuç (adresler, sayılar) "Ayrıntılar" arkasında: varsayılan gizli
+    from PySide6.QtWidgets import QLabel
+
+    from linwas.ui.widgets.details_toggle import DetailsToggle
+
+    toggle = card._result.findChildren(DetailsToggle)[0]
+    raw = next(label for label in card._result.findChildren(QLabel) if "Diagnosis:" in label.text())
+    card.show()
+    assert not raw.isVisible()
+    toggle.click()
+    assert raw.isVisible() and "Gateway: 192.168.1.1" in raw.text()
     # Bağlantı kopunca eski sonuç silinir
     card.set_connection(False, "")
     assert card._result.isHidden() and not card._test_btn.isEnabled()

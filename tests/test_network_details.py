@@ -106,36 +106,154 @@ def qapp():
     return QApplication.instance() or QApplication([])
 
 
-def test_detail_rows_skip_empty_values(qapp):
-    from linwas.ui.pages.network import detail_rows
+def test_basic_rows_are_filtered_and_advanced_holds_the_rest(qapp):
+    from linwas.ui.pages.network import advanced_rows, basic_rows, detail_rows
 
     full = network.build_wifi_details("Ev Ağı", "wlan0", SHOW, LIST)
-    labels = [label for label, _ in detail_rows(full)]
-    assert labels[0] == "IP address" and "Link speed" in labels
-    assert dict(detail_rows(full))["Band"] == "5 GHz · channel 36"
-    assert dict(detail_rows(full))["Link speed"] == "866 Mbit/s"
+    basic = dict(basic_rows(full))
+    # Varsayılan görünen: hız (+bant), IP adresi, güvenlik — teknik alanlar yok
+    assert list(basic) == ["Speed", "IP address", "Security"]
+    assert basic["Speed"] == "866 Mbit/s · 5 GHz"
+    assert basic["Security"] == "Secured (WPA2)"
+    advanced = dict(advanced_rows(full))
+    assert list(advanced) == [
+        "Gateway",
+        "DNS servers",
+        "Channel",
+        "Hardware address (MAC)",
+        "Access point (BSSID)",
+    ]
+    assert advanced["DNS servers"] == "192.168.1.1, 8.8.8.8" and advanced["Channel"] == "36"
+    assert [label for label, _ in detail_rows(full)] == list(basic) + list(advanced)
+
     sparse = network.build_wifi_details("Ev", "wlan0", "", "")
-    assert [label for label, _ in detail_rows(sparse)] == ["Security"]
-    assert dict(detail_rows(sparse))["Security"] == "Open network, not secured"
+    assert dict(basic_rows(sparse)) == {"Security": "Open network, not secured"}
+    assert advanced_rows(sparse) == []
+    # Hız bilinmiyorsa yalnızca bant gösterilir
+    only_band = network.WifiDetails("Ev", "wlan0", band="2.4 GHz")
+    assert dict(basic_rows(only_band))["Speed"] == "2.4 GHz"
 
 
-def test_details_card_rebuilds_only_on_change_and_copies(qapp):
+def test_details_card_hides_advanced_by_default_and_copies_everything(qapp):
     from PySide6.QtGui import QGuiApplication
 
     from linwas.ui.pages.network import _DetailsCard
 
     card = _DetailsCard()
+    card.show()
     details = network.build_wifi_details("Ev Ağı", "wlan0", SHOW, LIST)
     card.show_details(details)
-    first = card.rows
-    assert ("IP address", "192.168.1.5") in first
-    grid_widgets = card._grid.count()
+    assert ("IP address", "192.168.1.5") in card.rows and len(card.rows) == 3
+    assert card._toggle.isVisible() and not card._advanced.isVisible()  # teknik satırlar gizli
+    assert len(card.advanced) == 5
+
+    cells = card._basic_grid.count()
     card.show_details(details)  # aynı veri: yeniden kurulmaz
-    assert card._grid.count() == grid_widgets and card.rows == first
+    assert card._basic_grid.count() == cells
+
+    card._toggle.click()
+    assert card._advanced.isVisible()
+    card._toggle.click()
+    assert not card._advanced.isVisible()
 
     card._copy_ip.click()
     assert QGuiApplication.clipboard().text() == "192.168.1.5"
     assert card._copy_ip.text() == "Copied"
     card._copy_all.click()
-    text = QGuiApplication.clipboard().text()
+    text = QGuiApplication.clipboard().text()  # destek için her şey kopyalanır
     assert "IP address: 192.168.1.5" in text and "Gateway: 192.168.1.1" in text
+    assert "Hardware address (MAC): AA:BB:CC:DD:EE:FF" in text
+
+    bare = network.WifiDetails("Ev", "wlan0")  # gelişmiş veri yoksa düğme de yok
+    card.show_details(bare)
+    assert not card._toggle.isVisible() and not card._advanced.isVisible()
+
+
+def test_weak_unknown_networks_are_noise():
+    from linwas.backend.network import WifiNetwork
+
+    def net(signal, active=False, saved=False):
+        return WifiNetwork("x", signal, "WPA2", active, "AA", saved=saved)
+
+    from linwas.ui.pages.network import is_weak_unknown
+
+    assert is_weak_unknown(net(10))
+    assert not is_weak_unknown(net(10, active=True))
+    assert not is_weak_unknown(net(10, saved=True))
+    assert not is_weak_unknown(net(45))
+
+
+def test_is_unnamed_device():
+    def dev(name):
+        return network.BluetoothDevice("AA:BB:CC:DD:EE:FF", name, False, False)
+
+    assert network.is_unnamed_device(dev(""))
+    assert network.is_unnamed_device(dev("AA-BB-CC-DD-EE-FF"))
+    assert network.is_unnamed_device(dev("aa:bb:cc:dd:ee:ff"))
+    assert not network.is_unnamed_device(dev("Kulaklık"))
+    assert not network.is_unnamed_device(dev("JBL Flip 5"))
+
+
+def _wait(condition, timeout=3.0):
+    from PySide6.QtTest import QTest
+
+    waited = 0
+    while not condition() and waited < timeout * 1000:
+        QTest.qWait(20)
+        waited += 20
+    return condition()
+
+
+def test_wifi_tab_collapses_weak_networks(qapp, monkeypatch, tmp_path):
+    from linwas.ui.pages.network import _Row, _WifiTab
+
+    monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path / "c"))
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path / "d"))
+    status = network.WifiStatus(True, True, "Ev", "wlan0", 72, "10.0.0.5")
+    nets = [
+        network.WifiNetwork("Ev", 72, "WPA2", True, "A", saved=True),
+        network.WifiNetwork("İyi", 60, "WPA2", False, "B"),
+        network.WifiNetwork("Zayıf1", 10, "WPA2", False, "C"),
+        network.WifiNetwork("Zayıf2", 12, "", False, "D"),
+        network.WifiNetwork("KayıtlıZayıf", 8, "WPA2", False, "E", saved=True),
+    ]
+    monkeypatch.setattr(network, "wifi_status", lambda: status)
+    monkeypatch.setattr(network, "wifi_list", lambda rescan=True: nets)
+    monkeypatch.setattr(network, "wifi_details", lambda s: None)
+    tab = _WifiTab()
+    tab.show()
+    assert _wait(lambda: len(tab._list_card.findChildren(_Row)) > 0)
+    from PySide6.QtWidgets import QLabel
+
+    def names():
+        return [r.findChildren(QLabel)[0].text() for r in tab._list_card.findChildren(_Row)]
+
+    assert sorted(names()) == ["Ev", "KayıtlıZayıf", "İyi"]  # zayıf+bilinmeyenler gizli
+    assert tab._weak_btn.isVisible() and "2" in tab._weak_btn.text()
+    tab._weak_btn.click()
+    assert _wait(lambda: len(tab._list_card.findChildren(_Row)) == 5)
+    assert tab._weak_btn.text() == "Hide weak networks"
+    tab._weak_btn.click()
+    assert _wait(lambda: len(tab._list_card.findChildren(_Row)) == 3)
+
+
+def test_bluetooth_tab_collapses_unnamed_devices(qapp, monkeypatch):
+    from linwas.ui.pages.network import _BtTab, _Row
+
+    devices = [
+        network.BluetoothDevice("AA:00:00:00:00:01", "Kulaklık", True, True, "audio-headset"),
+        network.BluetoothDevice("AA:00:00:00:00:02", "Hoparlör", False, False),
+        network.BluetoothDevice("AA:00:00:00:00:03", "AA-00-00-00-00-03", False, False),
+        network.BluetoothDevice("AA:00:00:00:00:04", "", False, False),
+    ]
+    monkeypatch.setattr(network, "bluetooth_state", lambda: "on")
+    monkeypatch.setattr(network, "bluetooth_list_devices", lambda: devices)
+    tab = _BtTab()
+    tab.show()
+    assert _wait(lambda: len(tab._nearby.findChildren(_Row)) > 0)
+    assert len(tab._mine.findChildren(_Row)) == 1  # eşleşmiş her zaman görünür
+    assert len(tab._nearby.findChildren(_Row)) == 1  # yalnızca adlı yeni cihaz
+    assert tab._unnamed_btn.isVisible() and "2" in tab._unnamed_btn.text()
+    tab._unnamed_btn.click()
+    assert _wait(lambda: len(tab._nearby.findChildren(_Row)) == 3)
+    assert tab._unnamed_btn.text() == "Hide unnamed devices"

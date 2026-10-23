@@ -416,6 +416,15 @@ QFrame#Card QToolButton#DetailsToggle {{
 QFrame#Card QToolButton#DetailsToggle:hover {{
     color: {c.accent};
 }}
+QDialog QToolButton#DetailsToggle {{
+    background-color: transparent;
+    border: none;
+    padding: 2px 0;
+    color: {c.text_secondary};
+}}
+QDialog QToolButton#DetailsToggle:hover {{
+    color: {c.accent};
+}}
 QFrame#Card QFrame#Separator {{
     background-color: {c.separator};
     border: none;

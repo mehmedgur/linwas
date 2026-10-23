@@ -117,8 +117,11 @@ class QualityChart(QWidget):
             # Saat etiketi: 6 saatte bir (yerel saat, dilim başında)
             start = datetime.fromtimestamp(bucket.start)
             if start.minute == 0 and start.hour % 6 == 0:
+                label = f"{start:%H:%M}"
+                width = painter.fontMetrics().horizontalAdvance(label)
                 painter.setPen(text_color)
-                painter.drawText(QPointF(x, self.height() - 3), f"{start:%H:%M}")
+                # Sağ kenara taşan etiket içeri kaydırılır
+                painter.drawText(QPointF(min(x, self.width() - width), self.height() - 3), label)
         painter.end()
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:  # type: ignore[override]
