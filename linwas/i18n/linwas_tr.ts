@@ -2117,6 +2117,62 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <source>battery %{n}</source>
         <translation>pil %{n}</translation>
     </message>
+    <message>
+        <source>Connection details</source>
+        <translation>Bağlantı ayrıntıları</translation>
+    </message>
+    <message>
+        <source>Copy IP address</source>
+        <translation>IP adresini kopyala</translation>
+    </message>
+    <message>
+        <source>Copy all</source>
+        <translation>Tümünü kopyala</translation>
+    </message>
+    <message>
+        <source>Copied</source>
+        <translation>Kopyalandı</translation>
+    </message>
+    <message>
+        <source>IP address</source>
+        <translation>IP adresi</translation>
+    </message>
+    <message>
+        <source>Gateway</source>
+        <translation>Ağ geçidi</translation>
+    </message>
+    <message>
+        <source>DNS servers</source>
+        <translation>DNS sunucuları</translation>
+    </message>
+    <message>
+        <source>Hardware address (MAC)</source>
+        <translation>Donanım adresi (MAC)</translation>
+    </message>
+    <message>
+        <source>Access point (BSSID)</source>
+        <translation>Erişim noktası (BSSID)</translation>
+    </message>
+    <message>
+        <source>Band</source>
+        <translation>Bant</translation>
+    </message>
+    <message>
+        <source>Link speed</source>
+        <translation>Bağlantı hızı</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Güvenlik</translation>
+    </message>
+    <message>
+        <source>{band} · channel {channel}</source>
+        <translation>{band} · kanal {channel}</translation>
+    </message>
+    <message>
+        <source>Channel {channel}</source>
+        <translation>Kanal {channel}</translation>
+    </message>
 </context>
 <context>
     <name>InstalledAppsView</name>

@@ -7,11 +7,12 @@ Türkçe karakterli ağ/cihaz adları bozulmaz (LANG=C'de "ş" → "?" olur).
 
 from __future__ import annotations
 
+import ipaddress
 import os
 import re
 import shutil
 import subprocess
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 # --- Yardımcılar ---
@@ -60,6 +61,21 @@ def split_terse(line: str) -> list[str]:
             current.append(ch)
     fields.append("".join(current))
     return fields
+
+
+def unescape_terse(value: str) -> str:
+    """`nmcli -t` değerindeki kaçırılmış ":" ve "\\" karakterlerini geri getirir."""
+    out: list[str] = []
+    escaped = False
+    for ch in value:
+        if escaped:
+            out.append(ch)
+            escaped = False
+        elif ch == "\\":
+            escaped = True
+        else:
+            out.append(ch)
+    return "".join(out)
 
 
 def _nmcli(*args: str, timeout: int = 10) -> str:
@@ -146,6 +162,121 @@ def parse_ip4(out: str) -> str:
         if sep and value.strip():
             return value.strip().split("/")[0]
     return ""
+
+
+@dataclass
+class WifiDetails:
+    """Bağlı Wi-Fi ağının ayrıntıları (Wi-Fi sekmesindeki "Bağlantı ayrıntıları" kartı)."""
+
+    ssid: str
+    device: str
+    ip: str = ""  # IPv4 adresi (önek olmadan)
+    prefix: int | None = None  # ağ öneki (ör. 24)
+    gateway: str = ""
+    dns: list[str] = field(default_factory=list)
+    mac: str = ""  # bu bilgisayarın Wi-Fi kartının donanım adresi
+    bssid: str = ""  # bağlı olunan erişim noktası
+    band: str = ""  # "2.4 GHz" | "5 GHz" | "6 GHz"
+    channel: int | None = None
+    frequency: int | None = None  # MHz
+    rate: int | None = None  # Mbit/s (bağlantı hızı)
+    signal: int = 0  # 0-100
+    security: str = ""  # "WPA2", "" (açık)
+
+
+def parse_device_show(out: str) -> dict[str, list[str]]:
+    """`nmcli -t -f ALAN,... device show DEV` → {alan: [değerler]}.
+
+    Çoklu alanlardaki "[n]" dizini atılır (IP4.DNS[1], IP4.DNS[2] → "IP4.DNS"); kaçırılmış
+    ":" geri getirilir (MAC adresi); boş değerler atlanır.
+    """
+    result: dict[str, list[str]] = {}
+    for line in out.splitlines():
+        key, sep, value = line.partition(":")
+        if not sep:
+            continue
+        key = re.sub(r"\[\d+\]$", "", key.strip())
+        value = unescape_terse(value).strip()
+        if value:
+            result.setdefault(key, []).append(value)
+    return result
+
+
+def band_from_frequency(mhz: int | None) -> str:
+    """Merkez frekansından (MHz) bant: 2.4 / 5 / 6 GHz; bilinmiyorsa boş."""
+    if mhz is None:
+        return ""
+    if 2400 <= mhz <= 2500:
+        return "2.4 GHz"
+    if 4900 <= mhz <= 5895:
+        return "5 GHz"
+    if 5925 <= mhz <= 7125:
+        return "6 GHz"
+    return ""
+
+
+def _leading_int(text: str) -> int | None:
+    """ "2412 MHz" → 2412, "130 Mbit/s" → 130; sayı yoksa None."""
+    m = re.match(r"\s*(\d+)", text)
+    return int(m.group(1)) if m else None
+
+
+def build_wifi_details(ssid: str, device: str, show_out: str, list_out: str) -> WifiDetails:
+    """`device show` ve `device wifi list` çıktılarından ayrıntıları kurar (komut çalıştırmaz).
+
+    list_out alanları: ACTIVE,DEVICE,BSSID,SSID,CHAN,FREQ,RATE,SIGNAL,SECURITY.
+    """
+    info = parse_device_show(show_out)
+    details = WifiDetails(ssid=ssid, device=device)
+    details.mac = (info.get("GENERAL.HWADDR") or [""])[0]
+    details.gateway = (info.get("IP4.GATEWAY") or [""])[0]
+    details.dns = list(info.get("IP4.DNS", []))
+    address = (info.get("IP4.ADDRESS") or [""])[0]
+    if address:
+        try:
+            iface = ipaddress.ip_interface(address)
+            details.ip, details.prefix = str(iface.ip), iface.network.prefixlen
+        except ValueError:
+            details.ip = address.split("/")[0]
+
+    rows = [split_terse(line) for line in list_out.splitlines()]
+    rows = [r for r in rows if len(r) >= 9 and r[0].strip().lower() == "yes"]
+    row = next((r for r in rows if r[1] == device), rows[0] if rows else None)
+    if row is not None:
+        details.bssid = row[2]
+        details.channel = _leading_int(row[4])
+        details.frequency = _leading_int(row[5])
+        details.rate = _leading_int(row[6])
+        details.signal = _leading_int(row[7]) or 0
+        details.security = row[8].strip()
+        details.band = band_from_frequency(details.frequency)
+    return details
+
+
+def wifi_details(status: WifiStatus) -> WifiDetails | None:
+    """Bağlı ağın ayrıntıları; bağlı değilse None."""
+    if not status.connected or not status.device:
+        return None
+    show = _nmcli(
+        "-t",
+        "-f",
+        "GENERAL.HWADDR,IP4.ADDRESS,IP4.GATEWAY,IP4.DNS",
+        "device",
+        "show",
+        status.device,
+    )
+    listing = _nmcli(
+        "-t",
+        "-f",
+        "ACTIVE,DEVICE,BSSID,SSID,CHAN,FREQ,RATE,SIGNAL,SECURITY",
+        "device",
+        "wifi",
+        "list",
+        "--rescan",
+        "no",
+        timeout=30,
+    )
+    return build_wifi_details(status.ssid, status.device, show, listing)
 
 
 def parse_wifi_list(out: str) -> list[WifiNetwork]:

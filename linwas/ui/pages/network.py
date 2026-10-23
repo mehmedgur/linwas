@@ -11,12 +11,13 @@ import os
 from collections.abc import Callable
 
 from PySide6.QtCore import QCoreApplication, Qt, QThread, QTimer, Signal
-from PySide6.QtGui import QColor, QPainter
+from PySide6.QtGui import QColor, QGuiApplication, QPainter
 from PySide6.QtWidgets import (
     QCheckBox,
     QDialog,
     QDialogButtonBox,
     QFrame,
+    QGridLayout,
     QHBoxLayout,
     QLabel,
     QLineEdit,
@@ -30,7 +31,7 @@ from PySide6.QtWidgets import (
 
 from linwas.backend import network
 from linwas.backend.desktop import detect_desktop
-from linwas.backend.network import BluetoothDevice, WifiNetwork, WifiStatus
+from linwas.backend.network import BluetoothDevice, WifiDetails, WifiNetwork, WifiStatus
 from linwas.backend.settings_launcher import command_for, open_settings
 from linwas.ui import icons
 from linwas.ui.pages.base import BasePage
@@ -359,6 +360,101 @@ def _security_text(net: WifiNetwork) -> str:
     return tr("Secured ({kind})").format(kind=net.security.split()[0])
 
 
+def detail_rows(details: WifiDetails) -> list[tuple[str, str]]:
+    """Bağlantı ayrıntıları kartının (etiket, değer) satırları; boş değerler atlanır."""
+    if details.band and details.channel:
+        band = tr("{band} · channel {channel}").format(band=details.band, channel=details.channel)
+    elif details.band:
+        band = details.band
+    elif details.channel:
+        band = tr("Channel {channel}").format(channel=details.channel)
+    else:
+        band = ""
+    rows = [
+        (tr("IP address"), details.ip),
+        (tr("Gateway"), details.gateway),
+        (tr("DNS servers"), ", ".join(details.dns)),
+        (tr("Hardware address (MAC)"), details.mac),
+        (tr("Access point (BSSID)"), details.bssid),
+        (tr("Band"), band),
+        (tr("Link speed"), f"{details.rate} Mbit/s" if details.rate else ""),
+        (tr("Security"), details.security or tr("Open network, not secured")),
+    ]
+    return [(label, value) for label, value in rows if value]
+
+
+class _DetailsCard(Card):
+    """Bağlı ağın ayrıntıları: iki sütunlu ızgara; IP adresini ya da hepsini panoya kopyalar."""
+
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        header = QHBoxLayout()
+        heading = QLabel(tr("Connection details"), self)
+        heading.setObjectName("H2")
+        header.addWidget(heading)
+        header.addStretch(1)
+        self._copy_ip = QPushButton(tr("Copy IP address"), self)
+        self._copy_ip.clicked.connect(lambda: self._copy(self._ip, self._copy_ip))
+        header.addWidget(self._copy_ip)
+        self._copy_all = QPushButton(tr("Copy all"), self)
+        self._copy_all.clicked.connect(lambda: self._copy(self._all_text(), self._copy_all))
+        header.addWidget(self._copy_all)
+        self.layout.addLayout(header)
+        self._grid = QGridLayout()
+        self._grid.setHorizontalSpacing(24)
+        self._grid.setVerticalSpacing(0)
+        self._grid.setColumnStretch(0, 1)
+        self._grid.setColumnStretch(1, 1)
+        self.layout.addLayout(self._grid)
+        self._rows: list[tuple[str, str]] = []
+        self._ip = ""
+        self._restore = QTimer(self)
+        self._restore.setSingleShot(True)
+        self._restore.setInterval(2000)
+        self._restore.timeout.connect(self._reset_labels)
+
+    @property
+    def rows(self) -> list[tuple[str, str]]:
+        return list(self._rows)
+
+    def show_details(self, details: WifiDetails) -> None:
+        """Satırlar değişmediyse yeniden kurulmaz (otomatik yenilemede titreme olmasın)."""
+        rows = detail_rows(details)
+        self._ip = details.ip
+        self._copy_ip.setVisible(bool(details.ip))
+        if rows == self._rows:
+            return
+        self._rows = rows
+        while self._grid.count():
+            item = self._grid.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+        for index, (label, value) in enumerate(rows):
+            row, col = divmod(index, 2)
+            name = QLabel(label, self)
+            name.setObjectName("Secondary")
+            text = QLabel(value, self)
+            text.setWordWrap(True)
+            text.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+            text.setContentsMargins(0, 0, 0, 10)
+            self._grid.addWidget(name, row * 2, col)
+            self._grid.addWidget(text, row * 2 + 1, col)
+
+    def _all_text(self) -> str:
+        return "\n".join(f"{label}: {value}" for label, value in self._rows)
+
+    def _copy(self, text: str, button: QPushButton) -> None:
+        if not text:
+            return
+        QGuiApplication.clipboard().setText(text)
+        button.setText(tr("Copied"))
+        self._restore.start()
+
+    def _reset_labels(self) -> None:
+        self._copy_ip.setText(tr("Copy IP address"))
+        self._copy_all.setText(tr("Copy all"))
+
+
 class _WifiTab(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -375,6 +471,10 @@ class _WifiTab(QWidget):
         self._status_card = _StatusCard("network", content)
         self._status_card.toggle_clicked.connect(self._toggle_wifi)
         layout.addWidget(self._status_card)
+
+        self._details_card = _DetailsCard(content)
+        self._details_card.setVisible(False)
+        layout.addWidget(self._details_card)
 
         self._list_card = _ListCard(tr("Networks"), content)
         hidden_btn = QPushButton(tr("Hidden network…"), self._list_card)
@@ -414,8 +514,9 @@ class _WifiTab(QWidget):
             self._refresh_btn.setEnabled(False)
             self._refresh_btn.setText(tr("Searching…"))
 
-        def fetch() -> tuple[WifiStatus, list[WifiNetwork]]:
-            return network.wifi_status(), network.wifi_list(rescan=rescan)
+        def fetch() -> tuple[WifiStatus, list[WifiNetwork], WifiDetails | None]:
+            status = network.wifi_status()
+            return status, network.wifi_list(rescan=rescan), network.wifi_details(status)
 
         self._loading = self._jobs.run(fetch, self._on_loaded)
 
@@ -425,9 +526,10 @@ class _WifiTab(QWidget):
         self._refresh_btn.setText(tr("Refresh"))
         if not isinstance(result, tuple):
             return
-        status, nets = result
+        status, nets, details = result
         self._status = status
         self._show_status(status)
+        self._show_details(details)
         self._show_networks(nets)
 
     def _show_status(self, status: WifiStatus) -> None:
@@ -457,6 +559,11 @@ class _WifiTab(QWidget):
                 tr("Not connected"), tr("Choose a network below to connect."), True
             )
         self._list_card.setVisible(bool(status.device) and status.enabled)
+
+    def _show_details(self, details: WifiDetails | None) -> None:
+        self._details_card.setVisible(details is not None)
+        if details is not None:
+            self._details_card.show_details(details)
 
     def _show_networks(self, nets: list[WifiNetwork]) -> None:
         key = [(n.ssid, n.active, n.saved, n.quality, n.security) for n in nets]
