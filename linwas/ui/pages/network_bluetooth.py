@@ -27,6 +27,7 @@ from linwas.backend import btaudio, network
 from linwas.backend.btaudio import BtAudio
 from linwas.backend.network import BluetoothAdapter, BluetoothDevice
 from linwas.core import netlog
+from linwas.core.netadvice import SLEEPY_ICONS
 from linwas.core.netlog import BluetoothSummary
 from linwas.ui import icons
 from linwas.ui.widgets.card import Card
@@ -34,8 +35,6 @@ from linwas.ui.widgets.jobs import Jobs
 
 # Bu kadar kopmadan azı gürültü sayılır (cihaz kapatılmış ya da uyumuş olabilir)
 DROPS_NOTICE = 3
-# Boştayken kendiliğinden uyuyan/kopan cihazlar: kopma bir arıza değildir, sayılmaz
-SLEEPY_ICONS = ("input-mouse", "input-keyboard", "input-tablet", "input-gaming")
 
 
 def tr(text: str) -> str:

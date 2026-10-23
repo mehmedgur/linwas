@@ -11,6 +11,7 @@ connectivity: full/limited/portal/none/unknown).
 
 from __future__ import annotations
 
+import contextlib
 import ipaddress
 import re
 import shutil
@@ -21,7 +22,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 
 from linwas.backend import network
-from linwas.core import app_settings, netlog
+from linwas.core import app_settings, netadvice, netlog
 
 TEST_HOST = "example.com"
 TEST_PORT = 443
@@ -30,6 +31,7 @@ PING_INTERVAL = 0.4  # sn; iputils: yetkisiz kullanıcı için alt sınır eski 
 PING_TIMEOUT = 1.0  # sn (-W)
 LOSSY_THRESHOLD = 0.3  # ağ geçidine giden denemelerin bu orandan fazlası kayıpsa "kararsız"
 PRUNE_EVERY = 6 * 3600  # sn
+SHADOW_EVERY = 3600  # sn: gölge kipi (tahmin yaz, eskileri sonuçlandır) saatte bir
 
 # Cevap satırındaki süre: "64 bytes from 192.168.1.1: icmp_seq=1 ttl=64 time=2.31 ms"
 _RE_TIME = re.compile(r"time[=<]\s*([0-9]+(?:\.[0-9]+)?)\s*ms")
@@ -302,6 +304,7 @@ def collect_bluetooth_samples(now: int | None = None) -> list[netlog.Sample]:
             connected=dev.connected,
             signal=dev.rssi,
             battery=dev.battery,
+            icon=dev.icon,
         )
         for dev in network.bluetooth_list_devices()
         if dev.paired
@@ -330,8 +333,10 @@ class Sampler:
         interval: float = netlog.DEFAULT_INTERVAL,
         collectors: list[Callable[[], object]] | None = None,
         store: Callable[[netlog.Sample], None] = netlog.append,
+        shadow: Callable[[], object] | None = netadvice.run_shadow,
     ) -> None:
         self._interval = interval
+        self._shadow = shadow
         self._collectors = (
             collectors
             if collectors is not None
@@ -367,12 +372,16 @@ class Sampler:
         self._stop.set()
 
     def _loop(self, stop: threading.Event) -> None:
-        last_prune = 0.0
+        last_prune = last_shadow = 0.0
         while not stop.is_set():
             if time.monotonic() - last_prune > PRUNE_EVERY:
                 netlog.prune()
                 last_prune = time.monotonic()
             self.sample_once()
+            if self._shadow is not None and time.monotonic() - last_shadow > SHADOW_EVERY:
+                last_shadow = time.monotonic()
+                with contextlib.suppress(Exception):  # öneri hesabı örneklemeyi hiç durdurmamalı
+                    self._shadow()
             if stop.wait(self._interval):
                 break
 

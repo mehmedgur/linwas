@@ -34,19 +34,26 @@ def log_dir() -> Path:
 class DataItem:
     key: str  # "history" | "chats" | "usage" | "notifications" | "drivers" | "network" | "log"
     path: Path
+    extra: tuple[
+        Path, ...
+    ] = ()  # aynı öğeye ait başka dosyalar (birlikte boyutlanır, birlikte silinir)
 
     @property
     def size(self) -> int:
-        try:
-            if self.path.is_dir():
-                return sum(p.stat().st_size for p in self.path.rglob("*") if p.is_file())
-            return self.path.stat().st_size
-        except OSError:
-            return 0
+        total = 0
+        for path in (self.path, *self.extra):
+            try:
+                if path.is_dir():
+                    total += sum(p.stat().st_size for p in path.rglob("*") if p.is_file())
+                else:
+                    total += path.stat().st_size
+            except OSError:
+                pass
+        return total
 
     @property
     def exists(self) -> bool:
-        return self.path.exists()
+        return any(path.exists() for path in (self.path, *self.extra))
 
 
 def items() -> list[DataItem]:
@@ -57,7 +64,7 @@ def items() -> list[DataItem]:
         DataItem("usage", d / "ai_usage.db"),
         DataItem("notifications", d / "notify_state.json"),
         DataItem("drivers", d / "driver_changes.json"),
-        DataItem("network", d / "net_quality.jsonl"),
+        DataItem("network", d / "net_quality.jsonl", (d / "net_advice.jsonl",)),
         DataItem("log", log_dir()),
     ]
 
@@ -73,6 +80,8 @@ def delete(key: str) -> bool:
                 p.unlink(missing_ok=True)
         else:
             item.path.unlink(missing_ok=True)
+        for extra in item.extra:
+            extra.unlink(missing_ok=True)
     except OSError:
         return False
     return True

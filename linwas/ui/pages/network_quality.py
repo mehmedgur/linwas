@@ -209,8 +209,9 @@ class QualityCard(Card):
             tr(
                 "While Linwas is running, it notes your signal strength and the delay to your "
                 "router once a minute, and whether your paired Bluetooth devices are connected "
-                "(with their battery level). Nothing leaves this computer, and the notes are "
-                "deleted after 7 days."
+                "(with their battery level). It uses the notes to suggest settings worth a look "
+                "and to check later whether those suggestions were right. Nothing leaves this "
+                "computer, and everything is deleted after 7 days."
             ),
             self,
         )

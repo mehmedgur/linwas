@@ -49,6 +49,7 @@ class Sample:
     band: str = ""  # "2.4" | "5" | "6" (Wi-Fi)
     battery: int | None = None  # Bluetooth pil yüzdesi
     user: bool = False  # kullanıcı Linwas'tan bağlantıyı kendisi kesti/kapattı (kopma sayılmaz)
+    icon: str = ""  # Bluetooth: cihaz türü (BlueZ "Icon"; ör. "audio-headset", "input-mouse")
 
     @classmethod
     def from_dict(cls, data: object) -> Sample | None:
@@ -230,20 +231,35 @@ def _percentile(sorted_values: list[float], fraction: float) -> float:
     return sorted_values[index]
 
 
+def wifi_drops(samples: list[Sample], interval: int = DEFAULT_INTERVAL) -> list[tuple[str, str]]:
+    """Wi-Fi kopmaları: [(ağ adı, "disconnect" | "stall")], zamana göre.
+
+    "disconnect": bağlıyken bağlantı gitti (kullanıcı kesmediyse); önceki örneğin ağına yazılır.
+    "stall": bağlı görünüyor ama ağ geçidine hiç ulaşılamıyor; art arda aynı kesinti tek sayılır.
+    Büyük zaman boşluklarında (uyku, Linwas kapalı) kopma sayılmaz.
+    """
+    drops: list[tuple[str, str]] = []
+    previous: Sample | None = None
+    for s in samples:
+        if s.kind != KIND_WIFI:
+            continue
+        adjacent = previous is not None and s.ts - previous.ts <= interval * GAP_FACTOR
+        if adjacent and previous.connected and not s.connected and not s.user:
+            drops.append((previous.name, "disconnect"))
+        if _stalled(s) and not (adjacent and _stalled(previous)):
+            drops.append((s.name, "stall"))
+        previous = s
+    return drops
+
+
 def summarize_wifi(
     samples: list[Sample], interval: int = DEFAULT_INTERVAL, utc_offset: int = 0
 ) -> WifiSummary:
     """Wi-Fi örneklerinden sade bir özet. `utc_offset`: saniye (yerel saat için)."""
     wifi = [s for s in samples if s.kind == KIND_WIFI]
-    disconnects = stalls = 0
-    previous: Sample | None = None
-    for s in wifi:
-        adjacent = previous is not None and s.ts - previous.ts <= interval * GAP_FACTOR
-        if adjacent and previous.connected and not s.connected and not s.user:
-            disconnects += 1
-        if _stalled(s) and not (adjacent and _stalled(previous)):
-            stalls += 1  # art arda aynı kesinti tek sayılır
-        previous = s
+    drops = wifi_drops(wifi, interval)
+    disconnects = sum(1 for _, kind in drops if kind == "disconnect")
+    stalls = len(drops) - disconnects
     rtts = sorted(s.rtt_ms for s in wifi if s.connected and s.rtt_ms is not None)
     losses = [s.loss for s in wifi if s.connected and s.loss is not None]
     by_hour: dict[int, list[float]] = {}

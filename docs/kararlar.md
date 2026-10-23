@@ -748,6 +748,23 @@ deneyim** (son günlerde nasıldı, neden koptu). Her aşama ayrı commit; ayrı
     `busctl set-property -- …`; boş ad bilgisayar adına döner) ve **görünürlük**. Varsayılan gizli; "Görünür yap"
     `bluetoothctl discoverable on` yapar (süre "süresiz" ayarlıysa 180 sn'ye sınırlanır, eşleştirme kapalıysa açılır;
     açık unutulmasın), "Şimdi gizle" kapatır; sonuç `bluetoothctl show` ile geri okunup doğrulanır.
+  - **Öneriler, "Neden?" ve gölge kipi (aşama 8):** Wi-Fi ve Bluetooth sekmelerinin üstünde, yalnızca öneri varsa
+    görünen "Öneriler" kartı (en çok 2 öneri; süzülmüş). Kural (`core/netadvice.py`): son 7 günde bir ağ ya da
+    Bluetooth cihazı **≥ 3 kez koptuysa** ve **≥ 30 ölçüm** varsa öneri; fare/klavye/tablet/oyun kolu hiç öneri
+    almaz (uyumaları normal). Kullanıcının Linwas'tan kendi kesmeleri ve uzun zaman boşlukları kopma sayılmaz.
+    **Öneri bir şey değiştirmez**, "Ayarlara bak" ilgili ağın/cihazın mevcut ayar penceresini açar (değişiklik ve
+    geri alma orada, kullanıcı onayıyla); "Şimdi değil" öneriyi bir hafta susturur. **"Neden?"** (varsayılan
+    kapalı) kanıtı gösterir: ölçülen kopma ve ölçüm sayısı, ortalama sinyal/gecikme (Wi-Fi), kural eşiği, geçmiş
+    isabet ve "hiçbir şey sizin yerinize değiştirilmez" notu.
+    **Gölge kipi:** Linwas açıkken saatte bir, öneri gösterilsin ya da gösterilmesin, günde en çok bir kez sessizce
+    "bu ağ/cihaz yarın da kopacak" tahmini yazar; 24 saat sonra gerçek ölçümle karşılaştırır (tuttu = ≥ 1 kopma;
+    tutmadı; izlenemedi = kullanıcı o ağı/cihazı kullanmadı ya da < 10 ölçüm, oran dışı). Sonuçlanan en az 3
+    tahmin varsa "bu türden tahminlerde sorun ertesi gün a/b kez sürdü" yazılır; yoksa "yeterli geçmiş yok".
+    Böylece kuralın bu kullanıcıda işe yarayıp yaramadığı varsayılmaz, ölçülür (Eco karar 6'nın ölçülebilir
+    hâli). Öneriler otomatik **işlem yapmaz**; ileride otomatik eylem istenirse eşik bu isabet oranına bağlanır.
+    Veri: `~/.local/share/linwas/net_advice.jsonl` (tahmin, sonuç, "şimdi değil"; ağ/cihaz adı + sayılar), ölçümle
+    aynı rıza (`net_measure`; kapalıyken öneri gösterilmez), aynı 7 gün saklama ve aynı "Kullanıcı verileri"
+    öğesinde (birlikte görünür/silinir). Rıza metinleri ("öneri ve doğruluk denetimi") güncellendi.
   - **Doğrulanan komutlar:** `ping -n -c N -i 0.4 -W 1.0 <IP>` (iputils belgesi; çıktı biçimine değil cevap
     satırlarındaki `time=` değerine bakılır), `nmcli networking connectivity [check]` (full / limited / portal /
     none / unknown). Yalnızca IP adresi ping'lenir (seçenek enjeksiyonuna karşı).

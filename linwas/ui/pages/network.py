@@ -44,13 +44,14 @@ from linwas.backend.network import (
     WifiStatus,
 )
 from linwas.backend.settings_launcher import command_for, open_settings
-from linwas.core import netlog
+from linwas.core import netadvice, netlog
 from linwas.ui import icons
 from linwas.ui.pages.base import BasePage
 from linwas.ui.pages.network_bluetooth import BluetoothDeviceDialog, ComputerCard
 from linwas.ui.pages.network_hotspot import HotspotCard, HotspotDialog
 from linwas.ui.pages.network_profile_dialog import NetworkSettingsDialog
 from linwas.ui.pages.network_quality import QualityCard
+from linwas.ui.widgets.advice_card import AdviceCard
 from linwas.ui.widgets.card import Card
 from linwas.ui.widgets.details_toggle import DetailsToggle
 from linwas.ui.widgets.jobs import Job as _Job
@@ -542,6 +543,11 @@ class _WifiTab(QWidget):
         self._status_card.toggle_clicked.connect(self._toggle_wifi)
         layout.addWidget(self._status_card)
 
+        self._advice = AdviceCard(content)
+        self._advice.review_requested.connect(self._advice_review)
+        self._advice.dismissed.connect(self._advice_dismiss)
+        layout.addWidget(self._advice)
+
         self._details_card = _DetailsCard(content)
         self._details_card.setVisible(False)
         layout.addWidget(self._details_card)
@@ -597,12 +603,16 @@ class _WifiTab(QWidget):
             self._refresh_btn.setEnabled(False)
             self._refresh_btn.setText(tr("Searching…"))
 
-        def fetch() -> tuple[WifiStatus, list[WifiNetwork], WifiDetails | None, HotspotInfo | None]:
+        def fetch() -> tuple[
+            WifiStatus, list[WifiNetwork], WifiDetails | None, HotspotInfo | None, list
+        ]:
             status = network.wifi_status()
             hotspot = network.hotspot_info(status)
             if hotspot is not None:  # erişim noktası kipinde ağ taraması/ayrıntı anlamsız
-                return status, [], None, hotspot
-            return status, network.wifi_list(rescan=rescan), network.wifi_details(status), None
+                return status, [], None, hotspot, []
+            advice = netadvice.current(netadvice.RULE_WIFI)
+            nets = network.wifi_list(rescan=rescan)
+            return status, nets, network.wifi_details(status), None, advice
 
         self._loading = self._jobs.run(fetch, self._on_loaded)
 
@@ -612,9 +622,11 @@ class _WifiTab(QWidget):
         self._refresh_btn.setText(tr("Refresh"))
         if not isinstance(result, tuple):
             return
-        status, nets, details, hotspot = result
+        status, nets, details, hotspot, advice = result
         self._status = status
         self._hotspot = hotspot
+        self._advice.set_items(advice, lambda a: self._saved_network(a.subject, nets) is not None)
+        self._advice.setVisible(bool(advice) and hotspot is None)
         self._show_status(status)
         self._show_details(details)
         self._quality.set_connection(
@@ -862,6 +874,20 @@ class _WifiTab(QWidget):
         self._hotspot_card.set_busy()
         self._start(lambda: network.hotspot_stop(hotspot.name), lambda _r: None)
 
+    # --- Öneriler ("Ayarlara bak" ilgili ağın ayar penceresini açar) ---
+
+    @staticmethod
+    def _saved_network(name: str, nets: list[WifiNetwork]) -> WifiNetwork | None:
+        return next((n for n in nets if n.saved and n.ssid == name), None)
+
+    def _advice_review(self, _rule: str, subject: str) -> None:
+        net = self._saved_network(subject, self._nets)
+        if net is not None:
+            self._open_settings(net)
+
+    def _advice_dismiss(self, rule: str, subject: str) -> None:
+        self._jobs.run(lambda: netadvice.dismiss(rule, subject), lambda _r: self._load())
+
     # --- Ağ ayarları (otomatik bağlan, veri kullanımı, DNS, IP) ---
 
     def _open_settings(self, net: WifiNetwork) -> None:
@@ -953,6 +979,11 @@ class _BtTab(QWidget):
         self._status_card.toggle_clicked.connect(self._toggle_bt)
         layout.addWidget(self._status_card)
 
+        self._advice = AdviceCard(content)
+        self._advice.review_requested.connect(self._advice_review)
+        self._advice.dismissed.connect(self._advice_dismiss)
+        layout.addWidget(self._advice)
+
         self._mine = _ListCard(tr("My devices"), content)
         layout.addWidget(self._mine)
 
@@ -1003,14 +1034,15 @@ class _BtTab(QWidget):
         if self._loading is not None:
             return
 
-        def fetch() -> tuple[str, list[BluetoothDevice], BluetoothAdapter | None]:
+        def fetch() -> tuple[str, list[BluetoothDevice], BluetoothAdapter | None, list]:
             state = network.bluetooth_state()
             if state != "on":
-                return state, [], None
+                return state, [], None, []
             devices = network.bluetooth_scan(_SCAN_SECONDS) if scan else None
             if devices is None:
                 devices = network.bluetooth_list_devices()
-            return state, devices, network.bluetooth_adapter_info()
+            advice = netadvice.current(netadvice.RULE_BT)
+            return state, devices, network.bluetooth_adapter_info(), advice
 
         self._loading = self._jobs.run(fetch, self._on_loaded)
 
@@ -1022,13 +1054,16 @@ class _BtTab(QWidget):
             self._scan_btn.setText(tr("Search for devices"))
         if not isinstance(result, tuple):
             return
-        state, devices, adapter = result
+        state, devices, adapter, advice = result
         self._state = state
         self._show_state(state)
         on = state == "on"
         self._mine.setVisible(on)
         self._nearby.setVisible(on)
         self._computer.setVisible(on and adapter is not None)
+        self._advice.set_items(
+            advice, lambda a: self._paired_device(a.subject, devices) is not None
+        )
         if not on:
             return
         self._computer.show_adapter(adapter)
@@ -1196,6 +1231,20 @@ class _BtTab(QWidget):
                 return network.bluetooth_forget(dev.mac)
 
             self._start(work, lambda _r: None)
+
+    # --- Öneriler ("Ayarlara bak" ilgili cihazın ayar penceresini açar) ---
+
+    @staticmethod
+    def _paired_device(mac: str, devices: list[BluetoothDevice]) -> BluetoothDevice | None:
+        return next((d for d in devices if d.paired and d.mac == mac), None)
+
+    def _advice_review(self, _rule: str, subject: str) -> None:
+        dev = self._paired_device(subject, self._devices)
+        if dev is not None:
+            self._open_settings(dev)
+
+    def _advice_dismiss(self, rule: str, subject: str) -> None:
+        self._jobs.run(lambda: netadvice.dismiss(rule, subject), lambda _r: self._load())
 
     # --- Dosya gönderme (masaüstünün kendi Bluetooth aracıyla) ---
 

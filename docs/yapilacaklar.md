@@ -19,7 +19,7 @@ Son güncelleme: 17 Ekim 2026
   katmanı → [eco-entegrasyonu.md](eco-entegrasyonu.md). Eco düzeninin görünümü karara bağlandı (kararlar.md).
 
 ## Wi-Fi ve Bluetooth geliştirmeleri — Pardus'ta denenecekler (bulutta donanım yok; ayrıştırıcılar örnek çıktıyla test edildi)
-Karar ve kapsam: kararlar.md › Wi-Fi ve Bluetooth geliştirmeleri. Aşama 1–7 kodlandı (bulut, 23 Ekim 2026).
+Karar ve kapsam: kararlar.md › Wi-Fi ve Bluetooth geliştirmeleri. Aşama 1–8 kodlandı (bulut, 23 Ekim 2026).
 - [ ] **Bağlantı ayrıntıları:** Wi-Fi sekmesinde "Bağlantı ayrıntıları" kartı: hız, IP, güvenlik görünür; "Gelişmiş
   ayrıntılar"da ağ geçidi, DNS, kanal, MAC, BSSID. `nmcli -t -f GENERAL.HWADDR,IP4.ADDRESS,IP4.GATEWAY,IP4.DNS
   device show wlan0` çıktısının biçimi doğru mu?
@@ -59,6 +59,11 @@ Karar ve kapsam: kararlar.md › Wi-Fi ve Bluetooth geliştirmeleri. Aşama 1–
 - [ ] **Bu bilgisayar:** "Görünür yap" → telefon bilgisayarı buluyor mu, ~3 dk sonra kendiliğinden gizleniyor mu
   (`bluetoothctl show` → Discoverable)? "Yeniden adlandır" telefonda yeni adı gösteriyor mu, boş ad bilgisayar
   adına dönüyor mu?
+- [ ] **Öneriler ve gölge kipi:** ölçüm açıkken birkaç gün kullan; sık kopan bir ağ/cihaz için "Öneriler" kartı çıkıyor
+  mu, "Neden?" sayıları doğru mu, "Ayarlara bak" doğru pencereyi açıyor mu, "Şimdi değil" bir hafta susturuyor mu?
+  `~/.local/share/linwas/net_advice.jsonl` içinde günde bir `predict`, ertesi gün `outcome` (hit/miss/skip) satırı
+  oluşuyor mu? Fare/klavye için öneri ve tahmin çıkmıyor mu? Ölçümü kapatınca kart kayboluyor mu; Ayarlar ›
+  Kullanıcı verileri'nde "Bağlantı kalitesi notları" iki dosyayı birlikte siliyor mu?
 - [ ] **KARAR BEKLİYOR — QR ile paylaş:** `segno` (BSD, saf Python) bağımlılığı eklensin mi? Eklenirse:
   `pyproject.toml` bağımlılığı, `packaging/build-deb.sh` (şimdi `--no-deps`) ve CI değişir; Wi-Fi şifresi ve
   hotspot kartında "QR kodu göster" (`WIFI:T:WPA;S:<ad>;P:<şifre>;;` biçimi) eklenir.

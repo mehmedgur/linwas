@@ -144,3 +144,27 @@ def test_summarize_bluetooth():
     assert (sm.samples, sm.disconnects, sm.last_battery, sm.battery_drop) == (4, 1, 80, 10)
     none = netlog.summarize_bluetooth([], "AA")
     assert (none.samples, none.last_battery, none.battery_drop) == (0, None, None)
+
+
+def test_wifi_drops_attributes_each_drop_to_its_network():
+    s = [
+        wifi(T0, name="Ev"),
+        wifi(T0 + 60, name="", connected=False, rtt=None, loss=None),  # Ev koptu
+        wifi(T0 + 120, name="Kafe"),
+        wifi(T0 + 180, name="Kafe", rtt=None, loss=1.0),  # Kafe takıldı
+        wifi(T0 + 240, name="Kafe", rtt=None, loss=1.0),  # aynı takılma
+        wifi(T0 + 300, name="", connected=False, user=True, rtt=None, loss=None),  # kullanıcı kesti
+        wifi(T0 + 5000, name="Ev"),
+        wifi(T0 + 5060, name="", connected=False, rtt=None, loss=None),  # Ev koptu
+    ]
+    assert netlog.wifi_drops(s) == [("Ev", "disconnect"), ("Kafe", "stall"), ("Ev", "disconnect")]
+    # Bluetooth örnekleri yok sayılır
+    assert netlog.wifi_drops([Sample(ts=T0, kind=KIND_BT, name="x", ident="A")]) == []
+
+
+def test_icon_survives_the_store_and_defaults_for_old_lines(tmp_path):
+    path = tmp_path / "n.jsonl"
+    netlog.append(Sample(ts=T0, kind=KIND_BT, name="Fare", ident="A", icon="input-mouse"), path)
+    path.write_text(path.read_text() + '{"ts":1,"kind":"bt","name":"Eski"}\n', encoding="utf-8")
+    loaded = netlog.load(path=path)
+    assert [(s.name, s.icon) for s in loaded] == [("Eski", ""), ("Fare", "input-mouse")]

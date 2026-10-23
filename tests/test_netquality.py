@@ -304,7 +304,9 @@ def test_sampler_swallows_errors_and_stores_samples():
 def test_sampler_thread_start_stop_restart():
     stored = []
     sample = netlog.Sample(ts=1, kind="wifi", name="Ev")
-    sampler = nq.Sampler(interval=0.05, collectors=[lambda: sample], store=stored.append)
+    sampler = nq.Sampler(
+        interval=0.05, collectors=[lambda: sample], store=stored.append, shadow=None
+    )
     assert not sampler.running
     sampler.set_enabled(True)
     sampler.start()  # ikinci çağrı yeni iş parçacığı başlatmaz
@@ -323,9 +325,43 @@ def test_sampler_thread_start_stop_restart():
     sampler.stop()
 
 
+def test_sampler_runs_the_shadow_hook_and_survives_its_errors():
+    stored, calls = [], []
+    sample = netlog.Sample(ts=1, kind="wifi", name="Ev")
+
+    def shadow():
+        calls.append(1)
+        raise RuntimeError("öneri hesabı bozuldu")
+
+    sampler = nq.Sampler(
+        interval=0.02, collectors=[lambda: sample], store=stored.append, shadow=shadow
+    )
+    sampler.start()
+    deadline = time.time() + 3
+    while len(stored) < 5 and time.time() < deadline:
+        time.sleep(0.02)
+    sampler.stop()
+    assert len(stored) >= 5  # hata örneklemeyi durdurmadı
+    assert calls == [1]  # saatte bir: ilk turda çalıştı, sonra beklenir
+
+
 def test_settings_and_user_data_integration():
     assert app_settings.AppSettings().net_measure is False
     assert app_settings.from_dict({"net_measure": True}).net_measure is True
     assert app_settings.from_dict({"net_measure": "evet"}).net_measure is False
     item = next(i for i in user_data.items() if i.key == "network")
     assert item.path.name == netlog.FILE_NAME
+    assert [p.name for p in item.extra] == ["net_advice.jsonl"]  # öneri kaydı aynı öğede
+
+
+def test_deleting_the_network_item_removes_the_advice_file_too(tmp_path, monkeypatch):
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+    item = next(i for i in user_data.items() if i.key == "network")
+    assert not item.exists and item.size == 0
+    item.path.parent.mkdir(parents=True, exist_ok=True)
+    item.path.write_text("a" * 10, encoding="utf-8")
+    item.extra[0].write_text("b" * 5, encoding="utf-8")
+    item = next(i for i in user_data.items() if i.key == "network")
+    assert item.exists and item.size == 15  # iki dosya birlikte sayılır
+    assert user_data.delete("network") is True
+    assert not item.path.exists() and not item.extra[0].exists()

@@ -2210,8 +2210,8 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Bağlantı kalitemi ölç</translation>
     </message>
     <message>
-        <source>While Linwas is running, it notes your signal strength and the delay to your router once a minute, and whether your paired Bluetooth devices are connected (with their battery level). Nothing leaves this computer, and the notes are deleted after 7 days.</source>
-        <translation>Linwas çalışırken dakikada bir sinyal gücünü ve router'a gecikmeyi, ayrıca eşleşmiş Bluetooth cihazlarının bağlı olup olmadığını (pil yüzdesiyle) not eder. Hiçbir şey bu bilgisayardan çıkmaz; notlar 7 gün sonra silinir.</translation>
+        <source>While Linwas is running, it notes your signal strength and the delay to your router once a minute, and whether your paired Bluetooth devices are connected (with their battery level). It uses the notes to suggest settings worth a look and to check later whether those suggestions were right. Nothing leaves this computer, and everything is deleted after 7 days.</source>
+        <translation>Linwas çalışırken dakikada bir sinyal gücünü ve router'a gecikmeyi, ayrıca eşleşmiş Bluetooth cihazlarının bağlı olup olmadığını (pil yüzdesiyle) not eder. Notları, bakmaya değer ayarlar önermek ve önerilerin sonradan doğru çıkıp çıkmadığını denetlemek için kullanır. Hiçbir şey bu bilgisayardan çıkmaz; her şey 7 gün sonra silinir.</translation>
     </message>
     <message>
         <source>Measuring is off, so no new notes are added.</source>
@@ -5243,8 +5243,8 @@ Devam edilsin mi?</translation>
         <translation>Bağlantı kalitesi notları</translation>
     </message>
     <message>
-        <source>Wi-Fi signal and delay and Bluetooth device status, noted once a minute while Linwas runs; kept for 7 days</source>
-        <translation>Linwas açıkken dakikada bir not edilen Wi-Fi sinyal ve gecikmesi ile Bluetooth cihaz durumu; 7 gün saklanır</translation>
+        <source>Wi-Fi signal and delay, Bluetooth device status and how well suggestions turned out, noted while Linwas runs; kept for 7 days</source>
+        <translation>Linwas açıkken not edilen Wi-Fi sinyal ve gecikmesi, Bluetooth cihaz durumu ve önerilerin ne kadar tuttuğu; 7 gün saklanır</translation>
     </message>
 </context>
 <context>
@@ -10017,6 +10017,61 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>This computer</source>
         <translation>Bu bilgisayar</translation>
+    </message>
+</context>
+<context>
+    <name>NetworkAdvice</name>
+    <message>
+        <source>Suggestions</source>
+        <translation>Öneriler</translation>
+    </message>
+    <message>
+        <source>“{name}” keeps dropping</source>
+        <translation>“{name}” sık kopuyor</translation>
+    </message>
+    <message>
+        <source>The connection dropped {n} times in the last 7 days.</source>
+        <translation>Bağlantı son 7 günde {n} kez koptu.</translation>
+    </message>
+    <message>
+        <source>Review settings</source>
+        <translation>Ayarlara bak</translation>
+    </message>
+    <message>
+        <source>Not now</source>
+        <translation>Şimdi değil</translation>
+    </message>
+    <message>
+        <source>Why?</source>
+        <translation>Neden?</translation>
+    </message>
+    <message>
+        <source>Measured: {drops} drops in {samples} readings over the last 7 days.</source>
+        <translation>Ölçüm: son 7 günde {samples} ölçümde {drops} kopma.</translation>
+    </message>
+    <message>
+        <source>Average signal: {percent}%.</source>
+        <translation>Ortalama sinyal: %{percent}.</translation>
+    </message>
+    <message>
+        <source>Average delay to the router: {ms} ms.</source>
+        <translation>Router'a ortalama gecikme: {ms} ms.</translation>
+    </message>
+    <message>
+        <source>Rule: shown when a connection drops {n} or more times in a week.</source>
+        <translation>Kural: bir bağlantı haftada {n} ya da daha çok koptuğunda gösterilir.</translation>
+    </message>
+    <message>
+        <source>Track record: with this kind of prediction, the problem continued the next day {hits}/{total} times.</source>
+        <translation>Geçmiş isabet: bu türden tahminlerde sorun ertesi gün {hits}/{total} kez sürdü.</translation>
+    </message>
+    <message>
+        <source>Not enough history yet to say how reliable this kind of suggestion is.</source>
+        <translation>Bu tür önerilerin ne kadar güvenilir olduğunu söylemek için henüz yeterli geçmiş yok.</translation>
+    </message>
+    <message>
+        <source>Nothing is changed for you: “Review settings” only opens the settings, where you can undo anything.</source>
+        <translation>Sizin yerinize hiçbir şey değiştirilmez: “Ayarlara bak” yalnızca ayarları açar, her değişikliği orada geri alabilirsiniz.</translation>
     </message>
 </context>
 </TS>

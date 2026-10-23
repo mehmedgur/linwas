@@ -648,8 +648,8 @@ class SettingsPage(BasePage):
             "network": (
                 tr("Connection quality notes"),
                 tr(
-                    "Wi-Fi signal and delay and Bluetooth device status, noted once a minute "
-                    "while Linwas runs; kept for 7 days"
+                    "Wi-Fi signal and delay, Bluetooth device status and how well suggestions "
+                    "turned out, noted while Linwas runs; kept for 7 days"
                 ),
             ),
             "log": (tr("Log files"), tr("Written only when the detailed log is on")),
