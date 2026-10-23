@@ -26,8 +26,14 @@ Kod `linwas/eco/` altında başlar. Eco deposu: github.com/mehmedgur/eco (özel)
   (eco kendi masaüstüne geçince). Qt/QML kabuk eco'da kalır, değişen compositor ve ayar katmanıdır.
 - Her ayar değişikliği mevcut kurallardan geçer: kuyruk, izin listesi, yedek/geri alma, geçmiş.
 
+- **Ayarların sahibi eco'dur** (kullanıcı, 23 Ekim 2026): ayarları eco servisleri tutar ve uygular;
+  Linwas şemayı gösteren arayüzdür ve eco servisine D-Bus ile yazar.
+- **Eco teması:** pencere düğmeleri Linwas ile aynı (Windows tarzı, sağ üstte). Eco görsel dili
+  `tokens-eco.json` olarak ayrı token dosyasında tutulur (normal Linwas Microsoft temasında kalır).
+  Kaynaklar: eco masaüstü mockup v5 (koyu palet, Figtree) + "Hakkında" ayar sayfası görseli (açık
+  tema, teal vurgu). Ayrıntı ve çelişkiler açık sorularda.
+
 ## Açık sorular (cevap bekliyor)
-- [ ] Ayarların sahibi kim: eco servisleri (Linwas arayüz) mi, Linwas kendisi mi uygular?
 - [ ] Eco ayar kapsamı: hangi sayfalar ilk sürümde (ekran, ses, ağ, klavye, tema, güç...)?
 - [ ] Entegrasyon yolu: (1) ayrı süreç + D-Bus, (2) eco yetenek kaydına eylem olarak kaydolma,
   (3) arayüzü eco kabuğuna gömme. Öneri: 1, sonra 2.
