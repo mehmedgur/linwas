@@ -141,3 +141,10 @@ enable-animations`; doğrulanacak).
 - Kuyruk ekranları (Kuyruk / Çalışıyor / Sonuç) v4 sistemine göre yeniden çizilecek.
 - Diğer sayfalar (Giriş, AI Soru, Arayüz, Program, Sorun Giderme, Ayarlar) — sayfa sayfa taslak → onay.
 - Gezinmenin dar pencere kipleri (yalnız simge / gizli).
+
+## 8. Eco teması
+Eco sürümü `docs/tasarim/tokens-eco.json` ile `tokens.json` üzerine bindirilir (ölçüler, hareket ve
+pencere düğmeleri Linwas ile aynı). Kararlar (23 Ekim 2026): açık + koyu tema, teal vurgu, cam/bulanıklık
+yok, yazı ağırlıkları 400/500/700 (Figtree, pakete gömülür), simgeler kendi SVG'lerimiz (emoji yok).
+Açık renkler ayar sayfası görselinden ölçüldü, koyu renkler masaüstü mockup v5'ten; kontrast için
+türetilen iki değer (açık/koyu `metin_ucuncul`, koyu `vurgu`) dosyada işaretli.
