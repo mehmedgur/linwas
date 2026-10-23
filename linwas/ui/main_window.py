@@ -88,7 +88,11 @@ class MainWindow(QMainWindow):
 
         title = QLabel(tr("Welcome to Linwas"), central)
         title_font = title.font()
-        title_font.setPointSizeF(title_font.pointSizeF() * 1.8)
+        # Tema piksel boyutu verir (pointSizeF -1 döner); tema yoksa punto boyutundan çevir
+        base_px = title_font.pixelSize()
+        if base_px <= 0:
+            base_px = round(title_font.pointSizeF() * 96 / 72)
+        title_font.setPixelSize(round(base_px * 1.8))
         title_font.setBold(True)
         title.setFont(title_font)
         layout.addWidget(title)

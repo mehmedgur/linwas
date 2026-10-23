@@ -66,6 +66,10 @@ install -D -m 0644 "$ROOT/packaging/linwas.desktop" "$PKG/usr/share/applications
 install -D -m 0644 "$ROOT/linwas/resources/linwas.svg" \
     "$PKG/usr/share/icons/hicolor/scalable/apps/linwas.svg"
 
+# Figtree (eco teması) SIL OFL 1.1: telif satırı ve lisans metni pakete eşlik etmeli.
+install -D -m 0644 "$ROOT/linwas/resources/fonts/Figtree-OFL.txt" \
+    "$PKG/usr/share/doc/linwas/Figtree-OFL.txt"
+
 echo "==> Paket bilgileri"
 INSTALLED_SIZE=$(du -sk --exclude=DEBIAN "$PKG" | cut -f1)
 mkdir -p "$PKG/DEBIAN"
