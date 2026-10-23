@@ -18,7 +18,17 @@ Kod `linwas/eco/` altında başlar. Eco deposu: github.com/mehmedgur/eco (özel)
   "masaüstü bağdaştırıcısı" arayüzünün arkasında** durur (eco'nun compositor bağdaştırıcısı ile
   aynı fikir). Değişen masaüstüne göre yalnızca bağdaştırıcı yazılır.
 
+- **Eco sürümünde Linwas tam bir ayarlar uygulamasıdır** (kullanıcı, 23 Ekim 2026). Eco'da
+  `systemsettings` olmadığı için "Sistem ayarlarında aç" bu sürümde yoktur; her ayar Linwas'ta
+  gösterilir ve uygulanır. Normal Linwas'ta (GNOME/XFCE/Cinnamon) o buton kalır.
+- Bağdaştırıcı bir **ayar arka ucudur**: ayar şeması (ad, tür, aralık, risk, geri alma) ortaktır;
+  arka uçlar `oku` / `yaz` / `izle` sağlar. Sırayla: Plasma arka ucu (prototip), eco arka ucu
+  (eco kendi masaüstüne geçince). Qt/QML kabuk eco'da kalır, değişen compositor ve ayar katmanıdır.
+- Her ayar değişikliği mevcut kurallardan geçer: kuyruk, izin listesi, yedek/geri alma, geçmiş.
+
 ## Açık sorular (cevap bekliyor)
+- [ ] Ayarların sahibi kim: eco servisleri (Linwas arayüz) mi, Linwas kendisi mi uygular?
+- [ ] Eco ayar kapsamı: hangi sayfalar ilk sürümde (ekran, ses, ağ, klavye, tema, güç...)?
 - [ ] Entegrasyon yolu: (1) ayrı süreç + D-Bus, (2) eco yetenek kaydına eylem olarak kaydolma,
   (3) arayüzü eco kabuğuna gömme. Öneri: 1, sonra 2.
 - [ ] Linwas'ın izin modeli (root helper, polkit) ile eco politika motorunun ilişkisi.
