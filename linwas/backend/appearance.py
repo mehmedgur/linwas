@@ -33,6 +33,8 @@ KEYS: dict[str, dict[str, tuple[str, str]]] = {
 
 # Windows gibi: simge solda yok, sağda küçült/büyüt/kapat
 WINDOWS_BUTTON_LAYOUT = "appmenu:minimize,maximize,close"
+MACOS_BUTTON_LAYOUT = "close,minimize,maximize:"  # macOS gibi solda: kapat, küçült, büyüt
+GNOME_BUTTON_LAYOUT = "appmenu:close"
 
 # GNOME için Windows tarzı görev çubuğu (Debian/Pardus paketi ve eklenti kimliği doğrulandı)
 DASH_TO_PANEL_PACKAGE = "gnome-shell-extension-dash-to-panel"

@@ -250,7 +250,14 @@ BOTTOM_MENU = [
 CONFIG_DIR = os.path.join(os.path.expanduser("~"), ".config", "linwas-office-look")
 DISABLED_FLAG = os.path.join(CONFIG_DIR, "disabled")
 SETTINGS_FILE = os.path.join(CONFIG_DIR, "settings.json")
-DEFAULT_SETTINGS = {"file_menu": True, "autosave_minutes": 2}
+DEFAULT_SETTINGS = {"file_menu": True, "autosave_minutes": 2, "office_names": True}
+# Pencere başlığında Office karşılığı (tools/office_names.py TITLE_NAMES ile aynı)
+TITLE_NAMES = {
+    "LibreOffice Writer": "Word",
+    "LibreOffice Calc": "Excel",
+    "LibreOffice Impress": "PowerPoint",
+}
+_names_refreshed = False
 # Ayarlar Linwas'ın "Office görünümü" sayfasında; Linwas yoksa paketin kendi aracı açılır.
 SETTINGS_COMMANDS = (["linwas", "--page", "office_look"], ["linwas-office-look", "dialog"])
 TITLES = {
@@ -324,6 +331,8 @@ def user_settings():
         return settings
     if isinstance(data.get("file_menu"), bool):
         settings["file_menu"] = data["file_menu"]
+    if isinstance(data.get("office_names"), bool):
+        settings["office_names"] = data["office_names"]
     if isinstance(data.get("autosave_minutes"), int) and 0 <= data["autosave_minutes"] <= 60:
         settings["autosave_minutes"] = data["autosave_minutes"]
     return settings
@@ -652,7 +661,9 @@ class Job(unohelper.Base, XJob, XServiceInfo):
             frame.contextChanged()
         # Aynı çerçeveye başka belge yüklenebilir; rozet belge başına kurulur.
         if model is not None and _find(_badges, model) is None:
-            _badges.append((model, SaveBadge(frame, model, settings["autosave_minutes"])))
+            badge = SaveBadge(frame, model, settings["autosave_minutes"], settings["office_names"])
+            _badges.append((model, badge))
+        _refresh_names_once()
 
     def getImplementationName(self):
         return self.IMPLEMENTATION
@@ -662,6 +673,23 @@ class Job(unohelper.Base, XJob, XServiceInfo):
 
     def getSupportedServiceNames(self):
         return (self.IMPLEMENTATION,)
+
+
+def _refresh_names_once():
+    """LibreOffice oturumu başına bir kez: menü adı kopyaları (ör. "Writer (Word)") güncel mi.
+    LibreOffice güncellenince sistemdeki .desktop dosyası değişir; kopya yenilenir."""
+    global _names_refreshed
+    if _names_refreshed:
+        return
+    _names_refreshed = True
+    with contextlib.suppress(OSError):
+        subprocess.Popen(
+            ["linwas-office-look", "refresh-names"],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            start_new_session=True,
+        )
 
 
 class SaveBadge(unohelper.Base, XDocumentEventListener):
@@ -677,13 +705,16 @@ class SaveBadge(unohelper.Base, XDocumentEventListener):
         "OnNew",
     }
 
-    def __init__(self, frame, model, autosave_minutes):
+    def __init__(self, frame, model, autosave_minutes, office_names=True):
         self.frame = frame
         self.model = model
         self.interval = autosave_minutes * 60
         self.ctx = uno.getComponentContext()
         # LibreOffice'in kendi başlığının son parçası uygulamanın adıdır.
         self.app = frame.getTitle().rsplit(" - ", 1)[-1]
+        office = TITLE_NAMES.get(self.app)
+        if office_names and office:
+            self.app = f"{self.app} ({office})"
         self.stop = threading.Event()
         model.addDocumentEventListener(self)
         self.update_title()

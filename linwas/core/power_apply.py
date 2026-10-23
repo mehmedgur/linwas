@@ -546,6 +546,8 @@ def read_status() -> dict[str, object]:
 # --- Servis ---
 
 SERVICE_NAME = "linwas-power.service"
+# "Linwas yönetsin" ile kapatılan başka güç araçlarının birimleri (geri vermek için)
+TAKEOVER_PATH = Path("/etc/linwas/power-takeover.json")
 SERVICE_UNIT = Path("/usr/lib/systemd/system") / SERVICE_NAME
 
 
@@ -585,6 +587,13 @@ def _config_mtime() -> float:
         return 0.0
 
 
+def _ensure_clock() -> None:
+    from linwas.core import clock
+
+    with contextlib.suppress(Exception):  # saat denetimi güç servisini durdurmasın
+        clock.ensure()
+
+
 def run_service() -> None:
     wake = threading.Event()
     stop = threading.Event()
@@ -593,6 +602,9 @@ def run_service() -> None:
     STATE_DIR.mkdir(parents=True, exist_ok=True)
     os.chmod(STATE_DIR, 0o755)
     PID_FILE.write_text(str(os.getpid()), encoding="utf-8")
+    # Her açılışta saat ayarını denetle (silinmişse yeniden yazılır) ve saati eşitle; ağ henüz
+    # yoksa chrony ayar gereği ilk ölçümde saati kendisi atlatır (core/clock.py).
+    threading.Thread(target=_ensure_clock, daemon=True).start()
 
     last_key: tuple[object, ...] | None = None
     last_full = 0.0

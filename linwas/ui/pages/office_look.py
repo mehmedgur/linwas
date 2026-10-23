@@ -10,13 +10,12 @@ from __future__ import annotations
 from PySide6.QtCore import QCoreApplication, QThread, Signal
 from PySide6.QtWidgets import (
     QButtonGroup,
-    QCheckBox,
     QComboBox,
     QFrame,
+    QGridLayout,
     QHBoxLayout,
     QLabel,
     QPushButton,
-    QRadioButton,
     QScrollArea,
     QVBoxLayout,
     QWidget,
@@ -26,6 +25,7 @@ from linwas.backend import office_look
 from linwas.core.tasks import Task, TaskStep
 from linwas.ui.pages.base import BasePage
 from linwas.ui.widgets.card import Card
+from linwas.ui.widgets.option_tile import OptionTile
 
 
 def tr(text: str) -> str:
@@ -116,14 +116,26 @@ class OfficeLookPage(BasePage):
         row.addStretch(1)
         card.layout.addLayout(row)
 
-    def _radios(self, card: Card, title: str, choices: list[tuple[str, str]]) -> QButtonGroup:
-        card.layout.addWidget(QLabel(title, card))
+    @staticmethod
+    def _section(card: Card, title: str) -> None:
+        lbl = QLabel(title, card)
+        lbl.setObjectName("SectionTitle")
+        card.layout.addSpacing(6)
+        card.layout.addWidget(lbl)
+
+    def _radios(self, card: Card, title: str, choices: list[tuple[str, str, str]]) -> QButtonGroup:
+        """Seçenekler yan yana seçim kartları; (değer, başlık, açıklama)."""
+        self._section(card, title)
         group = QButtonGroup(card)
-        for i, (_, text) in enumerate(choices):
-            button = QRadioButton(text, card)
-            group.addButton(button, i)
-            card.layout.addWidget(button)
-        group.setProperty("values", [value for value, _ in choices])
+        grid = QGridLayout()
+        grid.setSpacing(10)
+        for i, (_, heading, description) in enumerate(choices):
+            tile = OptionTile(heading, description, parent=card)
+            group.addButton(tile.button, i)
+            grid.addWidget(tile, 0, i)
+            grid.setColumnStretch(i, 1)
+        card.layout.addLayout(grid)
+        group.setProperty("values", [value for value, _, _ in choices])
         return group
 
     def _build_settings_card(self) -> None:
@@ -133,43 +145,68 @@ class OfficeLookPage(BasePage):
             card,
             tr("Ribbon"),
             [
-                ("simple", tr("Simple ribbon: few tabs with named groups")),
-                ("full", tr("Full ribbon: every LibreOffice tool in tabs")),
-                ("classic", tr("Classic: menus and toolbars, no ribbon")),
+                ("simple", tr("Simple ribbon"), tr("Few tabs with named groups")),
+                ("full", tr("Full ribbon"), tr("Every LibreOffice tool in tabs")),
+                ("classic", tr("Classic"), tr("Menus and toolbars, no ribbon")),
             ],
         )
-        self._file_menu = QCheckBox(
-            tr("File menu inside the window (save, open, print without separate dialogs)"), card
-        )
-        card.layout.addWidget(self._file_menu)
 
-        row = QHBoxLayout()
-        row.addWidget(QLabel(tr("Save automatically"), card))
-        self._autosave = QComboBox(card)
+        self._section(card, tr("Working"))
+        menu_tile = OptionTile(
+            tr("File menu inside the window"),
+            tr("Save, open and print without separate dialogs"),
+            checkbox=True,
+            parent=card,
+        )
+        self._file_menu = menu_tile.button
+        card.layout.addWidget(menu_tile)
+
+        names_tile = OptionTile(
+            tr("Show the Office name next to each app"),
+            tr(
+                "LibreOffice Writer (Word), Calc (Excel) and Impress (PowerPoint) in the app menu, "
+                "search and window title"
+            ),
+            checkbox=True,
+            parent=card,
+        )
+        self._office_names = names_tile.button
+        card.layout.addWidget(names_tile)
+
+        # Otomatik kaydetme: başlık solda, seçim kutusu sağda (ayar satırı)
+        autosave_tile = QFrame(card)
+        autosave_tile.setObjectName("OptionTile")
+        row = QHBoxLayout(autosave_tile)
+        row.setContentsMargins(14, 10, 14, 10)
+        title = QLabel(tr("Save automatically"), autosave_tile)
+        title.setObjectName("OptionTitle")
+        row.addWidget(title, 1)
+        self._autosave = QComboBox(autosave_tile)
+        self._autosave.setAccessibleName(tr("Save automatically"))
         for minutes in office_look.AUTOSAVE_CHOICES:
             self._autosave.addItem(
                 tr("Off") if minutes == 0 else tr("Every {n} minutes").format(n=minutes), minutes
             )
         row.addWidget(self._autosave)
-        row.addStretch(1)
-        card.layout.addLayout(row)
+        card.layout.addWidget(autosave_tile)
 
         self._save_format = self._radios(
             card,
             tr("Save new documents as"),
             [
-                ("ooxml", tr("Word, Excel and PowerPoint files (.docx, .xlsx, .pptx)")),
-                ("odf", tr("LibreOffice's own formats (.odt, .ods, .odp)")),
+                ("ooxml", tr("Word, Excel and PowerPoint"), ".docx, .xlsx, .pptx"),
+                ("odf", tr("LibreOffice formats"), ".odt, .ods, .odp"),
             ],
         )
         self._font = self._radios(
             card,
             tr("Default font in new documents"),
             [
-                ("carlito", tr("Carlito, same size as Calibri (like Word)")),
-                ("liberation", tr("Liberation Serif (LibreOffice default)")),
+                ("carlito", "Carlito", tr("Same size as Calibri, like Word")),
+                ("liberation", "Liberation Serif", tr("LibreOffice default")),
             ],
         )
+        card.layout.addSpacing(6)
         row = QHBoxLayout()
         self._apply_btn = QPushButton(tr("Apply"), card)
         self._apply_btn.setProperty("primary", True)
@@ -256,6 +293,7 @@ class OfficeLookPage(BasePage):
             values = group.property("values")
             group.button(values.index(value)).setChecked(True)
         self._file_menu.setChecked(settings.file_menu)
+        self._office_names.setChecked(settings.office_names)
         self._autosave.setCurrentIndex(
             office_look.AUTOSAVE_CHOICES.index(settings.autosave_minutes)
         )
@@ -268,6 +306,7 @@ class OfficeLookPage(BasePage):
         return office_look.Settings(
             ribbon=value(self._ribbon),
             file_menu=self._file_menu.isChecked(),
+            office_names=self._office_names.isChecked(),
             autosave_minutes=self._autosave.currentData(),
             save_format=value(self._save_format),
             font=value(self._font),

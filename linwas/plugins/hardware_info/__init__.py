@@ -17,6 +17,8 @@ PLUGIN_ID = "linwas.hardware_info"
 class HardwareInfoPlugin(PluginBase):
     """Sayfası yok; bilgi ve arayüz parçaları sağlar."""
 
+    required = True  # Donanım sayfası, sistem raporu ve AI bağlamı buna dayanıyor
+
     @property
     def meta(self) -> PluginMeta:
         from linwas import __version__

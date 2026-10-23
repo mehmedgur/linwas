@@ -86,6 +86,7 @@ QTabBar::tab:selected {{
 
 def _qss(c: ColorSet, m: Metrics) -> str:
     check = asset_path("check", c.text_on_accent)
+    radio_dot = asset_path("radio_dot", c.text_on_accent)
     chevron = asset_path("chevron_down", c.text_secondary)
     r = m.radius
     rc = m.card_radius
@@ -268,6 +269,11 @@ QFrame#Card QLabel, QFrame#Card QCheckBox, QFrame#Card QRadioButton,
 QFrame#Card QWidget#CardRow {{
     background-color: {c.surface};
 }}
+/* Ağaç listesindeki hücre bileşenleri (Güç › Gelişmiş) satırın zeminini kullansın; kart zemini
+   seçili/değişen satırda beyaz kutu gibi görünüyordu. */
+QFrame#Card QTreeView QLabel, QFrame#Card QTreeView QWidget#SettingCell {{
+    background-color: transparent;
+}}
 
 /* === Durum çubuğu === */
 QWidget#StatusBar {{
@@ -389,6 +395,18 @@ QFrame#Card QToolButton#SettingLink:focus {{
 QFrame#Card QToolButton#SettingLink:disabled {{
     color: {c.text_disabled};
 }}
+/* Güç › Gelişmiş: açılır kapanır bölüm başlığı */
+QFrame#Card QToolButton#SectionToggle {{
+    background-color: {c.surface};
+    border: none;
+    border-radius: {r}px;
+    padding: 8px 6px;
+    font-weight: 600;
+    color: {c.text_primary};
+}}
+QFrame#Card QToolButton#SectionToggle:hover {{
+    background-color: {c.surface_hover};
+}}
 QFrame#Card QToolButton#DetailsToggle {{
     background-color: {c.surface};
     border: none;
@@ -424,6 +442,45 @@ QPushButton#Chip:checked {{
     background-color: {c.accent};
     color: {c.text_on_accent};
     border-color: {c.accent};
+}}
+
+/* === Seçim kartları (widgets/option_tile.py) === */
+QFrame#Card QLabel#SectionTitle {{
+    font-weight: 600;
+}}
+QFrame#Card QFrame#OptionTile {{
+    background-color: {c.surface};
+    border: 1px solid {c.border};
+    border-radius: {rc}px;
+}}
+QFrame#Card QFrame#OptionTile[clickable="true"]:hover {{
+    border-color: {c.accent};
+}}
+QFrame#Card QFrame#OptionTile[checked="true"] {{
+    background-color: {c.soft_accent};
+    border-color: {c.accent};
+}}
+QFrame#Card QFrame#OptionTile QLabel, QFrame#Card QFrame#OptionTile QCheckBox,
+QFrame#Card QFrame#OptionTile QRadioButton {{
+    background-color: {c.surface};
+}}
+QFrame#Card QFrame#OptionTile[checked="true"] QLabel,
+QFrame#Card QFrame#OptionTile[checked="true"] QCheckBox,
+QFrame#Card QFrame#OptionTile[checked="true"] QRadioButton {{
+    background-color: {c.soft_accent};
+}}
+QFrame#Card QFrame#OptionTile QLabel#OptionTitle {{
+    font-weight: 600;
+}}
+QFrame#Card QFrame#OptionTile QLabel#OptionNote {{
+    color: {c.text_secondary};
+    font-size: {fs2}px;
+}}
+QFrame#Card QFrame#OptionTile:disabled {{
+    border-color: {c.border};
+}}
+QFrame#Card QFrame#OptionTile:disabled QLabel {{
+    color: {c.text_disabled};
 }}
 
 /* === Metin alanları, açılır listeler, sayı kutuları === */
@@ -492,8 +549,9 @@ QCheckBox::indicator:checked {{
     image: url("{check}");
 }}
 QRadioButton::indicator:checked {{
-    border: 6px solid {c.accent};
-    background-color: {c.text_on_accent};
+    background-color: {c.accent};
+    border-color: {c.accent};
+    image: url("{radio_dot}");
 }}
 QCheckBox::indicator:disabled, QRadioButton::indicator:disabled {{
     border-color: {c.text_disabled};

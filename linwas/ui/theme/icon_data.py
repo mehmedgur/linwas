@@ -190,9 +190,32 @@ PATHS: dict[str, str] = {
         '<path d="M6 14h12v7H6z"/>'
     ),
     "scanner": '<rect x="3" y="12" width="18" height="7" rx="2"/><path d="M5 12 18 4M7 16h4"/>',
+    "phone": '<rect x="6.5" y="2" width="11" height="20" rx="2.5"/><path d="M11 18h2"/>',
+    "headphones": (
+        '<path d="M4 15v-3a8 8 0 0 1 16 0v3"/>'
+        '<rect x="3" y="14" width="4" height="6" rx="1.5"/>'
+        '<rect x="17" y="14" width="4" height="6" rx="1.5"/>'
+    ),
+    "gamepad": (
+        '<path d="M7 7h10a5 5 0 0 1 0 10c-1.5 0-2.5-1-3.5-2h-3c-1 1-2 2-3.5 2a5 5 0 0 1 0-10z"/>'
+        '<path d="M7.5 10v4M5.5 12h4"/><circle cx="16" cy="11" r=".8" fill="{c}"/>'
+        '<circle cx="17.5" cy="13.5" r=".8" fill="{c}"/>'
+    ),
+    "leaf": '<path d="M5 19c0-8 5-14 15-14 0 10-6 15-14 15"/><path d="M5 19l7-7"/>',
+    "scale": (
+        '<path d="M12 3v18M7 21h10M4 7h16"/><path d="M4 7l-2.5 6a3 3 0 0 0 5 0L4 7z"/>'
+        '<path d="M20 7l-2.5 6a3 3 0 0 0 5 0L20 7z"/>'
+    ),
+    "bolt": '<path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/>',
+    "plug": '<path d="M9 2v5M15 2v5"/><path d="M6 7h12v4a6 6 0 0 1-12 0V7z"/><path d="M12 17v5"/>',
+    "moon": '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/>',
+    "lock": '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+    "refresh": '<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/>',
     "chevron_right": '<path d="M9 6l6 6-6 6"/>',
     "chevron_down": '<path d="M6 9l6 6 6-6"/>',
     "check": '<path d="M5 12.5l4.5 4.5L19 7.5" stroke-width="3"/>',
+    # Seçili radyo düğmesinin ortasındaki nokta
+    "radio_dot": '<circle cx="12" cy="12" r="5" fill="{c}" stroke="none"/>',
     "info": (
         '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/>'
         '<circle cx="12" cy="7.5" r="0.6" fill="{c}"/>'

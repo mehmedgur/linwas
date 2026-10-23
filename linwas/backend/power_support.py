@@ -75,6 +75,30 @@ class PowerSupport:
     laptop: bool
 
 
+AGENT_PATH = Path("/usr/lib/linwas/linwas-power-agent")
+
+
+def agent_running() -> bool:
+    """Bu kullanıcının oturumunda güç ajanı (masaüstü ayarlarını uygulayan) çalışıyor mu."""
+    uid = os.getuid()
+    for proc in Path("/proc").iterdir():
+        if not proc.name.isdigit():
+            continue
+        try:
+            if proc.stat().st_uid != uid:
+                continue
+            if b"linwas.core.power_agent" in (proc / "cmdline").read_bytes():
+                return True
+        except OSError:
+            continue
+    return False
+
+
+def taken_over() -> bool:
+    """Yönetim daha önce "Linwas yönetsin" ile devralındı mı (geri verilebilir)."""
+    return power_apply.TAKEOVER_PATH.exists()
+
+
 def conflicts() -> list[ConflictTool]:
     out: list[ConflictTool] = []
     for name, pkg in power_apply.conflicting_tools():

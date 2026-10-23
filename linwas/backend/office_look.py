@@ -31,6 +31,7 @@ class Settings:
     autosave_minutes: int = 2
     save_format: str = "ooxml"
     font: str = "carlito"
+    office_names: bool = True  # menüde ve başlıkta "LibreOffice Writer (Word)"
 
 
 @dataclass
@@ -99,6 +100,7 @@ def parse_status(text: str) -> OfficeLookStatus:
         # "default": kullanıcı seçmemiş, paketin varsayılanı (sade şerit) geçerli
         ribbon=ribbon if ribbon in RIBBONS else defaults.ribbon,
         file_menu=raw.get("file_menu") if isinstance(raw.get("file_menu"), bool) else True,
+        office_names=raw.get("office_names") if isinstance(raw.get("office_names"), bool) else True,
         autosave_minutes=raw.get("autosave_minutes")
         if raw.get("autosave_minutes") in AUTOSAVE_CHOICES
         else defaults.autosave_minutes,
@@ -147,6 +149,9 @@ def set_option(key: str, value: str) -> Result:
 def apply_settings(old: Settings, new: Settings) -> Result:
     """Yalnız değişen ayarları yazar; LibreOffice açıksa ilk profil ayarında durur."""
     changes: list[tuple[str, str]] = []
+    # LibreOffice açıkken de yazılabilir; önce gelsin
+    if new.office_names != old.office_names:
+        changes.append(("office_names", "on" if new.office_names else "off"))
     if new.file_menu != old.file_menu:
         changes.append(("file_menu", "on" if new.file_menu else "off"))
     if new.autosave_minutes != old.autosave_minutes:

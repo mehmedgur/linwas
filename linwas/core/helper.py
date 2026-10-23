@@ -123,6 +123,31 @@ def _exec_package_fix_broken(seq: int, params: dict[str, str]) -> bool:
     )
 
 
+def _exec_clock_fix(seq: int, params: dict[str, str]) -> bool:
+    """Saati eşitler ve büyük farkların (uykudan uyanınca) hemen düzelmesini sağlar."""
+    from linwas.core import clock
+
+    try:
+        done = clock.ensure(wait_sync=True)
+    except OSError as exc:
+        _error(seq, f"Saat ayarı yazılamadı: {exc}")
+        return False
+    for line in done:
+        _send({"seq": seq, "status": "ok", "message": line})
+    offset = clock.offset_seconds()
+    if offset is not None and abs(offset) >= clock.WRONG_SECONDS:
+        _error(seq, f"Saat hâlâ {offset:+.0f} sn farklı (internet bağlantısını denetleyin)")
+        return False
+    return True
+
+
+def _exec_package_autoremove(seq: int, params: dict[str, str]) -> bool:
+    """Gereksiz paketleri ve eski çekirdekleri kaldırır (çalışan çekirdek apt tarafından korunur).
+    Dolu /boot'u boşaltmanın güvenli yolu."""
+    env = {"DEBIAN_FRONTEND": "noninteractive"}
+    return _run(["apt-get", "autoremove", "--purge", "-y"], seq, env)
+
+
 def _exec_package_update_index(seq: int, params: dict[str, str]) -> bool:
     return _run(["apt-get", "update"], seq)
 
@@ -574,6 +599,207 @@ def _exec_power_powertop_report(seq: int, params: dict[str, str]) -> bool:
     return True
 
 
+def _exec_power_take_over(seq: int, params: dict[str, str]) -> bool:
+    """Güç yönetimini Linwas'a verir: çakışan araçların servislerini kapatır (paketleri silmez),
+    Linwas güç servisini açar ve etkin planı uygular. Kapatılan birimler geri vermek için
+    kaydedilir.
+    """
+    from linwas.core import power_apply
+
+    try:
+        disabled = set(json.loads(power_apply.TAKEOVER_PATH.read_text(encoding="utf-8")))
+    except (OSError, ValueError, TypeError):
+        disabled = set()
+    for name, unit, _pkg in power_apply.CONFLICTING_TOOLS:
+        if not power_apply.unit_enabled(unit):
+            continue
+        _send({"seq": seq, "status": "ok", "message": f"{name} kapatılıyor…"})
+        if not _run(["systemctl", "disable", "--now", "--", unit], seq):
+            return False
+        disabled.add(unit)
+    try:
+        power_apply.TAKEOVER_PATH.parent.mkdir(parents=True, exist_ok=True)
+        _write_system_file(power_apply.TAKEOVER_PATH, json.dumps(sorted(disabled)) + "\n")
+    except OSError as exc:
+        _error(seq, f"Kayıt yazılamadı: {exc}")
+        return False
+    if power_apply.SERVICE_UNIT.exists():
+        name = power_apply.SERVICE_NAME
+        if not _run(["systemctl", "enable", "--now", "--", name], seq):
+            return False
+        return _run(["systemctl", "restart", "--", name], seq)
+    # Kaynak koddan çalıştırma: servis yok, plan bir kez uygulanır
+    power_apply.apply_once()
+    return True
+
+
+def _exec_power_give_back(seq: int, params: dict[str, str]) -> bool:
+    """Devralmayı geri alır: Linwas güç servisini kapatır, kapatılan araçları yeniden açar."""
+    from linwas.core import power_apply
+
+    try:
+        units = json.loads(power_apply.TAKEOVER_PATH.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        units = []
+    known = {unit for _n, unit, _p in power_apply.CONFLICTING_TOOLS}
+    if power_apply.SERVICE_UNIT.exists() and not _run(
+        ["systemctl", "disable", "--now", "--", power_apply.SERVICE_NAME], seq
+    ):
+        return False
+    for unit in units if isinstance(units, list) else []:
+        # Yalnızca bilinen araç birimleri (kayıt dosyası değiştirilmiş olsa bile)
+        if unit in known and not _run(["systemctl", "enable", "--now", "--", unit], seq):
+            return False
+    power_apply.TAKEOVER_PATH.unlink(missing_ok=True)
+    return True
+
+
+def _capture(cmd: list[str], timeout: int = 60) -> str | None:
+    """Komutun standart çıktısı; başarısızsa None."""
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, shell=False)
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return None
+    return r.stdout if r.returncode == 0 else None
+
+
+def _write_system_file(path: Path, text: str) -> None:
+    """Yarım dosya kalmasın: geçici dosyaya yazıp yerine koyar (izin 644)."""
+    tmp = path.with_name(path.name + ".linwas-tmp")
+    tmp.write_text(text, encoding="utf-8")
+    tmp.chmod(0o644)
+    os.replace(tmp, path)
+
+
+def _update_boot(seq: int) -> bool:
+    """initramfs ve GRUB menüsünü yeniden oluşturur (yeni çekirdek satırı açılışta geçerli olur)."""
+    if not _run(["update-initramfs", "-u"], seq):
+        return False
+    grub = shutil.which("update-grub")
+    return _run([grub] if grub else ["grub-mkconfig", "-o", "/boot/grub/grub.cfg"], seq)
+
+
+def _exec_hibernate_setup(seq: int, params: dict[str, str]) -> bool:
+    """/swapfile oluşturur, etkinleştirir, fstab'a ve GRUB çekirdek satırına (resume) ekler.
+
+    Herhangi bir adım başarısız olursa yapılanlar geri alınır (dosya silinir, fstab ve GRUB eski
+    hâline döner).
+    """
+    from linwas.core import hibernate as hib
+
+    size_gb = int(params["size_gb"])
+    swap = hib.SWAPFILE
+    try:
+        fstab_old = hib.FSTAB.read_text(encoding="utf-8")
+    except OSError as exc:
+        _error(seq, f"/etc/fstab okunamadı: {exc}")
+        return False
+    if swap.exists() or hib.other_swapfile_entry(fstab_old) or hib.has_fstab_entry(fstab_old):
+        _error(seq, f"{swap} zaten var; elle oluşturulmuş dosyaya dokunulmaz")
+        return False
+    fstype = (_capture(["findmnt", "-no", "FSTYPE", "/"]) or "").strip()
+    fs_uuid = (_capture(["findmnt", "-no", "UUID", "/"]) or "").strip()
+    if fstype not in hib.SUPPORTED_FS:
+        _error(seq, f"Bu dosya sisteminde desteklenmiyor: {fstype or '?'}")
+        return False
+    if not re.fullmatch(r"[0-9A-Fa-f-]{8,64}", fs_uuid):
+        _error(seq, "Kök dosya sisteminin UUID'si okunamadı")
+        return False
+    if shutil.disk_usage("/").free < (size_gb + hib.SPARE_GB) * 1024**3:
+        _error(seq, "Diskte yeterli boş alan yok")
+        return False
+
+    def undo() -> None:
+        subprocess.run(["swapoff", str(swap)], capture_output=True, shell=False)
+        swap.unlink(missing_ok=True)
+        hib.GRUB_DROPIN.unlink(missing_ok=True)
+        with contextlib.suppress(OSError):
+            if hib.FSTAB.read_text(encoding="utf-8") != fstab_old:
+                _write_system_file(hib.FSTAB, fstab_old)
+
+    try:
+        _send({"seq": seq, "status": "ok", "message": f"{size_gb} GB swap dosyası yazılıyor…"})
+        if fstype == "btrfs":
+            # btrfs: kopyala-yaz kapalı, sıkıştırmasız dosya (btrfs-filesystem(8) mkswapfile)
+            ok = _run(
+                ["btrfs", "filesystem", "mkswapfile", "--size", f"{size_gb}g", str(swap)], seq
+            )
+            out = (
+                _capture(["btrfs", "inspect-internal", "map-swapfile", "-r", str(swap)])
+                if ok
+                else None
+            )
+            offset = hib.parse_btrfs_offset(out or "")
+        else:
+            # mkswap(8): ext4/xfs'te fallocate yerine dd önerilir (dosyada boşluk kalmasın)
+            ok = _run(
+                [
+                    "dd",
+                    "if=/dev/zero",
+                    f"of={swap}",
+                    "bs=1M",
+                    f"count={size_gb * 1024}",
+                    "status=none",
+                ],
+                seq,
+            )
+            if ok:
+                swap.chmod(0o600)
+                ok = _run(["mkswap", str(swap)], seq)
+            out = _capture(["filefrag", "-v", str(swap)]) if ok else None
+            offset = hib.parse_filefrag_offset(out or "")
+        if not ok or offset is None:
+            undo()
+            _error(seq, "Swap dosyası hazırlanamadı")
+            return False
+        if not _run(["swapon", str(swap)], seq):
+            undo()
+            return False
+        _write_system_file(hib.FSTAB, hib.fstab_add(fstab_old))
+        hib.GRUB_DROPIN.parent.mkdir(parents=True, exist_ok=True)
+        _write_system_file(hib.GRUB_DROPIN, hib.grub_dropin_text(fs_uuid, offset))
+        if not _update_boot(seq):
+            undo()
+            _update_boot(seq)
+            return False
+    except OSError as exc:
+        undo()
+        _error(seq, f"Hazırda bekletme kurulamadı: {exc}")
+        return False
+    return True
+
+
+def _exec_hibernate_remove(seq: int, params: dict[str, str]) -> bool:
+    """Linwas'ın kurduğu swap dosyasını ve resume ayarını kaldırır (elle kurulana dokunmaz)."""
+    from linwas.core import hibernate as hib
+
+    try:
+        fstab = hib.FSTAB.read_text(encoding="utf-8")
+    except OSError as exc:
+        _error(seq, f"/etc/fstab okunamadı: {exc}")
+        return False
+    ours = hib.has_fstab_entry(fstab)
+    if not ours and not hib.GRUB_DROPIN.exists():
+        _error(seq, "Linwas'ın kurduğu hazırda bekletme ayarı bulunamadı")
+        return False
+    try:
+        hib.GRUB_DROPIN.unlink(missing_ok=True)
+        if ours:
+            # Swap'taki sayfalar belleğe geri alınır; bellek yetmezse swapoff başarısız olur
+            active = any(
+                n == str(hib.SWAPFILE)
+                for n, _k, _s in hib.parse_swaps(Path("/proc/swaps").read_text(encoding="utf-8"))
+            )
+            if active and not _run(["swapoff", str(hib.SWAPFILE)], seq):
+                return False
+            _write_system_file(hib.FSTAB, hib.fstab_remove(fstab))
+            hib.SWAPFILE.unlink(missing_ok=True)
+    except OSError as exc:
+        _error(seq, f"Kaldırılamadı: {exc}")
+        return False
+    return _update_boot(seq)
+
+
 def _exec_hardware_memory_report(seq: int, params: dict[str, str]) -> bool:
     """Bellek modüllerini okur (dmidecode); seri numarasız özeti herkesin okuyabileceği
     dosyaya yazar. Çıktı ilerleme olarak gönderilmez (seri numaraları içerir)."""
@@ -880,9 +1106,15 @@ _EXECUTORS: dict[str, Any] = {
         seq, "power", _POWER_FILES, lambda: _exec_power_save_config(seq, p)
     ),
     "power.powertop_report": _exec_power_powertop_report,
+    "power.take_over": _exec_power_take_over,
+    "power.give_back": _exec_power_give_back,
+    "hibernate.setup": _exec_hibernate_setup,
+    "hibernate.remove": _exec_hibernate_remove,
     "hardware.memory_report": _exec_hardware_memory_report,
     "fonts.install_microsoft": _exec_fonts_install_microsoft,
     "package.update_index": _exec_package_update_index,
+    "clock.fix": _exec_clock_fix,
+    "package.autoremove": _exec_package_autoremove,
     "package.fix_broken": _exec_package_fix_broken,
     "package.update_all": _exec_package_update_all,
     "service.enable": _exec_service_enable,

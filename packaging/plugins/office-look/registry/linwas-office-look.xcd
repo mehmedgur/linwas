@@ -65,6 +65,18 @@
     </node>
   </oor:component-data>
 
+  <!-- Calc formül yazımı Excel A1: başka sayfaya başvuru Excel'deki gibi Sayfa1!A1 (Calc'ta
+       Sayfa1.A1). 0 = Calc A1, 1 = Excel A1, 2 = Excel R1C1 (Araçlar › Seçenekler › Calc ›
+       Formül). Dosya biçimini değil yalnız formül yazıp okumayı etkiler. -->
+  <oor:component-data oor:name="Calc" oor:package="org.openoffice.Office">
+    <node oor:name="Formula">
+      <node oor:name="Syntax">
+        <prop oor:name="Grammar" oor:op="fuse">
+          <value>1</value>
+        </prop>
+      </node>
+    </node>
+  </oor:component-data>
   <!-- Writer temel yazı tipleri: Calibri ile metrik uyumlu Carlito, gövde 11 pt (1/100 mm). -->
   <oor:component-data oor:name="Writer" oor:package="org.openoffice.Office">
     <node oor:name="DefaultFont">

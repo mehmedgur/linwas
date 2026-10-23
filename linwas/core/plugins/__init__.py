@@ -7,8 +7,15 @@ Linwas'ın yerleşik eklentileri de (Oyun, Yazıcı, Yedekleme vb.) bu yapıyı 
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
+
+# Eklentinin kaynağı (Ayarlar › Eklentiler'deki rozet)
+SOURCE_BUILTIN = "builtin"  # Linwas'ın içinde
+SOURCE_OFFICIAL = "official"  # imzalı APT deposundan .deb (Python, entry point)
+SOURCE_CATALOG = "catalog"  # imzalı Linwas kataloğundan kodsuz eklenti
+SOURCE_DEVELOPER = "developer"  # geliştirici kipinde imzasız yerel dosya
 
 
 @dataclass
@@ -19,6 +26,23 @@ class PluginMeta:
     name: str  # görünen ad (İngilizce; UI çevirir)
     version: str  # semver
     api_version: str = "1"  # uyumsuz eklenti kapatılır
+    publisher: str = "Linwas"
+    description: str = ""  # kısa açıklama (görüntülenecek dilde)
+
+
+@dataclass
+class PluginAction:
+    """Eklentinin sunduğu düğme. Tür:
+    - "page": Linwas sayfasına gider (`target` = sayfa kimliği)
+    - "settings": sistem ayarını açar (`target` = data/settings_map.json anahtarı)
+    - "task": görevi kuyruğa koyar (`steps` = [(işlem, parametreler)]; izin listesinden geçer)
+    - "url": https bağlantısını tarayıcıda açar
+    """
+
+    kind: str
+    label: str
+    target: str = ""
+    steps: list[tuple[str, dict[str, str]]] = field(default_factory=list)
 
 
 @dataclass
@@ -55,11 +79,18 @@ class WhitelistProposal:
 
 @dataclass
 class ScanCheck:
-    """Sistem taramasına eklenen kontrol."""
+    """Sorun giderme taramasına eklenen kontrol.
+
+    `run` (ok, ayrıntı) döner; arka planda çalışır, Qt kullanmamalı. Sorun varsa
+    `problem_label` ve `fixes` gösterilir.
+    """
 
     id: str
-    label: str
+    label: str  # sorun yokken gösterilen metin
     description: str = ""
+    problem_label: str = ""
+    run: Callable[[], tuple[bool, str]] | None = None
+    fixes: list[PluginAction] = field(default_factory=list)
 
 
 @dataclass
@@ -68,7 +99,9 @@ class TroubleshootingCard:
 
     id: str
     symptom: str
-    solutions: list[str] = field(default_factory=list)
+    solutions: list[str] = field(default_factory=list)  # eski biçim: düz metin öneriler
+    description: str = ""
+    actions: list[PluginAction] = field(default_factory=list)
 
 
 @dataclass
@@ -79,6 +112,7 @@ class GuideEntry:
     label: str
     target_page_id: str = ""
     settings_launcher_key: str = ""  # data/settings_map.json içindeki anahtar
+    kind: str = "concept"  # setting | program | shortcut | concept (Rehber'deki süzgeç)
 
 
 @dataclass
@@ -95,6 +129,11 @@ class PluginBase(ABC):
 
     Kapılar isteğe bağlıdır; eklenti yalnızca kullandıklarını geçersiz kılar.
     """
+
+    # Kapatılamaz (başka sayfalar buna dayanıyor, ör. donanım bilgisi)
+    required: bool = False
+    # Ayarlar › Eklentiler'deki rozet; yükleyici kaynağa göre ayarlar
+    source: str = SOURCE_OFFICIAL
 
     @property
     @abstractmethod

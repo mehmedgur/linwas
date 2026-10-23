@@ -14,11 +14,11 @@ def tr(text: str) -> str:
 def section_name(section: str) -> str:
     return {
         "display": tr("Display and sleep"),
-        "buttons": tr("Buttons and lid (all plans)"),
+        "buttons": tr("Buttons and lid (same in all plans)"),
         "cpu": tr("Processor"),
-        "battery": tr("Battery (all plans)"),
-        "devices": tr("USB, PCIe and disks"),
-        "wireless": tr("Wireless"),
+        "battery": tr("Battery (same in all plans)"),
+        "devices": tr("Connected devices and disks"),
+        "wireless": tr("Wireless connections"),
         "graphics": tr("Graphics and brightness"),
     }.get(section, section)
 
@@ -26,77 +26,109 @@ def section_name(section: str) -> str:
 def setting_name(sid: str) -> str:
     return {
         "ppd_profile": tr("System power mode"),
-        "screen_dim": tr("Dim the screen when inactive"),
+        "screen_dim": tr("Dim the screen when not in use"),
         "screen_off": tr("Turn off the screen after"),
         "sleep_after": tr("Put the computer to sleep after"),
         "sleep_action": tr("Sleep type"),
-        "wake_timers": tr("Allow wake timers"),
+        "wake_timers": tr("Let scheduled tasks wake the computer"),
         "lid": tr("When I close the lid"),
-        "lid_docked": tr("Closing the lid with an external screen"),
+        "lid_docked": tr("Closing the lid with another screen connected"),
         "power_key": tr("When I press the power button"),
-        "cpu_boost": tr("Turbo boost"),
-        "cpu_epp": tr("Energy preference (EPP)"),
-        "cpu_min": tr("Minimum processor state"),
-        "cpu_max": tr("Maximum processor state"),
-        "cpu_governor": tr("Frequency governor"),
-        "battery_low": tr("Low battery level"),
-        "battery_critical": tr("Critical battery level"),
-        "battery_action_level": tr("Critical battery action level"),
-        "battery_action": tr("Critical battery action"),
-        "usb_autosuspend": tr("USB selective suspend"),
-        "pcie_aspm": tr("PCI Express link state power management"),
-        "pci_runtime_pm": tr("PCI device power management"),
-        "sata_alpm": tr("SATA link power management"),
-        "disk_spindown": tr("Turn off hard disk after"),
-        "wifi_powersave": tr("Wi-Fi power saving"),
+        "cpu_boost": tr("Processor speed boost (turbo)"),
+        "cpu_epp": tr("Processor: speed or battery"),
+        "cpu_min": tr("Lowest processor speed"),
+        "cpu_max": tr("Highest processor speed"),
+        "cpu_governor": tr("Speed control method"),
+        "battery_low": tr("“Battery low” warning at"),
+        "battery_critical": tr("“Battery very low” warning at"),
+        "battery_action_level": tr("Last level before the battery runs out"),
+        "battery_action": tr("When the battery is almost empty"),
+        "usb_autosuspend": tr("Put unused USB devices to sleep"),
+        "pcie_aspm": tr("Save power on internal card connections"),
+        "pci_runtime_pm": tr("Put unused internal devices to sleep"),
+        "sata_alpm": tr("Save power on the disk connection"),
+        "disk_spindown": tr("Stop the hard disk after"),
+        "wifi_powersave": tr("Wi-Fi battery saving"),
         "bluetooth": tr("Bluetooth"),
         "gpu_power": tr("Graphics card power mode"),
         "brightness": tr("Screen brightness when switching to this plan"),
-        "adaptive_brightness": tr("Adaptive brightness"),
+        "adaptive_brightness": tr("Brightness by room light"),
     }.get(sid, sid)
 
 
 def setting_help(sid: str) -> str:
     return {
-        "ppd_profile": tr("The Power saver / Balanced / Performance mode in the system menu."),
-        "screen_dim": tr("Makes the screen darker shortly before it turns off."),
-        "screen_off": tr("The screen turns off when you do not use the computer for this long."),
-        "sleep_after": tr("The computer sleeps when you do not use it for this long."),
-        "battery_critical": tr("Below this level the battery is shown as critical."),
-        "battery_action": tr("What the computer does when the battery is almost empty."),
-        "pci_runtime_pm": tr("Idle internal devices are switched off to save power."),
-        "sata_alpm": tr("Lets SATA disks save power when idle; may slow some disks slightly."),
-        "sleep_action": tr("Hibernate saves your work to disk and turns the computer off."),
-        "wake_timers": tr("Lets scheduled tasks wake the computer from sleep."),
-        "lid": tr("Takes effect after the next restart."),
-        "lid_docked": tr("Takes effect after the next restart."),
-        "power_key": tr("The login screen follows this setting after the next restart."),
-        "cpu_boost": tr("Turning turbo off makes the computer cooler and quieter but slower."),
-        "cpu_epp": tr("Tells the processor whether to favour speed or battery life."),
-        "cpu_min": tr("Percentage of the highest processor speed."),
-        "cpu_max": tr("Percentage of the highest processor speed. Lower values save battery."),
-        "cpu_governor": tr("Advanced: the kernel's frequency scaling method."),
-        "battery_low": tr("You are warned at this level."),
-        "battery_action_level": tr("The critical battery action runs at this level."),
+        "ppd_profile": tr(
+            "The Power saver / Balanced / Performance choice in the system menu at the top right."
+        ),
+        "screen_dim": tr(
+            "The screen gets darker a little before it turns off; moving the mouse brings it back."
+        ),
+        "screen_off": tr("If you do not touch the computer for this long, the screen turns off."),
+        "sleep_after": tr("If you do not touch the computer for this long, it goes to sleep."),
+        "battery_critical": tr("Below this level a “battery very low” warning appears."),
+        "battery_action": tr("What the computer does so that your work is not lost."),
+        "pci_runtime_pm": tr("Devices inside the computer sleep when they are not used."),
+        "sata_alpm": tr(
+            "The disk uses less power when idle; some disks may become very slightly slower."
+        ),
+        "sleep_action": tr(
+            "Sleep uses a little power and wakes instantly. Hibernate saves your work to the disk "
+            "and turns the computer off completely."
+        ),
+        "wake_timers": tr(
+            "A scheduled task, such as a night-time update, may wake the sleeping computer."
+        ),
+        "lid": tr("Takes effect after the computer restarts."),
+        "lid_docked": tr("Takes effect after the computer restarts."),
+        "power_key": tr("The login screen also follows this after the computer restarts."),
+        "cpu_boost": tr(
+            "When on, the processor speeds up when needed. Turning it off makes the computer "
+            "cooler, quieter and longer on battery, but a little slower."
+        ),
+        "cpu_epp": tr("Tells the processor what comes first: speed or battery life."),
+        "cpu_min": tr(
+            "Percent of the processor's top speed. Usually there is no need to change it."
+        ),
+        "cpu_max": tr(
+            "Percent of the processor's top speed. A lower value saves battery but makes the "
+            "computer slower."
+        ),
+        "cpu_governor": tr("For experts: how Linux adjusts the processor speed."),
+        "battery_low": tr("A warning appears when the battery reaches this level."),
+        "battery_action_level": tr("At this level the computer does what you choose below."),
         "usb_autosuspend": tr(
-            "Idle USB devices are switched off. Mice and keyboards are excluded."
+            "USB devices that are not used for a while sleep to save power. Mice and keyboards "
+            "are not included."
         ),
-        "pcie_aspm": tr("Some computers do not allow changing this; then it has no effect."),
-        "disk_spindown": tr("Only for hard disks with spinning platters."),
-        "wifi_powersave": tr("Saves battery; can slightly slow down the connection."),
-        "bluetooth": tr("Bluetooth is turned back on when you leave this plan."),
-        "gpu_power": tr("AMD and Intel: speed limit; NVIDIA: switch off the card when not in use."),
+        "pcie_aspm": tr(
+            "Cards inside the computer (such as Wi-Fi) use less power when idle. Some computers "
+            "do not allow this; then it has no effect."
+        ),
+        "disk_spindown": tr("Only for older, spinning hard disks; it does not affect SSDs."),
+        "wifi_powersave": tr(
+            "The battery lasts longer; the internet can sometimes be a little slower."
+        ),
+        "bluetooth": tr(
+            "Bluetooth is turned off in this plan and turned back on when you leave it."
+        ),
+        "gpu_power": tr(
+            "How much power the graphics card may use. On NVIDIA the card is switched off when "
+            "not in use."
+        ),
         "brightness": tr(
-            "Applied once when the plan or power source changes; you can still adjust it."
+            "Set once when the plan changes or you plug in or unplug; you can change it afterwards."
         ),
-        "adaptive_brightness": tr("Adjusts brightness using the light sensor."),
+        "adaptive_brightness": tr(
+            "The screen gets brighter or darker by itself, following the light in the room."
+        ),
     }.get(sid, "")
 
 
 _ENUMS = {
     "suspend": "Sleep",
     "hibernate": "Hibernate",
-    "hybrid-sleep": "Hybrid sleep",
+    "hybrid-sleep": "Sleep and hibernate together",
     "lock": "Lock the screen",
     "ignore": "Do nothing",
     "nothing": "Do nothing",
@@ -105,17 +137,17 @@ _ENUMS = {
     "power-saver": "Power saver",
     "balanced": "Balanced",
     "performance": "Performance",
-    "balance_performance": "Balanced, faster",
-    "balance_power": "Balanced, longer battery",
+    "balance_performance": "Balanced, closer to speed",
+    "balance_power": "Balanced, closer to battery",
     "power": "Power saving",
     "powersave": "Power saving",
-    "default": "Firmware default",
-    "powersupersave": "Maximum power saving",
+    "default": "Manufacturer’s setting",
+    "powersupersave": "Most power saving",
     "max_performance": "Performance",
     "medium_power": "Medium",
     "med_power_with_dipm": "Balanced",
-    "min_power": "Maximum power saving",
-    "HybridSleep": "Hybrid sleep",
+    "min_power": "Most power saving",
+    "HybridSleep": "Sleep and hibernate together",
     "Hibernate": "Hibernate",
     "PowerOff": "Shut down",
 }
@@ -125,7 +157,7 @@ def _enum_markers() -> None:
     """Çeviri aracı için: _ENUMS metinleri value_text() içinde tr(…) ile çevrilir."""
     tr("Sleep")
     tr("Hibernate")
-    tr("Hybrid sleep")
+    tr("Sleep and hibernate together")
     tr("Lock the screen")
     tr("Do nothing")
     tr("Shut down")
@@ -133,11 +165,11 @@ def _enum_markers() -> None:
     tr("Power saver")
     tr("Balanced")
     tr("Performance")
-    tr("Balanced, faster")
-    tr("Balanced, longer battery")
+    tr("Balanced, closer to speed")
+    tr("Balanced, closer to battery")
     tr("Power saving")
-    tr("Firmware default")
-    tr("Maximum power saving")
+    tr("Manufacturer’s setting")
+    tr("Most power saving")
     tr("Medium")
 
 
@@ -163,7 +195,11 @@ def value_text(sid: str, value: str) -> str:
     if sid in _PERCENT_SETTINGS:
         return tr("{n}%").format(n=value)
     if sid == "cpu_governor" and value in _GOVERNORS:
-        return value
+        return {
+            "schedutil": tr("Automatic (recommended)"),
+            "ondemand": tr("Fast when needed"),
+            "conservative": tr("Speeds up slowly"),
+        }[value]
     if sid == "bluetooth":
         return tr("Turn off")
     if sid == "wake_timers":
@@ -194,6 +230,23 @@ def hibernate_reason_text(code: str) -> str:
         "lockdown": tr("Secure Boot (kernel lockdown) blocks hibernation."),
         "swap": tr("The swap space is smaller than the memory (RAM)."),
         "resume": tr("No resume device is set up."),
+    }.get(code, code)
+
+
+def hibernate_setup_problem_text(code: str) -> str:
+    """Linwas'ın hazırda bekletmeyi kuramama nedeni (backend/hibernate_setup.py)."""
+    return {
+        "kernel": tr("The kernel does not support hibernation."),
+        "lockdown": tr(
+            "Secure Boot (kernel lockdown) blocks hibernation. It works only if Secure Boot is "
+            "turned off in the firmware settings."
+        ),
+        "fs": tr("The system disk's file system is not supported (ext4, XFS or Btrfs needed)."),
+        "btrfs_tools": tr("Btrfs tools are too old (version 6.1 or newer needed)."),
+        "bootloader": tr("Only computers that start with GRUB are supported."),
+        "initramfs": tr("Only systems that use initramfs-tools are supported."),
+        "space": tr("There is not enough free space on the system disk."),
+        "manual": tr("A /swapfile already exists; Linwas does not change it."),
     }.get(code, code)
 
 

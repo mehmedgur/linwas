@@ -944,6 +944,12 @@ class LinwasTaskbar {
         if (!sections)
             return; // bu GNOME sürümünde yapı farklı: kart eklenmez
         this._calendarCard = new MediaCard(this);
+        // GNOME bildirim listesindeki her bölümü bir MessageListSection sanar: "Temizle" her birinde
+        // clear() çağırır, _sync() canClear/empty/allowed okur (GNOME 43 calendar.js). Kartta clear()
+        // olmayınca Temizle ilk öğede (bu kart) hata verip bildirimleri silmiyordu. Kart temizlenmez;
+        // empty/allowed tanımsız kalır (görünürlüğü kart kendisi yönetir).
+        this._calendarCard.actor.clear = () => {};
+        this._calendarCard.actor.canClear = false;
         sections.insert_child_at_index(this._calendarCard.actor, 0);
         this._calendarMenuId = dateMenu.menu.connect('open-state-changed',
             (menu, open) => this._calendarCard?.setOpen(open));

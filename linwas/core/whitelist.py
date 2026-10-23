@@ -62,6 +62,8 @@ class ParamKind(Enum):
     PRIME_MODE = "prime_mode"
     # Güç planları ayarı (JSON; core.powerplan katı doğrulamasından geçer)
     POWER_CONFIG = "power_config"
+    # Hazırda bekletme swap dosyası boyutu (GiB, 1–256)
+    SWAP_SIZE_GB = "swap_size_gb"
 
 
 @dataclass(frozen=True)
@@ -228,6 +230,14 @@ def _validate_battery_name(value: str) -> str:
     return value
 
 
+def _validate_swap_size_gb(value: str) -> str:
+    from linwas.core.hibernate import MAX_SIZE_GB, MIN_SIZE_GB
+
+    if not value.isdigit() or not MIN_SIZE_GB <= int(value) <= MAX_SIZE_GB:
+        raise ValidationError(f"Geçersiz swap boyutu: {value!r}")
+    return str(int(value))
+
+
 def _validate_charge_limit(value: str) -> str:
     if value not in _CHARGE_LIMITS:
         raise ValidationError(f"Geçersiz şarj sınırı: {value!r}")
@@ -331,6 +341,7 @@ _VALIDATORS: dict[ParamKind, object] = {
     ParamKind.FWUPD_DEVICE_ID: _validate_fwupd_device_id,
     ParamKind.BACKPORTS_SUITE: _validate_backports_suite,
     ParamKind.POWER_CONFIG: _validate_power_config,
+    ParamKind.SWAP_SIZE_GB: _validate_swap_size_gb,
 }
 
 
@@ -446,6 +457,24 @@ OPERATIONS: dict[str, OperationSpec] = {
         risk=RiskLevel.LOW,
         label="Save power plan settings",
     ),
+    "power.take_over": OperationSpec(
+        params=[],
+        risk=RiskLevel.MEDIUM,
+        label="Let Linwas manage power (turn off other power tools, start the power service)",
+    ),
+    "power.give_back": OperationSpec(
+        params=[],
+        risk=RiskLevel.MEDIUM,
+        label="Give power management back (turn other power tools on again)",
+    ),
+    "hibernate.setup": _op(
+        ("size_gb", ParamKind.SWAP_SIZE_GB),
+        risk=RiskLevel.MEDIUM,
+        label="Set up hibernation (swap file and resume setting)",
+    ),
+    "hibernate.remove": OperationSpec(
+        params=[], risk=RiskLevel.MEDIUM, label="Remove the hibernation swap file"
+    ),
     "power.powertop_report": OperationSpec(
         params=[], risk=RiskLevel.LOW, label="Measure power use in detail (powertop)"
     ),
@@ -526,6 +555,16 @@ OPERATIONS: dict[str, OperationSpec] = {
         label="Update all packages",
     ),
     # Yarım kalmış kurulumları tamamla ve kırık bağımlılıkları onar
+    "clock.fix": OperationSpec(
+        params=[],
+        risk=RiskLevel.LOW,
+        label="Correct the clock and keep it correct after sleep",
+    ),
+    "package.autoremove": OperationSpec(
+        params=[],
+        risk=RiskLevel.MEDIUM,
+        label="Remove old kernels and packages that are no longer needed",
+    ),
     "package.fix_broken": OperationSpec(
         params=[],
         risk=RiskLevel.MEDIUM,

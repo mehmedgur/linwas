@@ -108,6 +108,23 @@ _STUB_PAGES = {
 }
 
 
+def _refresh_launchers_async() -> None:
+    """Kaynak koddan çalışırken yazılmış kısayollar paket kurulunca pakete geçsin (ya da tersi).
+    Yalnızca dosya işi; Qt kullanılmaz, arayüzü bekletmesin diye ayrı iş parçacığında."""
+    import threading
+
+    def work() -> None:
+        from linwas.backend import app_folders, workgroups
+
+        try:
+            app_folders.refresh_launchers(app_folders.load_folders())
+            workgroups.refresh_launchers()
+        except Exception:
+            pass
+
+    threading.Thread(target=work, name="linwas-launchers", daemon=True).start()
+
+
 class MainWindow(QMainWindow):
     """Linwas ana penceresi."""
 
@@ -224,12 +241,23 @@ class MainWindow(QMainWindow):
 
             QTimer.singleShot(300, self.run_onboarding)
 
+        # Program klasörü ve çalışma grubu kısayollarının komutunu güncelle (arka planda)
+        _refresh_launchers_async()
+
         # .exe/.msi çift tıklanınca Linwas açılsın (kurulu pakette, bir kez)
         if not self._settings.exe_handler_set:
             from linwas.backend.wine import set_default_exe_handler
 
             if set_default_exe_handler():
                 self._update_settings(exe_handler_set=True)
+
+        # .deb paketi çift tıklanınca Linwas kursun (bir kez; Ayarlar › Genel'den kapatılır)
+        if not self._settings.deb_handler_set:
+            from linwas.backend.file_handlers import make_linwas_deb_handler
+
+            ok, previous = make_linwas_deb_handler()
+            if ok:
+                self._update_settings(deb_handler_set=True, deb_handler_previous=previous)
 
         # Oturumla başlatma dosyası ayara uyar (varsayılan: açık); eski AI sohbetleri silinir
         from linwas.ai.chat_history import ChatHistoryDB
@@ -408,7 +436,13 @@ class MainWindow(QMainWindow):
         if self._tray is not None:
             self._tray.hide()
         self._notifier.stop()
+        self._wait_for_workers()
         QApplication.instance().quit()
+
+    def _wait_for_workers(self) -> None:
+        overview = self._pages.get("overview")
+        if isinstance(overview, OverviewPage):
+            overview.wait_for_worker()
 
     def _on_close_action_changed(self, action: str) -> None:
         self._settings = app_settings.load()
@@ -437,6 +471,7 @@ class MainWindow(QMainWindow):
             self._hide_to_background()
             event.ignore()  # type: ignore[attr-defined]
             return
+        self._wait_for_workers()
         super().closeEvent(event)  # type: ignore[arg-type]
 
     def _ask_close_action(self) -> str:
@@ -616,14 +651,16 @@ class MainWindow(QMainWindow):
         Bir eklentinin sayfası açılamazsa uygulama çalışmaya devam eder; hata
         Ayarlar › Eklentiler'de görünür.
         """
-        from linwas.core.plugins.loader import PluginLoader
+        from linwas.core.plugins.loader import PluginLoader, set_active
         from linwas.plugins.builtin import BUILTIN_PLUGINS
 
-        loader = PluginLoader()
+        loader = PluginLoader(disabled=set(self._settings.disabled_plugins))
         for cls in BUILTIN_PLUGINS:
             loader.load_class(cls)
         loader.discover()
+        loader.load_declarative(self._settings.language, self._settings.plugin_developer_mode)
         self.plugin_loader = loader
+        set_active(loader)
 
         offered = set()
         for plugin in loader.plugins():

@@ -560,6 +560,11 @@ class OverviewPage(QWidget):
         self._worker.done.connect(self._on_snapshot)
         self._worker.start()
 
+    def wait_for_worker(self) -> None:
+        """Kapanışta çağrılır: çalışan iş parçacığı yarıda yok edilirse uygulama çöker."""
+        if self._worker is not None and self._worker.isRunning():
+            self._worker.wait()
+
     def _on_snapshot(self, snap: object) -> None:
         if not isinstance(snap, _Snapshot):
             for card in (self._updates_card, self._drivers_card, self._wifi_card):

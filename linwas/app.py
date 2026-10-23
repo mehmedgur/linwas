@@ -41,6 +41,8 @@ def _self_check() -> int:
     ok = lang == "en" or translator is not None
     if not ok:
         print(f"translation file not found: {qm_path(lang)}", file=sys.stderr)
+    # Kapatırken "arka planda çalışsın mı?" sorusu açılmasın (CI'da yanıtlayan yok)
+    window._quitting = True
     window.close()
     return 0 if ok else 1
 

@@ -26,6 +26,7 @@ from linwas.backend.startup import StartupApp, list_startup_apps, set_enabled
 from linwas.translations import ui_language
 from linwas.ui import icons
 from linwas.ui.pages.base import BasePage
+from linwas.ui.widgets.fit import fit_width
 
 _DATA = Path(__file__).resolve().parent.parent.parent / "data"
 
@@ -309,7 +310,7 @@ class _StartupRow(QWidget):
 
         self._toggle_btn = QPushButton(tr("Enabled") if app.enabled else tr("Disabled"), row_widget)
         self._toggle_btn.setProperty("primary", app.enabled)
-        self._toggle_btn.setFixedWidth(90)
+        fit_width(self._toggle_btn, tr("Enabled"), tr("Disabled"))
         self._toggle_btn.clicked.connect(self._do_toggle)
         row.addWidget(self._toggle_btn)
 

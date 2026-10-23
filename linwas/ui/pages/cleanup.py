@@ -17,6 +17,7 @@ from linwas.backend.disk_cleanup import CleanupItem, clean_user_item, scan_clean
 from linwas.core.tasks import Task, TaskStep
 from linwas.ui.pages.base import BasePage
 from linwas.ui.widgets.card import Card
+from linwas.ui.widgets.fit import fit_width
 
 
 def tr(text: str) -> str:
@@ -66,20 +67,19 @@ class _CleanupCard(Card):
         row.addLayout(info, 1)
 
         size_lbl = QLabel(_fmt_mb(item.size_mb), self)
-        size_lbl.setStyleSheet("font-weight: bold; font-size: 15px;")
+        font = size_lbl.font()
+        font.setBold(True)
+        size_lbl.setFont(font)
         row.addWidget(size_lbl)
 
         if item.needs_root:
             badge = QLabel(tr("Requires password"), self)
-            badge.setStyleSheet(
-                "background-color: #fff3cc; color: #9d5d00; border-radius: 4px;"
-                " padding: 1px 7px; font-size: 13px;"
-            )
+            badge.setObjectName("LinwasTag")
             row.addWidget(badge)
 
         self._clean_btn = QPushButton(tr("Clean"), self)
         self._clean_btn.setProperty("primary", True)
-        self._clean_btn.setFixedWidth(80)
+        fit_width(self._clean_btn, tr("Clean"), tr("Cleaning…"), tr("Done"))
         self._clean_btn.clicked.connect(lambda: self.clean_requested.emit(item))
         row.addWidget(self._clean_btn)
 

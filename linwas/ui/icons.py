@@ -21,6 +21,9 @@ _ROLES = {
     "secondary": "text_secondary",
     "accent": "accent",
     "on_accent": "text_on_accent",
+    "success": "success",
+    "warning": "warning",
+    "danger": "danger",
 }
 
 _palette: ColorSet = LIGHT

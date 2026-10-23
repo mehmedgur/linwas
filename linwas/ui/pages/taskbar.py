@@ -72,6 +72,11 @@ class _Status(QThread):
                 "preset": taskbar.current_preset(),
                 "layout": taskbar.read_layout(),
                 "previous": taskbar.has_previous(),
+                "elements": taskbar.read_elements() if taskbar.dtp_installed() else [],
+                "behaviour": taskbar.read_behaviour(),
+                "clock": taskbar.read_clock(),
+                "pinned": taskbar.read_pinned(),
+                "dock_settings": taskbar.read_dock() if taskbar.dock_uuid() else None,
             }
         )
 
@@ -203,6 +208,12 @@ class TaskbarPage(BasePage):
         self._build_window_buttons()
         if s["dtp"] and s["preset"] == "windows":
             self._build_layout(s["layout"])
+            self._build_behaviour(s)
+            self._build_items(s)
+        if s["preset"] == "macos" and s["dock_settings"] is not None:
+            self._build_dock(s["dock_settings"])
+        self._build_clock(s)
+        self._build_pinned(s)
         # Linwas eklentisi gerekenler
         self._section(tr("Look and media (Linwas taskbar extension)"))
         self._build_setup(s)
@@ -287,8 +298,16 @@ class TaskbarPage(BasePage):
         )
         row.addWidget(on)
         off = QPushButton(tr("Only close button (GNOME default)"), card)
-        off.clicked.connect(lambda: appearance.set_value("gnome", "buttons", "appmenu:close"))
+        off.clicked.connect(
+            lambda: appearance.set_value("gnome", "buttons", appearance.GNOME_BUTTON_LAYOUT)
+        )
         row.addWidget(off)
+        mac = QPushButton(tr("On the left, like macOS"), card)
+        mac.setToolTip(tr("Close, minimize and maximize at the top left of every window."))
+        mac.clicked.connect(
+            lambda: appearance.set_value("gnome", "buttons", appearance.MACOS_BUTTON_LAYOUT)
+        )
+        row.addWidget(mac)
         row.addStretch(1)
         card.layout.addLayout(row)
         self._body.addWidget(card)
@@ -484,6 +503,247 @@ class TaskbarPage(BasePage):
             cb.toggled.connect(fn)
             _row(card, title, desc, cb)
         self._body.addWidget(card)
+
+    def _build_dock(self, d: taskbar.Dock) -> None:
+        """macOS düzeninin dock'u (Dash to Dock)."""
+        self._section(tr("Dock"))
+        card = Card()
+        _row(
+            card,
+            tr("Position"),
+            "",
+            _segmented(
+                card,
+                [("BOTTOM", tr("Bottom")), ("LEFT", tr("Left")), ("RIGHT", tr("Right"))],
+                d.position,
+                taskbar.set_dock_position,
+            ),
+        )
+        size_box = QWidget(card)
+        sl = QHBoxLayout(size_box)
+        sl.setContentsMargins(0, 0, 0, 0)
+        size = QSlider(Qt.Orientation.Horizontal, size_box)
+        size.setRange(*taskbar.DOCK_ICON_RANGE)
+        size.setValue(d.icon_size)
+        size.setFixedWidth(240)
+        size.setAccessibleName(tr("Icon size"))
+        value = QLabel(f"{d.icon_size} px", size_box)
+        value.setMinimumWidth(56)
+        size.valueChanged.connect(lambda v: value.setText(f"{v} px"))
+        size.sliderReleased.connect(lambda: taskbar.set_dock_icon_size(size.value()))
+        sl.addWidget(size)
+        sl.addWidget(value)
+        _row(card, tr("Icon size"), "", size_box)
+        vis = QComboBox(card)
+        for key, label in (
+            ("always", tr("Always visible")),
+            ("intellihide", tr("Hide when a window covers it")),
+            ("autohide", tr("Always hidden, show at the screen edge")),
+        ):
+            vis.addItem(label, key)
+        vis.setCurrentIndex(max(0, vis.findData(d.visibility)))
+        vis.currentIndexChanged.connect(lambda: taskbar.set_dock_visibility(vis.currentData()))
+        _row(card, tr("Visibility"), "", vis)
+        for attr, title, desc in (
+            ("trash", tr("Trash in the dock"), ""),
+            ("mounts", tr("USB drives and disks in the dock"), tr("Easy to open and eject.")),
+            ("dots", tr("Dot under open programs"), ""),
+            ("counter", tr("Show counts on app icons"), ""),
+            (
+                "apps_at_top",
+                tr("All programs button at the start"),
+                tr("Like Launchpad: the first icon opens the list of all programs."),
+            ),
+            ("all_monitors", tr("Dock on every screen"), ""),
+        ):
+            self._check(
+                card,
+                title,
+                desc,
+                getattr(d, attr),
+                lambda on, a=attr: taskbar.set_dock_option(a, on),
+            )
+        self._body.addWidget(card)
+
+    @staticmethod
+    def _check(card: Card, title: str, desc: str, checked: bool, slot) -> None:  # noqa: ANN001
+        cb = QCheckBox(card)
+        cb.setChecked(checked)
+        cb.setAccessibleName(title)
+        cb.toggled.connect(slot)
+        _row(card, title, desc, cb)
+
+    def _build_behaviour(self, s: dict) -> None:
+        """Windows 10 / 11 gibi hizalama, pencere birleştirme, ekranlar, sayı ve ilerleme."""
+        self._section(tr("Behaviour"))
+        card = Card()
+        align = taskbar.alignment(s["elements"])
+        _row(
+            card,
+            tr("Icon alignment"),
+            tr("Start button and app icons together in the middle or on the left."),
+            _segmented(
+                card,
+                [
+                    ("center", tr("Like Windows 11 (centre)")),
+                    ("left", tr("Like Windows 10 (left)")),
+                ],
+                align,
+                taskbar.set_alignment,
+            ),
+        )
+        b: taskbar.Behaviour = s["behaviour"]
+        combine = QComboBox(card)
+        combine.addItem(tr("Always combine, hide names"), True)
+        combine.addItem(tr("Never combine, show names"), False)
+        combine.setCurrentIndex(0 if b.combine else 1)
+        combine.currentIndexChanged.connect(
+            lambda: taskbar.set_behaviour("combine", combine.currentData())
+        )
+        _row(
+            card,
+            tr("Combine taskbar buttons"),
+            tr("Windows of the same program in one button, or each window with its title."),
+            combine,
+        )
+        for attr, title, desc in (
+            ("all_monitors", tr("Show the taskbar on all screens"), ""),
+            (
+                "badge_count",
+                tr("Show counts on app icons"),
+                tr("For example the number of unread e-mails."),
+            ),
+            (
+                "progress_bar",
+                tr("Show progress on app icons"),
+                tr("For example a download or file copy."),
+            ),
+        ):
+            self._check(
+                card, title, desc, getattr(b, attr), lambda on, a=attr: taskbar.set_behaviour(a, on)
+            )
+        self._body.addWidget(card)
+
+    def _build_items(self, s: dict) -> None:
+        """Çubukta hangi öğeler görünsün."""
+        self._section(tr("Items on the taskbar"))
+        card = Card()
+        visible = {e["element"]: e["visible"] for e in s["elements"]}
+        for name, title, desc in (
+            ("showAppsButton", tr("Start button"), tr("Opens the list of all programs.")),
+            ("activitiesButton", tr("Activities"), tr("Shows all open windows and desktops.")),
+            ("dateMenu", tr("Clock and calendar"), ""),
+            ("systemMenu", tr("System icons"), tr("Network, sound, battery and power.")),
+            (
+                "desktopButton",
+                tr("Show desktop corner"),
+                tr("A thin button at the end; click it to minimise all windows."),
+            ),
+        ):
+            self._check(
+                card,
+                title,
+                desc,
+                visible.get(name, True),
+                lambda on, n=name: taskbar.set_element_visible(n, on),
+            )
+        self._check(
+            card,
+            tr("Peek at the desktop"),
+            tr("Pointing at the show desktop corner shows the desktop for a moment."),
+            s["behaviour"].desktop_hover,
+            lambda on: taskbar.set_behaviour("desktop_hover", on),
+        )
+        self._body.addWidget(card)
+
+    def _build_clock(self, s: dict) -> None:
+        self._section(tr("Clock and date"))
+        card = Card()
+        c: taskbar.Clock = s["clock"]
+        for attr, title in (
+            ("date", tr("Show the date")),
+            ("weekday", tr("Show the day of the week")),
+            ("seconds", tr("Show seconds")),
+            ("format24", tr("24-hour clock")),
+        ):
+            self._check(
+                card, title, "", getattr(c, attr), lambda on, a=attr: taskbar.set_clock(a, on)
+            )
+        if s["dtp"] and s["preset"] == "windows" and s["elements"]:
+            _row(
+                card,
+                tr("Clock position"),
+                "",
+                _segmented(
+                    card,
+                    [("right", tr("Right")), ("center", tr("Centre"))],
+                    "center" if taskbar.clock_centered(s["elements"]) else "right",
+                    lambda k: taskbar.set_clock_centered(k == "center"),
+                ),
+            )
+        self._body.addWidget(card)
+
+    def _build_pinned(self, s: dict) -> None:
+        """Görev çubuğuna sabitlenmiş programlar: sırala, çıkar, ekle."""
+        from linwas.backend import app_folders
+        from linwas.ui.app_folder_popup import AppPicker, app_icon
+
+        self._section(tr("Pinned programs"))
+        card = Card()
+        pinned: list[str] = list(s["pinned"])
+        if not pinned:
+            empty = QLabel(tr("No programs are pinned."), card)
+            empty.setObjectName("Secondary")
+            card.layout.addWidget(empty)
+        for i, ref in enumerate(pinned):
+            entry = app_folders.app_entry(ref)
+            row = QHBoxLayout()
+            icon = QLabel(card)
+            icon.setPixmap(app_icon(entry).pixmap(28, 28))
+            row.addWidget(icon)
+            name = QLabel(entry.name if entry else ref, card)
+            row.addWidget(name, 1)
+            for text, tip, delta, enabled in (
+                ("↑", tr("Move left"), -1, i > 0),
+                ("↓", tr("Move right"), 1, i < len(pinned) - 1),
+            ):
+                btn = QPushButton(text, card)
+                btn.setToolTip(tip)
+                btn.setAccessibleName(tip)
+                btn.setEnabled(enabled)
+                btn.clicked.connect(lambda _=False, i=i, d=delta: self._move_pinned(pinned, i, d))
+                row.addWidget(btn)
+            remove = QPushButton(tr("Unpin"), card)
+            remove.clicked.connect(
+                lambda _=False, r=ref: self._save_pinned([p for p in pinned if p != r])
+            )
+            row.addWidget(remove)
+            card.layout.addLayout(row)
+        add = QPushButton(tr("Pin programs…"), card)
+
+        def pick() -> None:
+            picker = AppPicker(set(pinned), self)
+            picker.setWindowTitle(tr("Pin programs"))
+            if picker.exec():
+                self._save_pinned(pinned + picker.selected())
+
+        add.clicked.connect(pick)
+        actions = QHBoxLayout()
+        actions.addWidget(add)
+        actions.addStretch(1)
+        card.layout.addLayout(actions)
+        self._body.addWidget(card)
+
+    def _move_pinned(self, pinned: list[str], i: int, delta: int) -> None:
+        j = i + delta
+        if 0 <= j < len(pinned):
+            pinned = list(pinned)
+            pinned[i], pinned[j] = pinned[j], pinned[i]
+            self._save_pinned(pinned)
+
+    def _save_pinned(self, apps: list[str]) -> None:
+        taskbar.save_pinned(apps)
+        self._refresh()
 
     def _build_media(self) -> None:
         self._section(tr("Media"))

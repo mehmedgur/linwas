@@ -3,7 +3,7 @@
 > **Kural:** Her kodlama aşamasına geçmeden önce Claude bu listeyi okur ve bekleyen fikirleri
 > kullanıcıya hatırlatır.
 
-Son güncelleme: 12 Ekim 2026
+Son güncelleme: 17 Ekim 2026
 
 ## Notlar
 - Kullanıcının Pardus 23 bilgisayarında hem **GNOME** hem **KDE Plasma** oturumu var. Testler
@@ -41,9 +41,29 @@ Son güncelleme: 12 Ekim 2026
   1. [x] C. Klasörler (masaüstü + görev çubuğu, açılır pencere, DING kurulum önerisi). 10 Ekim 2026, deneme bekliyor.
   2. [x] A. Çalışma grupları (GNOME, XFCE, Cinnamon). 10 Ekim 2026, deneme bekliyor.
   3. [x] B. Pencere gruplama eklentisi — GNOME 42–48 kodlandı (10 Ekim 2026), deneme bekliyor; KDE, XFCE sonra.
-  4. [ ] D. Görev çubuğu ayarları: hazır düzen (Windows/macOS gibi), sağ tıkta son dosyalar, saydam/mat/bulanık,
-     konum/boyut/gizleme/önizleme (12 Ekim 2026).
-  5. [ ] E. Klasör renkleri (Nautilus; sağ tık için python3-nautilus eklentisi) (12 Ekim 2026).
+  4. [ ] D. Görev çubuğu ayarları: hazır düzen, saydam/mat/bulanık, konum/boyut/gizleme/önizleme, Windows 10/11
+     hizalama, birleştirme, öğeler, saat/tarih, sabitlenmiş programlar, macOS dock'u — kodlandı (18 Ekim 2026),
+     deneme bekliyor. **Kalan: sağ tıkta son açılan dosyalar.**
+  5. [ ] E. Klasör renkleri (12 Ekim 2026; tanım 18 Ekim 2026):
+     - **Ne:** Dosyalar'da bir klasöre sağ tıklayınca "Klasör rengi" alt menüsü: 8–10 renk + "Varsayılan".
+       Seçilen klasörün simgesi o renkte görünür (macOS etiketleri / Windows'taki renkli klasör
+       uygulamaları gibi). Birden çok klasör seçilince hepsine uygulanır.
+     - **Nasıl:** renk dosya sisteminde değil, klasörün GIO özniteliğinde saklanır:
+       `gio set <klasör> metadata::custom-icon file:///…/folder-<renk>.svg` (kaldırma: `-t unset`).
+       Nautilus 43 ve Nemo bu özniteliği gösterir. Simgeler Linwas'la gelir (`resources/folder-colors/`,
+       tema renklerine yakın, açık/koyu temada okunur SVG; kendimiz çizeriz, lisans sorunu yok).
+       Kullanıcı yetkisi yeter, root yok; klasör taşınırsa öznitelik GIO ile birlikte gider.
+     - **Sağ tık menüsü:** Nautilus için `python3-nautilus` (Pardus 23/Debian 12'de 4.0, depoda
+       doğrulandı) eklentisi `~/.local/share/nautilus-python/extensions/linwas_folder_color.py`;
+       Nemo için `nemo-python` (5.6, depoda var) ile aynı eklenti; XFCE Thunar için `thunarx-python`
+       (0.5.2, depoda var) — Thunar'ın `metadata::custom-icon`'u gösterip göstermediği kodlarken
+       doğrulanacak (göstermiyorsa XFCE'de yalnız Linwas sayfasından ve Thunar'ın kendi "simge" eki).
+       Paket yoksa Linwas kurmayı önerir (kuyruk + `package.install`); eklenti dosyasını kendisi yazar,
+       Dosyalar yeniden başlatılınca (`nautilus -q`) menü gelir.
+     - **Linwas sayfası:** Düzenle › Program klasörleri'nin yanında ya da Kişiselleştirme altında "Klasör
+       renkleri": eklentiyi kur/kaldır, son renklendirilen klasörler listesi, "Bütün renkleri temizle".
+     - **Kararlar (kullanıcı, 18 Ekim 2026):** macOS etiketleri gibi 7 renk — kırmızı, turuncu, sarı,
+       yeşil, mavi, mor, gri (+ Varsayılan); sayfa Kişiselleştirme altında ("Klasör renkleri").
   6. [x] F. Linwas görev çubuğu eklentisi (Dash to Panel üstüne; D buraya katılır) + medya widget'ı
      (görev çubuğu küçük kontrol + takvim menüsü kartı; tema/kapak rengi; saydam/mat/bulanık) —
      kodlandı 13 Ekim 2026, deneme bekliyor. Kalan: sağ tıkta son açılan dosyalar.
@@ -86,6 +106,80 @@ Son güncelleme: 12 Ekim 2026
 - Kodlama özellikleri tamam; kalanlar: kullanıcı denemeleri, yayın öncesi kararlar,
   doğrulanacaklar. (Testler kullanıcı yeni emir verene kadar yazılmıyor.)
 
+- **Hazırda bekletme kurulumu** (fikir 10 Ekim 2026, plan 17 Ekim 2026; kullanıcı "kodlamaya geçelim"
+  deyince). Linux'ta hazırda bekletme yalnızca swap'a yazılır; Windows'taki `hiberfil.sys` gibi Linwas
+  swap dosyasını kendisi kurar. Kullanıcının Pardus'unda durum: swap yok, RAM 23 GB, çekirdek `disk`
+  destekliyor, lockdown `none`, `resume=` yok → eksik yalnızca swap + resume.
+  - **Kapsam:** Güç ve pil › Hazırda bekletme kartında "Hazırda bekletmeyi kur" (destek yoksa ve neden
+    `swap`/`resume` ise). `kernel` ya da `lockdown` (Secure Boot) nedeninde kurulum sunulmaz, neden yazılır.
+    Kurulduktan sonra "Hazırda bekletmeyi kaldır".
+  - **Ön koşul denetimi (backend/hibernate_setup.py, Qt'siz, test edilebilir):** RAM (`MemTotal`), kök
+    dosya sistemi türü (`findmnt -no FSTYPE,UUID /`), boş alan (RAM + 2 GB pay, ayrıca işlemden sonra en az
+    %10 boş kalmalı), mevcut swap (`swapon --show --bytes`; zram ayrı sayılır), lockdown, `CanHibernate`,
+    LUKS (kök şifreliyse initramfs'de cryptsetup var mı), önyükleyici GRUB mu (`/etc/default/grub` var mı;
+    systemd-boot ise şimdilik desteklenmez). Sonuç: `ok` ya da kullanıcıya gösterilecek neden listesi.
+  - **Boyut:** varsayılan RAM kadar (yuvarlanmış GB); kullanıcı en az RAM'in yarısına indirebilir (uyarıyla).
+    Mevcut disk swap'ı yeterliyse dosya oluşturulmaz, yalnızca resume ayarlanır.
+  - **Dosya sistemi:** ext4/xfs: `dd if=/dev/zero` (mkswap(8): bu dosya sistemlerinde fallocate
+    önerilmez) + `chmod 600` + `mkswap`; `resume_offset` = `filefrag -v`
+    çıktısındaki ilk fiziksel blok. btrfs: `btrfs filesystem mkswapfile` ve
+    `btrfs inspect-internal map-swapfile -r` (btrfs-progs ≥ 6.1; Ubuntu 22.04'te 5.16 → desteklenmez,
+    nedeni yazılır). Diğer dosya sistemleri: desteklenmez.
+  - **Kalıcılık:** `/etc/fstab`'a `/swapfile none swap sw 0 0 # linwas-hibernate` (öncelik verilmez:
+    çekirdek eksi öncelik atar, zram (100) önce kullanılır);
+    çekirdek satırı için `/etc/default/grub.d/linwas-hibernate.cfg`
+    (`GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT resume=UUID=<kök UUID> resume_offset=<n>"`);
+    sonra `update-initramfs -u` ve `update-grub`. **Doğrulandı (Pardus 23, initramfs-tools 0.142):** init
+    çekirdek satırındaki `resume=`'i `RESUME`'a, `resume_offset=`'i değişkene alır ve conf.d'deki
+    `RESUME`'u ezer; bu yüzden `/etc/initramfs-tools/conf.d/resume`'a dokunulmaz (kullanıcının
+    makinesinde orada 1 GB'lık etkin olmayan swap LV'si yazılı).
+  - **Root işlemleri (whitelist + helper, `shell=True` yok):** `hibernate.setup` (parametre: `size_gb`, yeni
+    ParamKind tamsayı aralığı 1–256; dosya yolu sabit `/swapfile`, kullanıcıdan alınmaz) ve
+    `hibernate.remove`. Geri alma kaydı yerine işlem içinde geri alma: yarıda hata olursa fstab eski
+    hâline döner, grub.d dosyası ve swap dosyası silinir (fstab geri alma önekleri dışında kalır).
+    Görev sırası: Timeshift kuruluysa `snapshot.timeshift_create` → `hibernate.setup`. Risk: orta (tek onay
+    penceresinde "bilgisayar yeniden başlatılmalı" ve kullanılacak disk alanı yazılır).
+  - **Masaüstü:** GNOME kapatma menüsünde hazırda bekletme düğmesi yok; Güç sayfası seçeneklerinde (uyku
+    yerine, kapak, güç düğmesi, "bir süre uyuduktan sonra hazırda beklet") zaten sunuluyor. Ubuntu'da
+    polkit hazırda bekletmeyi kapatıyorsa (`CanHibernate` = `no`/`challenge`) gerekli polkit kuralı da
+    kurulumun parçası olur — kodlarken doğrulanacak.
+  - **Sonrası:** "Yeniden başlat" düğmesi (`power.schedule_reboot`); yeniden başlayınca kart "Kullanılabilir"
+    der ve "Şimdi dene" düğmesi sunar (açık işlerin kaydedilmesi uyarısıyla `systemctl hibernate`).
+  - **Doğrulanacaklar (resmi belgelerden):** initramfs-tools'un `RESUME` ile birlikte çekirdek satırındaki
+    `resume_offset`'i okuması (Debian 12/13, Ubuntu 22.04/24.04, Pardus 23); Ubuntu polkit varsayılanı;
+    systemd ≥ 255'in EFI `HibernateLocation` ile `resume=` gerektirmemesi (yalnızca bilgi; biz yine yazarız);
+    LUKS'lu kökte uyanma; Secure Boot açık Ubuntu'da lockdown nedeninin doğru gösterilmesi.
+  - **Aşamalar (her biri ayrı commit):**
+    1. [x] `core/hibernate.py` (saf parçalar) + `backend/hibernate_setup.py` (denetim) +
+       `tests/test_hibernate.py` (kodlandı 17 Ekim 2026; testler kullanıcıda çalıştırılacak).
+    2. [x] Root helper: `hibernate.setup` / `hibernate.remove`, işlem içi geri alma, whitelist
+       `SWAP_SIZE_GB` (kodlandı 17 Ekim 2026).
+    3. [x] Arayüz: Hazırda bekletme kartında boyut seçimi, onay, Timeshift adımı, "Şimdi yeniden başlat",
+       "Şimdi hazırda beklet", "Hazırda bekletmeyi kaldır", çeviriler (kodlandı 17 Ekim 2026).
+    4. [ ] Pardus 23 (ext4, GNOME) ve Ubuntu 22.04 sanal makinede deneme; CI kapsayıcılarında `--self-check`.
+- **Eklentiler ve üçüncü taraf eklentiler** (karar 17 Ekim 2026; kararlar.md › Eklenti mimarisi).
+  Aşamalar (her biri ayrı commit):
+  1. [x] **Altyapıyı tamamla** (kodlandı 17 Ekim 2026, deneme bekliyor; ilk açılış kapısı ertelendi, aşağıda): eklenti aç/kapat (ayar dosyasında kapalı eklenti kimlikleri; yerleşik sayfa
+     eklentileri de kapatılabilir, çekirdek sayfalar kapatılamaz); boştaki kapıları bağla: `scan_checks` +
+     `troubleshooting_cards` → Sorun giderme, `guide_entries` → Rehber/arama, `ai_context` → yardımcıya
+     gönderilen sistem bilgisi. Kapı veri yapıları eylem taşıyacak biçimde genişler (sayfaya git, sistem
+     ayarı, görev, bağlantı). Ayarlar › Eklentiler: kart listesi (simge, ad, sürüm, yayıncı, rozet:
+     Yerleşik / Resmi / Katalog / Geliştirici, aç/kapat, hata satırı, "Ayrıntılar"da kapılar ve izinler).
+  2. [x] **Kodsuz eklenti biçimi** (kodlandı 17 Ekim 2026, deneme bekliyor): `core/plugins/declarative.py` (Qt'siz): `manifest.json` şeması (sürüm 1;
+     kimlik, çok dilli ad/açıklama, sürüm, yayıncı, en düşük Linwas sürümü, kapılar), katı doğrulayıcı,
+     eklentilere açık işlemler listesi, izin özeti çıkarma, `DeclarativePlugin` uyarlayıcısı. Kurulum yeri
+     `~/.local/share/linwas/plugins/<kimlik>/`. Geliştirici kipinde yerel dosyadan kurma + izin ekranı.
+     Testler: şema, reddedilen işlem/parametre, izin özeti. İlk örnek: "Topluluk sorun giderme
+     reçeteleri" (yazıcı, ses, Wi-Fi reçeteleri).
+  3. [x] **Katalog ve imza** (kodlandı 17 Ekim 2026, deneme bekliyor; katalog adresi paket derlenirken
+     `LINWAS_APT_URL`'den `/usr/share/linwas/plugin-catalog.json`'a yazılır, imza APT anahtarıyla): imzalı `index.json` (`gpgv --keyring <Linwas eklenti anahtarı>`), dosya
+     SHA-256 denetimi, Ayarlar › Eklentiler › "Eklenti kataloğu" (göz at, kur, güncelle, kaldır), geri
+     çekilen eklentinin kapatılması, yeni izin isteyen güncellemede yeniden onay.
+  4. [ ] **Yayın akışı:** yapılanlar: `packaging/build-plugin-catalog.sh` (+ `build_plugin_catalog.py`),
+     `release.yml` adımı, örnek `packaging/plugin-catalog/plugins/org.linwas.recipes.json`. Kalan: eklenti
+     yazma kılavuzu (`docs/eklenti-yazma.md`), katalog için inceleme süreci, daha çok örnek.
+  5. [ ] **İlk açılış sihirbazı kapısı:** `OnboardingStep` yalnız kimlik/ad taşıyor; içerik biçimi (ör. tek
+     sayfalık bilgi + eylemler) kararlaştırılınca bağlanacak.
 ## Aşama 4'ün en sonunda yapılacaklar (kullanıcı kararı, 6 Ekim 2026)
 - Oyun sekmesi sonraki sürüme ertelendi (kullanıcı kararı, 7 Ekim 2026; bkz. Bekleyen fikirler).
 - [x] **EXE ve Wine:** kodlandı (feat/asama-5-paketleme), kullanıcının denemesi bekleniyor.
@@ -98,7 +192,6 @@ Son güncelleme: 12 Ekim 2026
   sayfaların görsel kontrolü. Commit öncesi mevcut `ruff` + `pytest` çalışmaya devam ediyor.
 
 ## Bekleyen fikirler (sonraki sürümler)
-- [ ] **Hazırda bekletme kurulumu** (10 Ekim 2026): swap dosyası + resume + initramfs/GRUB, Timeshift yedeğiyle. Şimdilik yalnızca destek varsa gösteriliyor.
 - [ ] **Windows sanal makinesi (Microsoft 365)** — 7 Ekim 2026'da askıya alındı (kullanıcı kararı); araştırma
   bitti, sıradaki adım 0b (elle prototip). Ayrıntı: kararlar.md › EXE › Windows sanal makinesi. Başlarken
   lisans kararı da verilecek (IoT LTSC lisansının bireysel kullanıma uygunluğu, perakende seçenek,
@@ -139,12 +232,51 @@ Son güncelleme: 12 Ekim 2026
   - [x] Paket Linwas APT deposunun yayın iş akışında (`release.yml`; sürüm
     `packaging/plugins/office-look/VERSION`). 17 Ekim 2026: yerel imzalı depoyla denendi
     (apt imzayı kabul ediyor, paket listede). Pardus 23'e .deb ile kuruldu.
+  - **Kalanların tanımı (18 Ekim 2026; kullanıcı kararı: 1–6 sırayla, her biri ayrı commit):**
+    1. **İlk açılışta Dosya sekmesi:** "Daha fazla araç"taki hatanın aynısı olması muhtemel — şerit Dosya
+       sekmesinin denetçisini eklentinin yakalayıcısı kurulmadan alıyor. Plan: Xephyr + geçici profille
+       ilk açılışı yeniden üret (bu oturumda kurulan yöntem), XTest ile Dosya sekmesine tıkla; neden
+       doğrulanınca ya sekme komutunu LibreOffice'in kendi komutuna bağla ya da eklenti ilk görünümde
+       şeridi yeniden yükletsin (`.uno:ToolbarMode` aynı moda). Kabul: temiz profilde ilk açılışta
+       Dosya sekmesi menüyü açar.
+    2. **Ubuntu 22.04/24.04 ve Debian 13:** `ribbon.build()` her LibreOffice sürümünün notebookbar.ui'ı
+       ile çalışmalı (7.3 / 24.2 / 24.8 / 25.x). Plan: CI'ya kapsayıcı adımı — ilgili dağıtımda
+       `libreoffice-writer/calc/impress` kurup `build()` + `dangling_size_groups()` + yinelenen kimlik
+       denetimi; bir komut kaynakta yoksa düz düğme yazılır (zaten öyle), sekme kimliği yoksa o
+       uygulama tam şeritte kalır (zaten öyle). Görsel deneme Ubuntu 22.04 sanal makinesinde.
+    3. **Eklenti metinleri yalnız Türkçe:** eklentideki (Dosya menüsü paneli, düğmeler, başlık rozeti)
+       metinler `_t("…")` ile iki dilli tabloya taşınır; dil LibreOffice'in arayüz dilinden
+       (`org.openoffice.Setup/L10N/ooLocale`) okunur, `tr` dışı her dil İngilizce. Şerit etiketleri
+       (`ribbon.py`'deki "Yaz", "Daha fazla araç") da aynı tabloyla, üretim sırasında sistem diline göre.
+    4. **Calc "İşlevler" sekmesi (Excel'deki Formüller):** Ekle sekmesinden sonra yeni sekme; gruplar
+       (komutların hepsi 7.4.7 Calc arayüz dosyalarında doğrulandı): İşlev ekle `.uno:FunctionDialog`,
+       Otomatik toplam `.uno:AutoSum` · Adlar: `.uno:DefineName`, `.uno:AddName`, `.uno:InsertName` ·
+       Formül denetimi: `.uno:ShowPrecedents`, `.uno:ShowDependents`, `.uno:ClearArrows`,
+       `.uno:ShowErrors`, `.uno:ToggleFormula` (formülleri göster) · Hesapla: `.uno:Calculate`,
+       `.uno:CalculateHard`. Excel'deki kategori düğmeleri (Mali, Mantıksal, Metin…) LibreOffice'te tek
+       komut olarak yok; "İşlev ekle" penceresi kategoriyle açılır.
+    5. **İlk açılış ipucu paneli:** sade şeritle ilk açılışta (kullanıcı başına bir kez) küçük bir
+       pencere: "Şerit Word/Excel'deki gibi; tüm araçlar için Daha fazla araç; eski menüler için
+       Görünüm › Kullanıcı Arayüzü". "Bir daha gösterme" ayar dosyasına yazılır.
+       **Karar (kullanıcı):** evet, kullanıcı başına bir kez.
+    6. **Impress "Giriş" sekmesi ONLYOFFICE düzeninde:** Pano · Slayt (`.uno:InsertSlide`,
+       `.uno:DuplicateSlide`, `.uno:DeleteSlide`, `.uno:AssignLayout`) · Yazı (yazı tipi, boyut, Büyüt,
+       Küçült / K, T, A, üstü çizili, gölge `.uno:Shadowed`, renk, vurgu) · Paragraf (madde, numara /
+       hizalamalar, satır aralığı) · Ekle (`.uno:Text`, `.uno:BasicShapes`, `.uno:InsertGraphic`,
+       `.uno:InsertTable`) · Gösteri (`.uno:Presentation`, `.uno:PresentationCurrentSlide`) · Bul ·
+       Daha fazla araç. Komutlar 7.4.7 Impress notebookbar.ui'da doğrulandı.
   - [ ] Bilinen sınır: paket kurulduktan sonra LibreOffice'in **ilk** açılışında (paket eklentisi
     o sırada kullanıcıya kaydediliyor) Dosya sekmesi menüyü açmıyor; ikinci açılıştan itibaren
     açıyor. Dosya düğmesi ve kısayollar ilk açılışta da çalışıyor.
   - [ ] Ubuntu 22.04/24.04 ve Debian 13'te (LibreOffice 7.3 / 24.x) sade şerit üretimini denemek.
   - [ ] LibreOffice eklentisinin arayüz metinleri yalnız Türkçe; İngilizce karşılıklar.
   - [ ] Calc tasarımındaki "İşlevler" sekmesi ve ilk açılış ipucu paneli.
+  - [ ] Writer "Yaz" sekmesi ONLYOFFICE düzeninde (0.5.0, 18 Ekim 2026; grup adsız, ayırıcılı, iki sıra
+    simge) — kodlandı. Calc "Tablo" da aynı düzende (Xephyr'de görüldü); Impress "Giriş" sırada.
+  - [x] Calc'ta "Daha fazla araç" çalışmıyordu → düğme doğrudan tam şeride geçme komutunu çalıştırıyor.
+  - [x] Excel uyumu: Calc formül yazımı Excel A1 (`Sayfa1!A1`).
+  - [x] Uygulama adlarında Office karşılığı: menü, arama ve pencere başlığında "LibreOffice Writer (Word)"
+    (kullanıcıya özel .desktop kopyası; Office görünümü sayfasında aç/kapat). Görsel deneme bekliyor.
 - [ ] **Windows Uygulamaları eklentisi:** Wine tabanlı ayrı alan. Bottles gibi mevcut açık kaynak
   araçlarla entegrasyon araştırılacak. Mevcut EXE/Wine desteği buraya taşınabilir.
 - [ ] **KDE desteği** (masaüstü eklentisi). Kullanıcının bilgisayarında KDE oturumu olduğu için
@@ -152,8 +284,6 @@ Son güncelleme: 12 Ekim 2026
 - [ ] **Yeni AI sağlayıcıları:** Claude, internetsiz yerel model.
 - [ ] **Başka dağıtım aileleri:** Fedora (dnf), Arch (pacman) için paket yöneticisi eklentileri.
 - [ ] **Okul / kurum paketi** (ör. Pardus kullanan okul laboratuvarları için toplu ayar ve kısıtlama).
-- [ ] **Topluluk sorun giderme reçeteleri** (eklenti olarak).
-- [ ] **Üçüncü taraf eklentiler:** kendi imza sistemi + izin ekranı.
 
 ## Yayın öncesi yapılacaklar (2.0)
 - [ ] Lisans kararı (GPL-3.0 önerildi).

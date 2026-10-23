@@ -30,8 +30,30 @@ def build_context() -> str:
         f"Architecture: {platform.machine()}",
     ]
 
+    lines += _plugin_context()
     raw = "\n".join(lines)
     return sanitize(raw)
+
+
+def _plugin_context() -> list[str]:
+    """Etkin eklentilerin AI bağlamı (ör. donanım özeti); her eklenti bir satır JSON."""
+    import json
+
+    from linwas.core.plugins.loader import active
+
+    loader = active()
+    if loader is None:
+        return []
+    out = []
+    for plugin in loader.plugins():
+        try:
+            data = plugin.ai_context()
+        except Exception:  # bozuk eklenti yardımcıyı durdurmasın
+            continue
+        if data:
+            text = json.dumps(data, ensure_ascii=False, default=str)[:4000]
+            out.append(f"{plugin.meta.name}: {text}")
+    return out
 
 
 def build_system_prompt(include_operations: bool = True) -> str:

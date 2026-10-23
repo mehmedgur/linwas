@@ -286,11 +286,33 @@ def launch(entry: AppEntry) -> bool:
 # --- Kısayollar ---
 
 
+# Kısayolların kullandığı komut satırı seçenekleri (linwas/app.py)
+_LAUNCHER_OPTIONS = ("--app-folder", "--open-group", "--workgroups-agent")
+
+
+def installed_is_current() -> bool:
+    """Kurulu paket kısayol seçeneklerinin hepsini biliyor mu (eski paket ana pencereyi açar)."""
+    if not INSTALLED_LINWAS.is_file():
+        return False
+    for app in INSTALLED_ROOT.glob("runtime/lib/python3*/site-packages/linwas/app.py"):
+        try:
+            text = app.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        return all(option in text for option in _LAUNCHER_OPTIONS)
+    return False
+
+
 def exec_command() -> list[str]:
-    """Şu an çalışan Linwas'ı başlatan komut. Kaynak koddan çalışırken kurulu (belki eski)
-    paket çağrılmaz; yoksa eski sürüm yeni seçenekleri bilmeyip ana pencereyi açar."""
+    """Kısayolların Linwas'ı başlatma komutu.
+
+    Kurulu paket yeterince yeniyse her zaman o kullanılır (kaynak koddan çalışırken yazılan
+    kısayollar da paket kurulunca geliştirici klasörüne bağlı kalmasın); değilse çalışan kopya.
+    """
     root = Path(__file__).resolve().parents[2]
-    if INSTALLED_LINWAS.is_file() and root.is_relative_to(INSTALLED_ROOT):
+    if installed_is_current() or (
+        INSTALLED_LINWAS.is_file() and root.is_relative_to(INSTALLED_ROOT)
+    ):
         return [str(INSTALLED_LINWAS)]
     return ["/usr/bin/env", f"PYTHONPATH={root}", sys.executable, "-m", "linwas"]
 

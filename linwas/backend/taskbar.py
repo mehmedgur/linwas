@@ -18,7 +18,7 @@ import re
 from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
 
-from linwas.backend import app_folders, window_groups, workgroups
+from linwas.backend import app_folders, appearance, window_groups, workgroups
 
 EXT_UUID = "linwas-taskbar@linwas"
 DTP_UUID = window_groups.DTP_UUID
@@ -242,6 +242,305 @@ def set_previews(on: bool) -> bool:
     return dtp_set("show-window-previews", "true" if on else "false")
 
 
+# --- Görev çubuğu öğeleri ve hizalama (Dash to Panel "panel-element-positions") ---
+# Biçim (dash-to-panel panelPositions.js, GNOME 43 sürümünde doğrulandı): {"<ekran>": [{"element",
+# "visible", "position"}, ...]}; yer: stackedTL (sol/üst), stackedBR (sağ/alt), centerMonitor.
+
+ELEMENTS = (
+    "showAppsButton",
+    "activitiesButton",
+    "leftBox",
+    "taskbar",
+    "centerBox",
+    "rightBox",
+    "dateMenu",
+    "systemMenu",
+    "desktopButton",
+)
+# Kullanıcının açıp kapatabildiği öğeler
+TOGGLEABLE = ("showAppsButton", "activitiesButton", "dateMenu", "systemMenu", "desktopButton")
+_DEFAULT_ELEMENTS = [
+    {"element": "showAppsButton", "visible": True, "position": "stackedTL"},
+    {"element": "activitiesButton", "visible": False, "position": "stackedTL"},
+    {"element": "leftBox", "visible": True, "position": "stackedTL"},
+    {"element": "taskbar", "visible": True, "position": "stackedTL"},
+    {"element": "centerBox", "visible": True, "position": "stackedBR"},
+    {"element": "rightBox", "visible": True, "position": "stackedBR"},
+    {"element": "dateMenu", "visible": True, "position": "stackedBR"},
+    {"element": "systemMenu", "visible": True, "position": "stackedBR"},
+    {"element": "desktopButton", "visible": True, "position": "stackedBR"},
+]
+_CENTER = "centerMonitor"
+_LEFT = "stackedTL"
+_RIGHT = "stackedBR"
+
+
+def read_elements() -> list[dict]:
+    """İlk ekranın öğe listesi (yoksa Dash to Panel varsayılanı); bilinmeyen öğeler atlanır."""
+    raw = _json_setting("panel-element-positions").get(_monitors()[0])
+    if not isinstance(raw, list):
+        return [dict(e) for e in _DEFAULT_ELEMENTS]
+    items = [e for e in raw if isinstance(e, dict) and e.get("element") in ELEMENTS]
+    names = {e["element"] for e in items}
+    # Eksik öğe varsa varsayılan yerinde eklenir (sıra korunur)
+    for default in _DEFAULT_ELEMENTS:
+        if default["element"] not in names:
+            items.append(dict(default))
+    return items
+
+
+def write_elements(elements: list[dict]) -> bool:
+    value = _json_setting("panel-element-positions")
+    for m in _monitors():
+        value[m] = [dict(e) for e in elements]
+    return _set_json("panel-element-positions", value)
+
+
+def _element(elements: list[dict], name: str) -> dict:
+    return next(e for e in elements if e["element"] == name)
+
+
+def set_element_visible(name: str, visible: bool) -> bool:
+    if name not in TOGGLEABLE:
+        return False
+    elements = read_elements()
+    _element(elements, name)["visible"] = visible
+    return write_elements(elements)
+
+
+def alignment(elements: list[dict] | None = None) -> str:
+    """ "center" (Windows 11: Başlat ve simgeler ortada) ya da "left" (Windows 10)."""
+    elements = elements or read_elements()
+    return "center" if _element(elements, "taskbar")["position"] == _CENTER else "left"
+
+
+def set_alignment(mode: str) -> bool:
+    """Başlat düğmesi ve simgeler birlikte ortaya ya da sola."""
+    if mode not in ("center", "left"):
+        return False
+    elements = read_elements()
+    position = _CENTER if mode == "center" else _LEFT
+    for name in ("showAppsButton", "taskbar"):
+        _element(elements, name)["position"] = position
+    return write_elements(elements)
+
+
+def clock_centered(elements: list[dict] | None = None) -> bool:
+    elements = elements or read_elements()
+    return _element(elements, "dateMenu")["position"] == _CENTER
+
+
+def set_clock_centered(on: bool) -> bool:
+    elements = read_elements()
+    _element(elements, "dateMenu")["position"] = _CENTER if on else _RIGHT
+    return write_elements(elements)
+
+
+# --- Davranış (Dash to Panel anahtarları, şemada doğrulandı) ---
+
+BEHAVIOUR_KEYS = {
+    "combine": "group-apps",  # aynı programın pencereleri tek düğmede
+    "all_monitors": "multi-monitors",  # her ekranda görev çubuğu
+    "badge_count": "progress-show-count",  # simgede bildirim sayısı
+    "progress_bar": "progress-show-bar",  # simgede indirme/kopyalama ilerlemesi
+    "desktop_hover": "show-showdesktop-hover",  # köşeye gelince masaüstünü göster
+}
+
+
+@dataclass
+class Behaviour:
+    combine: bool = True
+    all_monitors: bool = True
+    badge_count: bool = True
+    progress_bar: bool = True
+    desktop_hover: bool = False
+
+
+def read_behaviour() -> Behaviour:
+    b = Behaviour()
+    for attr, key in BEHAVIOUR_KEYS.items():
+        value = dtp_get(key)
+        if value in ("true", "false"):
+            setattr(b, attr, value == "true")
+    return b
+
+
+def set_behaviour(attr: str, on: bool) -> bool:
+    key = BEHAVIOUR_KEYS.get(attr)
+    return bool(key) and dtp_set(key, "true" if on else "false")
+
+
+# --- Saat ve tarih (GNOME: org.gnome.desktop.interface) ---
+
+CLOCK_SCHEMA = "org.gnome.desktop.interface"
+CLOCK_KEYS = {
+    "date": "clock-show-date",
+    "weekday": "clock-show-weekday",
+    "seconds": "clock-show-seconds",
+}
+
+
+@dataclass
+class Clock:
+    date: bool = True
+    weekday: bool = False
+    seconds: bool = False
+    format24: bool = True
+
+
+def read_clock() -> Clock:
+    c = Clock()
+    for attr, key in CLOCK_KEYS.items():
+        code, out = workgroups._gs("get", CLOCK_SCHEMA, key)
+        if code == 0 and out.strip() in ("true", "false"):
+            setattr(c, attr, out.strip() == "true")
+    code, out = workgroups._gs("get", CLOCK_SCHEMA, "clock-format")
+    if code == 0:
+        c.format24 = out.strip().strip("'") != "12h"
+    return c
+
+
+def set_clock(attr: str, on: bool) -> bool:
+    if attr == "format24":
+        return workgroups._gs("set", CLOCK_SCHEMA, "clock-format", "24h" if on else "12h")[0] == 0
+    key = CLOCK_KEYS.get(attr)
+    return bool(key) and workgroups._gs("set", CLOCK_SCHEMA, key, "true" if on else "false")[0] == 0
+
+
+# --- Sabitlenmiş programlar (GNOME "favorite-apps"; Dash to Panel de bunu gösterir) ---
+
+
+def read_pinned() -> list[str]:
+    code, out = workgroups._gs("get", "org.gnome.shell", "favorite-apps")
+    return workgroups._parse_strv(out) if code == 0 else []
+
+
+def save_pinned(apps: list[str]) -> bool:
+    clean = [a for a in dict.fromkeys(apps) if a.endswith(".desktop") and "/" not in a]
+    return (
+        workgroups._gs("set", "org.gnome.shell", "favorite-apps", workgroups._strv(clean))[0] == 0
+    )
+
+
+# --- Dock (macOS düzeni; Dash to Dock anahtarları Pardus 23 şemasında doğrulandı) ---
+
+DOCK_KEYS = {
+    "position": "dock-position",
+    "icon_size": "dash-max-icon-size",
+    "fixed": "dock-fixed",
+    "autohide": "autohide",
+    "intellihide": "intellihide",
+    "trash": "show-trash",
+    "mounts": "show-mounts",
+    "indicator": "running-indicator-style",
+    "click": "click-action",
+    "apps_at_top": "show-apps-at-top",
+    "counter": "show-icons-notifications-counter",
+    "all_monitors": "multi-monitor",
+    "transparency": "transparency-mode",
+    "extend": "extend-height",
+}
+MACOS_DOCK = {
+    "dock-position": "'BOTTOM'",
+    "extend-height": "false",
+    "running-indicator-style": "'DOTS'",
+    "click-action": "'focus-or-previews'",
+    "show-apps-at-top": "true",
+    "show-trash": "true",
+    "show-mounts": "true",
+    "transparency-mode": "'DYNAMIC'",
+}
+DOCK_POSITIONS = ("BOTTOM", "LEFT", "RIGHT")
+DOCK_ICON_RANGE = (24, 64)
+DOCK_VISIBILITY = ("always", "intellihide", "autohide")
+
+
+def dock_get(key: str) -> str | None:
+    code, out = _gsettings(_schema_dir("dash-to-dock@"), "get", DOCK_SCHEMA, key)
+    return out.strip() if code == 0 else None
+
+
+def dock_set(key: str, value: str) -> bool:
+    if key not in DOCK_KEYS.values():
+        return False
+    code, _ = _gsettings(_schema_dir("dash-to-dock@"), "set", DOCK_SCHEMA, key, value)
+    return code == 0
+
+
+@dataclass
+class Dock:
+    position: str = "BOTTOM"
+    icon_size: int = 48
+    visibility: str = "always"
+    trash: bool = True
+    mounts: bool = True
+    dots: bool = True
+    counter: bool = True
+    apps_at_top: bool = True
+    all_monitors: bool = False
+
+
+def read_dock() -> Dock:
+    d = Dock()
+    pos = (dock_get("dock-position") or "").strip("'")
+    if pos in DOCK_POSITIONS:
+        d.position = pos
+    size = dock_get("dash-max-icon-size") or ""
+    if size.isdigit():
+        d.icon_size = int(size)
+    if dock_get("dock-fixed") == "true":
+        d.visibility = "always"
+    elif dock_get("intellihide") == "true":
+        d.visibility = "intellihide"
+    else:
+        d.visibility = "autohide"
+    for attr, key in (
+        ("trash", "show-trash"),
+        ("mounts", "show-mounts"),
+        ("counter", "show-icons-notifications-counter"),
+        ("apps_at_top", "show-apps-at-top"),
+        ("all_monitors", "multi-monitor"),
+    ):
+        value = dock_get(key)
+        if value in ("true", "false"):
+            setattr(d, attr, value == "true")
+    d.dots = (dock_get("running-indicator-style") or "").strip("'") == "DOTS"
+    return d
+
+
+def set_dock_position(position: str) -> bool:
+    return position in DOCK_POSITIONS and dock_set("dock-position", f"'{position}'")
+
+
+def set_dock_icon_size(size: int) -> bool:
+    size = max(DOCK_ICON_RANGE[0], min(DOCK_ICON_RANGE[1], size))
+    return dock_set("dash-max-icon-size", str(size))
+
+
+def set_dock_visibility(mode: str) -> bool:
+    """always: hep görünür · intellihide: pencere üstüne gelince gizlenir · autohide: hep gizli."""
+    if mode not in DOCK_VISIBILITY:
+        return False
+    fixed = mode == "always"
+    ok = dock_set("dock-fixed", "true" if fixed else "false")
+    ok &= dock_set("autohide", "false" if fixed else "true")
+    ok &= dock_set("intellihide", "true" if mode == "intellihide" else "false")
+    return ok
+
+
+def set_dock_option(attr: str, on: bool) -> bool:
+    if attr == "dots":
+        return dock_set("running-indicator-style", "'DOTS'" if on else "'DEFAULT'")
+    key = {
+        "trash": "show-trash",
+        "mounts": "show-mounts",
+        "counter": "show-icons-notifications-counter",
+        "apps_at_top": "show-apps-at-top",
+        "all_monitors": "multi-monitor",
+    }.get(attr)
+    return bool(key) and dock_set(key, "true" if on else "false")
+
+
 # --- Eklentileri açma/kapatma ---
 
 
@@ -276,6 +575,8 @@ def _save_before() -> None:
     snap = {
         "enabled": _enabled_extensions(),
         "dtp": {k: dtp_get(k) for k in ("panel-position", "panel-size")},
+        "buttons": appearance.get("gnome", "buttons") or "",
+        "dock": {k: dock_get(k) for k in DOCK_KEYS.values()} if dock_uuid() else {},
     }
     try:
         _before_file().parent.mkdir(parents=True, exist_ok=True)
@@ -302,6 +603,12 @@ def restore_previous() -> bool:
     for key, value in (snap.get("dtp") or {}).items():
         if key in ("panel-position", "panel-size") and isinstance(value, str) and value:
             dtp_set(key, value)
+    buttons = snap.get("buttons")
+    if isinstance(buttons, str) and buttons and ";" not in buttons:
+        appearance.set_value("gnome", "buttons", buttons)
+    for key, value in (snap.get("dock") or {}).items():
+        if key in DOCK_KEYS.values() and isinstance(value, str) and value:
+            dock_set(key, value)
     _before_file().unlink(missing_ok=True)
     return True
 
@@ -345,17 +652,25 @@ def apply_preset(name: str) -> str:
             set_extension_enabled(dock, False)
             return "restart"
         set_extension_enabled(DTP_UUID, False)
-        schema = _schema_dir("dash-to-dock@")
-        for key, value in (
-            ("dock-position", "'BOTTOM'"),
-            ("extend-height", "false"),
-            ("dock-fixed", "false"),
-        ):
-            _gsettings(schema, "set", DOCK_SCHEMA, key, value)  # anahtar yoksa yok sayılır
+        # macOS dock'u (kullanıcı kararı 18 Ekim 2026): altta, ortada, hep görünür; çalışan
+        # programda nokta, tıklayınca öne getir; Launchpad başta; çöp kutusu ve sürücüler dock'ta.
+        for key, value in MACOS_DOCK.items():
+            dock_set(key, value)  # anahtar yoksa (eski sürüm) yok sayılır
+        set_dock_visibility("always")
+        appearance.set_value("gnome", "buttons", appearance.MACOS_BUTTON_LAYOUT)
     else:
         set_extension_enabled(DTP_UUID, False)
         if dock:
             set_extension_enabled(dock, False)
+    # macOS düzeninden çıkarken solda kalan pencere düğmeleri düzenin yerine döner
+    if name != "macos" and appearance.get("gnome", "buttons") == appearance.MACOS_BUTTON_LAYOUT:
+        appearance.set_value(
+            "gnome",
+            "buttons",
+            appearance.WINDOWS_BUTTON_LAYOUT
+            if name == "windows"
+            else appearance.GNOME_BUTTON_LAYOUT,
+        )
     return "ok"
 
 

@@ -11,6 +11,8 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from linwas.ui.widgets.fit import fit_width
+
 
 def tr(text: str) -> str:
     return QCoreApplication.translate("StatusBar", text)
@@ -55,7 +57,7 @@ class StatusBar(QWidget):
         self._apply_btn = QPushButton(tr("Apply"), self)
         self._apply_btn.setProperty("primary", True)
         self._apply_btn.setEnabled(False)
-        self._apply_btn.setFixedWidth(150)
+        fit_width(self._apply_btn, tr("Apply"), tr("Apply ({n})").format(n=99))
         # Yalnızca kuyrukta bekleyen görev varken görünür
         self._apply_btn.setVisible(False)
         self._apply_btn.clicked.connect(self.apply_clicked)

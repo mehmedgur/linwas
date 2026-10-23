@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 import os
 import re
-from dataclasses import asdict, dataclass, fields
+from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
 
 THEMES = ("system", "light", "dark", "high_contrast")
@@ -43,6 +43,8 @@ class AppSettings:
     send_errors_to_ai: str = "ask"
     onboarding_done: bool = False
     exe_handler_set: bool = False  # .exe/.msi varsayılan uygulaması bir kez Linwas yapıldı
+    deb_handler_set: bool = False  # .deb varsayılan uygulaması bir kez Linwas yapıldı
+    deb_handler_previous: str = ""  # Linwas'tan önceki .deb uygulaması (geri dönmek için)
     # Bildirimler ve başlangıç
     autostart: bool = True  # oturum açılınca arka planda başla
     notify_updates: bool = True
@@ -58,6 +60,10 @@ class AppSettings:
     # Gelişmiş (teknik) ayarlar
     show_details: bool = False  # görev penceresinde komut çıktısı baştan açık
     debug_log: bool = False  # ayrıntılı günlük dosyası
+    # Eklentiler: kapatılan eklenti kimlikleri (Ayarlar › Eklentiler)
+    disabled_plugins: list[str] = field(default_factory=list)
+    # İmzasız yerel eklenti dosyası kurulabilsin (varsayılan kapalı)
+    plugin_developer_mode: bool = False
 
     @property
     def ask_on_close(self) -> bool:
@@ -80,6 +86,10 @@ _CHOICES = {
 }
 
 
+_DESKTOP_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._+-]*\.desktop$")
+_PLUGIN_ID = re.compile(r"^[a-z0-9][a-z0-9._-]{1,63}$")
+
+
 def from_dict(data: dict) -> AppSettings:
     """Doğrulanmış ayarlar; geçersiz ya da eksik alanlar varsayılan kalır."""
     s = AppSettings()
@@ -89,6 +99,14 @@ def from_dict(data: dict) -> AppSettings:
         if f.name in _CHOICES:
             if value in _CHOICES[f.name]:
                 setattr(s, f.name, value)
+        elif f.name == "deb_handler_previous":
+            if isinstance(value, str) and (value == "" or _DESKTOP_ID.match(value)):
+                s.deb_handler_previous = value
+        elif f.name == "disabled_plugins":
+            if isinstance(value, list):
+                s.disabled_plugins = sorted(
+                    {v for v in value if isinstance(v, str) and _PLUGIN_ID.match(v)}
+                )
         elif isinstance(default, bool):
             if isinstance(value, bool):
                 setattr(s, f.name, value)

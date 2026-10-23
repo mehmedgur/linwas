@@ -9,8 +9,10 @@ from __future__ import annotations
 
 import os
 import re
+import shutil
 import subprocess
 from dataclasses import dataclass
+from pathlib import Path
 
 # --- Yardımcılar ---
 
@@ -75,6 +77,7 @@ class WifiNetwork:
     security: str  # "WPA2", "WPA1", "OWE", "" (açık)
     active: bool
     bssid: str
+    saved: bool = False  # bu ağ için kayıtlı bağlantı var (şifre yeniden sorulmaz)
 
     @property
     def quality(self) -> str:
@@ -99,6 +102,7 @@ class WifiStatus:
     ssid: str  # bağlı ağ adı; bağlı değilse ""
     device: str  # ör. "wlan0"
     signal: int = 0  # bağlı ağın sinyali (0-100)
+    ip: str = ""  # bağlı ağdaki IPv4 adresi (ör. "192.168.1.5")
 
 
 def wifi_status() -> WifiStatus:
@@ -125,10 +129,23 @@ def wifi_status() -> WifiStatus:
             break
 
     signal = 0
+    ip = ""
     if connected:
         active = next((n for n in wifi_list(rescan=False) if n.active), None)
         signal = active.signal if active else 0
-    return WifiStatus(enabled=enabled, connected=connected, ssid=ssid, device=device, signal=signal)
+        ip = parse_ip4(_nmcli("-t", "-f", "IP4.ADDRESS", "device", "show", device))
+    return WifiStatus(
+        enabled=enabled, connected=connected, ssid=ssid, device=device, signal=signal, ip=ip
+    )
+
+
+def parse_ip4(out: str) -> str:
+    """`nmcli -t -f IP4.ADDRESS device show DEV` → ilk adres, önek uzunluğu olmadan."""
+    for line in out.splitlines():
+        _, sep, value = line.partition(":")
+        if sep and value.strip():
+            return value.strip().split("/")[0]
+    return ""
 
 
 def parse_wifi_list(out: str) -> list[WifiNetwork]:
@@ -166,14 +183,29 @@ def wifi_list(rescan: bool = True) -> list[WifiNetwork]:
     args = ["-t", "-f", "ACTIVE,BSSID,SSID,SIGNAL,SECURITY", "device", "wifi", "list"]
     if not rescan:
         args += ["--rescan", "no"]
-    return parse_wifi_list(_nmcli(*args, timeout=30))
+    nets = parse_wifi_list(_nmcli(*args, timeout=30))
+    saved = set(wifi_saved_connections())
+    for net in nets:
+        net.saved = net.ssid in saved
+    return nets
 
 
-def wifi_connect(ssid: str, password: str = "") -> tuple[bool, str]:
-    """Wi-Fi ağına bağlanır. (başarılı, hata_mesajı) döner."""
+def wifi_connect(
+    ssid: str, password: str = "", saved: bool = False, hidden: bool = False
+) -> tuple[bool, str]:
+    """Wi-Fi ağına bağlanır. (başarılı, hata_mesajı) döner.
+
+    Kayıtlı ağda kayıtlı bağlantı açılır (yeni, yinelenen bağlantı oluşmaz).
+    """
+    if saved and not password:
+        code, out = _run_rc(["nmcli", "connection", "up", "id", ssid], timeout=45)
+        if code == 0:
+            return True, ""
     cmd = ["nmcli", "device", "wifi", "connect", ssid]
     if password:
         cmd += ["password", password]
+    if hidden:
+        cmd += ["hidden", "yes"]
     code, out = _run_rc(cmd, timeout=45)
     return (True, "") if code == 0 else (False, out)
 
@@ -187,8 +219,7 @@ def wifi_disconnect() -> bool:
 
 
 def wifi_set_enabled(enabled: bool) -> bool:
-    out, _ = _run(["nmcli", "radio", "wifi", "on" if enabled else "off"])
-    return True  # nmcli hata kodu yerine stderr'e yazar
+    return _run_rc(["nmcli", "radio", "wifi", "on" if enabled else "off"])[0] == 0
 
 
 def wifi_saved_connections() -> list[str]:
@@ -234,8 +265,25 @@ _RE_MAC = re.compile(r"^[0-9A-F]{2}(:[0-9A-F]{2}){5}$")
 
 
 def bluetooth_enabled() -> bool:
-    out, _ = _run(["rfkill", "list", "bluetooth"])
-    return "Soft blocked: yes" not in out
+    return bluetooth_state() == "on"
+
+
+def parse_rfkill(out: str) -> str:
+    """`rfkill list bluetooth` → "missing" (aygıt yok) | "blocked" (donanım anahtarı kapalı)
+    | "off" | "on"."""
+    if not out.strip():
+        return "missing"
+    if "Hard blocked: yes" in out:
+        return "blocked"
+    return "off" if "Soft blocked: yes" in out else "on"
+
+
+def bluetooth_state() -> str:
+    if shutil.which("rfkill") is None:
+        # rfkill kurulu değilse (bazı Debian kurulumları) yalnızca aygıtın varlığına bakılır
+        sysfs = Path("/sys/class/bluetooth")
+        return "on" if sysfs.is_dir() and any(sysfs.iterdir()) else "missing"
+    return parse_rfkill(_run(["rfkill", "list", "bluetooth"])[0])
 
 
 def bluetooth_set_enabled(enabled: bool) -> bool:

@@ -714,6 +714,35 @@ def launcher_path(group: WorkGroup) -> Path:
     return app_folders.user_apps_dir() / f"linwas-group-{group.id}.desktop"
 
 
+def refresh_launchers() -> None:
+    """Komutu eskimiş grup kısayollarını ve X11 ajanının autostart dosyasını yeniden yazar
+    (ör. kaynak koddan çalışırken yazılmış, sonra paket kurulmuş)."""
+    cmd = " ".join(app_folders._quote(a) for a in app_folders.exec_command())
+    stale = False
+    for path in app_folders.user_apps_dir().glob("linwas-group-*.desktop"):
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        if f"Exec={cmd} --open-group " not in text:
+            stale = True
+            break
+    if stale:
+        write_launchers(load_groups())
+    agent = _autostart_dir() / AGENT_AUTOSTART
+    try:
+        text = agent.read_text(encoding="utf-8")
+    except OSError:
+        return
+    exec_line = f"Exec={cmd} --workgroups-agent\n"
+    if exec_line not in text:
+        lines = [
+            exec_line if line.startswith("Exec=") else line
+            for line in text.splitlines(keepends=True)
+        ]
+        agent.write_text("".join(lines), encoding="utf-8")
+
+
 def write_launchers(groups: list[WorkGroup]) -> None:
     folder = app_folders.user_apps_dir()
     folder.mkdir(parents=True, exist_ok=True)

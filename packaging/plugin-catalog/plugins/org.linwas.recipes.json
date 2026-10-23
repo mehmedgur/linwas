@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "id": "org.linwas.recipes",
+  "version": "1.0.0",
+  "publisher": "Linwas",
+  "name": {"en": "Community troubleshooting recipes", "tr": "Topluluk sorun giderme reçeteleri"},
+  "description": {
+    "en": "Extra checks and fixes for printers, scanners and office documents.",
+    "tr": "Yazıcı, tarayıcı ve ofis belgeleri için ek denetimler ve çözümler."
+  },
+  "checks": [
+    {
+      "id": "printing-installed",
+      "ok": {"en": "The printing system is installed", "tr": "Yazdırma sistemi kurulu"},
+      "problem": {"en": "The printing system is not installed", "tr": "Yazdırma sistemi kurulu değil"},
+      "test": {"type": "command_exists", "command": "lpstat"},
+      "fixes": [
+        {
+          "label": {"en": "Install printing", "tr": "Yazdırmayı kur"},
+          "task": [{"op": "package.install", "params": {"name": "cups"}}]
+        }
+      ]
+    },
+    {
+      "id": "office-fonts",
+      "ok": {"en": "Word-compatible fonts are installed", "tr": "Word ile uyumlu yazı tipleri kurulu"},
+      "problem": {
+        "en": "Word documents may look different (Calibri-compatible font missing)",
+        "tr": "Word belgeleri farklı görünebilir (Calibri uyumlu yazı tipi yok)"
+      },
+      "test": {"type": "package_installed", "package": "fonts-crosextra-carlito"},
+      "fixes": [
+        {
+          "label": {"en": "Install the font", "tr": "Yazı tipini kur"},
+          "task": [{"op": "package.install", "params": {"name": "fonts-crosextra-carlito"}}]
+        }
+      ]
+    },
+    {
+      "id": "var-space",
+      "ok": {"en": "Enough space for downloads and updates", "tr": "İndirme ve güncellemeler için yer var"},
+      "problem": {"en": "Little space left for updates", "tr": "Güncellemeler için az yer kaldı"},
+      "test": {"type": "disk_free", "path": "/var", "min_gb": 2},
+      "fixes": [{"label": {"en": "Free up space", "tr": "Yer aç"}, "page": "cleanup"}]
+    }
+  ],
+  "troubleshooting": [
+    {
+      "id": "scanner",
+      "title": {"en": "Scanner isn't found", "tr": "Tarayıcı bulunmuyor"},
+      "description": {
+        "en": "Most network and USB scanners work with the driverless scanning package.",
+        "tr": "Çoğu ağ ve USB tarayıcı sürücüsüz tarama paketiyle çalışır."
+      },
+      "actions": [
+        {
+          "label": {"en": "Install driverless scanning", "tr": "Sürücüsüz taramayı kur"},
+          "task": [
+            {"op": "package.install", "params": {"name": "sane-airscan"}},
+            {"op": "package.install", "params": {"name": "ipp-usb"}}
+          ]
+        },
+        {"label": {"en": "Devices", "tr": "Aygıtlar"}, "page": "hardware"}
+      ]
+    },
+    {
+      "id": "hp-printer",
+      "title": {"en": "HP printer doesn't work", "tr": "HP yazıcı çalışmıyor"},
+      "description": {
+        "en": "Older HP printers need HP's own Linux driver package.",
+        "tr": "Eski HP yazıcılar HP'nin Linux sürücü paketine ihtiyaç duyar."
+      },
+      "actions": [
+        {
+          "label": {"en": "Install the HP driver", "tr": "HP sürücüsünü kur"},
+          "task": [{"op": "package.install", "params": {"name": "hplip"}}]
+        },
+        {"label": {"en": "Printer settings", "tr": "Yazıcı ayarları"}, "settings": "printers"}
+      ]
+    }
+  ],
+  "guide": [
+    {
+      "keywords": ["Devices and Printers", "Aygıtlar ve Yazıcılar"],
+      "kind": "setting",
+      "text": {
+        "en": "Printers and scanners are under Hardware & Printers.",
+        "tr": "Yazıcılar ve tarayıcılar Donanım ve yazıcılar sayfasında."
+      },
+      "page": "hardware"
+    }
+  ]
+}

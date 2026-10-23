@@ -158,3 +158,48 @@ Paket adı `pardus-libreoffice-writer-sade` yerine `pardus-ofis-deneyimi` oldu (
 - **İlk açılış sınırı:** Paketle gelen eklenti, profilin ilk açılışında kullanıcıya
   kaydediliyor. Şerit bu kayıttan önce kurulduğu için o oturumda Dosya sekmesinin denetçisi
   çalışmıyor. LibreOffice kapatılıp açılınca sekme menüyü açıyor.
+
+## Sürüm 0.5.0: Writer "Yaz" sekmesi ONLYOFFICE düzeninde (18 Ekim 2026)
+
+Kullanıcı isteği: `libre.png` (0.4.0 şeridi) yerine `onlyoffice.png` örneği. Değişiklik yalnız Writer
+"Yaz" (Home) sekmesinde; Ekle sekmesi, Calc ve Impress aynı.
+- Grup adları kaldırıldı; gruplar `GtkSeparator` (dikey, LibreOffice'in kendi notebookbar.ui'ındaki
+  gibi `VclOptionalBox`'ın ilk çocuğu) ile ayrılıyor. Adsız gruplarda küçük düğmeler hep yalnız simge
+  (`toolbar_style=icons`); ad ipucunda.
+- Gruplar: Pano (Kopyala, Kes / Yapıştır, Biçim boyacısı) · Yazı (yazı tipi, boyut, Büyüt, Küçült,
+  büyük-küçük harf / K, T, A, üstü çizili, üst-alt simge, vurgu `.uno:BackColor`, renk, biçimi temizle
+  `.uno:ResetAttributes`) · Paragraf (madde, numara, `.uno:SetOutline`, girinti / hizalamalar) ·
+  Paragraf ayarları (`.uno:LineSpacing`, `.uno:ControlCodes` / `.uno:BackgroundColor`,
+  `.uno:SetBorderStyle`) · Stil galerisi (grup adı kalkınca şerit yüksekliğini kullanır) · Bul / Tümünü
+  seç · Daha fazla araç.
+- Komutların hepsi LibreOffice 7.4.7 `swriter/ui/notebookbar.ui`'da var (grep ile doğrulandı); kaynak
+  düğme kopyalandığı için açılır menüler korunur.
+- Kurulu 7.4.7 dosyasıyla `build()` denendi: sahipsiz boyut grubu yok, yinelenen kimlik yok, 7 grup /
+  6 ayırıcı. Görsel deneme kullanıcıda (paket kurulup Writer açılarak).
+- **Calc "Tablo" sekmesi** de aynı düzende: Pano · Yazı (yazı tipi, boyut, Büyüt, Küçült / K, T, A,
+  üstü çizili, renk, hücre zemini, kenarlık) · Hizalama (üst, orta, alt, kaydır / sol, orta, sağ,
+  birleştir) · Sayı · Hücre ekle/sil, biçimi temizle · Otomatik toplam, işlev, sırala, süzgeç, koşullu
+  biçim, bul · Daha fazla araç. Xephyr'de geçici profille açılıp görüldü.
+- **"Daha fazla araç" Calc'ta çalışmıyordu.** Düğme eklentinin `.uno:LinwasMoreTools` komutunu
+  çağırıyordu; Calc şeridi düğmenin hedefini eklentinin yakalayıcısı (OnViewCreated) kurulmadan önce
+  alıyor ve `contextChanged()` ile yenilemiyor. Frame üzerinden gönderilen aynı komut çalışıyordu,
+  düğmeye tıklamak çalışmıyordu (Xephyr + XTest ile doğrulandı). Çözüm: düğme doğrudan
+  `.uno:ToolbarMode?Mode:string=notebookbar.ui` çalıştırır, etiket ve simge (`cmd/lc_toolbarmode.png`)
+  .ui içinde. Düzeltmeden sonra tıklayınca `ActiveCalc` `notebookbar.ui` oldu.
+- **Excel uyumu:** `org.openoffice.Office.Calc/Formula/Syntax/Grammar` = 1 (Excel A1; başka sayfaya
+  başvuru `Sayfa1!A1`). LibreOffice 7.4'ün diğer varsayılanları zaten Excel'e yakın: joker karakter
+  açık, düzenli ifade kapalı, `SearchCriteria` açık, OOXML açılışta yeniden hesaplama yok
+  (`OOXMLRecalcMode` 1); Calibri/Cambria → Carlito/Caladea fontconfig ile (paket bağımlılığı).
+
+## Uygulama adlarında Office karşılığı (18 Ekim 2026)
+
+- `tools/office_names.py`: `/usr/share/applications/libreoffice-{writer,calc,impress}.desktop`
+  kullanıcıya özel kopyası `~/.local/share/applications/` altına yazılır; yalnız `[Desktop Entry]`
+  bölümündeki `Name` satırlarına " (Word|Excel|PowerPoint)" eklenir, `Keywords`'e Office adı girer,
+  `X-Linwas-OfficeName=true` işareti konur. İşaretsiz (kullanıcının kendi) kopyaya dokunulmaz;
+  eylem adları ("Yeni Belge") değişmez; işlem tekrarlanınca aynı sonuç (kurulu 7.4.7 dosyasıyla
+  denendi).
+- Ayar `office_names` (varsayılan açık): `linwas-office-look set office_names on|off`,
+  `refresh-names`. "Yalnız benim için kapat" kopyaları siler, "aç" geri yazar.
+- Eklenti: pencere başlığı "… - LibreOffice Writer (Word)"; LibreOffice oturumu başına bir kez
+  `linwas-office-look refresh-names` (LibreOffice güncellenince kopya yenilenir).

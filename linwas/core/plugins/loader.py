@@ -13,12 +13,18 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from typing import Any
 
-from linwas.core.plugins import PluginBase, PluginMeta
+from linwas.core.plugins import SOURCE_BUILTIN, PluginBase, PluginMeta
 
 logger = logging.getLogger(__name__)
 
 SUPPORTED_API_VERSION = "1"
+
+# Engelleme nedenleri (Ayarlar › Eklentiler çevirir)
+BLOCKED_DEVELOPER = "developer_mode_off"
+BLOCKED_REVOKED = "revoked"
+BLOCKED_TOO_NEW = "needs_newer_linwas"
 
 ENTRY_POINT_GROUP = "linwas.plugins"
 
@@ -63,11 +69,30 @@ def _load_entry_point(ep: object) -> LoadResult:
     return LoadResult(plugin=instance, meta=meta, error=None)
 
 
-class PluginLoader:
-    """Kurulu eklentileri keşfeder ve yükler."""
+# Uygulamanın yüklediği eklentiler (arayüz dışı modüller, ör. AI bağlamı, buradan okur)
+_active: PluginLoader | None = None
 
-    def __init__(self) -> None:
+
+def set_active(loader: PluginLoader) -> None:
+    global _active
+    _active = loader
+
+
+def active() -> PluginLoader | None:
+    return _active
+
+
+class PluginLoader:
+    """Kurulu eklentileri keşfeder ve yükler.
+
+    `disabled` içindeki kimlikler yüklenir ama etkin sayılmaz (Ayarlar'da açılabilsin diye
+    listede kalır); kapatılamaz (`required`) eklentiler her zaman etkindir.
+    """
+
+    def __init__(self, disabled: set[str] | None = None) -> None:
         self._plugins: list[PluginBase] = []
+        self._disabled = set(disabled or ())
+        self._blocked: dict[str, str] = {}  # kimlik → engelleme nedeni (BLOCKED_*)
         self._errors: list[tuple[str, str]] = []  # (eklenti adı, hata mesajı)
 
     def discover(self) -> None:
@@ -96,16 +121,77 @@ class PluginLoader:
                 logger.warning("Eklenti kapatıldı (%s): %s", name, msg)
 
     def plugins(self) -> list[PluginBase]:
-        """Yüklenen eklenti örneklerini döner."""
+        """Etkin eklenti örneklerini döner."""
+        return [p for p in self._plugins if self.is_enabled(p)]
+
+    def all_plugins(self) -> list[PluginBase]:
+        """Kapalılar dahil yüklenen bütün eklentiler (Ayarlar › Eklentiler listesi)."""
         return list(self._plugins)
+
+    def is_enabled(self, plugin: PluginBase) -> bool:
+        if plugin.meta.id in self._blocked:
+            return False
+        return plugin.required or plugin.meta.id not in self._disabled
+
+    def blocked_reason(self, plugin: PluginBase) -> str:
+        """Kullanıcı açsa da çalışmama nedeni (İngilizce kod; arayüz çevirir)."""
+        return self._blocked.get(plugin.meta.id, "")
+
+    def add_plugin(self, plugin: PluginBase, blocked: str = "") -> None:
+        """Hazır eklenti örneğini ekler (kodsuz eklentiler); `blocked` doluysa çalışmaz."""
+        if any(p.meta.id == plugin.meta.id for p in self._plugins):
+            self.add_error(plugin.meta.id, "duplicate plugin id")
+            return
+        self._plugins.append(plugin)
+        if blocked:
+            self._blocked[plugin.meta.id] = blocked
+
+    def load_declarative(self, lang: str, developer_mode: bool) -> None:
+        """Kurulu kodsuz eklentileri yükler.
+
+        Engellenenler listede kalır (kaldırılabilsin diye): geliştirici kipi kapalıyken imzasız
+        eklentiler, katalogdan geri çekilenler, daha yeni Linwas isteyenler.
+        """
+        from linwas import __version__
+        from linwas.core.plugins import SOURCE_DEVELOPER, catalog, declarative
+
+        found, errors = declarative.installed()
+        for name, message in errors:
+            self.add_error(name, message)
+        revoked = catalog.cached()
+        current = declarative.version_tuple(__version__)
+        for item in found:
+            plugin = declarative.DeclarativePlugin(item.manifest, item.source, lang)
+            blocked = ""
+            if item.source == SOURCE_DEVELOPER and not developer_mode:
+                blocked = BLOCKED_DEVELOPER
+            elif revoked and revoked.revoked_reason(item.manifest["id"], item.manifest["version"]):
+                blocked = BLOCKED_REVOKED
+            elif declarative.version_tuple(item.manifest.get("min_linwas", "0.0.0")) > current:
+                blocked = BLOCKED_TOO_NEW
+            self.add_plugin(plugin, blocked)
+
+    def gate(self, name: str) -> list[Any]:
+        """Etkin eklentilerin bir kapısının sonuçlarını birleştirir (ör. "scan_checks").
+
+        Bozuk bir eklentinin hatası diğerlerini durdurmaz; hata listeye yazılır.
+        """
+        out: list[Any] = []
+        for plugin in self.plugins():
+            try:
+                out.extend(getattr(plugin, name)())
+            except Exception as exc:
+                self.add_error(plugin.meta.id, f"{name}: {exc}")
+        return out
 
     def errors(self) -> list[tuple[str, str]]:
         """(eklenti adı, hata) çiftlerini döner."""
         return list(self._errors)
 
     def add_error(self, name: str, message: str) -> None:
-        """Yükleme sonrası (ör. sayfa oluşturulurken) oluşan hatayı kaydeder."""
-        self._errors.append((name, message))
+        """Yükleme sonrası (ör. sayfa oluşturulurken) oluşan hatayı kaydeder (yinelenmez)."""
+        if (name, message) not in self._errors:
+            self._errors.append((name, message))
 
     def load_class(self, cls: type[PluginBase]) -> PluginBase | None:
         """Doğrudan sınıf vererek eklenti yükler (testler ve yerleşik eklentiler için)."""
@@ -120,5 +206,6 @@ class PluginLoader:
             logger.warning("Eklenti API sürümü uyumsuz (%s): %s", meta.id, meta.api_version)
             return None
 
+        instance.source = SOURCE_BUILTIN
         self._plugins.append(instance)
         return instance

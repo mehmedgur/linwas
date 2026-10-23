@@ -55,7 +55,23 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
   - İlk açılış sihirbazı adımı
 - **Yerleşik özellikler de eklenti olarak yazılır** (Oyun, Yazıcı, Yedekleme, Windows'tan taşıma, Görev Yöneticisi, Disk temizliği, Güç ve pil, Wine vb.).
 - **Sürümlü arayüz:** eklenti desteklediği arayüz sürümünü bildirir; uyumsuz eklenti kapatılır ve kullanıcıya söylenir.
-- **Şimdilik yalnızca resmi eklentiler.** Resmi eklentiler imzalı APT deposundan .deb olarak gelir; ayrı bir eklenti imza sistemi şimdilik yazılmaz (APT imzası yeterli). Üçüncü taraf eklentiler gündeme gelirse kendi imza sistemi ve izin ekranı eklenir.
+- **Resmi eklentiler** imzalı APT deposundan .deb olarak gelir (Python kodlu, entry point); APT imzası yeterli.
+- **Üçüncü taraf eklentiler (17 Ekim 2026, kullanıcı kararı):**
+  - **Kodsuz (bildirimsel):** tek `manifest.json`; Python kodu çalıştıramaz. Yapabilecekleri: sorun giderme
+    belirti kartları ve reçeteleri, tarama denetimleri (hazır denetim türleriyle: komut/dosya/servis/paket/
+    çekirdek modülü/boş alan), rehber ve arama girdileri, görevler (yalnızca izin listesindeki işlemler ve
+    sabit, kurulumda doğrulanan parametreler), Linwas sayfasına ya da sistem ayarına gitme, https bağlantısı.
+    Eklentilere kapalı işlemler (ör. `deb.install`, `file.write_text`, `apt.add_source`/`add_key`,
+    Timeshift geri yükleme) ayrı bir izin listesinde tutulur. Python kodlu üçüncü taraf eklenti sonraki
+    sürümde ayrı süreçte çalışma koşuluyla değerlendirilir.
+  - **Güven:** Linwas'ın incelediği, Linwas anahtarıyla imzalı **katalog** (imzalı `index.json` +
+    eklenti dosyalarının SHA-256'sı; doğrulama sistemde zaten olan `gpgv` ile, yeni bağımlılık yok).
+    Katalog bir eklentiyi geri çekerse Linwas onu kapatır. **Geliştirici kipi** (Ayarlar'da, varsayılan
+    kapalı): imzasız yerel dosya büyük uyarıyla kurulabilir; bu eklentiler "Geliştirici" rozeti taşır.
+  - **İzin ekranı:** kurulumdan önce eklentinin kullanacağı her işlem (risk düzeyiyle), açacağı sayfalar ve
+    bağlantılar tek tek gösterilir; güncelleme yeni izin isterse yeniden onay alınır.
+  - **Önce altyapı:** boştaki kapılar (tarama, sorun giderme, rehber, AI bağlamı) bağlanır, Ayarlar ›
+    Eklentiler kartlı sayfa olur (aç/kapat, sürüm, yayıncı, rozet, izinler, hata). Aşamalar: yapilacaklar.md.
 - Gelecekte olası eklentiler: bkz. `yapilacaklar.md`.
 
 ## Hedef kullanıcı ve genel UX
@@ -88,6 +104,67 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
     kartlar beyaz + köşe 12 px + hafif gölge; iç satır ayırıcısı metin hizasından başlar; bölüm başlıkları
     kartın dışında küçük gri. macOS tipi anahtar (beyaz yuvarlak düğme); düğme köşesi 8 px; vurgu `#0066d6`;
     yazı `#1d1d1f`, ikincil `#6e6e73`. Pencere düğmeleri (trafik ışıkları) yok, başlığı masaüstü çizer.
+  - **Seçim kartları ve Wi-Fi/Bluetooth (17 Ekim 2026):** birkaç seçenekten biri yuvarlak köşeli seçim
+    kartlarıyla seçilir (`widgets/option_tile.py`: başlık + gri açıklama, seçili kart vurgu kenarlıklı ve
+    açık vurgu zeminli; seçim düğmesi içi beyaz noktalı dolu daire). Wi-Fi ve Bluetooth sekmeleri: üstte
+    durum kartı (simge kutusu, durum, aç/kapat; aygıt yoksa sürücü yönlendirmesi), altında kart içinde
+    liste (Wi-Fi: Kayıtlı/Şifreli/Açık, gizli ağ, IP; Bluetooth: Aygıtlarım / Diğer aygıtlar), unutmada
+    onay, altta "Diğer … ayarları". nmcli/bluetoothctl çağrıları arka planda.
+  - **Güç ve pil sayfası (17 Ekim 2026):** pil özeti (pil biçimli gösterge, büyük yüzde, durum/kalan
+    süre; Pil sağlığı / Şarj döngüsü / Güç kaynağı kutuları; pil yıpranmış ya da azsa yapıcı öneri), plan
+    seçim kartları (simgeli, 3 sütun), sık ayarlar satır tablosu (ad + açıklama, Prizde / Pilde), otomasyon
+    kutuları (Pil tasarrufu, Zamanlama); kaydet çubuğu sayfanın altında sabit. Gelişmiş güç ayarları
+    (ağaç liste) sık ayarların hemen altında ve **açık başlar** (kullanıcı: "her şeyi kontrol
+    edebiliyordum, görünür olsun"); sık ayarlar kartında "Bu planın tüm ayarları" bağlantısı.
+  - **Sorun giderme genişletildi (17 Ekim 2026):** taramaya DNS, saat eşitleme, salt okunur sistem diski,
+    /home ve ayrı /boot doluluğu, bellek, sıcaklık (termal bölgeler, ≥ 90 °C), DKMS modülleri, yazılımla
+    çizim (ekran kartı sürücüsü yok), eski APT listesi (> 14 gün), açılış süresi (> 90 sn), pil sağlığı
+    (< %60) eklendi; her sorunda "Yardımcıya sor". Yeni belirti kartları: Bluetooth, mikrofon/kamera, pil
+    çabuk bitiyor, tarih/saat, güncellemeler başarısız, yavaş açılış. Yeni root işlemi `package.autoremove`
+    (`apt-get autoremove --purge`: eski çekirdekler, dolu /boot). Sabit genişlikli düğmeler (Disk temizliği,
+    durum çubuğu, Görev Yöneticisi) yazıya göre genişliyor (`widgets/fit.py`).
+  - **Dokunmatik yüzeyde sağ tık (18 Ekim 2026):** GNOME varsayılanı `click-method='fingers'` (sağ alt
+    köşe sol tık sayılır) Windows'tan gelenlerde "sağ tık çalışmıyor" diye görülüyor. İlk açılış
+    sihirbazında (dokunmatik yüzey varsa ve köşe tıklaması kapalıysa) "sağ alt köşeyle sağ tık" kutusu
+    işaretli gelir (`'areas'`); Sorun giderme'de "Sağ tık çalışmıyor" kartı aynı düzeltmeyi ve fare
+    ayarlarını sunar. `backend/touchpad.py`; şimdilik yalnız GNOME (Cinnamon/XFCE anahtarı doğrulanmadı).
+  - **Görev çubuğu eklentisi ve "Temizle" (18 Ekim 2026, hata):** takvim menüsüne eklenen medya kartında
+    `clear()` olmadığı için GNOME'un bildirim "Temizle" düğmesi ilk öğede hata verip bildirimleri
+    silmiyordu (`s.clear is not a function`, calendar.js:976). Karta boş `clear()` ve `canClear=false`
+    eklendi; eklenti dosyası görev çubuğu sayfası açılınca yenilenir, oturum yeniden açılınca geçerli.
+  - **Klasör renkleri (18 Ekim 2026, kullanıcı):** Dosyalar'da sağ tık › "Klasör rengi" (7 renk: kırmızı,
+    turuncu, sarı, yeşil, mavi, mor, gri + Varsayılan); `metadata::custom-icon` + Linwas'ın SVG simgeleri;
+    Nautilus (`python3-nautilus`), Nemo (`nemo-python`), Thunar (`thunarx-python`, gösterimi doğrulanacak).
+    Linwas sayfası Kişiselleştirme › Klasör renkleri. Ayrıntı: yapilacaklar.md › E.
+  - **macOS düzeni (18 Ekim 2026, kullanıcı kararları):** düzen seçilince pencere düğmeleri solda
+    (`close,minimize,maximize:`; Windows/GNOME düzenine geçince sağa döner), dock hep görünür, çöp kutusu
+    ve sürücüler dock'ta. Claude'un seçtikleri: çalışan programda nokta (`DOTS`), tıklayınca öne getir /
+    önizleme (`focus-or-previews`), bütün programlar düğmesi başta (`show-apps-at-top`), dinamik
+    saydamlık. "Dock" bölümü: konum (alt/sol/sağ), simge boyutu 24–64, görünürlük (hep görünür / pencere
+    gelince gizle / hep gizli), çöp kutusu, sürücüler, nokta, bildirim sayısı, programlar düğmesi başta,
+    her ekranda dock. "Önceki düzene dön" düğme yerleşimini ve dock ayarlarını da geri getirir. macOS'taki
+    büyüme (magnification) Dash to Dock'ta yok.
+  - **Görev çubuğu özelleştirme (18 Ekim 2026, kullanıcı seçimi):** Windows düzeninde (Dash to Panel)
+    Davranış: simgelerin yeri "Windows 11 gibi (ortada)" / "Windows 10 gibi (solda)" (Başlat ve görev
+    listesi `panel-element-positions` içinde `centerMonitor` / `stackedTL`), düğmeleri birleştirme
+    (`group-apps`), her ekranda (`multi-monitors`), simgede sayı ve ilerleme (`progress-show-count`,
+    `progress-show-bar`). Öğeler: Başlat, Etkinlikler, saat, sistem simgeleri, masaüstünü göster köşesi
+    (görünürlük `panel-element-positions`), köşede masaüstüne göz at (`show-showdesktop-hover`). Saat
+    ve tarih (her GNOME düzeninde): `clock-show-date/weekday/seconds`, `clock-format`; saatin yeri
+    sağda/ortada. Sabitlenmiş programlar: `org.gnome.shell favorite-apps` (sırala, çıkar, ekle). Anahtar
+    ve öğe adları Pardus 23'teki Dash to Panel şemasından/kaynağından doğrulandı.
+  - **Güç yönetimini tek tuşla devralma (17 Ekim 2026, kullanıcı):** sayfanın en üstünde "Güç yönetimi"
+    kartı (eski "başka güç aracı" ve "servis durdu" kartlarının yerine): durum başlığı + denetim listesi
+    (güç servisi, başka güç aracı, masaüstü ajanı). "Güç yönetimini Linwas'a ver" → root işlemi
+    `power.take_over`: TLP/auto-cpufreq/laptop-mode-tools servislerini `systemctl disable --now` ile
+    kapatır (paket silinmez), kapatılanları `/etc/linwas/power-takeover.json`'a yazar, `linwas-power.service`'i
+    açıp yeniden başlatır; sonra ajan çalışmıyorsa başlatılır. "Yönetimi geri ver" → `power.give_back`:
+    Linwas servisini kapatır, kayıttaki (yalnızca bilinen) araçları yeniden açar.
+  - **Hazırda bekletme kurulumu (17 Ekim 2026):** eksik yalnızca swap/resume ise Linwas `/swapfile`
+    (varsayılan RAM kadar, en az yarısı) oluşturur, fstab'a ve `/etc/default/grub.d/linwas-hibernate.cfg`
+    ile çekirdek satırına `resume=UUID=… resume_offset=…` ekler; Secure Boot kilidi, GRUB/initramfs-tools
+    olmaması, desteklenmeyen dosya sistemi, yer yokluğu ya da elle kurulmuş /swapfile'da kurmaz ve nedeni
+    yazar. Ayrıntı: yapilacaklar.md › Hazırda bekletme kurulumu.
   - **Ölçek ve okunabilirlik (12 Ekim 2026, kullanıcı):** yazı küçük kalmasın. Qt'ye aktarımda gövde
     16 px, başlık 32 px, ayar satırı en az 64 px, tıklama alanı en az 40 px. Her ekranda Windows / macOS /
     Linux'taki karşılığı karşılaştırılır, en anlaşılır çözüm seçilir.
@@ -223,6 +300,11 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
   - **Aygıt Yöneticisi:** Donanım ve yazıcı altında ayrı görünüm; bütün PCI/USB aygıtları, kullandığı sürücü, durumu; sürücüsüz/sorunlu aygıtlar en üstte uyarıyla. Güncelleme merkezi ile karşılıklı bağlantı.
 - EXE: risk analizi; Linux alternatifi varsa önerilir, yoksa Wine ile açılır. (6 Ekim 2026 ayrıntıları:)
   - **Açma:** Programlar › "Windows programı aç (.exe)…" ve "Windows programları" sekmesi; .exe/.msi çift tıklanınca Linwas açılır (kurulu pakette ilk açılışta `xdg-mime default`, kullanıcı düzeyinde).
+  - **.deb dosyaları (18 Ekim 2026, kullanıcı):** çift tıklanan .deb Linwas'ta açılır (risk analizi →
+    kurulum). Kurulu pakette ilk açılışta `xdg-mime default linwas.desktop` (asıl tür ve eski adları,
+    kullanıcı düzeyinde); önceki uygulama (ör. Arşiv Yöneticisi) ayarlara yazılır. Ayarlar › Genel ›
+    "Dosyaları açma" kutusu kapatılınca ona dönülür (yoksa kullanıcının mimeapps.list'inden Linwas
+    satırı silinir). `backend/file_handlers.py`.
   - **Analiz** (`backend/exe_inspect.py`, salt okunur): PE başlığı (mimari, konsol/pencere, imza tablosu var mı — Linux'ta doğrulanamaz, .NET), sürüm bilgisi (şirket/ürün), kurulum türü (Inno/NSIS/MSI/InstallShield/WiX), çift uzantı hilesi, tarayıcının yazdığı indirme adresi (xattr), SHA256. Risk: yüksek = geçersiz PE / çift uzantı / ARM; orta = imzasız veya yapımcı yok.
   - **Virüs taraması:** yalnızca "VirusTotal'da denetle" düğmesi (tarayıcıda, yalnızca SHA256 ile; dosya gönderilmez). ClamAV yok.
   - **Wine:** dağıtım deposundan; yeni root işlemi `wine.setup` (i386 mimarisi + `wine wine64 wine32:i386`).

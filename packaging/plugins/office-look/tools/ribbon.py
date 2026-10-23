@@ -29,6 +29,12 @@ import xml.etree.ElementTree as ET
 
 FILE_TAB_COMMAND = ".uno:LinwasFileTab"
 MORE_TOOLS_COMMAND = ".uno:LinwasMoreTools"
+# "Daha fazla araç" düğmesi doğrudan LibreOffice'in tam şeride geçme komutunu çalıştırır.
+# Eklentinin kendi komutu Calc'ta çalışmıyordu: şerit düğmenin hedefini eklentinin yakalayıcısı
+# kurulmadan önce alıyor ve yenilemiyor (18 Ekim 2026, Xephyr'de tıklayarak doğrulandı).
+FULL_RIBBON_COMMAND = ".uno:ToolbarMode?Mode:string=notebookbar.ui"
+MORE_TOOLS_LABEL = "Daha fazla araç"
+MORE_TOOLS_ICON = "cmd/lc_toolbarmode.png"
 OUTPUT_NAME = "linwas_simple.ui"
 MODULES = ("swriter", "scalc", "simpress")
 
@@ -61,37 +67,58 @@ PREPEND = {"File"}
 GROUPS = {
     "swriter": {
         "File": FILE_GROUPS,
+        # ONLYOFFICE / Word düzeni (18 Ekim 2026): grup adı yok, gruplar dikey çizgiyle ayrılır,
+        # her grup iki sıra yalnız simgeli küçük düğme; stil galerisi şeridin yüksekliğini kullanır.
         "Home": [
-            ("Pano", [".uno:Paste"], [[".uno:Copy"], [".uno:Cut"]]),
+            ("", [], [[".uno:Copy", ".uno:Cut"], [".uno:Paste", ".uno:FormatPaintbrush"]]),
             (
-                "Yazı",
+                "",
                 [],
                 [
-                    [".uno:CharFontName", ".uno:FontHeight"],
+                    [
+                        ".uno:CharFontName",
+                        ".uno:FontHeight",
+                        ".uno:Grow",
+                        ".uno:Shrink",
+                        ".uno:ChangeCaseRotateCase",
+                    ],
                     [
                         ".uno:Bold",
                         ".uno:Italic",
                         ".uno:Underline",
+                        ".uno:Strikeout",
+                        ".uno:SuperScript",
+                        ".uno:SubScript",
+                        ".uno:BackColor",
                         ".uno:Color",
-                        ".uno:CharBackColor",
+                        ".uno:ResetAttributes",
                     ],
                 ],
             ),
             (
-                "Paragraf",
+                "",
                 [],
                 [
-                    [".uno:LeftPara", ".uno:CenterPara", ".uno:RightPara", ".uno:JustifyPara"],
                     [
                         ".uno:DefaultBullet",
                         ".uno:DefaultNumbering",
+                        ".uno:SetOutline",
                         ".uno:DecrementIndent",
                         ".uno:IncrementIndent",
                     ],
+                    [".uno:LeftPara", ".uno:CenterPara", ".uno:RightPara", ".uno:JustifyPara"],
                 ],
             ),
-            ("Stiller", [".uno:StylesPreview"], []),
-            ("Düzenle", [".uno:SearchDialog"], []),
+            (
+                "",
+                [],
+                [
+                    [".uno:LineSpacing", ".uno:ControlCodes"],
+                    [".uno:BackgroundColor", ".uno:SetBorderStyle"],
+                ],
+            ),
+            ("", [".uno:StylesPreview"], []),
+            ("", [], [[".uno:SearchDialog"], [".uno:SelectAll"]]),
             ("", [MORE_TOOLS_COMMAND], []),
         ],
         "Insert": [
@@ -114,25 +141,40 @@ GROUPS = {
     },
     "scalc": {
         "File": FILE_GROUPS,
+        # Writer "Yaz" ile aynı ONLYOFFICE / Excel düzeni (18 Ekim 2026)
         "Home": [
-            ("Pano", [".uno:Paste"], [[".uno:Copy"], [".uno:Cut"]]),
+            ("", [], [[".uno:Copy", ".uno:Cut"], [".uno:Paste", ".uno:FormatPaintbrush"]]),
             (
-                "Yazı ve hizalama",
+                "",
                 [],
                 [
-                    [".uno:CharFontName", ".uno:FontHeight"],
+                    [".uno:CharFontName", ".uno:FontHeight", ".uno:Grow", ".uno:Shrink"],
                     [
                         ".uno:Bold",
                         ".uno:Italic",
-                        ".uno:AlignLeft",
-                        ".uno:AlignHorizontalCenter",
-                        ".uno:AlignRight",
-                        ".uno:WrapText",
+                        ".uno:Underline",
+                        ".uno:Strikeout",
+                        ".uno:Color",
+                        ".uno:BackgroundColor",
+                        ".uno:SetBorderStyle",
                     ],
                 ],
             ),
             (
-                "Sayı",
+                "",
+                [],
+                [
+                    [".uno:AlignTop", ".uno:AlignVCenter", ".uno:AlignBottom", ".uno:WrapText"],
+                    [
+                        ".uno:AlignLeft",
+                        ".uno:AlignHorizontalCenter",
+                        ".uno:AlignRight",
+                        ".uno:ToggleMergeCells",
+                    ],
+                ],
+            ),
+            (
+                "",
                 [],
                 [
                     [".uno:NumberFormatType"],
@@ -145,8 +187,24 @@ GROUPS = {
                     ],
                 ],
             ),
-            ("Hesapla", [".uno:AutoSum", ".uno:FunctionDialog"], []),
-            ("Düzenle", [".uno:DataSort", ".uno:DataFilterAutoFilter"], []),
+            ("", [], [[".uno:InsertCell", ".uno:DeleteCell"], [".uno:ResetAttributes"]]),
+            (
+                "",
+                [],
+                [
+                    [
+                        ".uno:AutoSum",
+                        ".uno:FunctionDialog",
+                        ".uno:SortAscending",
+                        ".uno:SortDescending",
+                    ],
+                    [
+                        ".uno:DataFilterAutoFilter",
+                        ".uno:ConditionalFormatMenu",
+                        ".uno:SearchDialog",
+                    ],
+                ],
+            ),
             ("", [MORE_TOOLS_COMMAND], []),
         ],
     },
@@ -159,6 +217,11 @@ DROPDOWN = {
     ".uno:BasicShapes",
     ".uno:Color",
     ".uno:CharBackColor",
+    ".uno:BackColor",
+    ".uno:LineSpacing",
+    ".uno:SetBorderStyle",
+    ".uno:BackgroundColor",
+    ".uno:ConditionalFormatMenu",
 }
 BUTTON_CLASSES = ("GtkToolButton", "GtkMenuToolButton", "GtkToggleToolButton")
 
@@ -205,10 +268,18 @@ class _Builder:
             _prop(obj, name, value)
         return child, obj
 
-    def _toolbox(self, parent: ET.Element, commands: list[str], large: bool) -> None:
+    def _toolbox(
+        self, parent: ET.Element, commands: list[str], large: bool, compact: bool = False
+    ) -> None:
         # Büyük düğmeler: simge üstte, ad altta. Küçük satırlar: tek-iki düğmeyse ad yanında,
-        # kalabalık biçim satırlarında yalnız simge (tasarımda K/T/A gibi).
-        style = "both" if large else ("both-horiz" if len(commands) <= 2 else "icons")
+        # kalabalık biçim satırlarında yalnız simge (tasarımda K/T/A gibi). Adsız (sade) gruplarda
+        # küçük düğmeler hep yalnız simge; adı ipucunda görünür (ONLYOFFICE / Word gibi).
+        if large:
+            style = "both"
+        elif compact or len(commands) > 2:
+            style = "icons"
+        else:
+            style = "both-horiz"
         child, box = self._object(
             parent,
             "sfxlo-NotebookbarToolBox",
@@ -223,7 +294,16 @@ class _Builder:
         for command in commands:
             source = self.buttons.get(command)
             inner = ET.SubElement(box, "child")
-            if source is not None:
+            if command == MORE_TOOLS_COMMAND:
+                item = ET.SubElement(
+                    inner, "object", {"class": "GtkToolButton", "id": self._id("Button")}
+                )
+                _prop(item, "visible", "True")
+                _prop(item, "action_name", FULL_RIBBON_COMMAND)
+                _prop(item, "label", MORE_TOOLS_LABEL)
+                _prop(item, "tooltip_text", "Bütün araçların olduğu tam şeride geç")
+                _prop(item, "icon_name", MORE_TOOLS_ICON)
+            elif source is not None:
                 item = copy.deepcopy(source)
                 item.set("id", self._id("Button"))
                 inner.append(item)
@@ -236,12 +316,29 @@ class _Builder:
         _packing(child, expand="False", fill="True")
 
     def group(
-        self, parent: ET.Element, title: str, large: list[str], rows: list[list[str]]
+        self,
+        parent: ET.Element,
+        title: str,
+        large: list[str],
+        rows: list[list[str]],
+        separator: bool = False,
     ) -> None:
         # PriorityMergedHBox'ın her çocuğu VclOptionalBox olmalı.
         child, optional = self._object(
             parent, "VclOptionalBox", "Group", can_focus="False", valign="fill", vexpand="True"
         )
+        if separator:
+            # Gruplar arasında ince dikey çizgi (LibreOffice'in kendi şeridindeki gibi)
+            sep_child, _ = self._object(
+                optional,
+                "GtkSeparator",
+                "Separator",
+                can_focus="False",
+                margin_top="5",
+                margin_bottom="5",
+                orientation="vertical",
+            )
+            _packing(sep_child, expand="False", fill="True", padding="5")
         _, column = self._object(
             optional, "GtkBox", "Column", can_focus="False", orientation="vertical", spacing="2"
         )
@@ -261,7 +358,7 @@ class _Builder:
                 spacing="2",
             )
             for row in rows:
-                self._toolbox(stack, row, large=False)
+                self._toolbox(stack, row, large=False, compact=not title)
             _packing(stack_child, expand="False", fill="True")
         _packing(top_child, expand="True", fill="True")
         if title:
@@ -324,8 +421,8 @@ def build(module: str, source: str, target: str) -> None:
             continue
         for c in merged.findall("child"):
             merged.remove(c)
-        for title, large, rows in groups:
-            builder.group(merged, title, large, rows)
+        for i, (title, large, rows) in enumerate(groups):
+            builder.group(merged, title, large, rows, separator=i > 0 and not title)
 
     remove_dangling_size_groups(root)
     tree.write(target, encoding="UTF-8", xml_declaration=True)

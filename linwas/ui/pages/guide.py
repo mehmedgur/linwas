@@ -22,6 +22,7 @@ from linwas.backend import windows_guide
 from linwas.backend.desktop import detect_desktop
 from linwas.backend.settings_launcher import open_settings
 from linwas.core import app_settings
+from linwas.core.plugins.loader import active as active_plugins
 from linwas.ui.pages.base import BasePage
 from linwas.ui.widgets.card import Card
 
@@ -36,6 +37,7 @@ class GuidePage(BasePage):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._entries = windows_guide.load()
+        self._plugin_entries_added = False
         self._lang = app_settings.load().language
         self._desktop = detect_desktop(os.environ).value
 
@@ -81,6 +83,37 @@ class GuidePage(BasePage):
         scroll.setWidget(holder)
         layout.addWidget(scroll, 1)
         self._render()
+
+    def showEvent(self, event: object) -> None:  # type: ignore[override]
+        super().showEvent(event)  # type: ignore[arg-type]
+        # Eklentiler sayfalardan sonra yüklenir; girdileri ilk gösterimde eklenir
+        if not self._plugin_entries_added:
+            self._plugin_entries_added = True
+            if self._add_plugin_entries():
+                self._render()
+
+    def _add_plugin_entries(self) -> bool:
+        loader = active_plugins()
+        if loader is None:
+            return False
+        added = False
+        for entry in loader.gate("guide_entries"):
+            action: dict[str, str] = {}
+            if entry.target_page_id:
+                action["page"] = entry.target_page_id
+            elif entry.settings_launcher_key:
+                action["settings"] = entry.settings_launcher_key
+            self._entries.append(
+                windows_guide.GuideEntry(
+                    kind=entry.kind,
+                    windows=list(entry.keywords),
+                    # Eklenti metni zaten arayüz dilinde verir
+                    text={self._lang: entry.label, "en": entry.label},
+                    action=action,
+                )
+            )
+            added = True
+        return added
 
     def set_query(self, text: str) -> None:
         self._kind.setCurrentIndex(0)

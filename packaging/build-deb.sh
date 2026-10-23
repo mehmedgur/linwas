@@ -82,6 +82,9 @@ echo "==> Güç planları servisi ve masaüstü ajanı"
 install -D -m 0755 "$ROOT/packaging/linwas-power.sh" "$PKG/usr/lib/linwas/linwas-power"
 install -D -m 0755 "$ROOT/packaging/linwas-power-switch.sh" "$PKG/usr/lib/linwas/linwas-power-switch"
 install -D -m 0755 "$ROOT/packaging/linwas-power-agent.sh" "$PKG/usr/lib/linwas/linwas-power-agent"
+# Saat: uykudan uyanınca düzelt (core/clock.py; Windows ile çift açılışta RTC yerel saatte)
+install -D -m 0755 "$ROOT/packaging/linwas-clock-sleep.sh" \
+    "$PKG/usr/lib/systemd/system-sleep/linwas-clock"
 install -D -m 0644 "$ROOT/packaging/systemd/linwas-power.service" \
     "$PKG/usr/lib/systemd/system/linwas-power.service"
 install -D -m 0644 "$ROOT/packaging/linwas-power-agent.desktop" \
@@ -96,6 +99,10 @@ if [ -n "$APT_URL" ]; then
     fi
     install -D -m 0644 "$ROOT/packaging/linwas-archive-keyring.gpg" \
         "$PKG/usr/share/keyrings/linwas-archive-keyring.gpg"
+    # Eklenti kataloğu deponun yanında, aynı anahtarla imzalı (core/plugins/catalog.py)
+    mkdir -p "$PKG/usr/share/linwas"
+    printf '{"url": "%s/plugins/index.json"}\n' "${APT_URL%/}" > "$PKG/usr/share/linwas/plugin-catalog.json"
+    chmod 0644 "$PKG/usr/share/linwas/plugin-catalog.json"
 fi
 
 echo "==> Paket bilgileri"

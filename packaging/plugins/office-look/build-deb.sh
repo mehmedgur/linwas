@@ -22,6 +22,7 @@ cp -a "$HERE/extension/." "$PKG/$LO_SHARE/extensions/linwas-office-look/"
 find "$PKG/$LO_SHARE/extensions" -name __pycache__ -prune -exec rm -rf {} +
 install -m 644 "$HERE/registry/linwas-office-look.xcd" "$PKG/$LO_SHARE/registry/"
 install -m 644 "$HERE/tools/cli.py" "$HERE/tools/ribbon.py" "$HERE/tools/lo_profile.py" \
+    "$HERE/tools/office_names.py" \
     "$PKG/usr/share/linwas-office-look/"
 install -m 755 "$HERE/linwas-office-look" "$PKG/usr/bin/"
 install -m 644 "$HERE/linwas-office-look.desktop" "$PKG/usr/share/applications/"

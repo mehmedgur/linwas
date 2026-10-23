@@ -1846,12 +1846,176 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
 <context>
     <name>NetworkPage</name>
     <message>
-        <source>(Hidden network)</source>
-        <translation>(Gizli ağ)</translation>
+        <source>Bluetooth is turned off by a switch</source>
+        <translation>Bluetooth bir anahtarla kapatılmış</translation>
     </message>
     <message>
-        <source>Available networks</source>
-        <translation>Kullanılabilir ağlar</translation>
+        <source>Choose a network below to connect.</source>
+        <translation>Bağlanmak için aşağıdan bir ağ seç.</translation>
+    </message>
+    <message>
+        <source>Connect to a hidden network</source>
+        <translation>Gizli ağa bağlan</translation>
+    </message>
+    <message>
+        <source>Connect to a network that does not show its name</source>
+        <translation>Adını göstermeyen bir ağa bağlan</translation>
+    </message>
+    <message>
+        <source>Connected to {ssid}</source>
+        <translation>{ssid} ağına bağlı</translation>
+    </message>
+    <message>
+        <source>Connecting…</source>
+        <translation>Bağlanıyor…</translation>
+    </message>
+    <message>
+        <source>Could not connect to {name}. Make sure it is on and nearby. If it asks for a code, use More Bluetooth settings.</source>
+        <translation>{name} aygıtına bağlanılamadı. Açık ve yakında olduğundan emin ol. Kod istiyorsa Diğer Bluetooth ayarları'nı kullan.</translation>
+    </message>
+    <message>
+        <source>Could not connect to {ssid}. Check the password and try again.</source>
+        <translation>{ssid} ağına bağlanılamadı. Şifreyi denetleyip yeniden dene.</translation>
+    </message>
+    <message>
+        <source>Forget {name}?</source>
+        <translation>{name} unutulsun mu?</translation>
+    </message>
+    <message>
+        <source>Hidden network…</source>
+        <translation>Gizli ağ…</translation>
+    </message>
+    <message>
+        <source>IP address {ip}</source>
+        <translation>IP adresi {ip}</translation>
+    </message>
+    <message>
+        <source>More Bluetooth settings</source>
+        <translation>Diğer Bluetooth ayarları</translation>
+    </message>
+    <message>
+        <source>More Wi-Fi settings</source>
+        <translation>Diğer Wi-Fi ayarları</translation>
+    </message>
+    <message>
+        <source>My devices</source>
+        <translation>Aygıtlarım</translation>
+    </message>
+    <message>
+        <source>Network name:</source>
+        <translation>Ağ adı:</translation>
+    </message>
+    <message>
+        <source>Networks</source>
+        <translation>Ağlar</translation>
+    </message>
+    <message>
+        <source>No Bluetooth adapter found</source>
+        <translation>Bluetooth aygıtı bulunamadı</translation>
+    </message>
+    <message>
+        <source>No Wi-Fi adapter found</source>
+        <translation>Wi-Fi kartı bulunamadı</translation>
+    </message>
+    <message>
+        <source>No networks found. Move closer to the router and press Refresh.</source>
+        <translation>Ağ bulunamadı. Modeme yaklaşıp Yenile'ye bas.</translation>
+    </message>
+    <message>
+        <source>No new devices found yet.</source>
+        <translation>Henüz yeni aygıt bulunamadı.</translation>
+    </message>
+    <message>
+        <source>No paired devices yet. Search for devices below to add one.</source>
+        <translation>Henüz eşleşmiş aygıt yok. Eklemek için aşağıda aygıt ara.</translation>
+    </message>
+    <message>
+        <source>Not connected</source>
+        <translation>Bağlı değil</translation>
+    </message>
+    <message>
+        <source>Open network, not secured</source>
+        <translation>Açık ağ, şifresiz</translation>
+    </message>
+    <message>
+        <source>Other devices</source>
+        <translation>Diğer aygıtlar</translation>
+    </message>
+    <message>
+        <source>Paired devices connect automatically when nearby.</source>
+        <translation>Eşleşmiş aygıtlar yakındayken kendiliğinden bağlanır.</translation>
+    </message>
+    <message>
+        <source>Paired, not connected</source>
+        <translation>Eşleşmiş, bağlı değil</translation>
+    </message>
+    <message>
+        <source>Pairing…</source>
+        <translation>Eşleştiriliyor…</translation>
+    </message>
+    <message>
+        <source>Password (leave empty for an open network):</source>
+        <translation>Şifre (açık ağda boş bırak):</translation>
+    </message>
+    <message>
+        <source>Put the device in pairing mode first (see its manual), then search.</source>
+        <translation>Önce aygıtı eşleştirme kipine al (kılavuzuna bak), sonra ara.</translation>
+    </message>
+    <message>
+        <source>Ready to pair</source>
+        <translation>Eşleştirmeye hazır</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>Kayıtlı</translation>
+    </message>
+    <message>
+        <source>Search for devices</source>
+        <translation>Aygıt ara</translation>
+    </message>
+    <message>
+        <source>Searching…</source>
+        <translation>Aranıyor…</translation>
+    </message>
+    <message>
+        <source>Secured ({kind})</source>
+        <translation>Şifreli ({kind})</translation>
+    </message>
+    <message>
+        <source>Show password</source>
+        <translation>Şifreyi göster</translation>
+    </message>
+    <message>
+        <source>This computer has no Bluetooth, or it needs a driver. Check the Drivers page.</source>
+        <translation>Bu bilgisayarda Bluetooth yok ya da sürücü gerekiyor. Sürücüler sayfasına bak.</translation>
+    </message>
+    <message>
+        <source>Turn it on to see networks nearby.</source>
+        <translation>Yakındaki ağları görmek için aç.</translation>
+    </message>
+    <message>
+        <source>Turn it on to use headphones, mice and phones.</source>
+        <translation>Kulaklık, fare ve telefon kullanmak için aç.</translation>
+    </message>
+    <message>
+        <source>Turn it on with the wireless switch or key (often Fn + a key with an antenna).</source>
+        <translation>Kablosuz anahtarı ya da tuşuyla aç (çoğunlukla Fn + anten simgeli tuş).</translation>
+    </message>
+    <message>
+        <source>You will need the password to connect to this network again.</source>
+        <translation>Bu ağa yeniden bağlanmak için şifre gerekecek.</translation>
+    </message>
+    <message>
+        <source>You will need to pair this device again to use it.</source>
+        <translation>Bu aygıtı kullanmak için yeniden eşleştirmen gerekecek.</translation>
+    </message>
+    <message>
+        <source>Your Wi-Fi card may need a driver. Open the Drivers page to check.</source>
+        <translation>Wi-Fi kartının sürücüye ihtiyacı olabilir. Denetlemek için Sürücüler sayfasını aç.</translation>
+    </message>
+    <message>
+        <source>(Hidden network)</source>
+        <translation>(Gizli ağ)</translation>
     </message>
     <message>
         <source>Bluetooth</source>
@@ -1890,24 +2054,12 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Unut</translation>
     </message>
     <message>
-        <source>No paired devices.</source>
-        <translation>Eşleşmiş cihaz yok.</translation>
-    </message>
-    <message>
         <source>Password:</source>
         <translation>Parola:</translation>
     </message>
     <message>
         <source>Refresh</source>
         <translation>Yenile</translation>
-    </message>
-    <message>
-        <source>Scan</source>
-        <translation>Tara</translation>
-    </message>
-    <message>
-        <source>Scanning…</source>
-        <translation>Taranıyor…</translation>
     </message>
     <message>
         <source>Turn off</source>
@@ -1926,20 +2078,12 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Wi-Fi ve Bluetooth</translation>
     </message>
     <message>
-        <source>Wi-Fi enabled — not connected</source>
-        <translation>Wi-Fi açık — bağlı değil</translation>
-    </message>
-    <message>
         <source>Wi-Fi is off</source>
         <translation>Wi-Fi kapalı</translation>
     </message>
     <message>
         <source>Connected</source>
         <translation>Bağlı</translation>
-    </message>
-    <message>
-        <source>Connected: {ssid} · signal %{n} ({quality})</source>
-        <translation>Bağlı: {ssid} · sinyal %{n} ({quality})</translation>
     </message>
     <message>
         <source>Excellent</source>
@@ -1954,28 +2098,8 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>İyi</translation>
     </message>
     <message>
-        <source>New device — not paired</source>
-        <translation>Yeni cihaz — eşleşmemiş</translation>
-    </message>
-    <message>
-        <source>No password</source>
-        <translation>Şifresiz</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation>Açık ağ</translation>
-    </message>
-    <message>
         <source>Pair</source>
         <translation>Eşleştir</translation>
-    </message>
-    <message>
-        <source>Paired</source>
-        <translation>Eşleşmiş</translation>
-    </message>
-    <message>
-        <source>Password protected</source>
-        <translation>Şifre korumalı</translation>
     </message>
     <message>
         <source>Signal: {quality}</source>
@@ -2708,6 +2832,506 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
 <context>
     <name>PowerPage</name>
     <message>
+        <source>Same when plugged in and on battery</source>
+        <translation>Prizde ve pilde aynı</translation>
+    </message>
+    <message>
+        <source>Automatic (recommended)</source>
+        <translation>Otomatik (önerilen)</translation>
+    </message>
+    <message>
+        <source>Fast when needed</source>
+        <translation>Gerekince hızlı</translation>
+    </message>
+    <message>
+        <source>Speeds up slowly</source>
+        <translation>Yavaş yavaş hızlanır</translation>
+    </message>
+    <message>
+        <source>Sleep and hibernate together</source>
+        <translation>Uyku ve hazırda bekletme birlikte</translation>
+    </message>
+    <message>
+        <source>Most power saving</source>
+        <translation>En çok tasarruf</translation>
+    </message>
+    <message>
+        <source>Balanced, closer to battery</source>
+        <translation>Dengeli, pile yakın</translation>
+    </message>
+    <message>
+        <source>Balanced, closer to speed</source>
+        <translation>Dengeli, hıza yakın</translation>
+    </message>
+    <message>
+        <source>Manufacturer’s setting</source>
+        <translation>Üreticinin ayarı</translation>
+    </message>
+    <message>
+        <source>The screen gets brighter or darker by itself, following the light in the room.</source>
+        <translation>Ekran, ortamdaki ışığa göre kendiliğinden açılıp kısılır.</translation>
+    </message>
+    <message>
+        <source>Set once when the plan changes or you plug in or unplug; you can change it afterwards.</source>
+        <translation>Plan değişince ya da şarj aletini takıp çıkarınca bir kez uygulanır; sonra istediğin gibi değiştirebilirsin.</translation>
+    </message>
+    <message>
+        <source>How much power the graphics card may use. On NVIDIA the card is switched off when not in use.</source>
+        <translation>Ekran kartının ne kadar güç harcayacağı. NVIDIA'da kullanılmayınca kart tamamen kapatılır.</translation>
+    </message>
+    <message>
+        <source>Bluetooth is turned off in this plan and turned back on when you leave it.</source>
+        <translation>Bu planda Bluetooth kapatılır; plandan çıkınca yeniden açılır.</translation>
+    </message>
+    <message>
+        <source>The battery lasts longer; the internet can sometimes be a little slower.</source>
+        <translation>Pil daha uzun gider; internet bazen biraz yavaşlayabilir.</translation>
+    </message>
+    <message>
+        <source>Only for older, spinning hard disks; it does not affect SSDs.</source>
+        <translation>Yalnızca dönen, eski tip sabit diskler için; SSD'leri etkilemez.</translation>
+    </message>
+    <message>
+        <source>The disk uses less power when idle; some disks may become very slightly slower.</source>
+        <translation>Disk boştayken daha az güç harcar; bazı disklerde çok az yavaşlama olabilir.</translation>
+    </message>
+    <message>
+        <source>Devices inside the computer sleep when they are not used.</source>
+        <translation>Bilgisayarın içindeki aygıtlar kullanılmayınca uyutulur.</translation>
+    </message>
+    <message>
+        <source>Cards inside the computer (such as Wi-Fi) use less power when idle. Some computers do not allow this; then it has no effect.</source>
+        <translation>Bilgisayarın içindeki kartlar (ör. Wi-Fi) boştayken daha az güç harcar. Bazı bilgisayarlar buna izin vermez; o zaman etkisi olmaz.</translation>
+    </message>
+    <message>
+        <source>USB devices that are not used for a while sleep to save power. Mice and keyboards are not included.</source>
+        <translation>Bir süre kullanılmayan USB aygıtları güç harcamasın diye uyutulur. Fare ve klavye bunun dışındadır.</translation>
+    </message>
+    <message>
+        <source>What the computer does so that your work is not lost.</source>
+        <translation>İşlerin kaybolmasın diye bilgisayarın ne yapacağı.</translation>
+    </message>
+    <message>
+        <source>At this level the computer does what you choose below.</source>
+        <translation>Pil bu seviyeye inince aşağıda seçtiğin işlem yapılır.</translation>
+    </message>
+    <message>
+        <source>Below this level a “battery very low” warning appears.</source>
+        <translation>Pil bu seviyenin altına inince “çok azaldı” uyarısı gösterilir.</translation>
+    </message>
+    <message>
+        <source>A warning appears when the battery reaches this level.</source>
+        <translation>Pil bu seviyeye inince uyarı gösterilir.</translation>
+    </message>
+    <message>
+        <source>For experts: how Linux adjusts the processor speed.</source>
+        <translation>Uzmanlar için: Linux'un işlemci hızını nasıl ayarladığı.</translation>
+    </message>
+    <message>
+        <source>Percent of the processor's top speed. A lower value saves battery but makes the computer slower.</source>
+        <translation>İşlemcinin en yüksek hızına göre yüzde. Düşürürsen pil daha uzun gider ama bilgisayar yavaşlar.</translation>
+    </message>
+    <message>
+        <source>Percent of the processor's top speed. Usually there is no need to change it.</source>
+        <translation>İşlemcinin en yüksek hızına göre yüzde. Genelde değiştirmeye gerek yoktur.</translation>
+    </message>
+    <message>
+        <source>Tells the processor what comes first: speed or battery life.</source>
+        <translation>İşlemciye önceliğin hız mı yoksa pil ömrü mü olduğunu söyler.</translation>
+    </message>
+    <message>
+        <source>When on, the processor speeds up when needed. Turning it off makes the computer cooler, quieter and longer on battery, but a little slower.</source>
+        <translation>Açıkken işlemci gerekince hızlanır. Kapatırsan bilgisayar daha serin ve sessiz olur, pil daha uzun gider ama biraz yavaşlar.</translation>
+    </message>
+    <message>
+        <source>The login screen also follows this after the computer restarts.</source>
+        <translation>Giriş ekranı da bilgisayar yeniden başlayınca bu ayara uyar.</translation>
+    </message>
+    <message>
+        <source>Takes effect after the computer restarts.</source>
+        <translation>Bilgisayar yeniden başlayınca geçerli olur.</translation>
+    </message>
+    <message>
+        <source>A scheduled task, such as a night-time update, may wake the sleeping computer.</source>
+        <translation>Gece güncellemesi gibi zamanlanmış bir iş, uyuyan bilgisayarı uyandırabilir.</translation>
+    </message>
+    <message>
+        <source>Sleep uses a little power and wakes instantly. Hibernate saves your work to the disk and turns the computer off completely.</source>
+        <translation>Uyku az güç harcar ve hemen açılır. Hazırda bekletme açık işlerini diske kaydedip bilgisayarı tamamen kapatır.</translation>
+    </message>
+    <message>
+        <source>If you do not touch the computer for this long, it goes to sleep.</source>
+        <translation>Bilgisayara bu kadar süre dokunmazsan uykuya geçer.</translation>
+    </message>
+    <message>
+        <source>If you do not touch the computer for this long, the screen turns off.</source>
+        <translation>Bilgisayara bu kadar süre dokunmazsan ekran kapanır.</translation>
+    </message>
+    <message>
+        <source>The screen gets darker a little before it turns off; moving the mouse brings it back.</source>
+        <translation>Ekran kapanmadan biraz önce kararır; fareyi oynatınca geri gelir.</translation>
+    </message>
+    <message>
+        <source>The Power saver / Balanced / Performance choice in the system menu at the top right.</source>
+        <translation>Sağ üstteki sistem menüsündeki Güç tasarrufu / Dengeli / Performans seçimi.</translation>
+    </message>
+    <message>
+        <source>Brightness by room light</source>
+        <translation>Ortam ışığına göre parlaklık</translation>
+    </message>
+    <message>
+        <source>Graphics card power mode</source>
+        <translation>Ekran kartının güç kipi</translation>
+    </message>
+    <message>
+        <source>Wi-Fi battery saving</source>
+        <translation>Wi-Fi'de pil tasarrufu</translation>
+    </message>
+    <message>
+        <source>Stop the hard disk after</source>
+        <translation>Sabit diski durdurma süresi</translation>
+    </message>
+    <message>
+        <source>Save power on the disk connection</source>
+        <translation>Disk bağlantısında tasarruf</translation>
+    </message>
+    <message>
+        <source>Put unused internal devices to sleep</source>
+        <translation>Kullanılmayan dahili aygıtları uyut</translation>
+    </message>
+    <message>
+        <source>Save power on internal card connections</source>
+        <translation>Dahili kartların bağlantısında tasarruf</translation>
+    </message>
+    <message>
+        <source>Put unused USB devices to sleep</source>
+        <translation>Kullanılmayan USB aygıtlarını uyut</translation>
+    </message>
+    <message>
+        <source>When the battery is almost empty</source>
+        <translation>Pil bitmek üzereyken</translation>
+    </message>
+    <message>
+        <source>Last level before the battery runs out</source>
+        <translation>Pil bitmeden önceki son seviye</translation>
+    </message>
+    <message>
+        <source>“Battery very low” warning at</source>
+        <translation>“Pil çok azaldı” uyarısı</translation>
+    </message>
+    <message>
+        <source>“Battery low” warning at</source>
+        <translation>“Pil azaldı” uyarısı</translation>
+    </message>
+    <message>
+        <source>Speed control method</source>
+        <translation>Hız ayarlama yöntemi</translation>
+    </message>
+    <message>
+        <source>Highest processor speed</source>
+        <translation>İşlemcinin en yüksek hızı</translation>
+    </message>
+    <message>
+        <source>Lowest processor speed</source>
+        <translation>İşlemcinin en düşük hızı</translation>
+    </message>
+    <message>
+        <source>Processor: speed or battery</source>
+        <translation>İşlemci: hız mı, pil mi</translation>
+    </message>
+    <message>
+        <source>Processor speed boost (turbo)</source>
+        <translation>İşlemcinin hız artırması (turbo)</translation>
+    </message>
+    <message>
+        <source>Closing the lid with another screen connected</source>
+        <translation>Ek ekran bağlıyken kapağı kapatınca</translation>
+    </message>
+    <message>
+        <source>Let scheduled tasks wake the computer</source>
+        <translation>Zamanlanmış işler bilgisayarı uyandırabilsin</translation>
+    </message>
+    <message>
+        <source>Sleep type</source>
+        <translation>Uyku biçimi</translation>
+    </message>
+    <message>
+        <source>Put the computer to sleep after</source>
+        <translation>Uykuya geçme süresi</translation>
+    </message>
+    <message>
+        <source>Turn off the screen after</source>
+        <translation>Ekranı kapatma süresi</translation>
+    </message>
+    <message>
+        <source>Dim the screen when not in use</source>
+        <translation>Kullanılmayınca ekranı karart</translation>
+    </message>
+    <message>
+        <source>System power mode</source>
+        <translation>Sistemin güç kipi</translation>
+    </message>
+    <message>
+        <source>Wireless connections</source>
+        <translation>Kablosuz bağlantılar</translation>
+    </message>
+    <message>
+        <source>Connected devices and disks</source>
+        <translation>Bağlı aygıtlar ve diskler</translation>
+    </message>
+    <message>
+        <source>Battery (same in all plans)</source>
+        <translation>Pil (bütün planlarda aynı)</translation>
+    </message>
+    <message>
+        <source>Buttons and lid (same in all plans)</source>
+        <translation>Düğmeler ve kapak (bütün planlarda aynı)</translation>
+    </message>
+    <message>
+        <source>Checking power management…</source>
+        <translation>Güç yönetimi denetleniyor…</translation>
+    </message>
+    <message>
+        <source>Desktop settings (screen, sleep) follow the plan.</source>
+        <translation>Masaüstü ayarları (ekran, uyku) planı izliyor.</translation>
+    </message>
+    <message>
+        <source>Give control back</source>
+        <translation>Yönetimi geri ver</translation>
+    </message>
+    <message>
+        <source>Give power management back</source>
+        <translation>Güç yönetimini geri ver</translation>
+    </message>
+    <message>
+        <source>Let Linwas manage power</source>
+        <translation>Güç yönetimini Linwas'a ver</translation>
+    </message>
+    <message>
+        <source>Linwas does not fully manage power yet</source>
+        <translation>Linwas gücü henüz tam yönetmiyor</translation>
+    </message>
+    <message>
+        <source>Linwas is running from source code; the power service comes with the installed package. Plan settings are locked, battery information works.</source>
+        <translation>Linwas kaynak koddan çalışıyor; güç servisi kurulu paketle gelir. Plan ayarları kilitli, pil bilgisi çalışıyor.</translation>
+    </message>
+    <message>
+        <source>Linwas manages power on this computer</source>
+        <translation>Bu bilgisayarda gücü Linwas yönetiyor</translation>
+    </message>
+    <message>
+        <source>No other power tool is active.</source>
+        <translation>Başka güç aracı etkin değil.</translation>
+    </message>
+    <message>
+        <source>One click fixes the items below: other power tools are turned off (not removed), the Linwas power service is started and the plan is applied. You can give control back at any time.</source>
+        <translation>Tek tıkla aşağıdakiler düzelir: başka güç araçları kapatılır (silinmez), Linwas güç servisi başlatılır ve plan uygulanır. Yönetimi istediğin zaman geri verebilirsin.</translation>
+    </message>
+    <message>
+        <source>Plans, automatic switching and the settings below are applied by Linwas. Changes in the system menu are set back when the plan or power source changes.</source>
+        <translation>Planlar, otomatik geçiş ve aşağıdaki ayarlar Linwas tarafından uygulanır. Sistem menüsündeki değişiklikler plan ya da güç kaynağı değişince geri alınır.</translation>
+    </message>
+    <message>
+        <source>The Linwas power service is running.</source>
+        <translation>Linwas güç servisi çalışıyor.</translation>
+    </message>
+    <message>
+        <source>The Linwas power service is stopped, so plans are not applied.</source>
+        <translation>Linwas güç servisi durmuş; planlar uygulanmıyor.</translation>
+    </message>
+    <message>
+        <source>The Linwas power service is turned off and the power tools it turned off are turned on again. Linwas plans are no longer applied. Continue?</source>
+        <translation>Linwas güç servisi kapatılır, onun kapattığı güç araçları yeniden açılır. Linwas planları artık uygulanmaz. Devam edilsin mi?</translation>
+    </message>
+    <message>
+        <source>The desktop part is not running; screen and sleep times are not set.</source>
+        <translation>Masaüstü bölümü çalışmıyor; ekran ve uyku süreleri ayarlanmıyor.</translation>
+    </message>
+    <message>
+        <source>Turns the Linwas power service off and the other power tools on again</source>
+        <translation>Linwas güç servisini kapatır, diğer güç araçlarını yeniden açar</translation>
+    </message>
+    <message>
+        <source>{names} also manages power; the two would override each other. Until it is turned off, Linwas does not change processor, USB/PCIe/disk, wireless and graphics card settings.</source>
+        <translation>{names} de gücü yönetiyor; ikisi birbirinin ayarını bozar. O kapatılana kadar Linwas işlemci, USB/PCIe/disk, kablosuz ve ekran kartı ayarlarını değiştirmez.</translation>
+    </message>
+    <message>
+        <source>A /swapfile already exists; Linwas does not change it.</source>
+        <translation>/swapfile zaten var; Linwas ona dokunmaz.</translation>
+    </message>
+    <message>
+        <source>Btrfs tools are too old (version 6.1 or newer needed).</source>
+        <translation>Btrfs araçları eski (6.1 ya da daha yeni sürüm gerekli).</translation>
+    </message>
+    <message>
+        <source>Create the swap file and set up waking</source>
+        <translation>Swap dosyasını oluştur ve uyanmayı ayarla</translation>
+    </message>
+    <message>
+        <source>Hibernate is available. It saves your open work to the disk and turns the computer off completely; it uses no power and opens where you left off. You can choose it for sleep, the lid and buttons.</source>
+        <translation>Hazırda bekletme kullanılabilir. Açık işlerini diske kaydeder ve bilgisayarı tamamen kapatır; hiç güç harcamaz, açılınca kaldığın yerden devam eder. Uyku, kapak ve düğmeler için seçebilirsin.</translation>
+    </message>
+    <message>
+        <source>Hibernate now</source>
+        <translation>Şimdi hazırda beklet</translation>
+    </message>
+    <message>
+        <source>Hibernate saves your open work to the disk and turns the computer off completely. On Linux it needs swap space as big as the memory ({ram} GB); this computer does not have enough. Linwas can create a swap file for it, like Windows' hiberfil.sys. Free space on the system disk: {free} GB.</source>
+        <translation>Hazırda bekletme açık işlerini diske kaydeder ve bilgisayarı tamamen kapatır. Linux'ta bunun için bellek kadar ({ram} GB) swap alanı gerekir; bu bilgisayarda yeterli değil. Linwas, Windows'taki hiberfil.sys gibi bir swap dosyası oluşturabilir. Sistem diskinde boş alan: {free} GB.</translation>
+    </message>
+    <message>
+        <source>Hibernation is set up. Restart the computer once to finish; after that you can choose it for sleep, the lid and buttons.</source>
+        <translation>Hazırda bekletme kuruldu. Bitirmek için bilgisayarı bir kez yeniden başlat; sonra uyku, kapak ve düğmeler için seçebilirsin.</translation>
+    </message>
+    <message>
+        <source>Linwas will create a {n} GB swap file (/swapfile) on the system disk and set the computer to wake from it. Writing the file can take a few minutes. Afterwards the computer must be restarted once.
+
+Continue?</source>
+        <translation>Linwas sistem diskinde {n} GB'lık bir swap dosyası (/swapfile) oluşturacak ve bilgisayarı ondan uyanacak şekilde ayarlayacak. Dosyanın yazılması birkaç dakika sürebilir. Sonra bilgisayar bir kez yeniden başlatılmalı.
+
+Devam edilsin mi?</translation>
+    </message>
+    <message>
+        <source>Only computers that start with GRUB are supported.</source>
+        <translation>Yalnızca GRUB ile açılan bilgisayarlar destekleniyor.</translation>
+    </message>
+    <message>
+        <source>Only systems that use initramfs-tools are supported.</source>
+        <translation>Yalnızca initramfs-tools kullanan sistemler destekleniyor.</translation>
+    </message>
+    <message>
+        <source>Remove hibernation</source>
+        <translation>Hazırda bekletmeyi kaldır</translation>
+    </message>
+    <message>
+        <source>Restart now</source>
+        <translation>Şimdi yeniden başlat</translation>
+    </message>
+    <message>
+        <source>Save your work and close your programs. Restart the computer now?</source>
+        <translation>İşlerini kaydet ve programları kapat. Bilgisayar şimdi yeniden başlatılsın mı?</translation>
+    </message>
+    <message>
+        <source>Save your work first. The computer turns off; press the power button to continue where you left off. Hibernate now?</source>
+        <translation>Önce işlerini kaydet. Bilgisayar kapanır; kaldığın yerden devam etmek için güç düğmesine bas. Şimdi hazırda bekletilsin mi?</translation>
+    </message>
+    <message>
+        <source>Secure Boot (kernel lockdown) blocks hibernation. It works only if Secure Boot is turned off in the firmware settings.</source>
+        <translation>Secure Boot (çekirdek kilidi) hazırda bekletmeyi engelliyor. Yalnızca Secure Boot ürün yazılımı (BIOS/UEFI) ayarlarından kapatılırsa çalışır.</translation>
+    </message>
+    <message>
+        <source>Set up hibernation</source>
+        <translation>Hazırda bekletmeyi kur</translation>
+    </message>
+    <message>
+        <source>Swap file size</source>
+        <translation>Swap dosyası boyutu</translation>
+    </message>
+    <message>
+        <source>Swap file size:</source>
+        <translation>Swap dosyası boyutu:</translation>
+    </message>
+    <message>
+        <source>System backup (Timeshift)</source>
+        <translation>Sistem yedeği (Timeshift)</translation>
+    </message>
+    <message>
+        <source>The swap file is deleted and hibernation is turned off. Settings that use hibernate should be changed to sleep. Continue?</source>
+        <translation>Swap dosyası silinir ve hazırda bekletme kapanır. Hazırda bekletme kullanan ayarları uykuya çevirmelisin. Devam edilsin mi?</translation>
+    </message>
+    <message>
+        <source>The system disk's file system is not supported (ext4, XFS or Btrfs needed).</source>
+        <translation>Sistem diskinin dosya sistemi desteklenmiyor (ext4, XFS ya da Btrfs gerekli).</translation>
+    </message>
+    <message>
+        <source>There is not enough free space on the system disk.</source>
+        <translation>Sistem diskinde yeterli boş alan yok.</translation>
+    </message>
+    <message>
+        <source>This is smaller than the memory. Hibernation may fail when the memory is nearly full.</source>
+        <translation>Bu, bellekten küçük. Bellek doluyken hazırda bekletme başarısız olabilir.</translation>
+    </message>
+    <message>
+        <source>All settings of this plan</source>
+        <translation>Bu planın tüm ayarları</translation>
+    </message>
+    <message>
+        <source>Go to the advanced power settings</source>
+        <translation>Gelişmiş güç ayarlarına git</translation>
+    </message>
+    <message>
+        <source>Battery health</source>
+        <translation>Pil sağlığı</translation>
+    </message>
+    <message>
+        <source>Battery saver</source>
+        <translation>Pil tasarrufu</translation>
+    </message>
+    <message>
+        <source>Battery: {n}%</source>
+        <translation>Pil: %{n}</translation>
+    </message>
+    <message>
+        <source>Choose how your computer balances speed and energy use.</source>
+        <translation>Bilgisayarının hız ile enerji kullanımı arasındaki dengeyi seç.</translation>
+    </message>
+    <message>
+        <source>Choose how your computer balances speed and energy use. Plans switch automatically when you plug in or unplug.</source>
+        <translation>Bilgisayarının hız ile enerji kullanımı arasındaki dengeyi seç. Şarj aletini takıp çıkardığında ayarlar kendiliğinden değişir.</translation>
+    </message>
+    <message>
+        <source>Full charge and discharge</source>
+        <translation>Tam dolup boşalma</translation>
+    </message>
+    <message>
+        <source>Good</source>
+        <translation>İyi</translation>
+    </message>
+    <message>
+        <source>Linwas can change the plan for you. Turn on what you need and save.</source>
+        <translation>Linwas planı senin yerine değiştirebilir. İstediğini aç ve kaydet.</translation>
+    </message>
+    <message>
+        <source>Mains</source>
+        <translation>Şebeke</translation>
+    </message>
+    <message>
+        <source>Needs replacing soon</source>
+        <translation>Yakında değişmeli</translation>
+    </message>
+    <message>
+        <source>Schedule</source>
+        <translation>Zamanlama</translation>
+    </message>
+    <message>
+        <source>Sets this plan's settings again, e.g. after changing them elsewhere</source>
+        <translation>Bu planın ayarlarını yeniden uygular (ör. başka yerden değiştirildiyse)</translation>
+    </message>
+    <message>
+        <source>Switches to a thriftier plan when the battery runs low.</source>
+        <translation>Pil azalınca daha tasarruflu bir plana geçer.</translation>
+    </message>
+    <message>
+        <source>The battery has lost much of its capacity. Consider replacing it; until then, keep the laptop plugged in for long work.</source>
+        <translation>Pil kapasitesinin büyük kısmını yitirmiş. Değiştirmeyi düşün; o zamana kadar uzun işlerde şarj aletini takılı tut.</translation>
+    </message>
+    <message>
+        <source>The battery holds less charge than when it was new. Battery protection and the Power saver plan help it last longer.</source>
+        <translation>Pil yeniyken olduğundan daha az şarj tutuyor. Pil koruma ve Güç tasarrufu planı ömrünü uzatır.</translation>
+    </message>
+    <message>
+        <source>The battery is low. Plug in the charger soon.</source>
+        <translation>Pil azaldı. Şarj aletini yakında tak.</translation>
+    </message>
+    <message>
+        <source>Uses another plan at set hours, e.g. Power saver at night.</source>
+        <translation>Belirli saatlerde başka plan kullanır (ör. gece Güç tasarrufu).</translation>
+    </message>
+    <message>
+        <source>Worn</source>
+        <translation>Yıpranmış</translation>
+    </message>
+    <message>
         <source>Apply</source>
         <translation>Uygula</translation>
     </message>
@@ -2724,16 +3348,8 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Pil şarj sınırı: %{n}</translation>
     </message>
     <message>
-        <source>Battery health: {n}% of its original capacity ({verdict})</source>
-        <translation>Pil sağlığı: ilk kapasitesinin %{n} kadarı ({verdict})</translation>
-    </message>
-    <message>
         <source>Battery protection</source>
         <translation>Pil koruma</translation>
-    </message>
-    <message>
-        <source>Charge cycles: {n}</source>
-        <translation>Şarj döngüsü: {n}</translation>
     </message>
     <message>
         <source>Charging</source>
@@ -2808,18 +3424,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Kapağı kapattığımda</translation>
     </message>
     <message>
-        <source>good</source>
-        <translation>iyi</translation>
-    </message>
-    <message>
-        <source>needs replacing soon</source>
-        <translation>yakında değiştirilmeli</translation>
-    </message>
-    <message>
-        <source>worn</source>
-        <translation>yıpranmış</translation>
-    </message>
-    <message>
         <source>The limit is kept after restarting.</source>
         <translation>Sınır yeniden başlattıktan sonra da korunur.</translation>
     </message>
@@ -2828,40 +3432,12 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>"Sistem varsayılanı", Linwas'ın o ayara dokunmadığı anlamına gelir. "Tüm planlar" altındaki ayarlar her plan için aynıdır.</translation>
     </message>
     <message>
-        <source>AMD and Intel: speed limit; NVIDIA: switch off the card when not in use.</source>
-        <translation>AMD ve Intel: hız sınırı; NVIDIA: kullanılmadığında kartı kapatır.</translation>
-    </message>
-    <message>
-        <source>Adaptive brightness</source>
-        <translation>Uyarlanabilir parlaklık</translation>
-    </message>
-    <message>
-        <source>Adjusts brightness using the light sensor.</source>
-        <translation>Parlaklığı ışık algılayıcısına göre ayarlar.</translation>
-    </message>
-    <message>
         <source>Advanced power settings</source>
         <translation>Gelişmiş güç seçenekleri</translation>
     </message>
     <message>
-        <source>Advanced: the kernel's frequency scaling method.</source>
-        <translation>İleri düzey: çekirdeğin frekans ayarlama yöntemi.</translation>
-    </message>
-    <message>
         <source>Allow</source>
         <translation>İzin ver</translation>
-    </message>
-    <message>
-        <source>Allow wake timers</source>
-        <translation>Uyanma zamanlayıcılarına izin ver</translation>
-    </message>
-    <message>
-        <source>Another power tool is installed</source>
-        <translation>Başka bir güç aracı kurulu</translation>
-    </message>
-    <message>
-        <source>Applied once when the plan or power source changes; you can still adjust it.</source>
-        <translation>Plan ya da güç kaynağı değişince bir kez uygulanır; sonra yine ayarlayabilirsiniz.</translation>
     </message>
     <message>
         <source>Ask what to do</source>
@@ -2872,18 +3448,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Otomatik plan değiştirme</translation>
     </message>
     <message>
-        <source>Balanced, faster</source>
-        <translation>Dengeli, daha hızlı</translation>
-    </message>
-    <message>
-        <source>Balanced, longer battery</source>
-        <translation>Dengeli, daha uzun pil</translation>
-    </message>
-    <message>
-        <source>Battery (all plans)</source>
-        <translation>Pil (tüm planlar)</translation>
-    </message>
-    <message>
         <source>Battery levels must be: low &gt; critical &gt; action level.</source>
         <translation>Pil seviyeleri şöyle olmalı: düşük &gt; kritik &gt; eylem seviyesi.</translation>
     </message>
@@ -2892,32 +3456,8 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Bluetooth</translation>
     </message>
     <message>
-        <source>Bluetooth is turned back on when you leave this plan.</source>
-        <translation>Bu plandan çıkınca Bluetooth yeniden açılır.</translation>
-    </message>
-    <message>
-        <source>Buttons and lid (all plans)</source>
-        <translation>Düğmeler ve kapak (tüm planlar)</translation>
-    </message>
-    <message>
-        <source>Closing the lid with an external screen</source>
-        <translation>Harici ekran bağlıyken kapak kapanınca</translation>
-    </message>
-    <message>
         <source>Common settings for {plan}</source>
         <translation>{plan} için sık kullanılan ayarlar</translation>
-    </message>
-    <message>
-        <source>Critical battery action</source>
-        <translation>Kritik pil eylemi</translation>
-    </message>
-    <message>
-        <source>Critical battery action level</source>
-        <translation>Kritik pil eylemi seviyesi</translation>
-    </message>
-    <message>
-        <source>Critical battery level</source>
-        <translation>Kritik pil seviyesi</translation>
     </message>
     <message>
         <source>Custom plan</source>
@@ -2932,10 +3472,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>"{name}" planı silinsin mi?</translation>
     </message>
     <message>
-        <source>Dim the screen when inactive</source>
-        <translation>Boştayken ekranı karart</translation>
-    </message>
-    <message>
         <source>Discard</source>
         <translation>Vazgeç</translation>
     </message>
@@ -2946,10 +3482,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>Do not allow</source>
         <translation>İzin verme</translation>
-    </message>
-    <message>
-        <source>Energy preference (EPP)</source>
-        <translation>Enerji tercihi (EPP)</translation>
     </message>
     <message>
         <source>Every day from</source>
@@ -2964,44 +3496,16 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Dışa aktar…</translation>
     </message>
     <message>
-        <source>Firmware default</source>
-        <translation>Donanım yazılımı varsayılanı</translation>
-    </message>
-    <message>
-        <source>Frequency governor</source>
-        <translation>Frekans yöneticisi (governor)</translation>
-    </message>
-    <message>
         <source>Graphics and brightness</source>
         <translation>Ekran kartı ve parlaklık</translation>
-    </message>
-    <message>
-        <source>Graphics card power mode</source>
-        <translation>Ekran kartı güç modu</translation>
     </message>
     <message>
         <source>Hibernate</source>
         <translation>Hazırda beklet</translation>
     </message>
     <message>
-        <source>Hibernate is available. You can choose it for sleep, the lid and buttons.</source>
-        <translation>Hazırda bekletme kullanılabilir. Uyku, kapak ve düğmeler için seçebilirsiniz.</translation>
-    </message>
-    <message>
         <source>Hibernate is not available on this computer:</source>
         <translation>Bu bilgisayarda hazırda bekletme kullanılamıyor:</translation>
-    </message>
-    <message>
-        <source>Hibernate saves your work to disk and turns the computer off.</source>
-        <translation>Hazırda bekletme, açık işlerinizi diske kaydedip bilgisayarı kapatır.</translation>
-    </message>
-    <message>
-        <source>Hybrid sleep</source>
-        <translation>Karma uyku</translation>
-    </message>
-    <message>
-        <source>Idle USB devices are switched off. Mice and keyboards are excluded.</source>
-        <translation>Boştaki USB aygıtları kapatılır. Fare ve klavye hariç.</translation>
     </message>
     <message>
         <source>Import power plan</source>
@@ -3020,20 +3524,8 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>{plan} planında en düşük işlemci durumu en yüksekten büyük.</translation>
     </message>
     <message>
-        <source>Lets scheduled tasks wake the computer from sleep.</source>
-        <translation>Zamanlanmış görevlerin bilgisayarı uykudan uyandırmasına izin verir.</translation>
-    </message>
-    <message>
-        <source>Linwas will be able to set up hibernation in a later version.</source>
-        <translation>Linwas, sonraki bir sürümde hazırda bekletmeyi kurabilecek.</translation>
-    </message>
-    <message>
         <source>Lock the screen</source>
         <translation>Ekranı kilitle</translation>
-    </message>
-    <message>
-        <source>Low battery level</source>
-        <translation>Düşük pil seviyesi</translation>
     </message>
     <message>
         <source>Low battery switching comes first, then the schedule, then the selected plan.</source>
@@ -3044,20 +3536,8 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Başka bir güç aracı yönetiyor</translation>
     </message>
     <message>
-        <source>Maximum power saving</source>
-        <translation>En yüksek tasarruf</translation>
-    </message>
-    <message>
-        <source>Maximum processor state</source>
-        <translation>En yüksek işlemci durumu</translation>
-    </message>
-    <message>
         <source>Medium</source>
         <translation>Orta</translation>
-    </message>
-    <message>
-        <source>Minimum processor state</source>
-        <translation>En düşük işlemci durumu</translation>
     </message>
     <message>
         <source>Never</source>
@@ -3096,28 +3576,8 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Açık</translation>
     </message>
     <message>
-        <source>Only for hard disks with spinning platters.</source>
-        <translation>Yalnızca dönen plakalı sabit diskler için.</translation>
-    </message>
-    <message>
         <source>Only on laptops</source>
         <translation>Yalnızca dizüstü bilgisayarlarda</translation>
-    </message>
-    <message>
-        <source>PCI Express link state power management</source>
-        <translation>PCI Express bağlantı durumu güç yönetimi</translation>
-    </message>
-    <message>
-        <source>PCI device power management</source>
-        <translation>PCI aygıt güç yönetimi</translation>
-    </message>
-    <message>
-        <source>Percentage of the highest processor speed.</source>
-        <translation>En yüksek işlemci hızının yüzdesi.</translation>
-    </message>
-    <message>
-        <source>Percentage of the highest processor speed. Lower values save battery.</source>
-        <translation>En yüksek işlemci hızının yüzdesi. Düşük değerler pil tasarrufu sağlar.</translation>
     </message>
     <message>
         <source>Plan name:</source>
@@ -3152,16 +3612,8 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>İşlemci</translation>
     </message>
     <message>
-        <source>Put the computer to sleep after</source>
-        <translation>Bilgisayarı uyku moduna al</translation>
-    </message>
-    <message>
         <source>Reapply plan</source>
         <translation>Planı yeniden uygula</translation>
-    </message>
-    <message>
-        <source>Remove {name}</source>
-        <translation>{name} aracını kaldır</translation>
     </message>
     <message>
         <source>Rename power plan</source>
@@ -3188,20 +3640,12 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>"{name}" planı varsayılan ayarlarına döndürülsün mü?</translation>
     </message>
     <message>
-        <source>SATA link power management</source>
-        <translation>SATA bağlantı güç yönetimi</translation>
-    </message>
-    <message>
         <source>Save changes</source>
         <translation>Değişiklikleri kaydet</translation>
     </message>
     <message>
         <source>Save power plan settings</source>
         <translation>Güç planı ayarlarını kaydet</translation>
-    </message>
-    <message>
-        <source>Saves battery; can slightly slow down the connection.</source>
-        <translation>Pil tasarrufu sağlar; bağlantıyı biraz yavaşlatabilir.</translation>
     </message>
     <message>
         <source>Screen brightness when switching to this plan</source>
@@ -3212,44 +3656,12 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Güvenli Önyükleme (çekirdek kilidi) hazırda bekletmeyi engelliyor.</translation>
     </message>
     <message>
-        <source>Setting</source>
-        <translation>Ayar</translation>
-    </message>
-    <message>
         <source>Sleep</source>
         <translation>Uyku</translation>
     </message>
     <message>
-        <source>Sleep type</source>
-        <translation>Uyku türü</translation>
-    </message>
-    <message>
-        <source>Some computers do not allow changing this; then it has no effect.</source>
-        <translation>Bazı bilgisayarlar bunun değiştirilmesine izin vermez; o zaman etkisi olmaz.</translation>
-    </message>
-    <message>
         <source>System default</source>
         <translation>Sistem varsayılanı</translation>
-    </message>
-    <message>
-        <source>System power mode</source>
-        <translation>Sistem güç modu</translation>
-    </message>
-    <message>
-        <source>Takes effect after the next restart.</source>
-        <translation>Bir sonraki yeniden başlatmada geçerli olur.</translation>
-    </message>
-    <message>
-        <source>Tells the processor whether to favour speed or battery life.</source>
-        <translation>İşlemciye hızı mı pil ömrünü mü öne alacağını söyler.</translation>
-    </message>
-    <message>
-        <source>The Power saver / Balanced / Performance mode in the system menu.</source>
-        <translation>Sistem menüsündeki Güç tasarrufu / Dengeli / Performans modu.</translation>
-    </message>
-    <message>
-        <source>The critical battery action runs at this level.</source>
-        <translation>Kritik pil eylemi bu seviyede çalışır.</translation>
     </message>
     <message>
         <source>The hdparm tool is not installed</source>
@@ -3262,10 +3674,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>The kernel does not support hibernation.</source>
         <translation>Çekirdek hazırda bekletmeyi desteklemiyor.</translation>
-    </message>
-    <message>
-        <source>The login screen follows this setting after the next restart.</source>
-        <translation>Giriş ekranı bu ayara bir sonraki yeniden başlatmadan sonra uyar.</translation>
     </message>
     <message>
         <source>The power mode was changed from the system menu ({now}). This plan uses {want}; it is set again when the plan or power source changes, or when you press "Reapply plan".</source>
@@ -3288,32 +3696,8 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Bu dosya geçerli bir Linwas güç planı değil.</translation>
     </message>
     <message>
-        <source>Turbo boost</source>
-        <translation>Turbo hızlandırma</translation>
-    </message>
-    <message>
         <source>Turn off</source>
         <translation>Kapat</translation>
-    </message>
-    <message>
-        <source>Turn off hard disk after</source>
-        <translation>Sabit diski kapat</translation>
-    </message>
-    <message>
-        <source>Turn off the screen after</source>
-        <translation>Ekranı kapat</translation>
-    </message>
-    <message>
-        <source>Turning turbo off makes the computer cooler and quieter but slower.</source>
-        <translation>Turbo kapalıyken bilgisayar daha serin ve sessiz ama daha yavaştır.</translation>
-    </message>
-    <message>
-        <source>USB selective suspend</source>
-        <translation>USB seçici askıya alma</translation>
-    </message>
-    <message>
-        <source>USB, PCIe and disks</source>
-        <translation>USB, PCIe ve diskler</translation>
     </message>
     <message>
         <source>Value</source>
@@ -3326,18 +3710,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>When the battery falls to</source>
         <translation>Pil şu seviyeye düşünce:</translation>
-    </message>
-    <message>
-        <source>Wi-Fi power saving</source>
-        <translation>Wi-Fi güç tasarrufu</translation>
-    </message>
-    <message>
-        <source>Wireless</source>
-        <translation>Kablosuz</translation>
-    </message>
-    <message>
-        <source>You are warned at this level.</source>
-        <translation>Bu seviyede uyarılırsınız.</translation>
     </message>
     <message>
         <source>You can have at most {n} custom plans.</source>
@@ -3378,10 +3750,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>use</source>
         <translation>arasında kullan:</translation>
-    </message>
-    <message>
-        <source>{names} also manages power settings. To avoid the two overriding each other, Linwas does not change processor, USB/PCIe/disk, wireless and graphics card settings. Removing it is recommended.</source>
-        <translation>{names} de güç ayarlarını yönetiyor. İkisi birbirinin ayarını ezmesin diye Linwas işlemci, USB/PCIe/disk, kablosuz ve ekran kartı ayarlarını değiştirmiyor. Kaldırılması önerilir.</translation>
     </message>
     <message>
         <source>{n} min</source>
@@ -3612,10 +3980,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>{n} aygıt bilgisayarı uykudan uyandırabiliyor.</translation>
     </message>
     <message>
-        <source>Below this level the battery is shown as critical.</source>
-        <translation>Pil bu seviyenin altında kritik olarak gösterilir.</translation>
-    </message>
-    <message>
         <source>Default</source>
         <translation>Varsayılan</translation>
     </message>
@@ -3632,60 +3996,12 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Gelişmiş ayarları göster</translation>
     </message>
     <message>
-        <source>Idle internal devices are switched off to save power.</source>
-        <translation>Boştaki dahili aygıtlar enerji tasarrufu için kapatılır.</translation>
-    </message>
-    <message>
-        <source>Lets SATA disks save power when idle; may slow some disks slightly.</source>
-        <translation>SATA diskler boştayken enerji tasarrufu yapar; bazı diskleri biraz yavaşlatabilir.</translation>
-    </message>
-    <message>
-        <source>Makes the screen darker shortly before it turns off.</source>
-        <translation>Ekran kapanmadan kısa süre önce kararır.</translation>
-    </message>
-    <message>
         <source>Needs the Linwas power service</source>
         <translation>Linwas güç servisi gerekli</translation>
     </message>
     <message>
-        <source>Power plans are applied by the Linwas power service, which comes with the installed Linwas package. Linwas is running from source code here, so the plan settings are locked. Battery information still works.</source>
-        <translation>Güç planlarını Linwas paketiyle kurulan Linwas güç servisi uygular. Linwas burada kaynak koddan çalışıyor, bu yüzden plan ayarları kilitli. Pil bilgileri yine çalışır.</translation>
-    </message>
-    <message>
-        <source>Power plans are not available</source>
-        <translation>Güç planları kullanılamıyor</translation>
-    </message>
-    <message>
         <source>Restore the default value of this setting</source>
         <translation>Bu ayarı varsayılan değerine döndür</translation>
-    </message>
-    <message>
-        <source>Start the power service</source>
-        <translation>Güç servisini başlat</translation>
-    </message>
-    <message>
-        <source>Start the service</source>
-        <translation>Servisi başlat</translation>
-    </message>
-    <message>
-        <source>The Linwas power service is not running, so plan settings would not be applied. They are locked until the service runs again.</source>
-        <translation>Linwas güç servisi çalışmıyor, bu yüzden plan ayarları uygulanmaz. Servis yeniden çalışana kadar ayarlar kilitli.</translation>
-    </message>
-    <message>
-        <source>The computer sleeps when you do not use it for this long.</source>
-        <translation>Bilgisayarı bu süre kullanmazsanız uyku moduna geçer.</translation>
-    </message>
-    <message>
-        <source>The power service is stopped</source>
-        <translation>Güç servisi durdu</translation>
-    </message>
-    <message>
-        <source>The screen turns off when you do not use the computer for this long.</source>
-        <translation>Bilgisayarı bu süre kullanmazsanız ekran kapanır.</translation>
-    </message>
-    <message>
-        <source>What the computer does when the battery is almost empty.</source>
-        <translation>Pil bitmek üzereyken bilgisayarın ne yapacağı.</translation>
     </message>
     <message>
         <source>about {t} left</source>
@@ -4139,6 +4455,22 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
 <context>
     <name>SettingsPage</name>
     <message>
+        <source>Opening files</source>
+        <translation>Dosyaları açma</translation>
+    </message>
+    <message>
+        <source>Install .deb packages with Linwas</source>
+        <translation>.deb paketlerini Linwas ile kur</translation>
+    </message>
+    <message>
+        <source>When you double-click a downloaded .deb file, Linwas checks it first and shows what it will change before installing. Turning this off returns .deb files to the program that opened them before.</source>
+        <translation>İndirdiğin bir .deb dosyasına çift tıkladığında Linwas önce onu denetler ve kurmadan önce neleri değiştireceğini gösterir. Kapatırsan .deb dosyaları önceden açan programa geri döner.</translation>
+    </message>
+    <message>
+        <source>The default program could not be changed.</source>
+        <translation>Varsayılan program değiştirilemedi.</translation>
+    </message>
+    <message>
         <source>A device has no driver</source>
         <translation>Bir aygıtın sürücüsü yok</translation>
     </message>
@@ -4291,10 +4623,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Linwas arka planda güncellemeler ve sorunlar hakkında bildirim gösterir. Uygulama menüsünden yeniden açabilirsiniz.</translation>
     </message>
     <message>
-        <source>Installed plugins</source>
-        <translation>Kurulu eklentiler</translation>
-    </message>
-    <message>
         <source>Keep running in the background</source>
         <translation>Arka planda çalışmaya devam et</translation>
     </message>
@@ -4377,10 +4705,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>No activity yet.</source>
         <translation>Henüz işlem yok.</translation>
-    </message>
-    <message>
-        <source>No plugins installed. Built-in features are listed in the menu.</source>
-        <translation>Kurulu eklenti yok. Yerleşik özellikler menüde listelenir.</translation>
     </message>
     <message>
         <source>Notification state</source>
@@ -4610,16 +4934,240 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
 <context>
     <name>TroubleshootPage</name>
     <message>
+        <source>Corner right-click, like Windows</source>
+        <translation>Köşeyle sağ tık (Windows gibi)</translation>
+    </message>
+    <message>
+        <source>Mouse &amp; touchpad settings</source>
+        <translation>Fare ve dokunmatik yüzey ayarları</translation>
+    </message>
+    <message>
+        <source>Pressing the bottom-right corner of the touchpad clicks like the left button.</source>
+        <translation>Dokunmatik yüzeyin sağ alt köşesine basınca sol tık gibi davranıyor.</translation>
+    </message>
+    <message>
+        <source>Right-click doesn't work</source>
+        <translation>Sağ tık çalışmıyor</translation>
+    </message>
+    <message>
+        <source>Right-click now works with the bottom-right corner of the touchpad</source>
+        <translation>Sağ tık artık dokunmatik yüzeyin sağ alt köşesiyle çalışıyor</translation>
+    </message>
+    <message>
+        <source>The touchpad setting could not be changed</source>
+        <translation>Dokunmatik yüzey ayarı değiştirilemedi</translation>
+    </message>
+    <message>
+        <source>Ask the assistant</source>
+        <translation>Yardımcıya sor</translation>
+    </message>
+    <message>
+        <source>Battery details</source>
+        <translation>Pil ayrıntıları</translation>
+    </message>
+    <message>
+        <source>Battery drains fast</source>
+        <translation>Pil çabuk bitiyor</translation>
+    </message>
+    <message>
+        <source>Bluetooth</source>
+        <translation>Bluetooth</translation>
+    </message>
+    <message>
+        <source>Bluetooth device won't connect</source>
+        <translation>Bluetooth aygıtı bağlanmıyor</translation>
+    </message>
+    <message>
+        <source>Checks internet and DNS, the clock, disks, memory, temperature, installations, drivers, services, sound, printing, updates, start-up time and the battery.</source>
+        <translation>İnterneti ve DNS'i, saati, diskleri, belleği, sıcaklığı, kurulumları, sürücüleri, servisleri, sesi, yazdırmayı, güncellemeleri, açılış süresini ve pili denetler.</translation>
+    </message>
+    <message>
+        <source>Computer starts slowly</source>
+        <translation>Bilgisayar yavaş açılıyor</translation>
+    </message>
+    <message>
+        <source>Connected, but web addresses are not found (DNS)</source>
+        <translation>Bağlı, ama web adresleri bulunamıyor (DNS)</translation>
+    </message>
+    <message>
+        <source>Date &amp; time settings</source>
+        <translation>Tarih ve saat ayarları</translation>
+    </message>
+    <message>
+        <source>Devices</source>
+        <translation>Aygıtlar</translation>
+    </message>
+    <message>
+        <source>Enough free memory</source>
+        <translation>Yeterli boş bellek var</translation>
+    </message>
+    <message>
+        <source>Enough free space for your files</source>
+        <translation>Dosyaların için yeterli boş alan var</translation>
+    </message>
+    <message>
+        <source>Enough space for system updates (/boot)</source>
+        <translation>Sistem güncellemeleri için yeterli alan var (/boot)</translation>
+    </message>
+    <message>
+        <source>Extra drivers are built for this kernel</source>
+        <translation>Ek sürücüler bu çekirdek için derlenmiş</translation>
+    </message>
+    <message>
+        <source>Headphones, mouse or phone isn't found or keeps disconnecting.</source>
+        <translation>Kulaklık, fare ya da telefon bulunmuyor veya bağlantı kopuyor.</translation>
+    </message>
+    <message>
+        <source>It takes long until the desktop is ready.</source>
+        <translation>Masaüstünün hazır olması uzun sürüyor.</translation>
+    </message>
+    <message>
+        <source>Memory is almost full</source>
+        <translation>Bellek dolmak üzere</translation>
+    </message>
+    <message>
+        <source>Microphone or camera doesn't work</source>
+        <translation>Mikrofon ya da kamera çalışmıyor</translation>
+    </message>
+    <message>
+        <source>No graphics driver: the screen is drawn by the processor</source>
+        <translation>Ekran kartı sürücüsü yok: ekranı işlemci çiziyor</translation>
+    </message>
+    <message>
+        <source>Others can't hear or see you in video calls.</source>
+        <translation>Görüntülü görüşmelerde karşı taraf seni duymuyor ya da görmüyor.</translation>
+    </message>
+    <message>
+        <source>Power plans</source>
+        <translation>Güç planları</translation>
+    </message>
+    <message>
+        <source>Rebuild drivers</source>
+        <translation>Sürücüleri yeniden derle</translation>
+    </message>
+    <message>
+        <source>Refresh the list</source>
+        <translation>Listeyi yenile</translation>
+    </message>
+    <message>
+        <source>Refresh the list of programs</source>
+        <translation>Program listesini yenile</translation>
+    </message>
+    <message>
+        <source>Remove old kernels</source>
+        <translation>Eski çekirdekleri kaldır</translation>
+    </message>
+    <message>
+        <source>Restart Bluetooth</source>
+        <translation>Bluetooth'u yeniden başlat</translation>
+    </message>
+    <message>
+        <source>Restart Bluetooth service</source>
+        <translation>Bluetooth servisini yeniden başlat</translation>
+    </message>
+    <message>
+        <source>Some drivers are not built for the running kernel</source>
+        <translation>Bazı sürücüler çalışan çekirdek için derlenmemiş</translation>
+    </message>
+    <message>
+        <source>Sound settings</source>
+        <translation>Ses ayarları</translation>
+    </message>
+    <message>
+        <source>Startup programs</source>
+        <translation>Başlangıç programları</translation>
+    </message>
+    <message>
+        <source>Temperature is normal</source>
+        <translation>Sıcaklık normal</translation>
+    </message>
+    <message>
+        <source>The battery empties quickly or the laptop gets warm.</source>
+        <translation>Pil çabuk boşalıyor ya da dizüstü ısınıyor.</translation>
+    </message>
+    <message>
+        <source>The battery is in good condition</source>
+        <translation>Pil iyi durumda</translation>
+    </message>
+    <message>
+        <source>The battery is worn</source>
+        <translation>Pil yıpranmış</translation>
+    </message>
+    <message>
+        <source>The boot partition (/boot) is full; kernel updates will fail</source>
+        <translation>Açılış bölümü (/boot) dolu; çekirdek güncellemeleri başarısız olur</translation>
+    </message>
+    <message>
+        <source>The clock is not synchronized</source>
+        <translation>Saat eşitlenmemiş</translation>
+    </message>
+    <message>
+        <source>The clock is off, or secure websites show certificate errors.</source>
+        <translation>Saat yanlış ya da güvenli siteler sertifika hatası veriyor.</translation>
+    </message>
+    <message>
+        <source>The clock is set automatically</source>
+        <translation>Saat kendiliğinden ayarlanıyor</translation>
+    </message>
+    <message>
+        <source>The computer is very hot</source>
+        <translation>Bilgisayar çok ısınmış</translation>
+    </message>
+    <message>
+        <source>The computer starts quickly</source>
+        <translation>Bilgisayar hızlı açılıyor</translation>
+    </message>
+    <message>
+        <source>The computer starts slowly</source>
+        <translation>Bilgisayar yavaş açılıyor</translation>
+    </message>
+    <message>
+        <source>The disk with your files is almost full</source>
+        <translation>Dosyalarının bulunduğu disk dolmak üzere</translation>
+    </message>
+    <message>
+        <source>The graphics card driver works</source>
+        <translation>Ekran kartı sürücüsü çalışıyor</translation>
+    </message>
+    <message>
+        <source>The list of programs has not been refreshed for a long time</source>
+        <translation>Program listesi uzun süredir yenilenmemiş</translation>
+    </message>
+    <message>
+        <source>The list of programs is up to date</source>
+        <translation>Program listesi güncel</translation>
+    </message>
+    <message>
+        <source>The system disk can be written</source>
+        <translation>Sistem diskine yazılabiliyor</translation>
+    </message>
+    <message>
+        <source>The system disk is read-only; nothing can be saved</source>
+        <translation>Sistem diski salt okunur; hiçbir şey kaydedilemiyor</translation>
+    </message>
+    <message>
+        <source>Updates fail</source>
+        <translation>Güncellemeler başarısız oluyor</translation>
+    </message>
+    <message>
+        <source>Updating stops with an error or the disk is full.</source>
+        <translation>Güncelleme hatayla duruyor ya da disk dolu.</translation>
+    </message>
+    <message>
+        <source>Web addresses are found (DNS)</source>
+        <translation>Web adresleri bulunuyor (DNS)</translation>
+    </message>
+    <message>
+        <source>Wrong date or time</source>
+        <translation>Tarih ya da saat yanlış</translation>
+    </message>
+    <message>
         <source>An installation was interrupted</source>
         <translation>Bir kurulum yarıda kalmış</translation>
     </message>
     <message>
         <source>Can't install programs</source>
         <translation>Program kurulamıyor</translation>
-    </message>
-    <message>
-        <source>Checks internet, disk space, installations, services, sound and printing.</source>
-        <translation>İnternet, disk alanı, kurulumlar, servisler, ses ve yazdırmayı denetler.</translation>
     </message>
     <message>
         <source>Computer is slow</source>
@@ -4804,6 +5352,14 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
 </context>
 <context>
     <name>OnboardingWizard</name>
+    <message>
+        <source>Otherwise right-click needs a two-finger click. You can change this later in Troubleshooting.</source>
+        <translation>Seçmezsen sağ tık için iki parmakla basman gerekir. Bunu sonra Sorun giderme'den de değiştirebilirsin.</translation>
+    </message>
+    <message>
+        <source>Right-click by pressing the bottom-right corner of the touchpad, like Windows</source>
+        <translation>Dokunmatik yüzeyin sağ alt köşesine basınca sağ tık olsun (Windows gibi)</translation>
+    </message>
     <message>
         <source>A full backup (Timeshift snapshot) lets you return the whole system to today's state if something goes wrong. It can take a few minutes.</source>
         <translation>Tam yedek (Timeshift anlık görüntüsü), bir sorun çıkarsa bütün sistemi bugünkü hâline döndürmenizi sağlar. Birkaç dakika sürebilir.</translation>
@@ -7632,6 +8188,226 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
 <context>
     <name>TaskbarPage</name>
     <message>
+        <source>All programs button at the start</source>
+        <translation>Bütün programlar düğmesi başta</translation>
+    </message>
+    <message>
+        <source>Always hidden, show at the screen edge</source>
+        <translation>Hep gizli, ekranın kenarına gelince görünsün</translation>
+    </message>
+    <message>
+        <source>Always visible</source>
+        <translation>Hep görünsün</translation>
+    </message>
+    <message>
+        <source>Close, minimize and maximize at the top left of every window.</source>
+        <translation>Kapat, küçült ve büyüt her pencerenin sol üstünde.</translation>
+    </message>
+    <message>
+        <source>Dock</source>
+        <translation>Dock</translation>
+    </message>
+    <message>
+        <source>Dock on every screen</source>
+        <translation>Her ekranda dock</translation>
+    </message>
+    <message>
+        <source>Dot under open programs</source>
+        <translation>Açık programların altında nokta</translation>
+    </message>
+    <message>
+        <source>Easy to open and eject.</source>
+        <translation>Açmak ve çıkarmak kolay olur.</translation>
+    </message>
+    <message>
+        <source>Hide when a window covers it</source>
+        <translation>Pencere üstüne gelince gizlensin</translation>
+    </message>
+    <message>
+        <source>Icon size</source>
+        <translation>Simge boyutu</translation>
+    </message>
+    <message>
+        <source>Like Launchpad: the first icon opens the list of all programs.</source>
+        <translation>Launchpad gibi: ilk simge bütün programların listesini açar.</translation>
+    </message>
+    <message>
+        <source>On the left, like macOS</source>
+        <translation>Solda, macOS gibi</translation>
+    </message>
+    <message>
+        <source>Trash in the dock</source>
+        <translation>Dock'ta çöp kutusu</translation>
+    </message>
+    <message>
+        <source>USB drives and disks in the dock</source>
+        <translation>Dock'ta USB bellekler ve diskler</translation>
+    </message>
+    <message>
+        <source>Visibility</source>
+        <translation>Görünürlük</translation>
+    </message>
+    <message>
+        <source>24-hour clock</source>
+        <translation>24 saat biçimi</translation>
+    </message>
+    <message>
+        <source>A thin button at the end; click it to minimise all windows.</source>
+        <translation>Sondaki ince düğme; tıklayınca bütün pencereler küçülür.</translation>
+    </message>
+    <message>
+        <source>Activities</source>
+        <translation>Etkinlikler</translation>
+    </message>
+    <message>
+        <source>Always combine, hide names</source>
+        <translation>Hep birleştir, adları gizle</translation>
+    </message>
+    <message>
+        <source>Behaviour</source>
+        <translation>Davranış</translation>
+    </message>
+    <message>
+        <source>Centre</source>
+        <translation>Ortada</translation>
+    </message>
+    <message>
+        <source>Clock and calendar</source>
+        <translation>Saat ve takvim</translation>
+    </message>
+    <message>
+        <source>Clock and date</source>
+        <translation>Saat ve tarih</translation>
+    </message>
+    <message>
+        <source>Clock position</source>
+        <translation>Saatin yeri</translation>
+    </message>
+    <message>
+        <source>Combine taskbar buttons</source>
+        <translation>Görev çubuğu düğmelerini birleştir</translation>
+    </message>
+    <message>
+        <source>For example a download or file copy.</source>
+        <translation>Örneğin bir indirme ya da dosya kopyalama.</translation>
+    </message>
+    <message>
+        <source>For example the number of unread e-mails.</source>
+        <translation>Örneğin okunmamış e-posta sayısı.</translation>
+    </message>
+    <message>
+        <source>Icon alignment</source>
+        <translation>Simgelerin yeri</translation>
+    </message>
+    <message>
+        <source>Items on the taskbar</source>
+        <translation>Görev çubuğundaki öğeler</translation>
+    </message>
+    <message>
+        <source>Like Windows 10 (left)</source>
+        <translation>Windows 10 gibi (solda)</translation>
+    </message>
+    <message>
+        <source>Like Windows 11 (centre)</source>
+        <translation>Windows 11 gibi (ortada)</translation>
+    </message>
+    <message>
+        <source>Move left</source>
+        <translation>Sola taşı</translation>
+    </message>
+    <message>
+        <source>Move right</source>
+        <translation>Sağa taşı</translation>
+    </message>
+    <message>
+        <source>Network, sound, battery and power.</source>
+        <translation>Ağ, ses, pil ve güç.</translation>
+    </message>
+    <message>
+        <source>Never combine, show names</source>
+        <translation>Birleştirme, adları göster</translation>
+    </message>
+    <message>
+        <source>No programs are pinned.</source>
+        <translation>Sabitlenmiş program yok.</translation>
+    </message>
+    <message>
+        <source>Opens the list of all programs.</source>
+        <translation>Bütün programların listesini açar.</translation>
+    </message>
+    <message>
+        <source>Peek at the desktop</source>
+        <translation>Masaüstüne göz at</translation>
+    </message>
+    <message>
+        <source>Pin programs</source>
+        <translation>Program sabitle</translation>
+    </message>
+    <message>
+        <source>Pin programs…</source>
+        <translation>Program sabitle…</translation>
+    </message>
+    <message>
+        <source>Pinned programs</source>
+        <translation>Sabitlenmiş programlar</translation>
+    </message>
+    <message>
+        <source>Pointing at the show desktop corner shows the desktop for a moment.</source>
+        <translation>Masaüstünü göster köşesine gelince masaüstü bir an görünür.</translation>
+    </message>
+    <message>
+        <source>Show counts on app icons</source>
+        <translation>Simgelerde sayı göster</translation>
+    </message>
+    <message>
+        <source>Show desktop corner</source>
+        <translation>Masaüstünü göster köşesi</translation>
+    </message>
+    <message>
+        <source>Show progress on app icons</source>
+        <translation>Simgelerde ilerleme göster</translation>
+    </message>
+    <message>
+        <source>Show seconds</source>
+        <translation>Saniyeyi göster</translation>
+    </message>
+    <message>
+        <source>Show the date</source>
+        <translation>Tarihi göster</translation>
+    </message>
+    <message>
+        <source>Show the day of the week</source>
+        <translation>Haftanın gününü göster</translation>
+    </message>
+    <message>
+        <source>Show the taskbar on all screens</source>
+        <translation>Görev çubuğunu her ekranda göster</translation>
+    </message>
+    <message>
+        <source>Shows all open windows and desktops.</source>
+        <translation>Bütün açık pencereleri ve masaüstlerini gösterir.</translation>
+    </message>
+    <message>
+        <source>Start button</source>
+        <translation>Başlat düğmesi</translation>
+    </message>
+    <message>
+        <source>Start button and app icons together in the middle or on the left.</source>
+        <translation>Başlat düğmesi ve program simgeleri birlikte ortada ya da solda.</translation>
+    </message>
+    <message>
+        <source>System icons</source>
+        <translation>Sistem simgeleri</translation>
+    </message>
+    <message>
+        <source>Unpin</source>
+        <translation>Sabitlemeyi kaldır</translation>
+    </message>
+    <message>
+        <source>Windows of the same program in one button, or each window with its title.</source>
+        <translation>Aynı programın pencereleri tek düğmede ya da her pencere kendi adıyla.</translation>
+    </message>
+    <message>
         <source>Accent color</source>
         <translation>Vurgu rengi</translation>
     </message>
@@ -8010,6 +8786,66 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
 <context>
     <name>OfficeLookPage</name>
     <message>
+        <source>Show the Office name next to each app</source>
+        <translation>Uygulama adlarının yanında Office karşılığını göster</translation>
+    </message>
+    <message>
+        <source>LibreOffice Writer (Word), Calc (Excel) and Impress (PowerPoint) in the app menu, search and window title</source>
+        <translation>Uygulama menüsünde, aramada ve pencere başlığında LibreOffice Writer (Word), Calc (Excel) ve Impress (PowerPoint)</translation>
+    </message>
+    <message>
+        <source>Simple ribbon</source>
+        <translation>Sade şerit</translation>
+    </message>
+    <message>
+        <source>Few tabs with named groups</source>
+        <translation>Az sekme, adlı gruplar</translation>
+    </message>
+    <message>
+        <source>Full ribbon</source>
+        <translation>Tam şerit</translation>
+    </message>
+    <message>
+        <source>Every LibreOffice tool in tabs</source>
+        <translation>LibreOffice'in bütün araçları sekmelerde</translation>
+    </message>
+    <message>
+        <source>Classic</source>
+        <translation>Klasik</translation>
+    </message>
+    <message>
+        <source>Menus and toolbars, no ribbon</source>
+        <translation>Menüler ve araç çubukları, şerit yok</translation>
+    </message>
+    <message>
+        <source>Working</source>
+        <translation>Çalışma</translation>
+    </message>
+    <message>
+        <source>File menu inside the window</source>
+        <translation>Pencere içinde Dosya menüsü</translation>
+    </message>
+    <message>
+        <source>Save, open and print without separate dialogs</source>
+        <translation>Ayrı pencere açmadan kaydet, aç, yazdır</translation>
+    </message>
+    <message>
+        <source>Word, Excel and PowerPoint</source>
+        <translation>Word, Excel ve PowerPoint</translation>
+    </message>
+    <message>
+        <source>LibreOffice formats</source>
+        <translation>LibreOffice biçimleri</translation>
+    </message>
+    <message>
+        <source>Same size as Calibri, like Word</source>
+        <translation>Calibri ile aynı boyutta, Word'deki gibi</translation>
+    </message>
+    <message>
+        <source>LibreOffice default</source>
+        <translation>LibreOffice'in varsayılanı</translation>
+    </message>
+    <message>
         <source>Apply</source>
         <translation>Uygula</translation>
     </message>
@@ -8018,16 +8854,8 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
         <translation>Uygulanıyor…</translation>
     </message>
     <message>
-        <source>Carlito, same size as Calibri (like Word)</source>
-        <translation>Carlito, Calibri ile aynı boyutta (Word'deki gibi)</translation>
-    </message>
-    <message>
         <source>Checking…</source>
         <translation>Denetleniyor…</translation>
-    </message>
-    <message>
-        <source>Classic: menus and toolbars, no ribbon</source>
-        <translation>Klasik: menüler ve araç çubukları, şerit yok</translation>
     </message>
     <message>
         <source>Close LibreOffice before applying; it reads these when it starts.</source>
@@ -8050,14 +8878,6 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
         <translation>{n} dakikada bir</translation>
     </message>
     <message>
-        <source>File menu inside the window (save, open, print without separate dialogs)</source>
-        <translation>Pencere içinde Dosya menüsü (ayrı pencere açmadan kaydet, aç, yazdır)</translation>
-    </message>
-    <message>
-        <source>Full ribbon: every LibreOffice tool in tabs</source>
-        <translation>Tam şerit: LibreOffice'in bütün araçları sekmelerde</translation>
-    </message>
-    <message>
         <source>Install LibreOffice and the Office look</source>
         <translation>LibreOffice'i ve Office görünümünü kur</translation>
     </message>
@@ -8070,10 +8890,6 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
         <translation>LibreOffice için Office görünümünü kur</translation>
     </message>
     <message>
-        <source>Liberation Serif (LibreOffice default)</source>
-        <translation>Liberation Serif (LibreOffice'in varsayılanı)</translation>
-    </message>
-    <message>
         <source>LibreOffice and the Office look</source>
         <translation>LibreOffice ve Office görünümü</translation>
     </message>
@@ -8084,10 +8900,6 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>LibreOffice {version} is installed.</source>
         <translation>LibreOffice {version} kurulu.</translation>
-    </message>
-    <message>
-        <source>LibreOffice's own formats (.odt, .ods, .odp)</source>
-        <translation>LibreOffice'in kendi biçimleri (.odt, .ods, .odp)</translation>
     </message>
     <message>
         <source>Makes LibreOffice look and work like Microsoft Office: a simple ribbon, a File menu inside the window, Word/Excel/PowerPoint formats and automatic saving. Your settings here only affect you.</source>
@@ -8122,10 +8934,6 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
         <translation>Yeni belgeleri şu biçimde kaydet</translation>
     </message>
     <message>
-        <source>Simple ribbon: few tabs with named groups</source>
-        <translation>Sade şerit: az sekme, adlı gruplar</translation>
-    </message>
-    <message>
         <source>The Office look is not installed.</source>
         <translation>Office görünümü kurulu değil.</translation>
     </message>
@@ -8150,10 +8958,6 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
         <translation>Yalnız senin için kapatmak parola istemez, diğer kullanıcıları etkilemez. Herkes için kaldırmak yönetici parolası ister.</translation>
     </message>
     <message>
-        <source>Word, Excel and PowerPoint files (.docx, .xlsx, .pptx)</source>
-        <translation>Word, Excel ve PowerPoint dosyaları (.docx, .xlsx, .pptx)</translation>
-    </message>
-    <message>
         <source>Your settings</source>
         <translation>Ayarların</translation>
     </message>
@@ -8172,6 +8976,356 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>✓ Office look {version} is installed. Simple ribbon: {apps}.</source>
         <translation>✓ Office görünümü {version} kurulu. Sade şerit: {apps}.</translation>
+    </message>
+</context>
+<context>
+    <name>PluginPermissionsDialog</name>
+    <message>
+        <source>Can run these system tasks (you confirm each time, with your password):</source>
+        <translation>Şu sistem görevlerini çalıştırabilir (her seferinde şifrenle onaylarsın):</translation>
+    </message>
+    <message>
+        <source>Checks (reads only, changes nothing):</source>
+        <translation>Denetler (yalnızca okur, hiçbir şeyi değiştirmez):</translation>
+    </message>
+    <message>
+        <source>Create a system backup (Timeshift)</source>
+        <translation>Sistem yedeği oluştur (Timeshift)</translation>
+    </message>
+    <message>
+        <source>Delete downloaded package files</source>
+        <translation>İndirilmiş paket dosyalarını sil</translation>
+    </message>
+    <message>
+        <source>Free disk space on {t}</source>
+        <translation>{t} üzerindeki boş alan</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Kur</translation>
+    </message>
+    <message>
+        <source>Install all updates</source>
+        <translation>Bütün güncellemeleri kur</translation>
+    </message>
+    <message>
+        <source>Install the Flatpak app {app_id}</source>
+        <translation>{app_id} Flatpak uygulamasını kur</translation>
+    </message>
+    <message>
+        <source>Install the program {name}</source>
+        <translation>{name} programını kur</translation>
+    </message>
+    <message>
+        <source>Install {name}?</source>
+        <translation>{name} kurulsun mu?</translation>
+    </message>
+    <message>
+        <source>It only adds help texts.</source>
+        <translation>Yalnızca yardım metinleri ekler.</translation>
+    </message>
+    <message>
+        <source>Opens these Linwas pages:</source>
+        <translation>Şu Linwas sayfalarını açar:</translation>
+    </message>
+    <message>
+        <source>Opens these system settings:</source>
+        <translation>Şu sistem ayarlarını açar:</translation>
+    </message>
+    <message>
+        <source>Opens these web pages in your browser:</source>
+        <translation>Şu web sayfalarını tarayıcında açar:</translation>
+    </message>
+    <message>
+        <source>Plugins cannot run their own code. System tasks always go through the Linwas safety list and ask for your confirmation.</source>
+        <translation>Eklentiler kendi kodlarını çalıştıramaz. Sistem görevleri her zaman Linwas güvenlik listesinden geçer ve onayını ister.</translation>
+    </message>
+    <message>
+        <source>Rebuild driver modules for the running kernel</source>
+        <translation>Sürücü modüllerini çalışan çekirdek için yeniden derle</translation>
+    </message>
+    <message>
+        <source>Refresh the list of firmware updates</source>
+        <translation>Ürün yazılımı güncellemeleri listesini yenile</translation>
+    </message>
+    <message>
+        <source>Refresh the list of programs</source>
+        <translation>Program listesini yenile</translation>
+    </message>
+    <message>
+        <source>Remove old kernels and unneeded packages</source>
+        <translation>Eski çekirdekleri ve gereksiz paketleri kaldır</translation>
+    </message>
+    <message>
+        <source>Repair interrupted installations</source>
+        <translation>Yarım kalan kurulumları onar</translation>
+    </message>
+    <message>
+        <source>Restart the system service {name}</source>
+        <translation>{name} sistem servisini yeniden başlat</translation>
+    </message>
+    <message>
+        <source>Shrink the system logs</source>
+        <translation>Sistem günlüklerini küçült</translation>
+    </message>
+    <message>
+        <source>This plugin is not from the Linwas catalog and was not checked by Linwas. Install it only if you trust where it comes from.</source>
+        <translation>Bu eklenti Linwas kataloğundan gelmiyor ve Linwas tarafından incelenmedi. Yalnızca geldiği yere güveniyorsan kur.</translation>
+    </message>
+    <message>
+        <source>This update asks for new permissions (marked ★).</source>
+        <translation>Bu güncelleme yeni izinler istiyor (★ ile işaretli).</translation>
+    </message>
+    <message>
+        <source>Turn on the system service {name}</source>
+        <translation>{name} sistem servisini aç</translation>
+    </message>
+    <message>
+        <source>Update</source>
+        <translation>Güncelle</translation>
+    </message>
+    <message>
+        <source>Update all Flatpak apps</source>
+        <translation>Bütün Flatpak uygulamalarını güncelle</translation>
+    </message>
+    <message>
+        <source>Update {name}?</source>
+        <translation>{name} güncellensin mi?</translation>
+    </message>
+    <message>
+        <source>Version {version} · from {publisher}</source>
+        <translation>Sürüm {version} · yayıncı: {publisher}</translation>
+    </message>
+    <message>
+        <source>What {name} can do</source>
+        <translation>{name} neler yapabilir</translation>
+    </message>
+    <message>
+        <source>Whether the file {t} exists</source>
+        <translation>{t} dosyası var mı</translation>
+    </message>
+    <message>
+        <source>Whether the kernel module {t} is loaded</source>
+        <translation>{t} çekirdek modülü yüklü mü</translation>
+    </message>
+    <message>
+        <source>Whether the package {t} is installed</source>
+        <translation>{t} paketi kurulu mu</translation>
+    </message>
+    <message>
+        <source>Whether the program {t} exists</source>
+        <translation>{t} programı var mı</translation>
+    </message>
+    <message>
+        <source>Whether the system service {t} is running</source>
+        <translation>{t} sistem servisi çalışıyor mu</translation>
+    </message>
+    <message>
+        <source>high risk</source>
+        <translation>yüksek risk</translation>
+    </message>
+    <message>
+        <source>low risk</source>
+        <translation>düşük risk</translation>
+    </message>
+    <message>
+        <source>medium risk</source>
+        <translation>orta risk</translation>
+    </message>
+</context>
+<context>
+    <name>PluginsSettings</name>
+    <message>
+        <source>Adds: {items}</source>
+        <translation>Ekledikleri: {items}</translation>
+    </message>
+    <message>
+        <source>Allow installing plugin files that are not in the catalog</source>
+        <translation>Katalogda olmayan eklenti dosyalarının kurulmasına izin ver</translation>
+    </message>
+    <message>
+        <source>Always on</source>
+        <translation>Hep açık</translation>
+    </message>
+    <message>
+        <source>Built-in</source>
+        <translation>Yerleşik</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>Katalog</translation>
+    </message>
+    <message>
+        <source>Check the catalog</source>
+        <translation>Kataloğa bak</translation>
+    </message>
+    <message>
+        <source>Checking…</source>
+        <translation>Denetleniyor…</translation>
+    </message>
+    <message>
+        <source>Developer</source>
+        <translation>Geliştirici</translation>
+    </message>
+    <message>
+        <source>Developer mode</source>
+        <translation>Geliştirici kipi</translation>
+    </message>
+    <message>
+        <source>Downloading…</source>
+        <translation>İndiriliyor…</translation>
+    </message>
+    <message>
+        <source>For people who write plugins. Such files are not checked by Linwas; they still cannot run code and every system task asks for your confirmation.</source>
+        <translation>Eklenti yazanlar için. Bu dosyalar Linwas tarafından incelenmez; yine de kod çalıştıramaz ve her sistem görevi onayını ister.</translation>
+    </message>
+    <message>
+        <source>Hardware information</source>
+        <translation>Donanım bilgisi</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Kur</translation>
+    </message>
+    <message>
+        <source>Install from file…</source>
+        <translation>Dosyadan kur…</translation>
+    </message>
+    <message>
+        <source>Install plugin</source>
+        <translation>Eklenti kur</translation>
+    </message>
+    <message>
+        <source>Installed</source>
+        <translation>Kurulu</translation>
+    </message>
+    <message>
+        <source>Installed plugins</source>
+        <translation>Kurulu eklentiler</translation>
+    </message>
+    <message>
+        <source>Linwas plugin (*.json)</source>
+        <translation>Linwas eklentisi (*.json)</translation>
+    </message>
+    <message>
+        <source>Not running: developer mode is off.</source>
+        <translation>Çalışmıyor: geliştirici kipi kapalı.</translation>
+    </message>
+    <message>
+        <source>Not running: it needs a newer Linwas.</source>
+        <translation>Çalışmıyor: daha yeni bir Linwas gerekiyor.</translation>
+    </message>
+    <message>
+        <source>Official</source>
+        <translation>Resmi</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>Açık</translation>
+    </message>
+    <message>
+        <source>Other parts of Linwas need this plugin.</source>
+        <translation>Linwas'ın başka bölümleri bu eklentiye ihtiyaç duyuyor.</translation>
+    </message>
+    <message>
+        <source>Permissions</source>
+        <translation>İzinler</translation>
+    </message>
+    <message>
+        <source>Plugin catalog</source>
+        <translation>Eklenti kataloğu</translation>
+    </message>
+    <message>
+        <source>Plugin files outside the catalog are not checked by Linwas. Turn on developer mode only if you write or test plugins yourself.</source>
+        <translation>Katalog dışındaki eklenti dosyaları Linwas tarafından incelenmez. Geliştirici kipini yalnızca kendin eklenti yazıyor ya da deniyorsan aç.</translation>
+    </message>
+    <message>
+        <source>Plugins add pages, checks and help to Linwas. Built-in plugins come with Linwas; official ones come from the signed Linwas package repository; catalog plugins contain no program code and can only use safe, listed tasks.</source>
+        <translation>Eklentiler Linwas'a sayfa, denetim ve yardım ekler. Yerleşik eklentiler Linwas'la gelir; resmi olanlar imzalı Linwas paket deposundan gelir; katalog eklentileri program kodu içermez ve yalnızca güvenli, listelenmiş görevleri kullanabilir.</translation>
+    </message>
+    <message>
+        <source>Plugins checked and signed by Linwas. The list and every file are verified with the Linwas key before anything is installed.</source>
+        <translation>Linwas tarafından incelenmiş ve imzalanmış eklentiler. Hiçbir şey kurulmadan önce liste ve her dosya Linwas anahtarıyla doğrulanır.</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Kaldır</translation>
+    </message>
+    <message>
+        <source>Remove plugin</source>
+        <translation>Eklentiyi kaldır</translation>
+    </message>
+    <message>
+        <source>Remove {name}? Its checks, cards and guide entries disappear.</source>
+        <translation>{name} kaldırılsın mı? Denetimleri, kartları ve rehber girdileri kaybolur.</translation>
+    </message>
+    <message>
+        <source>Restart Linwas to apply the change: quit it completely, then open it again.</source>
+        <translation>Değişikliğin geçerli olması için Linwas'ı tamamen kapatıp yeniden aç.</translation>
+    </message>
+    <message>
+        <source>Something went wrong: {error}</source>
+        <translation>Bir sorun oluştu: {error}</translation>
+    </message>
+    <message>
+        <source>The catalog could not be reached. Check the internet connection.</source>
+        <translation>Kataloğa ulaşılamadı. İnternet bağlantısını denetle.</translation>
+    </message>
+    <message>
+        <source>The catalog could not be verified with the Linwas key. Nothing was installed.</source>
+        <translation>Katalog Linwas anahtarıyla doğrulanamadı. Hiçbir şey kurulmadı.</translation>
+    </message>
+    <message>
+        <source>The catalog is empty.</source>
+        <translation>Katalog boş.</translation>
+    </message>
+    <message>
+        <source>The catalog or plugin file is damaged. Nothing was installed.</source>
+        <translation>Katalog ya da eklenti dosyası bozuk. Hiçbir şey kurulmadı.</translation>
+    </message>
+    <message>
+        <source>The downloaded plugin does not match the catalog. Nothing was installed.</source>
+        <translation>İndirilen eklenti katalogla eşleşmiyor. Hiçbir şey kurulmadı.</translation>
+    </message>
+    <message>
+        <source>This Linwas build has no plugin catalog address.</source>
+        <translation>Bu Linwas derlemesinde eklenti kataloğu adresi yok.</translation>
+    </message>
+    <message>
+        <source>This is not a valid Linwas plugin.</source>
+        <translation>Bu geçerli bir Linwas eklentisi değil.</translation>
+    </message>
+    <message>
+        <source>Turned off: Linwas withdrew this plugin from the catalog.</source>
+        <translation>Kapatıldı: Linwas bu eklentiyi katalogdan geri çekti.</translation>
+    </message>
+    <message>
+        <source>Update</source>
+        <translation>Güncelle</translation>
+    </message>
+    <message>
+        <source>information for the assistant</source>
+        <translation>yardımcı için bilgi</translation>
+    </message>
+    <message>
+        <source>page: {names}</source>
+        <translation>sayfa: {names}</translation>
+    </message>
+    <message>
+        <source>{n} guide entry(ies)</source>
+        <translation>{n} rehber girdisi</translation>
+    </message>
+    <message>
+        <source>{n} plugin(s) in the catalog.</source>
+        <translation>Katalogda {n} eklenti var.</translation>
+    </message>
+    <message>
+        <source>{n} problem card(s)</source>
+        <translation>{n} sorun kartı</translation>
+    </message>
+    <message>
+        <source>{n} troubleshooting check(s)</source>
+        <translation>{n} sorun giderme denetimi</translation>
     </message>
 </context>
 </TS>

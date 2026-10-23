@@ -6,7 +6,6 @@ değil, ayrı "Gelişmiş" sayfasında olacak.
 
 from __future__ import annotations
 
-import contextlib
 from datetime import datetime
 
 from PySide6.QtCore import QCoreApplication, QDateTime, QLocale, Qt, QTime, Signal
@@ -288,6 +287,27 @@ class SettingsPage(BasePage):
         hint.setWordWrap(True)
         card.layout.addWidget(hint)
 
+        # Dosya ilişkilendirme: .deb paketleri Linwas'ta açılsın (kurulu pakette)
+        from linwas.backend import file_handlers
+
+        card = s.card(tr("Opening files"))
+        self._deb_handler = QCheckBox(tr("Install .deb packages with Linwas"), card)
+        self._deb_handler.setChecked(file_handlers.linwas_opens_debs())
+        self._deb_handler.setEnabled(file_handlers.INSTALLED_DESKTOP_FILE.is_file())
+        self._deb_handler.toggled.connect(self._on_deb_handler)
+        card.layout.addWidget(self._deb_handler)
+        deb_hint = QLabel(
+            tr(
+                "When you double-click a downloaded .deb file, Linwas checks it first and shows "
+                "what it will change before installing. Turning this off returns .deb files to "
+                "the program that opened them before."
+            ),
+            card,
+        )
+        deb_hint.setObjectName("Secondary")
+        deb_hint.setWordWrap(True)
+        card.layout.addWidget(deb_hint)
+
         card = s.card(tr("Help"))
         row = QHBoxLayout()
         tour = QPushButton(tr("Show the welcome tour again"), card)
@@ -299,6 +319,26 @@ class SettingsPage(BasePage):
         row.addWidget(quit_btn)
         row.addStretch(1)
         card.layout.addLayout(row)
+
+    def _on_deb_handler(self, on: bool) -> None:
+        from linwas.backend import file_handlers
+
+        if on:
+            ok, previous = file_handlers.make_linwas_deb_handler()
+            if ok and previous:
+                self._settings.deb_handler_previous = previous
+        else:
+            ok = file_handlers.restore_deb_handler(self._settings.deb_handler_previous)
+        if not ok:
+            self._deb_handler.blockSignals(True)
+            self._deb_handler.setChecked(not on)
+            self._deb_handler.blockSignals(False)
+            QMessageBox.warning(
+                self, tr("Opening files"), tr("The default program could not be changed.")
+            )
+            return
+        self._settings.deb_handler_set = True
+        self._save()
 
     def _sync_close_action(self) -> None:
         """Kapatma sorusundaki "Seçimimi hatırla" diske yazar; eski kopya üzerine yazmasın."""
@@ -881,27 +921,9 @@ class SettingsPage(BasePage):
     # --- Eklentiler ---
 
     def _build_plugins(self, s: _Section) -> None:
-        card = s.card(tr("Installed plugins"))
-        self._plugins = QLabel("", card)
-        self._plugins.setWordWrap(True)
-        card.layout.addWidget(self._plugins)
+        from linwas.ui.pages.settings_plugins import PluginsPanel
+
+        self._plugins_panel = PluginsPanel(s, self)
 
     def _load_plugins(self) -> None:
-        from linwas.core.plugins.loader import PluginLoader
-
-        # Ana pencerenin yüklediği eklentiler (yerleşikler dahil)
-        loader = getattr(self.window(), "plugin_loader", None)
-        if loader is None:
-            loader = PluginLoader()
-            with contextlib.suppress(Exception):
-                loader.discover()
-        lines = []
-        for plugin in loader.plugins():
-            info = getattr(plugin, "meta", None)
-            name = getattr(info, "name", type(plugin).__name__)
-            version = getattr(info, "version", "")
-            lines.append(f"✓ {name} {version}".strip())
-        for name, error in loader.errors():
-            lines.append(f"⚠ {name}: {error}")
-        empty = tr("No plugins installed. Built-in features are listed in the menu.")
-        self._plugins.setText("\n".join(lines) if lines else empty)
+        self._plugins_panel.reload()

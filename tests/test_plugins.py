@@ -109,3 +109,64 @@ class TestPluginGates:
         p = MinimalPlugin()
         assert p.whitelist_proposals() == []
         assert p.ai_context() == {}
+
+
+# --- Aç/kapat ve kapılar (17 Ekim 2026) ---
+
+
+class _CheckPlugin(PluginBase):
+    @property
+    def meta(self) -> PluginMeta:
+        return PluginMeta(id="test.checks", name="Checks", version="1.0.0")
+
+    def scan_checks(self) -> list[ScanCheck]:
+        return [ScanCheck(id="c1", label="Fine", run=lambda: (True, ""))]
+
+
+class _RequiredPlugin(_CheckPlugin):
+    required = True
+
+    @property
+    def meta(self) -> PluginMeta:
+        return PluginMeta(id="test.required", name="Required", version="1.0.0")
+
+
+class _BrokenGatePlugin(PluginBase):
+    @property
+    def meta(self) -> PluginMeta:
+        return PluginMeta(id="test.broken_gate", name="Broken", version="1.0.0")
+
+    def scan_checks(self) -> list[ScanCheck]:
+        raise RuntimeError("boom")
+
+
+def test_disabled_plugin_is_listed_but_not_active():
+    loader = PluginLoader(disabled={"test.checks", "test.required"})
+    loader.load_class(_CheckPlugin)
+    loader.load_class(_RequiredPlugin)
+    assert [p.meta.id for p in loader.all_plugins()] == ["test.checks", "test.required"]
+    # Kapatılamaz eklenti kapalı listesinde olsa da etkin
+    assert [p.meta.id for p in loader.plugins()] == ["test.required"]
+    assert len(loader.gate("scan_checks")) == 1
+
+
+def test_gate_error_is_recorded_once_and_others_continue():
+    loader = PluginLoader()
+    loader.load_class(_BrokenGatePlugin)
+    loader.load_class(_CheckPlugin)
+    assert len(loader.gate("scan_checks")) == 1
+    loader.gate("scan_checks")
+    assert len([e for e in loader.errors() if e[0] == "test.broken_gate"]) == 1
+
+
+def test_builtin_source():
+    loader = PluginLoader()
+    plugin = loader.load_class(_CheckPlugin)
+    assert plugin is not None and plugin.source == "builtin"
+
+
+def test_disabled_plugins_setting_is_validated():
+    from linwas.core import app_settings
+
+    s = app_settings.from_dict({"disabled_plugins": ["linwas.power", "Bad Id!", 3, "linwas.power"]})
+    assert s.disabled_plugins == ["linwas.power"]

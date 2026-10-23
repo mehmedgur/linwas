@@ -7,7 +7,9 @@ kapalıyken çalışır. `generate-ribbons` ve `remove-ribbons` paket betiklerin
 Komutlar:
   status [--json]          durum
   set <anahtar> <değer>    ribbon simple|full|classic|default, file_menu on|off,
-                           autosave 0|1|2|5|10, save_format ooxml|odf, font carlito|liberation
+                           autosave 0|1|2|5|10, save_format ooxml|odf, font carlito|liberation,
+                           office_names on|off (menüde "LibreOffice Writer (Word)")
+  refresh-names            menü adı kopyalarını ayara göre yenile (LibreOffice güncellenince)
   disable | enable         yalnız bu kullanıcı için kapat / yeniden aç
   dialog                   zenity penceresi
   settings-window          Linwas'ın "Office görünümü" sayfası; Linwas yoksa zenity penceresi
@@ -27,6 +29,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import lo_profile  # noqa: E402
+import office_names  # noqa: E402
 import ribbon  # noqa: E402
 
 PACKAGE = "linwas-office-look"
@@ -55,7 +58,7 @@ CONFIG_DIR = os.path.join(os.path.expanduser("~"), ".config", "linwas-office-loo
 SETTINGS_FILE = os.path.join(CONFIG_DIR, "settings.json")
 DISABLED_FLAG = os.path.join(CONFIG_DIR, "disabled")
 BACKUP_FILE = os.path.join(CONFIG_DIR, "backup.json")
-DEFAULT_SETTINGS = {"file_menu": True, "autosave_minutes": 2}
+DEFAULT_SETTINGS = {"file_menu": True, "autosave_minutes": 2, "office_names": True}
 AUTOSAVE_CHOICES = (0, 1, 2, 5, 10)
 
 EXIT_ERROR, EXIT_USAGE, EXIT_LO_RUNNING = 1, 2, 3
@@ -103,6 +106,8 @@ def _read_settings() -> dict:
         return settings
     if isinstance(data.get("file_menu"), bool):
         settings["file_menu"] = data["file_menu"]
+    if isinstance(data.get("office_names"), bool):
+        settings["office_names"] = data["office_names"]
     if data.get("autosave_minutes") in AUTOSAVE_CHOICES:
         settings["autosave_minutes"] = data["autosave_minutes"]
     return settings
@@ -154,6 +159,7 @@ def status() -> dict:
         "settings": {
             "ribbon": _ribbon_state(prof),
             "file_menu": settings["file_menu"],
+            "office_names": settings["office_names"],
             "autosave_minutes": settings["autosave_minutes"],
             "save_format": "odf" if writer_filter == ODF_FILTERS["Writer"] else "ooxml",
             "font": "liberation" if font == LIBERATION_FONTS["Standard"] else "carlito",
@@ -183,7 +189,21 @@ def _set_ribbon(prof: lo_profile.Profile, value: str) -> None:
         prof.set(TOOLBAR_MODE, prop, ui)
 
 
+def refresh_names() -> None:
+    """Menü adı kopyalarını ayara göre yazar ya da siler (kapalıyken hep siler)."""
+    on = _read_settings()["office_names"] and not os.path.exists(DISABLED_FLAG)
+    office_names.apply(on)
+
+
 def set_option(key: str, value: str) -> None:
+    if key == "office_names":
+        if value not in ("on", "off"):
+            raise ToolError("office_names: on|off", EXIT_USAGE)
+        settings = _read_settings()
+        settings["office_names"] = value == "on"
+        _write_settings(settings)
+        refresh_names()
+        return
     if key in ("file_menu", "autosave"):
         settings = _read_settings()
         if key == "file_menu":
@@ -452,8 +472,12 @@ def main(argv: list[str]) -> int:
             set_option(*args)
         elif command == "disable":
             disable()
+            refresh_names()
         elif command == "enable":
             enable()
+            refresh_names()
+        elif command == "refresh-names":
+            refresh_names()
         elif command == "dialog":
             return dialog()
         elif command == "settings-window":

@@ -59,6 +59,8 @@ jobs:
       - run: bash packaging/plugins/office-look/build-deb.sh "" build
       - run: bash packaging/build-apt-repo.sh "$SIGNING_FPR" build/apt-repo build/linwas_*.deb
           build/linwas-office-look_*.deb
+      # Eklenti kataloğu deponun plugins/ klasörüne, aynı anahtarla imzalı
+      - run: bash packaging/build-plugin-catalog.sh "$SIGNING_FPR" build/apt-repo/plugins
       - uses: actions/upload-artifact@v4
         with:
           name: linwas-apt-repo

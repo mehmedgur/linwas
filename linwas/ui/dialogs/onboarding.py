@@ -17,7 +17,7 @@ from PySide6.QtWidgets import (
     QWizardPage,
 )
 
-from linwas.backend import troubleshoot
+from linwas.backend import touchpad, troubleshoot
 from linwas.backend.backups import timeshift_available
 from linwas.core.tasks import Task, TaskStep
 
@@ -98,6 +98,25 @@ class OnboardingWizard(QWizard):
         )
         self._migrate = QCheckBox(tr("Open “Transfer” after this"), page)
         layout.addWidget(self._migrate)
+        # Dokunmatik yüzeyde Windows gibi sağ tık (GNOME varsayılanı iki parmak)
+        self._corner_click = None
+        if touchpad.should_offer():
+            self._corner_click = QCheckBox(
+                tr("Right-click by pressing the bottom-right corner of the touchpad, like Windows"),
+                page,
+            )
+            self._corner_click.setChecked(True)
+            layout.addWidget(self._corner_click)
+            hint = QLabel(
+                tr(
+                    "Otherwise right-click needs a two-finger click. You can change this later "
+                    "in Troubleshooting."
+                ),
+                page,
+            )
+            hint.setObjectName("Secondary")
+            hint.setWordWrap(True)
+            layout.addWidget(hint)
         self.addPage(page)
 
         # 4. İlk tam yedek
@@ -171,4 +190,6 @@ class OnboardingWizard(QWizard):
                 self.tasks.append(Task(label=tr("Install Timeshift"), steps=[step]))
         if self._migrate.isChecked():
             self.open_page = "migrate"
+        if self._corner_click is not None and self._corner_click.isChecked():
+            touchpad.set_corner_right_click(True)  # kullanıcı ayarı; anında geçerli
         super().accept()
