@@ -27,6 +27,9 @@ def _self_check() -> int:
     from linwas.ui.main_window import MainWindow
 
     app = QApplication([sys.argv[0]])
+    from linwas.ui.theme.fonts import load_bundled_fonts
+
+    load_bundled_fonts()
     lang = selected_language()
     translator = install_translator(app, lang)
     window = MainWindow()
@@ -83,6 +86,10 @@ def main(argv: list[str] | None = None) -> int:
     app.setApplicationName("Linwas")
     app.setApplicationVersion(__version__)
     app.setDesktopFileName("linwas")
+    # Eco düzeni için gömülü Figtree yazı tipi (düzen seçilmese de yüklenir; küçüktür)
+    from linwas.ui.theme.fonts import load_bundled_fonts
+
+    load_bundled_fonts()
     # LINWAS_LANG ortam değişkeni (geliştirme/test) ayarlardaki dili ezer
     from linwas.core import app_settings
 

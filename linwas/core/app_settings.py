@@ -13,8 +13,8 @@ from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
 
 THEMES = ("system", "light", "dark", "high_contrast")
-# Linwas'ın kendi düzeni: macOS havası (varsayılan) ya da Windows görünümü
-UI_STYLES = ("macos", "windows")
+# Linwas'ın kendi düzeni: macOS havası (varsayılan), Windows görünümü ya da eco (Linux Ekosistemi)
+UI_STYLES = ("macos", "windows", "eco")
 # ask: pencere kapatılınca her seferinde sor (varsayılan); "auto" eski ayar dosyalarından
 # gelir, "ask" ile aynı davranır. tray: arka planda çalışmaya devam et (tepsi varsa simgeyle);
 # quit: Linwas'ı kapat.

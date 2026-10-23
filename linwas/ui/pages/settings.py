@@ -383,6 +383,7 @@ class SettingsPage(BasePage):
             [
                 ("macos", tr("macOS style")),
                 ("windows", tr("Windows style")),
+                ("eco", tr("Eco style")),
             ],
             self._settings.ui_style,
         )

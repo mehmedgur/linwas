@@ -15,7 +15,16 @@ Son güncelleme: 17 Ekim 2026
   kaynağı bu `docs/` klasörü.
 
 ## Karar bekleyenler
-- (yok)
+- **Eco entegrasyonu:** yol (ayrı süreç + D-Bus / yetenek kaydı), izin modeli ve eco'nun kendi masaüstü
+  katmanı → [eco-entegrasyonu.md](eco-entegrasyonu.md). Eco düzeninin görünümü karara bağlandı (kararlar.md).
+
+## Eco düzeni — bekleyenler
+- [ ] Pardus'ta Ayarlar › Görünüm › Düzen › "Eco düzeni" ile açık/koyu denemesi (GNOME oturumu).
+- [ ] Eco ekran görüntüsündeki özel başlık çubuğu, arama kutusu ve "Son değiştirilen" listesi (kenar
+  çubuğunun altı) henüz yok; mevcut Linwas yerleşimi kullanılıyor.
+- [ ] Koyu temada "Kontrol ediliyor…" gibi nötr rozetler açık renkli kalıyor (macOS koyu temada da var).
+- [ ] Eco'ya özgü sayfalar (Hakkında vb.) ve eco servisleriyle D-Bus bağlantısı — eco belgelerinde arayüz
+  tanımı çıkınca.
 
 ## İnceleme bekleyenler
 - [ ] **PR #1 — Eski sistem desteğinin kaldırılması:** CI yeşil, Pardus 23'te "Destekleniyor"

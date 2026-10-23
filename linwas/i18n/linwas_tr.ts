@@ -4659,6 +4659,10 @@ Devam edilsin mi?</translation>
         <translation>Windows düzeni</translation>
     </message>
     <message>
+        <source>Eco style</source>
+        <translation>Eco düzeni</translation>
+    </message>
+    <message>
         <source>Layout:</source>
         <translation>Düzen:</translation>
     </message>

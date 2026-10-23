@@ -52,7 +52,7 @@ QTabBar::tab:selected {{
     background: {c.surface};
     border-color: {c.border};
     border-radius: {r}px;
-    font-weight: 600;
+    font-weight: {m.semibold};
 }}
 """
     # Windows: altı çizili sekmeler
@@ -104,7 +104,7 @@ def _qss(c: ColorSet, m: Metrics) -> str:
     return f"""
 /* === Temel === */
 QWidget {{
-    font-family: "Noto Sans", sans-serif;
+    font-family: {m.font_family};
     font-size: {fs}px;
     color: {c.text_primary};
     background-color: {c.background};
@@ -177,7 +177,7 @@ QPushButton[primary="true"] {{
     background-color: {c.accent};
     color: {c.text_on_accent};
     border: 1px solid {c.accent};
-    font-weight: 600;
+    font-weight: {m.semibold};
 }}
 QPushButton[primary="true"]:hover {{
     background-color: {c.accent_hover};
@@ -236,7 +236,7 @@ QPushButton#SidebarItem:hover {{
 QPushButton#SidebarItem[active="true"] {{
     background-color: {c.sidebar_item_active};
     color: {c.sidebar_text_active};
-    font-weight: 600;
+    font-weight: {m.semibold};
     {active_bar}
 }}
 QLabel#SidebarSection {{
@@ -244,7 +244,7 @@ QLabel#SidebarSection {{
     padding: 14px 10px 4px 10px;
     color: {c.text_secondary};
     font-size: {fs2}px;
-    font-weight: 600;
+    font-weight: {m.semibold};
 }}
 
 /* === Kartlar === */
@@ -366,7 +366,7 @@ QListWidget#SettingsNav::item:hover {{
 QListWidget#SettingsNav::item:selected {{
     background-color: {c.sidebar_item_active};
     color: {c.sidebar_text_active};
-    font-weight: 600;
+    font-weight: {m.semibold};
 }}
 QLabel#TileNumber {{
     font-size: 34px;
@@ -401,7 +401,7 @@ QFrame#Card QToolButton#SectionToggle {{
     border: none;
     border-radius: {r}px;
     padding: 8px 6px;
-    font-weight: 600;
+    font-weight: {m.semibold};
     color: {c.text_primary};
 }}
 QFrame#Card QToolButton#SectionToggle:hover {{
@@ -446,7 +446,7 @@ QPushButton#Chip:checked {{
 
 /* === Seçim kartları (widgets/option_tile.py) === */
 QFrame#Card QLabel#SectionTitle {{
-    font-weight: 600;
+    font-weight: {m.semibold};
 }}
 QFrame#Card QFrame#OptionTile {{
     background-color: {c.surface};
@@ -470,7 +470,7 @@ QFrame#Card QFrame#OptionTile[checked="true"] QRadioButton {{
     background-color: {c.soft_accent};
 }}
 QFrame#Card QFrame#OptionTile QLabel#OptionTitle {{
-    font-weight: 600;
+    font-weight: {m.semibold};
 }}
 QFrame#Card QFrame#OptionTile QLabel#OptionNote {{
     color: {c.text_secondary};

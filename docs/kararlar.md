@@ -104,6 +104,14 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
     kartlar beyaz + köşe 12 px + hafif gölge; iç satır ayırıcısı metin hizasından başlar; bölüm başlıkları
     kartın dışında küçük gri. macOS tipi anahtar (beyaz yuvarlak düğme); düğme köşesi 8 px; vurgu `#0066d6`;
     yazı `#1d1d1f`, ikincil `#6e6e73`. Pencere düğmeleri (trafik ışıkları) yok, başlığı masaüstü çizer.
+  - **Eco düzeni (23 Ekim 2026, kullanıcı kararı):** Linwas, eco (Linux Ekosistemi) projesinin ayarlar
+    uygulaması olacak; macOS/Windows yanında üçüncü bir **düzen** (`UiStyle.ECO`, Ayarlar › Görünüm ›
+    Düzen › "Eco düzeni"). Açık ve koyu tema birlikte; vurgu teal (`#2f6f73` / koyu `#5cb7bc`); yazı tipi
+    **Figtree** (pakete gömülü, SIL OFL 1.1; ağırlıklar 400/500/700); cam/bulanıklık yok; köşe 7 px
+    (kartlar 10 px); pencere düğmeleri Linwas ile aynı. Değerler `docs/tasarim/tokens-eco.json`, kodda
+    `ui/theme/tokens.py` (`ECO_LIGHT`, `ECO_DARK`, `METRICS[UiStyle.ECO]`); `tests/test_eco_style.py`
+    ikisinin uyumunu ve WCAG AA kontrastını denetler. Türetilen renkler (koyu vurgu, ikincil metin) belgede
+    "turetilmis" diye işaretli. Ayrıntı: [eco-entegrasyonu.md](eco-entegrasyonu.md).
   - **Seçim kartları ve Wi-Fi/Bluetooth (17 Ekim 2026):** birkaç seçenekten biri yuvarlak köşeli seçim
     kartlarıyla seçilir (`widgets/option_tile.py`: başlık + gri açıklama, seçili kart vurgu kenarlıklı ve
     açık vurgu zeminli; seçim düğmesi içi beyaz noktalı dolu daire). Wi-Fi ve Bluetooth sekmeleri: üstte

@@ -14,6 +14,7 @@ class UiStyle(Enum):
 
     MACOS = "macos"
     WINDOWS = "windows"
+    ECO = "eco"  # Linux Ekosistemi (eco) görünümü: teal vurgu, Figtree yazı tipi
 
 
 class Theme(Enum):
@@ -194,6 +195,65 @@ WINDOWS_DARK = ColorSet(
     segment_bg="#2a2a2a",
 )
 
+# Eco düzeni (23 Ekim 2026). Değerlerin kaynağı docs/tasarim/tokens-eco.json; açık renkler eco
+# "Hakkında" ayar sayfası görselinden ölçüldü, koyu renkler eco masaüstü mockup v5'ten.
+# Hover/basılı tonları ve koyu temadaki saydam renklerin opak karşılıkları türetilmiştir.
+ECO_LIGHT = ColorSet(
+    accent="#2f6f73",
+    accent_hover="#2a6468",
+    accent_pressed="#26595c",
+    background="#f7f7f4",
+    surface="#ecefe9",
+    surface_hover="#e5e8e2",
+    border="#d7dad5",
+    text_primary="#1e272a",
+    text_secondary="#5c6e72",
+    text_disabled="#7a8e92",
+    text_on_accent="#ffffff",
+    danger="#c42b1c",
+    danger_bg="#fde7e9",
+    warning="#9d5d00",
+    success="#0f7b0f",
+    sidebar_bg="#ecefe9",
+    sidebar_item_hover="#e0e3dd",
+    sidebar_item_active="#e8f2f2",
+    status_bar_bg="#ecefe9",
+    sidebar_text_active="#2f6f73",
+    separator="#d7dad5",
+    field_bg="#ecefe9",
+    soft_accent="#dce9e9",
+    segment_bg="#dee1db",
+)
+
+ECO_DARK = ColorSet(
+    accent="#5cb7bc",
+    accent_hover="#6cbec3",
+    accent_pressed="#53a5a9",
+    background="#0d1117",
+    surface="#161b22",
+    surface_hover="#1c2333",
+    border="#292d34",
+    text_primary="#e6edf3",
+    text_secondary="#7d8590",
+    text_disabled="#484f58",
+    text_on_accent="#0d1117",
+    danger="#ff99a4",
+    danger_bg="#442726",
+    warning="#d29922",
+    success="#6ccb5f",
+    sidebar_bg="#161b22",
+    sidebar_item_hover="#1c2333",
+    sidebar_item_active="#1d2b31",
+    status_bar_bg="#161b22",
+    sidebar_text_active="#5cb7bc",
+    separator="#22262d",
+    field_bg="#1c2333",
+    soft_accent="#203239",
+    segment_bg="#21262d",
+    tile_bg="#21262d",
+    tile_fg="#e6edf3",
+)
+
 THEMES: dict[Theme, ColorSet] = {
     Theme.LIGHT: LIGHT,
     Theme.DARK: DARK,
@@ -206,9 +266,21 @@ WINDOWS_THEMES: dict[Theme, ColorSet] = {
     Theme.HIGH_CONTRAST: HIGH_CONTRAST,
 }
 
+ECO_THEMES: dict[Theme, ColorSet] = {
+    Theme.LIGHT: ECO_LIGHT,
+    Theme.DARK: ECO_DARK,
+    Theme.HIGH_CONTRAST: HIGH_CONTRAST,
+}
+
+_COLOR_TABLES: dict[UiStyle, dict[Theme, ColorSet]] = {
+    UiStyle.MACOS: THEMES,
+    UiStyle.WINDOWS: WINDOWS_THEMES,
+    UiStyle.ECO: ECO_THEMES,
+}
+
 
 def colors(theme: Theme, style: UiStyle = UiStyle.MACOS, accent: str = "") -> ColorSet:
-    table = WINDOWS_THEMES if style is UiStyle.WINDOWS else THEMES
+    table = _COLOR_TABLES[style]
     base = table.get(theme, table[Theme.LIGHT])
     if not accent or theme is Theme.HIGH_CONTRAST:
         return base
@@ -303,6 +375,8 @@ class Metrics:
     sidebar_tiles: bool  # renkli simge kutuları (macOS)
     active_bar: bool  # seçili öğenin solunda vurgu çizgisi (Windows)
     segmented_tabs: bool  # sekmeler segmented control gibi (macOS)
+    font_family: str = '"Noto Sans", sans-serif'
+    semibold: int = 600  # "yarı kalın" yazı ağırlığı (eco: Figtree 500)
 
 
 # Yazı küçük kalmasın (kullanıcı kararı, 12 Ekim 2026)
@@ -334,6 +408,22 @@ METRICS: dict[UiStyle, Metrics] = {
         sidebar_tiles=False,
         active_bar=True,
         segmented_tabs=False,
+    ),
+    UiStyle.ECO: Metrics(
+        font_px=15,
+        secondary_px=13,
+        caption_px=13,
+        h1_px=28,
+        h2_px=19,
+        radius=7,
+        card_radius=10,
+        sidebar_width=270,
+        sidebar_icon=20,
+        sidebar_tiles=False,
+        active_bar=False,
+        segmented_tabs=False,
+        font_family='"Figtree", "Noto Sans", sans-serif',
+        semibold=500,
     ),
 }
 

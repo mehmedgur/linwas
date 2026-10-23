@@ -66,6 +66,10 @@ install -D -m 0644 "$ROOT/packaging/linwas.desktop" "$PKG/usr/share/applications
 install -D -m 0644 "$ROOT/linwas/resources/linwas.svg" \
     "$PKG/usr/share/icons/hicolor/scalable/apps/linwas.svg"
 
+# Figtree (eco düzeni) SIL OFL 1.1: telif satırı ve lisans metni pakete eşlik etmeli.
+install -D -m 0644 "$ROOT/linwas/resources/fonts/Figtree-OFL.txt" \
+    "$PKG/usr/share/doc/linwas/Figtree-OFL.txt"
+
 echo "==> Root helper ve polkit eylemi"
 install -D -m 0755 "$ROOT/packaging/linwas-helper.sh" "$PKG/usr/lib/linwas/linwas-helper"
 install -D -m 0644 "$ROOT/packaging/org.linwas.helper.policy" \
