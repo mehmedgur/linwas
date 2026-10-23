@@ -3,7 +3,46 @@
 > **Kural:** Her kodlama aşamasına geçmeden önce Claude bu listeyi okur ve bekleyen fikirleri
 > kullanıcıya hatırlatır.
 
-Son güncelleme: 17 Ekim 2026
+Son güncelleme: 23 Ekim 2026
+
+## DEVİR NOTU — 23 Ekim 2026 (bulut → Pardus bilgisayarı, Claude Code CLI)
+**Dal:** `claude/gallant-shannon-r0gpxa` — hepsi push'lı, **ana dala birleştirilmedi, PR açılmadı** (istenince açılır;
+8 aşama tek dalda, PR'ı bölmek istersen aşama sırasına göre commit'lerden bölünür).
+**Bilgisayarda devam (terminal):**
+```
+cd ~/linwas                                    # depo klasörün
+git fetch origin
+git checkout claude/gallant-shannon-r0gpxa     # ilk seferde yerel dalı kendisi oluşturur
+git pull origin claude/gallant-shannon-r0gpxa
+./scripts/run-dev.sh                           # çevirileri her çalıştırmada derler
+```
+(`./scripts/dev-setup.sh` yalnızca `.venv` yoksa/bağımlılık değiştiyse; bu dalda bağımlılık değişmedi.) Dal, eski
+`yedek-20261023` dalını içerir; yerel çalışman kaybolmaz.
+**Bulutta yapılanlar (hepsi `ruff` + `pytest` temiz: 719 test; yalnızca bulut ortamına özgü iki eski test hariç:
+`test_backend_hardware_power…test_run_backup_and_list`, `test_office_look_tool…test_user_settings_file`):**
+Eco düzeni (`UiStyle.ECO`, açık/koyu, teal, Figtree) ve Wi-Fi/Bluetooth sayfasının 8 aşaması — ayrıntı ve verilen kararlar
+kararlar.md › "Wi-Fi ve Bluetooth geliştirmeleri". İlke: **süzülmüş veri** (önce sade/yorumlanmış bilgi; ham sayı ve adresler
+"Ayrıntılar/Gelişmiş" arkasında; gürültü varsayılan gizli).
+**Pardus'ta deneme sırası (aşağıdaki liste; donanım bulutta yoktu, komut çıktıları belge/kaynaktan doğrulanıp örnekle test edildi):**
+1) Eco teması + Wi-Fi sekmesi (risksiz) → 2) ölçümü aç, ayrıntılar, bağlantı testi → 3) Bluetooth satırları, Ayarlar,
+Bu bilgisayar → 4) **dikkatli olunacaklar:** elle IP (yanlış IP bağlantıyı keser, "Otomatik (DHCP)"e dönülebilir) ve
+**hotspot (Wi-Fi'dan ayrılır — ağ kablosu/telefon hazır olsun)**.
+**Bilinen sınırlar ve riskler:**
+- Wi-Fi/hotspot şifresi `nmcli` komut satırı argümanı olarak kısa süre geçer (aynı kullanıcının `ps`'inde görünür; nmcli şifreyi
+  stdin'den almıyor). Wi-Fi'a bağlanırken de aynıydı.
+- Hotspot WPA2'dir; kart WPA/RSN bilmiyorsa nmcli WEP'e düşer ve ≥ 8 karakterlik şifreyi reddeder (hata "Ayrıntılar"da).
+- Bluetooth yeniden adlandırma `busctl` ile D-Bus'a yazar (ad `--` sonrasına konur, seçenek enjeksiyonuna karşı); birden çok
+  denetleyicide cihaz hangisindeyse onda başarılı olur, bilgisayar adı ise ilk denetleyiciye (hci0) yazılır.
+- Dosya gönderme masaüstünün aracına (`bluetooth-sendto` / `blueman-sendto`) bağlı; Debian 12/Pardus 23'te hangi pakette
+  olduğu doğrulanmadı (Ubuntu 22.04: `gnome-bluetooth`, 24.04: `gnome-bluetooth-sendto`).
+- Öneri eşikleri (≥ 3 kopma, ≥ 30 ölçüm, ufuk 24 sa) sezgiseldir; gerçek veriyle ayarlanmalı. "Ayarlara bak" bağlantı adı = SSID
+  varsayımına dayanır (profil yeniden adlandırılmışsa düğme gizlenir).
+**Bekleyen kararlar / açık işler:** (1) **QR ile paylaş** için `segno` bağımlılığı eklensin mi (aşağıda). (2) Ana dalda 2 yeni
+commit var ("eski sistem desteğini kaldır", PR #1); bu dalla birleştirilmedi. (3) Eco karar 22 (eco deposunda "Co-Authored-By
+yok") ile bu deponun commit eki alışkanlığı çelişir; hangisi geçerli olacak? (4) Eco'ya özgü özel başlık çubuğu/arama
+kutusu (aşağıda "Eco düzeni — bekleyenler"). (5) KDE desteği sonraki sürümde (dosya gönderme/ses/görünürlük GNOME'da denenir).
+**Sıradaki fikirler (bekleyenler değişmedi):** Windows Hazırlık aracı, Wine, KDE, yeni AI sağlayıcıları, Fedora/Arch, okul paketi,
+topluluk reçeteleri, üçüncü taraf eklentiler.
 
 ## Notlar
 - Kullanıcının Pardus 23 bilgisayarında hem **GNOME** hem **KDE Plasma** oturumu var. Testler
