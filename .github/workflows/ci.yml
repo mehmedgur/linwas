@@ -43,12 +43,35 @@ jobs:
           path: build/*.deb
           if-no-files-found: error
           retention-days: 14
-      # Kurulum testi kapsayıcılarında git yok; test betiği ayrı artifact olarak taşınır.
+      # Test kapsayıcılarında git yok; test betikleri ayrı artifact olarak taşınır
+      # (ortak üst klasör packaging/ olduğu için betikler artifact kökünde durur).
       - uses: actions/upload-artifact@v4
         with:
           name: ci-scripts
-          path: packaging/ci-install-test.sh
+          path: |
+            packaging/ci-install-test.sh
+            packaging/ci-apt-repo-test.sh
+            packaging/build-apt-repo.sh
+            packaging/debian/postinst.in
           retention-days: 1
+
+  office-look:
+    name: Office görünümü paketi
+    needs: test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      # Derleme betiği paket ağacını ve bu LibreOffice'ten üretilen sade şeridi denetler.
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends
+          libreoffice-writer libreoffice-calc libreoffice-impress python3-uno fakeroot
+      - run: bash packaging/plugins/office-look/build-deb.sh
+          "$(cat packaging/plugins/office-look/VERSION)~dev${{ github.run_number }}" build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linwas-office-look-deb
+          path: build/linwas-office-look_*.deb
+          if-no-files-found: error
+          retention-days: 14
 
   install-test:
     name: Kurulum testi (${{ matrix.image }})
@@ -77,3 +100,22 @@ jobs:
           name: ci-scripts
       - name: Paketi kur ve kendi kendini denetle
         run: bash ci-install-test.sh
+
+  apt-repo-test:
+    name: APT deposu testi (${{ matrix.image }})
+    needs: build-deb
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ["ubuntu:22.04", "debian:12"]
+    container: ${{ matrix.image }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: linwas-deb
+      - uses: actions/download-artifact@v4
+        with:
+          name: ci-scripts
+      - name: İmzalı depo, postinst kaynağı, depodan güncelleme, purge
+        run: bash ci-apt-repo-test.sh

@@ -9,7 +9,7 @@ description = "Windows'tan Linux'a geçenler için terminalsiz Linux yardımcıs
 readme = "README.md"
 # Geliştirme makinelerinde (Ubuntu 22.04) Python 3.10 var; paket kendi Python 3.12'sini gömer.
 requires-python = ">=3.10"
-dependencies = ["PySide6-Essentials>=6.8,<7"]
+dependencies = ["PySide6-Essentials>=6.8,<7", "keyring>=24"]
 
 [project.optional-dependencies]
 dev = ["pytest", "ruff"]
@@ -21,7 +21,7 @@ linwas = "linwas.app:main"
 include = ["linwas*"]
 
 [tool.setuptools.package-data]
-linwas = ["i18n/*.qm", "i18n/*.ts", "resources/*.svg", "resources/tokens/*.json", "resources/fonts/*.ttf", "resources/fonts/*.txt", "resources/icons/*.svg"]
+linwas = ["i18n/*.qm", "i18n/*.ts", "resources/*.svg", "resources/gnome-extension/*", "resources/fonts/*", "data/*.json"]
 
 [tool.ruff]
 line-length = 100

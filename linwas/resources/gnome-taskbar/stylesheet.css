@@ -1,0 +1,21 @@
+.linwas-media-mini { spacing: 8px; }
+.linwas-media-mini-cover { border-radius: 4px; background-size: cover; }
+.linwas-media-mini-label { max-width: 220px; }
+.linwas-media-mini-btn { border-radius: 99px; padding: 2px 4px; }
+.linwas-media-mini-btn:hover { background-color: rgba(127, 127, 127, 0.3); }
+.linwas-media-card { border-radius: 16px; padding: 14px 16px; spacing: 12px; margin: 6px; min-width: 340px; }
+.linwas-media-head { spacing: 8px; }
+.linwas-media-app { font-size: 0.9em; font-weight: bold; }
+.linwas-media-body { spacing: 14px; }
+.linwas-media-cover { border-radius: 12px; background-size: cover; }
+.linwas-media-texts { spacing: 4px; }
+.linwas-media-title { font-weight: bold; font-size: 1.1em; }
+.linwas-media-artist { font-size: 0.95em; }
+.linwas-media-time { font-size: 0.85em; font-feature-settings: "tnum"; }
+.linwas-media-track { border-radius: 2px; height: 4px; }
+.linwas-media-fill { border-radius: 2px; height: 4px; }
+.linwas-media-controls { spacing: 18px; }
+.linwas-media-ctl { border-radius: 99px; padding: 8px; }
+.linwas-media-ctl:hover, .linwas-media-ctl:focus { background-color: rgba(127, 127, 127, 0.28); }
+.linwas-media-play { padding: 10px; }
+.linwas-media-empty { spacing: 8px; padding: 6px 0; }

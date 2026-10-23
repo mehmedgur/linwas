@@ -1,22 +1,30 @@
 {
-  "$aciklama": "Eco teması — tokens.json üzerine bindirilir: burada olmayan değer (ölçüler, hareket, boşluk, pencere düğmeleri) tokens.json'dan gelir. Açık renkler 'Hakkında' ayar sayfası görselinden pikselle ölçüldü; koyu renkler eco masaüstü mockup v5'ten. 'turetilmis' olanlar kontrast hesabıyla bulundu (WCAG 2.1 AA 4.5:1).",
-  "temel": "tokens.json",
-  "kaynak": ["eco masaüstü mockup v5 (koyu palet, Figtree)", "Eco 'Hakkında' ayar sayfası görseli (açık tema, teal vurgu)"],
-  "kararlar": ["Açık ve koyu tema birlikte", "Vurgu teal", "Cam/bulanıklık (backdrop-filter) yok", "Yazı ağırlıkları 400/500/700", "Pencere düğmeleri Linwas ile aynı"],
+  "$aciklama": "Eco düzeni tasarım değerleri. Açık renkler eco 'Hakkında' ayar sayfası görselinden pikselle ölçüldü; koyu renkler eco masaüstü mockup v5'ten. 'turetilmis' olanlar WCAG 2.1 AA (4.5:1) kontrast hesabıyla bulundu. Koddaki karşılığı linwas/ui/theme/tokens.py (UiStyle.ECO, ECO_LIGHT, ECO_DARK, METRICS); tests/test_eco_style.py ikisinin uyumunu denetler.",
+  "kaynak": [
+    "eco masaüstü mockup v5 (koyu palet, Figtree)",
+    "Eco 'Hakkında' ayar sayfası görseli (açık tema, teal vurgu)"
+  ],
+  "kararlar": [
+    "Açık ve koyu tema birlikte",
+    "Vurgu teal",
+    "Cam/bulanıklık (backdrop-filter) yok",
+    "Yazı ağırlıkları 400/500/700",
+    "Pencere düğmeleri Linwas ile aynı"
+  ],
   "font": {
-    "aile": ["Figtree", "Noto Sans", "sans-serif"],
+    "aile": [
+      "Figtree",
+      "Noto Sans",
+      "sans-serif"
+    ],
     "not": "Figtree SIL OFL 1.1; pakete gömülür, telif satırı ve OFL metni paketin copyright dosyasına eklenir. Türkçe harf kapsamı (ğ ş ı İ) gömmeden önce yazı tipi dosyasında doğrulanacak."
   },
-  "yazi": {
-    "agirliklar": {"normal": 400, "orta": 500, "kalin": 700},
-    "bodyStrong": {"boyut": 14, "satir": 20, "agirlik": 500},
-    "subtitle":   {"boyut": 20, "satir": 28, "agirlik": 700},
-    "title":      {"boyut": 28, "satir": 36, "agirlik": 700},
-    "titleLarge": {"boyut": 40, "satir": 52, "agirlik": 700},
-    "kurallar": ["Boyutlar tokens.json ile aynı", "Italik yok", "Başlıklar 700, vurgulu gövde 500, gövde 400"]
+  "simge": {
+    "cizgi": 1,
+    "uc": "round",
+    "birlesim": "round",
+    "not": "Kendi SVG'lerimiz, tek renk (currentColor), tokens.json'daki 16/20 px; emoji yok. Çizgi kalınlığı görsel denemede gözden geçirilecek."
   },
-  "kose": {"kontrol": 7, "katman": 10, "bitisik": 0},
-  "simge": {"cizgi": 1, "uc": "round", "birlesim": "round", "not": "Kendi SVG'lerimiz, tek renk (currentColor), tokens.json'daki 16/20 px; emoji yok. Çizgi kalınlığı görsel denemede gözden geçirilecek."},
   "renk": {
     "acik": {
       "zemin": "#F7F7F4",
@@ -52,7 +60,49 @@
       "uyari": "#D29922",
       "not": "vurgu, açık temadaki teal tonunun (#2F6F73) açılmış hâli (turetilmis, #161B22 üstünde 7.4:1); metin_ucuncul mockup'taki #484F58 (2.1:1) yerine (4.6:1); #484F58 yalnızca pasif öğede."
     },
-    "calisma_alani": {"c1": "#3FB950", "c2": "#A371F7", "c3": "#58A6FF", "c4": "#F78166", "not": "Mockup v5 çalışma alanı kimlik renkleri; vurgu (teal) ile karışmaz."},
+    "calisma_alani": {
+      "c1": "#3FB950",
+      "c2": "#A371F7",
+      "c3": "#58A6FF",
+      "c4": "#F78166",
+      "not": "Mockup v5 çalışma alanı kimlik renkleri; vurgu (teal) ile karışmaz."
+    },
     "durum": "basarili / hata renkleri ve açık tema uyarı rengi tokens.json'dan gelir (eco için ayrı değer çıkarılmadı)."
+  },
+  "colorset_eslesmesi": {
+    "background": "zemin",
+    "surface": "yuzey",
+    "border": "kenar",
+    "separator": "ayirici",
+    "text_primary": "metin",
+    "text_secondary": "metin_ucuncul",
+    "text_disabled": "metin_pasif",
+    "accent": "vurgu",
+    "soft_accent": "vurgu_zemin",
+    "sidebar_item_active": "secili_oge_zemin",
+    "text_on_accent": "vurgu_ustu_metin",
+    "not": "Linwas ColorSet'inde 'ikincil' metin rengi yok; metin_ucuncul (kontrastı yeterli) text_secondary olur. metin_ikincil yalnız eco kabuğunda kullanılır."
+  },
+  "olcu_notu": "Ölçüler (yazı boyutları, köşe, kenar çubuğu) Linwas'ın Windows düzeniyle aynı; köşe 7/10, yarı kalın = Figtree 500, kalın = 700.",
+  "yazi": {
+    "aile": [
+      "Figtree",
+      "Noto Sans",
+      "sans-serif"
+    ],
+    "agirliklar": {
+      "normal": 400,
+      "orta": 500,
+      "kalin": 700
+    },
+    "kurallar": [
+      "Boyutlar Linwas Metrics değerlerinden gelir",
+      "Italik yok",
+      "Başlıklar 700, vurgulu gövde 500, gövde 400"
+    ]
+  },
+  "kose": {
+    "kontrol": 7,
+    "katman": 10
   }
 }

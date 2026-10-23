@@ -1,0 +1,597 @@
+{
+  "_comment": "Görev Yöneticisi › Başlangıç bilgi kartları. Anahtar: .desktop dosya adı (uzantısız, küçük harf); nokta ile biten anahtar önek olarak eşleşir. İngilizce alanlar varsayılan, 'tr' Türkçe.",
+  "at-spi-dbus-bus": {
+    "description": "Accessibility infrastructure. Required for screen readers (Orca) and assistive technologies. Disable only if you never use accessibility features.",
+    "safe_to_disable": false,
+    "category": "Accessibility",
+    "impact": "Disabling may break screen readers and some accessibility tools.",
+    "tr": {
+      "category": "Erişilebilirlik",
+      "description": "Erişilebilirlik altyapısı. Ekran okuyucular (Orca) ve yardımcı teknolojiler için gereklidir. Yalnızca erişilebilirlik özelliklerini hiç kullanmıyorsanız kapatın.",
+      "impact": "Kapatılırsa ekran okuyucular ve bazı erişilebilirlik araçları bozulabilir."
+    }
+  },
+  "baloo_file": {
+    "description": "KDE file indexing service that enables fast file search in Dolphin and KRunner. Indexes file names and content in the background.",
+    "safe_to_disable": true,
+    "category": "Search",
+    "impact": "File search in KDE apps will no longer work instantly.",
+    "tr": {
+      "category": "Arama",
+      "description": "KDE dosya dizinleme hizmeti; Dolphin ve KRunner'da hızlı dosya aramayı sağlar. Dosya adlarını ve içeriklerini arka planda dizinler.",
+      "impact": "KDE uygulamalarında dosya araması artık anında çalışmaz."
+    }
+  },
+  "blueman": {
+    "description": "Bluetooth manager that shows a tray icon for connecting Bluetooth devices. Safe to disable if you don't use Bluetooth.",
+    "safe_to_disable": true,
+    "category": "Hardware",
+    "impact": "Bluetooth tray icon disappears; you can still connect via system settings.",
+    "tr": {
+      "category": "Donanım",
+      "description": "Bluetooth aygıtlarını bağlamak için simge gösteren Bluetooth yöneticisi. Bluetooth kullanmıyorsanız kapatabilirsiniz.",
+      "impact": "Bluetooth simgesi kaybolur; sistem ayarlarından yine bağlanabilirsiniz."
+    }
+  },
+  "discord": {
+    "description": "Discord chat and voice client. Starts automatically to receive messages and calls.",
+    "safe_to_disable": true,
+    "category": "Communication",
+    "impact": "Discord will not start automatically; you will miss notifications until you open it.",
+    "tr": {
+      "category": "İletişim",
+      "description": "Discord sohbet ve sesli görüşme uygulaması. İletileri ve aramaları almak için kendiliğinden başlar.",
+      "impact": "Discord kendiliğinden açılmaz; açana kadar bildirimleri kaçırırsınız."
+    }
+  },
+  "dropbox": {
+    "description": "Dropbox cloud storage client. Syncs your Dropbox folder to the cloud automatically.",
+    "safe_to_disable": true,
+    "category": "Sync",
+    "impact": "Files will not sync to Dropbox until you start Dropbox manually.",
+    "tr": {
+      "category": "Eşitleme",
+      "description": "Dropbox bulut depolama istemcisi. Dropbox klasörünüzü buluta kendiliğinden eşitler.",
+      "impact": "Dropbox'ı elle başlatana kadar dosyalar eşitlenmez."
+    }
+  },
+  "dunst": {
+    "description": "Lightweight desktop notification daemon. Displays notifications from apps as small pop-ups.",
+    "safe_to_disable": false,
+    "category": "Desktop",
+    "impact": "App notifications will not be shown.",
+    "tr": {
+      "category": "Masaüstü",
+      "description": "Hafif bildirim hizmeti. Uygulama bildirimlerini küçük açılır pencerelerle gösterir.",
+      "impact": "Uygulama bildirimleri gösterilmez."
+    }
+  },
+  "geoclue-demo-agent": {
+    "description": "Location services agent. Allows apps to request your geographic location (e.g. weather, maps).",
+    "safe_to_disable": true,
+    "category": "Privacy",
+    "impact": "Location-aware apps will not work.",
+    "tr": {
+      "category": "Gizlilik",
+      "description": "Konum hizmeti aracısı. Uygulamaların (ör. hava durumu, harita) konumunuzu istemesine izin verir.",
+      "impact": "Konum kullanan uygulamalar çalışmaz."
+    }
+  },
+  "gmenudbusmenuproxy": {
+    "description": "KDE Plasma helper that shows application menus (File, Edit…) in the global menu / top panel.",
+    "safe_to_disable": false,
+    "category": "Desktop",
+    "impact": "Application menus may disappear from the global menu in KDE.",
+    "tr": {
+      "category": "Masaüstü",
+      "description": "Uygulama menülerini (Dosya, Düzen…) KDE Plasma'nın genel menüsünde / üst panelinde gösteren yardımcı.",
+      "impact": "KDE'de uygulama menüleri genel menüden kaybolabilir."
+    }
+  },
+  "gnome-initial-setup-copy-worker": {
+    "description": "Copies settings chosen in the GNOME welcome wizard to the new user's account. Runs once.",
+    "safe_to_disable": true,
+    "category": "System",
+    "impact": "No effect after the first login.",
+    "tr": {
+      "category": "Sistem",
+      "description": "GNOME karşılama sihirbazında seçilen ayarları yeni kullanıcının hesabına kopyalar. Bir kez çalışır.",
+      "impact": "İlk oturumdan sonra bir etkisi yoktur."
+    }
+  },
+  "gnome-initial-setup-first-login": {
+    "description": "GNOME welcome wizard that runs once on a user's first login.",
+    "safe_to_disable": true,
+    "category": "System",
+    "impact": "No effect after the first login.",
+    "tr": {
+      "category": "Sistem",
+      "description": "Kullanıcının ilk oturum açışında bir kez çalışan GNOME karşılama sihirbazı.",
+      "impact": "İlk oturumdan sonra bir etkisi yoktur."
+    }
+  },
+  "gnome-keyring-pkcs11": {
+    "description": "GNOME Keyring PKCS#11 component. Stores passwords and certificates securely. Used by browsers, SSH, and system authentication.",
+    "safe_to_disable": false,
+    "category": "Security",
+    "impact": "Saved passwords and SSH keys may stop working.",
+    "tr": {
+      "category": "Güvenlik",
+      "description": "GNOME Anahtarlık PKCS#11 bileşeni. Şifreleri ve sertifikaları güvenle saklar; tarayıcılar, SSH ve sistem kimlik doğrulaması kullanır.",
+      "impact": "Kayıtlı şifreler ve SSH anahtarları çalışmayabilir."
+    }
+  },
+  "gnome-keyring-secrets": {
+    "description": "GNOME Keyring secrets service. Stores application passwords and tokens securely. Most apps depend on this.",
+    "safe_to_disable": false,
+    "category": "Security",
+    "impact": "Apps will be unable to save/retrieve passwords.",
+    "tr": {
+      "category": "Güvenlik",
+      "description": "GNOME Anahtarlık gizli bilgi hizmeti. Uygulama şifrelerini ve oturum bilgilerini güvenle saklar; çoğu uygulama buna ihtiyaç duyar.",
+      "impact": "Uygulamalar şifre kaydedemez ve okuyamaz."
+    }
+  },
+  "gnome-keyring-ssh": {
+    "description": "GNOME Keyring SSH agent. Manages SSH keys so you don't re-enter your passphrase at every login.",
+    "safe_to_disable": true,
+    "category": "Security",
+    "impact": "SSH keys will not be loaded automatically; you will be prompted for passphrase every time.",
+    "tr": {
+      "category": "Güvenlik",
+      "description": "GNOME Anahtarlık SSH aracısı. SSH anahtarlarını yönetir; her oturumda parolayı yeniden yazmanız gerekmez.",
+      "impact": "SSH anahtarları kendiliğinden yüklenmez; her seferinde parola sorulur."
+    }
+  },
+  "gnome-shell-overrides-migration": {
+    "description": "One-time migration of old GNOME Shell settings.",
+    "safe_to_disable": true,
+    "category": "System",
+    "impact": "Usually no effect.",
+    "tr": {
+      "category": "Sistem",
+      "description": "Eski GNOME Shell ayarlarının bir kerelik taşınması.",
+      "impact": "Genellikle bir etkisi yoktur."
+    }
+  },
+  "ibus": {
+    "description": "Intelligent Input Bus — input method framework for typing in East Asian and other languages. If you only type in Latin script, this is not needed.",
+    "safe_to_disable": true,
+    "category": "Input",
+    "impact": "Non-Latin input methods (Chinese, Japanese, Korean…) will stop working.",
+    "tr": {
+      "category": "Klavye girişi",
+      "description": "Akıllı Giriş Yolu (IBus): Çince, Japonca gibi dillerde yazmak için giriş yöntemi altyapısı. Yalnızca Latin harfleriyle yazıyorsanız gerekmez.",
+      "impact": "Latin dışı giriş yöntemleri (Çince, Japonca, Korece…) çalışmaz."
+    }
+  },
+  "im-launch": {
+    "description": "Starts the input method framework (IBus/Fcitx) chosen in the system. Needed for typing languages such as Chinese or Japanese.",
+    "safe_to_disable": true,
+    "category": "Input",
+    "impact": "Non-Latin input methods may stop working. Turkish typing is not affected.",
+    "tr": {
+      "category": "Klavye girişi",
+      "description": "Sistemde seçili giriş yöntemi altyapısını (IBus/Fcitx) başlatır. Çince, Japonca gibi dillerde yazmak için gerekir.",
+      "impact": "Latin dışı giriş yöntemleri çalışmayabilir. Türkçe yazmayı etkilemez."
+    }
+  },
+  "light-locker": {
+    "description": "Screen locker used in LightDM sessions (e.g. XFCE).",
+    "safe_to_disable": true,
+    "category": "Security",
+    "impact": "The screen will not lock automatically when left unattended.",
+    "tr": {
+      "category": "Güvenlik",
+      "description": "LightDM oturumlarında (ör. XFCE) kullanılan ekran kilidi.",
+      "impact": "Bilgisayar başında değilken ekran kendiliğinden kilitlenmez."
+    }
+  },
+  "nextcloud": {
+    "description": "Nextcloud desktop client. Syncs files with your Nextcloud server automatically.",
+    "safe_to_disable": true,
+    "category": "Sync",
+    "impact": "Files will not sync to Nextcloud until you start the client manually.",
+    "tr": {
+      "category": "Eşitleme",
+      "description": "Nextcloud masaüstü istemcisi. Dosyaları Nextcloud sunucunuzla kendiliğinden eşitler.",
+      "impact": "İstemciyi elle başlatana kadar dosyalar Nextcloud'a eşitlenmez."
+    }
+  },
+  "nm-applet": {
+    "description": "Network Manager tray icon for managing Wi-Fi and wired connections. Safe to disable only if you manage networks another way.",
+    "safe_to_disable": false,
+    "category": "Network",
+    "impact": "Network tray icon disappears; you may lose easy access to Wi-Fi settings.",
+    "tr": {
+      "category": "Ağ",
+      "description": "Kablosuz ve kablolu bağlantıları yönetmek için Ağ Yöneticisi simgesi. Ağları başka yoldan yönetiyorsanız kapatabilirsiniz.",
+      "impact": "Ağ simgesi kaybolur; kablosuz ayarlarına kolay erişim kalmayabilir."
+    }
+  },
+  "onboard-autostart": {
+    "description": "Onboard on-screen keyboard.",
+    "safe_to_disable": true,
+    "category": "Accessibility",
+    "impact": "The on-screen keyboard will not start at login.",
+    "tr": {
+      "category": "Erişilebilirlik",
+      "description": "Onboard ekran klavyesi.",
+      "impact": "Ekran klavyesi oturum açılırken başlamaz."
+    }
+  },
+  "orca-autostart": {
+    "description": "Orca screen reader. Starts only if the screen reader is turned on in accessibility settings.",
+    "safe_to_disable": true,
+    "category": "Accessibility",
+    "impact": "The screen reader will not start at login.",
+    "tr": {
+      "category": "Erişilebilirlik",
+      "description": "Orca ekran okuyucu. Yalnızca erişilebilirlik ayarlarında ekran okuyucu açıksa başlar.",
+      "impact": "Ekran okuyucu oturum açılırken başlamaz."
+    }
+  },
+  "org.gnome.evolution-alarm-notify": {
+    "description": "Shows reminders for calendar events and tasks (Evolution / GNOME Calendar).",
+    "safe_to_disable": true,
+    "category": "Productivity",
+    "impact": "Calendar reminders will not pop up.",
+    "tr": {
+      "category": "Verimlilik",
+      "description": "Takvim etkinlikleri ve görevler için anımsatıcı gösterir (Evolution / GNOME Takvim).",
+      "impact": "Takvim anımsatıcıları açılmaz."
+    }
+  },
+  "org.gnome.settingsdaemon.": {
+    "description": "GNOME settings service (power, sound, keyboard, display colour, date and time, printing…). Part of the GNOME desktop.",
+    "safe_to_disable": false,
+    "category": "System",
+    "impact": "Related settings (e.g. power saving, media keys, sound) may stop working.",
+    "tr": {
+      "category": "Sistem",
+      "description": "GNOME ayar hizmeti (güç, ses, klavye, ekran rengi, tarih ve saat, yazdırma…). GNOME masaüstünün bir parçasıdır.",
+      "impact": "İlgili ayarlar (ör. güç tasarrufu, medya tuşları, ses) çalışmayabilir."
+    }
+  },
+  "org.kde.kalendarac": {
+    "description": "Shows reminders for KDE calendar events.",
+    "safe_to_disable": true,
+    "category": "Productivity",
+    "impact": "KDE calendar reminders will not pop up.",
+    "tr": {
+      "category": "Verimlilik",
+      "description": "KDE takvim etkinlikleri için anımsatıcı gösterir.",
+      "impact": "KDE takvim anımsatıcıları açılmaz."
+    }
+  },
+  "org.kde.kdeconnect.daemon": {
+    "description": "KDE Connect: links your phone with the computer (notifications, file sharing, clipboard).",
+    "safe_to_disable": true,
+    "category": "Communication",
+    "impact": "Your phone will not connect automatically until you open KDE Connect.",
+    "tr": {
+      "category": "İletişim",
+      "description": "KDE Connect: telefonunuzu bilgisayarla eşler (bildirimler, dosya paylaşımı, pano).",
+      "impact": "KDE Connect'i açana kadar telefonunuz kendiliğinden bağlanmaz."
+    }
+  },
+  "pam_kwallet_init": {
+    "description": "Unlocks the KDE Wallet with your login password. Only needed for KDE apps that store passwords in KDE Wallet.",
+    "safe_to_disable": true,
+    "category": "Security",
+    "impact": "KDE apps may ask for the wallet password separately.",
+    "tr": {
+      "category": "Güvenlik",
+      "description": "KDE Wallet'ı oturum şifrenizle açar. Yalnızca şifrelerini KDE Cüzdan'da saklayan KDE uygulamaları için gerekir.",
+      "impact": "KDE uygulamaları cüzdan şifresini ayrıca sorabilir."
+    }
+  },
+  "pardus-mycomputer-add-to-desktop": {
+    "description": "Adds the Pardus My Computer icon to the desktop.",
+    "safe_to_disable": true,
+    "category": "Desktop",
+    "impact": "The My Computer icon will not be added to the desktop.",
+    "tr": {
+      "category": "Masaüstü",
+      "description": "Pardus Bilgisayarım simgesini masaüstüne ekler.",
+      "impact": "Bilgisayarım simgesi masaüstüne eklenmez."
+    }
+  },
+  "picom": {
+    "description": "Compositor for X11. Adds visual effects like transparency and smooth window animations. Common in lightweight desktop environments.",
+    "safe_to_disable": true,
+    "category": "Desktop",
+    "impact": "Window transparency and some visual effects will be lost.",
+    "tr": {
+      "category": "Masaüstü",
+      "description": "X11 pencere birleştiricisi. Saydamlık ve akıcı pencere geçişleri gibi görsel efektler ekler; hafif masaüstlerinde yaygındır.",
+      "impact": "Pencere saydamlığı ve bazı görsel efektler kaybolur."
+    }
+  },
+  "polkit-gnome-authentication-agent-1": {
+    "description": "PolicyKit authentication agent. Shows the password dialog when an app needs administrator privileges (like installing software).",
+    "safe_to_disable": false,
+    "category": "Security",
+    "impact": "Administrator password dialogs will stop appearing; privileged operations will fail silently.",
+    "tr": {
+      "category": "Güvenlik",
+      "description": "PolicyKit kimlik doğrulama aracısı. Bir uygulama yönetici yetkisi istediğinde (ör. program kurarken) şifre penceresini gösterir.",
+      "impact": "Yönetici şifre pencereleri çıkmaz; yetki gerektiren işlemler sessizce başarısız olur."
+    }
+  },
+  "polkit-kde-authentication-agent-1": {
+    "description": "PolicyKit authentication agent for KDE. Shows the password dialog when an app needs administrator rights.",
+    "safe_to_disable": false,
+    "category": "Security",
+    "impact": "Administrator password dialogs will stop appearing; privileged operations will fail.",
+    "tr": {
+      "category": "Güvenlik",
+      "description": "KDE için PolicyKit kimlik doğrulama aracısı. Bir uygulama yönetici yetkisi istediğinde şifre penceresini gösterir.",
+      "impact": "Yönetici şifre pencereleri çıkmaz; yetki gerektiren işlemler başarısız olur."
+    }
+  },
+  "print-applet": {
+    "description": "Printing status tray applet. Shows print job progress in the system tray.",
+    "safe_to_disable": true,
+    "category": "Hardware",
+    "impact": "No print status icon. Printing still works normally.",
+    "tr": {
+      "category": "Donanım",
+      "description": "Yazdırma durumu simgesi. Yazdırma işlerinin ilerlemesini gösterir.",
+      "impact": "Yazdırma durumu simgesi görünmez. Yazdırma normal çalışır."
+    }
+  },
+  "pulseaudio": {
+    "description": "Sound server that plays sound from applications.",
+    "safe_to_disable": false,
+    "category": "Sound",
+    "impact": "Sound may stop working.",
+    "tr": {
+      "category": "Ses",
+      "description": "Uygulamaların sesini çalan ses sunucusu.",
+      "impact": "Ses çalışmayabilir."
+    }
+  },
+  "redshift-gtk": {
+    "description": "Adjusts screen color temperature at night to reduce eye strain. Makes the screen warmer (more orange) after sunset.",
+    "safe_to_disable": true,
+    "category": "Display",
+    "impact": "Automatic blue light reduction at night will be disabled.",
+    "tr": {
+      "category": "Ekran",
+      "description": "Göz yorgunluğunu azaltmak için gece ekran renk sıcaklığını ayarlar; gün batımından sonra ekranı daha sıcak (turuncu) yapar.",
+      "impact": "Gece mavi ışık azaltma kendiliğinden yapılmaz."
+    }
+  },
+  "snap-userd-autostart": {
+    "description": "Helper for Snap apps (e.g. opening links from Snap apps).",
+    "safe_to_disable": true,
+    "category": "System",
+    "impact": "Snap apps may not open links or files correctly.",
+    "tr": {
+      "category": "Sistem",
+      "description": "Snap uygulamaları için yardımcı (ör. Snap uygulamalarından bağlantı açma).",
+      "impact": "Snap uygulamaları bağlantıları ya da dosyaları doğru açamayabilir."
+    }
+  },
+  "spice-vdagent": {
+    "description": "SPICE display agent for virtual machines (KVM/QEMU). Enables clipboard sharing and screen resize in virtual machines.",
+    "safe_to_disable": true,
+    "category": "Virtualization",
+    "impact": "Only relevant inside a virtual machine. Safe to disable on physical hardware.",
+    "tr": {
+      "category": "Sanallaştırma",
+      "description": "Sanal makineler (KVM/QEMU) için SPICE aracısı. Sanal makinede pano paylaşımını ve ekran boyutu ayarını sağlar.",
+      "impact": "Yalnızca sanal makinede önemlidir; gerçek bilgisayarda kapatılabilir."
+    }
+  },
+  "ssh-add": {
+    "description": "Adds SSH keys to the authentication agent at login. Useful if you frequently use SSH without a passphrase.",
+    "safe_to_disable": true,
+    "category": "Network",
+    "impact": "SSH keys will not be pre-loaded; you will need to run ssh-add manually.",
+    "tr": {
+      "category": "Ağ",
+      "description": "Oturum açılırken SSH anahtarlarını kimlik doğrulama aracısına ekler.",
+      "impact": "SSH anahtarları önceden yüklenmez; ssh-add komutunu elle çalıştırmanız gerekir."
+    }
+  },
+  "steam": {
+    "description": "Steam gaming platform. Starts with the system to enable game library access and friend notifications.",
+    "safe_to_disable": true,
+    "category": "Gaming",
+    "impact": "Steam will not launch automatically; you can still start it manually.",
+    "tr": {
+      "category": "Oyun",
+      "description": "Steam oyun platformu. Oyun kitaplığına erişim ve arkadaş bildirimleri için sistemle başlar.",
+      "impact": "Steam kendiliğinden açılmaz; elle başlatabilirsiniz."
+    }
+  },
+  "sticky": {
+    "description": "Sticky Notes: keeps your notes on the desktop.",
+    "safe_to_disable": true,
+    "category": "Productivity",
+    "impact": "Notes will not appear at login until you open the app.",
+    "tr": {
+      "category": "Verimlilik",
+      "description": "Yapışkan Notlar: notlarınızı masaüstünde tutar.",
+      "impact": "Uygulamayı açana kadar notlar oturum açılırken görünmez."
+    }
+  },
+  "syncthing-gtk": {
+    "description": "Syncthing GUI — file synchronization between your devices. Runs in the background to keep folders in sync.",
+    "safe_to_disable": true,
+    "category": "Sync",
+    "impact": "File synchronization with Syncthing will stop until you manually start it.",
+    "tr": {
+      "category": "Eşitleme",
+      "description": "Syncthing arayüzü: aygıtlarınız arasında dosya eşitleme. Klasörleri eşit tutmak için arka planda çalışır.",
+      "impact": "Syncthing'i elle başlatana kadar dosya eşitleme durur."
+    }
+  },
+  "tr.org.pardus.power-manager-autostart": {
+    "description": "Pardus Power Manager: tray icon to switch between power-saving and performance modes.",
+    "safe_to_disable": true,
+    "category": "Power",
+    "impact": "The power mode icon will not appear; you can still open it from the menu.",
+    "tr": {
+      "category": "Güç",
+      "description": "Pardus Güç Yöneticisi: güç tasarrufu ve performans kipleri arasında geçiş için simge.",
+      "impact": "Güç kipi simgesi görünmez; menüden yine açabilirsiniz."
+    }
+  },
+  "tr.org.pardus.update-autostart": {
+    "description": "Pardus update notifier. Checks for Pardus system updates and shows a notification when updates are ready.",
+    "safe_to_disable": true,
+    "category": "System",
+    "impact": "Pardus update notifications will not appear.",
+    "tr": {
+      "category": "Sistem",
+      "description": "Pardus güncelleme bildiricisi. Pardus sistem güncellemelerini denetler, hazır olduğunda bildirim gösterir.",
+      "impact": "Pardus güncelleme bildirimleri görünmez."
+    }
+  },
+  "tracker-miner-fs": {
+    "description": "GNOME file indexing service for fast search in Files (Nautilus) and GNOME Search. Indexes documents and metadata in the background.",
+    "safe_to_disable": true,
+    "category": "Search",
+    "impact": "GNOME file search will be slow or unavailable.",
+    "tr": {
+      "category": "Arama",
+      "description": "Dosyalar uygulaması ve GNOME Arama'da hızlı arama için GNOME dosya dizinleme hizmeti. Belgeleri ve bilgilerini arka planda dizinler.",
+      "impact": "GNOME dosya araması yavaşlar ya da çalışmaz."
+    }
+  },
+  "tracker-miner-fs-3": {
+    "description": "GNOME file indexing service for fast search in Files and GNOME Search. Indexes documents and metadata in the background.",
+    "safe_to_disable": true,
+    "category": "Search",
+    "impact": "GNOME file search will be slow or unavailable.",
+    "tr": {
+      "category": "Arama",
+      "description": "Dosyalar uygulaması ve GNOME Arama'da hızlı arama için GNOME dosya dizinleme hizmeti. Belgeleri ve bilgilerini arka planda dizinler.",
+      "impact": "GNOME dosya araması yavaşlar ya da çalışmaz."
+    }
+  },
+  "tracker-miner-rss": {
+    "description": "GNOME Tracker RSS miner. Indexes RSS feeds for GNOME applications.",
+    "safe_to_disable": true,
+    "category": "Search",
+    "impact": "RSS feed data will not be indexed.",
+    "tr": {
+      "category": "Arama",
+      "description": "GNOME Tracker RSS hizmeti. GNOME uygulamaları için RSS beslemelerini dizinler.",
+      "impact": "RSS besleme verileri dizinlenmez."
+    }
+  },
+  "ulauncher": {
+    "description": "Application launcher. Start apps quickly by pressing a keyboard shortcut.",
+    "safe_to_disable": true,
+    "category": "Productivity",
+    "impact": "Quick launch keyboard shortcut will not work.",
+    "tr": {
+      "category": "Verimlilik",
+      "description": "Uygulama başlatıcı. Bir klavye kısayoluyla uygulamaları hızlıca açmanızı sağlar.",
+      "impact": "Hızlı başlatma kısayolu çalışmaz."
+    }
+  },
+  "update-notifier": {
+    "description": "Checks for software updates and shows a notification when updates are available.",
+    "safe_to_disable": true,
+    "category": "System",
+    "impact": "You will not receive automatic update notifications.",
+    "tr": {
+      "category": "Sistem",
+      "description": "Yazılım güncellemelerini denetler ve güncelleme olduğunda bildirim gösterir.",
+      "impact": "Otomatik güncelleme bildirimleri gelmez."
+    }
+  },
+  "user-dirs-update-gtk": {
+    "description": "Offers to rename your standard folders when you change the system language.",
+    "safe_to_disable": true,
+    "category": "System",
+    "impact": "You will not be asked to rename folders after a language change.",
+    "tr": {
+      "category": "Sistem",
+      "description": "Sistem dilini değiştirdiğinizde standart klasörlerin adlarını değiştirmeyi önerir.",
+      "impact": "Dil değişikliğinden sonra klasör adlarını değiştirmeniz sorulmaz."
+    }
+  },
+  "xapp-sn-watcher": {
+    "description": "Lets the panel show tray icons of applications (XApp status notifier).",
+    "safe_to_disable": false,
+    "category": "Desktop",
+    "impact": "Some application tray icons may disappear.",
+    "tr": {
+      "category": "Masaüstü",
+      "description": "Panelin uygulama simgelerini göstermesini sağlar (XApp durum bildirici).",
+      "impact": "Bazı uygulama simgeleri panelden kaybolabilir."
+    }
+  },
+  "xdg-user-dirs": {
+    "description": "Creates your standard folders (Documents, Downloads, Pictures…) at login if they are missing.",
+    "safe_to_disable": false,
+    "category": "System",
+    "impact": "Missing standard folders will not be created again.",
+    "tr": {
+      "category": "Sistem",
+      "description": "Oturum açılırken eksikse standart klasörlerinizi (Belgeler, İndirilenler, Resimler…) oluşturur.",
+      "impact": "Eksik standart klasörler yeniden oluşturulmaz."
+    }
+  },
+  "xdg-user-dirs-kde": {
+    "description": "Creates or updates your standard folders (Documents, Downloads…) at login (KDE version).",
+    "safe_to_disable": false,
+    "category": "System",
+    "impact": "Missing standard folders will not be created again.",
+    "tr": {
+      "category": "Sistem",
+      "description": "Oturum açılırken standart klasörlerinizi (Belgeler, İndirilenler…) oluşturur ya da günceller (KDE sürümü).",
+      "impact": "Eksik standart klasörler yeniden oluşturulmaz."
+    }
+  },
+  "xfce4-clipman-plugin-autostart": {
+    "description": "XFCE clipboard manager. Keeps a history of things you have copied so you can paste older items.",
+    "safe_to_disable": true,
+    "category": "Productivity",
+    "impact": "Clipboard history feature is disabled.",
+    "tr": {
+      "category": "Verimlilik",
+      "description": "XFCE pano yöneticisi. Kopyaladıklarınızın geçmişini tutar; eski öğeleri yeniden yapıştırabilirsiniz.",
+      "impact": "Pano geçmişi özelliği kapanır."
+    }
+  },
+  "xfce4-notifyd": {
+    "description": "XFCE desktop notification daemon. Shows pop-up notifications from apps (email, calendar reminders, etc.).",
+    "safe_to_disable": false,
+    "category": "Desktop",
+    "impact": "Desktop notifications from all apps will be suppressed.",
+    "tr": {
+      "category": "Masaüstü",
+      "description": "XFCE bildirim hizmeti. Uygulamaların (e-posta, takvim anımsatıcıları vb.) açılır bildirimlerini gösterir.",
+      "impact": "Bütün uygulamaların masaüstü bildirimleri gösterilmez."
+    }
+  },
+  "xiccd": {
+    "description": "Display colour profile service for XFCE.",
+    "safe_to_disable": true,
+    "category": "Display",
+    "impact": "Custom colour profiles will not be applied.",
+    "tr": {
+      "category": "Ekran",
+      "description": "XFCE için ekran renk profili hizmeti.",
+      "impact": "Özel renk profilleri uygulanmaz."
+    }
+  },
+  "xscreensaver": {
+    "description": "Screen saver and screen locker. Locks the screen after inactivity to protect your session.",
+    "safe_to_disable": true,
+    "category": "Security",
+    "impact": "Screen will not lock automatically when left unattended.",
+    "tr": {
+      "category": "Güvenlik",
+      "description": "Ekran koruyucu ve ekran kilidi. Bir süre işlem yapılmazsa oturumunuzu korumak için ekranı kilitler.",
+      "impact": "Bilgisayar başında değilken ekran kendiliğinden kilitlenmez."
+    }
+  }
+}

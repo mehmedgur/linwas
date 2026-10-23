@@ -1,0 +1,32 @@
+[
+  {
+    "id": "google-chrome",
+    "name": "Google Chrome",
+    "description": "Web browser by Google. Official repository.",
+    "package": "google-chrome-stable",
+    "key_url": "https://dl.google.com/linux/linux_signing_key.pub",
+    "keyring_path": "/usr/share/keyrings/linwas-google-chrome.gpg",
+    "source_line": "deb [arch=amd64 signed-by=/usr/share/keyrings/linwas-google-chrome.gpg] https://dl.google.com/linux/chrome/deb/ stable main",
+    "list_name": "linwas-google-chrome.list"
+  },
+  {
+    "id": "vscode",
+    "name": "Visual Studio Code",
+    "description": "Code editor by Microsoft. Official repository.",
+    "package": "code",
+    "key_url": "https://packages.microsoft.com/keys/microsoft.asc",
+    "keyring_path": "/usr/share/keyrings/linwas-microsoft-vscode.gpg",
+    "source_line": "deb [arch=amd64 signed-by=/usr/share/keyrings/linwas-microsoft-vscode.gpg] https://packages.microsoft.com/repos/code stable main",
+    "list_name": "linwas-microsoft-vscode.list"
+  },
+  {
+    "id": "zoom",
+    "name": "Zoom",
+    "description": "Video conferencing. Downloaded directly from Zoom.",
+    "package": "zoom",
+    "key_url": "https://zoom.us/linux/download/pubkey?version=5-12-6",
+    "keyring_path": "/usr/share/keyrings/linwas-zoom.gpg",
+    "source_line": "deb [arch=amd64 signed-by=/usr/share/keyrings/linwas-zoom.gpg] https://zoom.us/linux/download/apt stable zoom",
+    "list_name": "linwas-zoom.list"
+  }
+]

@@ -1,0 +1,14 @@
+# Linwas otomatik güncelleme (Güncelleme merkezi). Ayar: /etc/linwas/autoupdate.json
+[Unit]
+Description=Linwas automatic updates
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/linwas/linwas-autoupdate
+Nice=10
+IOSchedulingClass=idle
+# dpkg yarıda kesilmesin (apt-daily-upgrade.service ile aynı yaklaşım)
+KillMode=process
+TimeoutStopSec=900

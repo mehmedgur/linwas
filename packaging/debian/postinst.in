@@ -1,0 +1,33 @@
+#!/bin/sh
+# Linwas kurulum sonrası betiği.
+# APT deposu yalnızca paket bir depo adresi ve imza anahtarıyla derlendiyse eklenir
+# (build-deb.sh: LINWAS_APT_URL + packaging/linwas-archive-keyring.gpg).
+set -e
+
+APT_URL="@APT_URL@"
+SOURCES=/etc/apt/sources.list.d/linwas.sources
+KEYRING=/usr/share/keyrings/linwas-archive-keyring.gpg
+
+if [ "$1" = "configure" ] && [ -n "$APT_URL" ] && [ -f "$KEYRING" ]; then
+    # deb822 biçimi (sources.list(5)); kullanıcı kaldırdıysa yeniden eklenmez
+    if [ ! -e "$SOURCES" ] && [ ! -e "$SOURCES.disabled" ]; then
+        cat > "$SOURCES" <<SRC
+Types: deb
+URIs: $APT_URL
+Suites: stable
+Components: main
+Signed-By: $KEYRING
+SRC
+        chmod 0644 "$SOURCES"
+    fi
+fi
+
+# Otomatik güncelleme zamanlayıcısı (ayar yoksa varsayılan: açık; bkz. linwas/core/autoupdate.py)
+if [ "$1" = "configure" ] && [ -d /run/systemd/system ]; then
+    systemctl daemon-reload >/dev/null 2>&1 || true
+    systemctl enable --now linwas-autoupdate.timer >/dev/null 2>&1 || true
+    systemctl enable linwas-power.service >/dev/null 2>&1 || true
+    systemctl restart linwas-power.service >/dev/null 2>&1 || true
+fi
+
+exit 0

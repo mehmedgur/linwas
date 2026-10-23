@@ -1,4 +1,4 @@
-"""Pakete gömülü yazı tipleri (eco teması: Figtree, SIL OFL 1.1)."""
+"""Pakete gömülü yazı tipleri (eco düzeni: Figtree, SIL OFL 1.1)."""
 
 from __future__ import annotations
 

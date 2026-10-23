@@ -1,0 +1,7 @@
+.linwas-group-button-box { spacing: 6px; }
+.linwas-group-count { font-size: 0.85em; opacity: 0.8; }
+.linwas-group-item { spacing: 10px; padding: 6px 10px; }
+.linwas-group-thumb { border-radius: 6px; }
+.linwas-group-title { max-width: 260px; }
+.linwas-group-close { border-radius: 99px; padding: 4px; }
+.linwas-group-close:hover { background-color: rgba(128, 128, 128, 0.3); }

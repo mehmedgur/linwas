@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Eklentinin kendi komutlarının şeritte ve ipuçlarında görünen adları. -->
+<oor:component-data xmlns:oor="http://openoffice.org/2001/registry" xmlns:xs="http://www.w3.org/2001/XMLSchema" oor:name="GenericCommands" oor:package="org.openoffice.Office.UI">
+  <node oor:name="UserInterface">
+    <node oor:name="Commands">
+      <node oor:name=".uno:LinwasFileMenu" oor:op="replace">
+        <prop oor:name="Label" oor:type="xs:string">
+          <value xml:lang="en-US">File</value>
+          <value xml:lang="tr">Dosya</value>
+        </prop>
+        <prop oor:name="TooltipLabel" oor:type="xs:string">
+          <value xml:lang="en-US">Open the File menu</value>
+          <value xml:lang="tr">Dosya menüsünü aç</value>
+        </prop>
+        <prop oor:name="Properties" oor:type="xs:int">
+          <value>1</value>
+        </prop>
+      </node>
+      <node oor:name=".uno:LinwasFileTab" oor:op="replace">
+        <prop oor:name="Label" oor:type="xs:string">
+          <value xml:lang="en-US">Open File menu</value>
+          <value xml:lang="tr">Dosya menüsünü aç</value>
+        </prop>
+        <prop oor:name="Properties" oor:type="xs:int">
+          <value>1</value>
+        </prop>
+      </node>
+      <node oor:name=".uno:LinwasMoreTools" oor:op="replace">
+        <prop oor:name="Label" oor:type="xs:string">
+          <value xml:lang="en-US">More tools</value>
+          <value xml:lang="tr">Daha fazla araç</value>
+        </prop>
+        <prop oor:name="TooltipLabel" oor:type="xs:string">
+          <value xml:lang="en-US">Switch to the full ribbon with all tools</value>
+          <value xml:lang="tr">Tüm araçların olduğu tam şeride geç</value>
+        </prop>
+        <prop oor:name="Properties" oor:type="xs:int">
+          <value>1</value>
+        </prop>
+      </node>
+    </node>
+  </node>
+</oor:component-data>

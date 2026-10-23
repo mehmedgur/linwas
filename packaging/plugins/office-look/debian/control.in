@@ -1,0 +1,24 @@
+Package: linwas-office-look
+Version: @VERSION@
+Architecture: all
+Maintainer: mehmedgur <mehmedgrbz11@gmail.com>
+Installed-Size: @INSTALLED_SIZE@
+Depends: libreoffice-writer (>= 4:7.3), libreoffice-calc (>= 4:7.3), libreoffice-impress (>= 4:7.3), python3, python3-uno, poppler-utils, fonts-crosextra-carlito, fonts-crosextra-caladea, zenity, pkexec | policykit-1
+Recommends: linwas
+Conflicts: pardus-ofis-deneyimi, pardus-libreoffice-writer-sade
+Replaces: pardus-ofis-deneyimi, pardus-libreoffice-writer-sade
+Provides: pardus-ofis-deneyimi
+Section: editors
+Priority: optional
+Homepage: https://github.com/mehmedgur/linwas2
+Description: Microsoft Office-like look for LibreOffice (Linwas)
+ Makes LibreOffice Writer, Calc and Impress feel like Microsoft Office:
+ a simple ribbon with few tabs and named groups, an in-window File menu
+ (save, save as with format cards, open, recent files, templates, print
+ with preview, password protection), Office Open XML as the default
+ format, Carlito as the default font and automatic saving.
+ .
+ Every user can change or turn these off in Linwas (Office › Office look)
+ without an administrator password. The simple ribbon is generated from
+ the installed LibreOffice at install time and regenerated when
+ LibreOffice is upgraded.

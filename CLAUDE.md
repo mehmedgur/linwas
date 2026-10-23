@@ -1,9 +1,6 @@
 # Linwas 2.0 — Claude için proje notları
 
 **Önce oku:** `docs/kararlar.md` (bütün kararlar) ve `docs/yapilacaklar.md` (bekleyenler).
-**Arayüz kodu yazarken:** `docs/tasarim-sistemi.md` + `docs/tasarim/tokens.json` tek kaynaktır
-(Microsoft Windows tasarım rehberi esas). Görsel taslaklar `docs/tasarim/taslaklar/` (v4).
-Yeni ölçü/renk/süre icat etme; bir değer eksikse Microsoft rehberine bak ve belgeye ekle.
 Bu belgeler projenin tek doğru kaynağıdır. Yeni bir karar alındığında aynı değişiklikte güncelle.
 
 ## Çalışma kuralları
@@ -34,6 +31,8 @@ Bu belgeler projenin tek doğru kaynağıdır. Yeni bir karar alındığında ay
 - **Kullanıcının makinesi (Claude Code burada çalışır):** Pardus 23, testler **GNOME oturumunda**
   (KDE oturumu da var; KDE desteği sonraki sürümde).
   - Kaynak koddan çalıştırma: `./scripts/dev-setup.sh` (bir kerelik) → `./scripts/run-dev.sh`.
+    Masaüstü/menü kısayolu: `./scripts/install-dev-shortcut.sh` (kaldırma: `--remove`).
+  - Başka makinede denemek için yerel .deb: `./scripts/build-local-deb.sh` (masaüstüne kopyalar).
   - `sudo`, `pkexec`, `apt install` gibi sistemi değiştiren komutları kendin çalıştırma; ne
     yapacağını açıkla ve kullanıcının onayını al ya da kullanıcıya çalıştırt.
 - **Sanal makine:** Ubuntu 22.04.
