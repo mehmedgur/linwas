@@ -16,9 +16,11 @@ from PySide6.QtWidgets import (
     QCheckBox,
     QDialog,
     QDialogButtonBox,
+    QFileDialog,
     QFrame,
     QGridLayout,
     QHBoxLayout,
+    QInputDialog,
     QLabel,
     QLineEdit,
     QMessageBox,
@@ -30,9 +32,10 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from linwas.backend import netquality, network
+from linwas.backend import btaudio, btfile, netquality, network
 from linwas.backend.desktop import detect_desktop
 from linwas.backend.network import (
+    BluetoothAdapter,
     BluetoothDevice,
     HotspotInfo,
     WifiDetails,
@@ -44,7 +47,7 @@ from linwas.backend.settings_launcher import command_for, open_settings
 from linwas.core import netlog
 from linwas.ui import icons
 from linwas.ui.pages.base import BasePage
-from linwas.ui.pages.network_bluetooth import BluetoothDeviceDialog
+from linwas.ui.pages.network_bluetooth import BluetoothDeviceDialog, ComputerCard
 from linwas.ui.pages.network_hotspot import HotspotCard, HotspotDialog
 from linwas.ui.pages.network_profile_dialog import NetworkSettingsDialog
 from linwas.ui.pages.network_quality import QualityCard
@@ -970,6 +973,12 @@ class _BtTab(QWidget):
         self._nearby.add_footer(self._unnamed_btn)
         layout.addWidget(self._nearby)
 
+        self._computer = ComputerCard(content)
+        self._computer.setVisible(False)
+        self._computer.visibility_requested.connect(self._set_visible)
+        self._computer.rename_requested.connect(self._rename_computer)
+        layout.addWidget(self._computer)
+
         footer = QHBoxLayout()
         footer.addStretch(1)
         footer.addWidget(_settings_button("bluetooth", tr("More Bluetooth settings"), content))
@@ -994,12 +1003,14 @@ class _BtTab(QWidget):
         if self._loading is not None:
             return
 
-        def fetch() -> tuple[str, list[BluetoothDevice]]:
+        def fetch() -> tuple[str, list[BluetoothDevice], BluetoothAdapter | None]:
             state = network.bluetooth_state()
             if state != "on":
-                return state, []
+                return state, [], None
             devices = network.bluetooth_scan(_SCAN_SECONDS) if scan else None
-            return state, devices if devices is not None else network.bluetooth_list_devices()
+            if devices is None:
+                devices = network.bluetooth_list_devices()
+            return state, devices, network.bluetooth_adapter_info()
 
         self._loading = self._jobs.run(fetch, self._on_loaded)
 
@@ -1011,14 +1022,16 @@ class _BtTab(QWidget):
             self._scan_btn.setText(tr("Search for devices"))
         if not isinstance(result, tuple):
             return
-        state, devices = result
+        state, devices, adapter = result
         self._state = state
         self._show_state(state)
         on = state == "on"
         self._mine.setVisible(on)
         self._nearby.setVisible(on)
+        self._computer.setVisible(on and adapter is not None)
         if not on:
             return
+        self._computer.show_adapter(adapter)
         self._devices = devices
         self._show_devices()
 
@@ -1103,6 +1116,8 @@ class _BtTab(QWidget):
         else:
             row.add_button(tr("Pair"), lambda: self._connect(dev, row), primary=True)
         if dev.paired:
+            if dev.connected and btfile.can_receive(dev.icon):
+                row.add_button(tr("Send file…"), lambda: self._send_file(dev))
             row.add_button(tr("Settings"), lambda: self._open_settings(dev))
             row.add_button(tr("Forget"), lambda: self._forget(dev))
         return row
@@ -1182,14 +1197,84 @@ class _BtTab(QWidget):
 
             self._start(work, lambda _r: None)
 
-    # --- Cihaz ayarları (ad, otomatik bağlan) ---
+    # --- Dosya gönderme (masaüstünün kendi Bluetooth aracıyla) ---
+
+    def _send_file(self, dev: BluetoothDevice) -> None:
+        name = dev.name or dev.mac
+        if btfile.available_tool() is None:
+            _show_error(
+                self,
+                tr("Send file"),
+                tr(
+                    "Sending files needs a Bluetooth file tool: “bluetooth-sendto” (GNOME "
+                    "Bluetooth) or “blueman-sendto” (Blueman). Install one of them and try again."
+                ),
+                "",
+            )
+            return
+        paths, _filter = QFileDialog.getOpenFileNames(
+            self, tr("Choose files to send to {name}").format(name=name)
+        )
+        if not paths:
+            return
+        ok, msg = btfile.send(dev.mac, paths)
+        if not ok:
+            _show_error(self, tr("Send file"), tr("The files could not be sent."), msg)
+
+    # --- Bu bilgisayarın görünürlüğü ve adı ---
+
+    def _set_visible(self, visible: bool) -> None:
+        self._computer.set_busy()
+        self._start(lambda: network.bluetooth_set_visible(visible), self._visibility_done)
+
+    def _visibility_done(self, result: object) -> None:
+        if result is not True:
+            _show_error(
+                self,
+                tr("Visibility"),
+                tr("The visibility of this computer could not be changed."),
+                "",
+            )
+
+    def _rename_computer(self) -> None:
+        info = self._computer.info
+        if info is None:
+            return
+        text, accepted = QInputDialog.getText(
+            self,
+            tr("Computer name"),
+            tr("Name other devices see (leave empty to use the default):"),
+            QLineEdit.EchoMode.Normal,
+            info.alias,
+        )
+        if not accepted:
+            return
+        try:
+            name = network.validate_alias(text)
+        except network.AliasError:
+            _show_error(self, tr("Computer name"), tr("This name is not valid."), "")
+            return
+        self._computer.set_busy()
+        self._start(lambda: network.bluetooth_set_computer_name(name), self._rename_done)
+
+    def _rename_done(self, result: object) -> None:
+        ok, msg = result if isinstance(result, tuple) else (False, "")
+        if not ok:
+            _show_error(self, tr("Computer name"), tr("The name could not be changed."), str(msg))
+
+    # --- Cihaz ayarları (ad, otomatik bağlan, ses) ---
 
     def _open_settings(self, dev: BluetoothDevice) -> None:
         dlg = BluetoothDeviceDialog(dev, self)
         if dlg.exec() != QDialog.DialogCode.Accepted:
             return
         change = dlg.change()
-        if change.name is None and change.trusted is None:
+        if (
+            change.name is None
+            and change.trusted is None
+            and change.audio_mode is None
+            and not change.make_output
+        ):
             return
 
         def work() -> list[str]:
@@ -1202,6 +1287,7 @@ class _BtTab(QWidget):
                 dev.mac, change.trusted
             ):
                 failures.append("trust")
+            failures += btaudio.apply(dev.mac, change.audio_mode, change.make_output)
             return failures
 
         self._start(work, self._settings_saved)

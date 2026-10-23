@@ -2377,6 +2377,50 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <source>won't connect by itself</source>
         <translation>kendiliğinden bağlanmaz</translation>
     </message>
+    <message>
+        <source>Choose files to send to {name}</source>
+        <translation>{name} cihazına gönderilecek dosyaları seçin</translation>
+    </message>
+    <message>
+        <source>Computer name</source>
+        <translation>Bilgisayar adı</translation>
+    </message>
+    <message>
+        <source>Name other devices see (leave empty to use the default):</source>
+        <translation>Diğer cihazların göreceği ad (varsayılan için boş bırakın):</translation>
+    </message>
+    <message>
+        <source>Send file</source>
+        <translation>Dosya gönder</translation>
+    </message>
+    <message>
+        <source>Send file…</source>
+        <translation>Dosya gönder…</translation>
+    </message>
+    <message>
+        <source>Sending files needs a Bluetooth file tool: “bluetooth-sendto” (GNOME Bluetooth) or “blueman-sendto” (Blueman). Install one of them and try again.</source>
+        <translation>Dosya göndermek için bir Bluetooth dosya aracı gerekir: “bluetooth-sendto” (GNOME Bluetooth) ya da “blueman-sendto” (Blueman). Birini kurup yeniden deneyin.</translation>
+    </message>
+    <message>
+        <source>The files could not be sent.</source>
+        <translation>Dosyalar gönderilemedi.</translation>
+    </message>
+    <message>
+        <source>The name could not be changed.</source>
+        <translation>Ad değiştirilemedi.</translation>
+    </message>
+    <message>
+        <source>The visibility of this computer could not be changed.</source>
+        <translation>Bu bilgisayarın görünürlüğü değiştirilemedi.</translation>
+    </message>
+    <message>
+        <source>This name is not valid.</source>
+        <translation>Bu ad geçerli değil.</translation>
+    </message>
+    <message>
+        <source>Visibility</source>
+        <translation>Görünürlük</translation>
+    </message>
 </context>
 <context>
     <name>InstalledAppsView</name>
@@ -9929,6 +9973,50 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>This name is not valid.</source>
         <translation>Bu ad geçerli değil.</translation>
+    </message>
+    <message>
+        <source>Calls (uses the microphone)</source>
+        <translation>Konuşma (mikrofonu kullanır)</translation>
+    </message>
+    <message>
+        <source>Hide now</source>
+        <translation>Şimdi gizle</translation>
+    </message>
+    <message>
+        <source>It is hidden from nearby devices. Make it visible to pair a phone with it.</source>
+        <translation>Yakındaki cihazlardan gizli. Bir telefonu eşleştirmek için görünür yapın.</translation>
+    </message>
+    <message>
+        <source>It is visible to nearby devices for a few minutes.</source>
+        <translation>Yakındaki cihazlar bu bilgisayarı birkaç dakika boyunca görebilir.</translation>
+    </message>
+    <message>
+        <source>Make visible</source>
+        <translation>Görünür yap</translation>
+    </message>
+    <message>
+        <source>Music (best sound quality)</source>
+        <translation>Müzik (en iyi ses kalitesi)</translation>
+    </message>
+    <message>
+        <source>Other devices see this computer as “{name}”.</source>
+        <translation>Diğer cihazlar bu bilgisayarı “{name}” olarak görür.</translation>
+    </message>
+    <message>
+        <source>Play sound through this device</source>
+        <translation>Sesi bu cihazdan çal</translation>
+    </message>
+    <message>
+        <source>Rename…</source>
+        <translation>Yeniden adlandır…</translation>
+    </message>
+    <message>
+        <source>Sound mode:</source>
+        <translation>Ses modu:</translation>
+    </message>
+    <message>
+        <source>This computer</source>
+        <translation>Bu bilgisayar</translation>
     </message>
 </context>
 </TS>

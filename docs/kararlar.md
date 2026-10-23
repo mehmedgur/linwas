@@ -728,6 +728,26 @@ deneyim** (son günlerde nasıldı, neden koptu). Her aşama ayrı commit; ayrı
     Cihaz penceresinde "Bağlantı son 7 günde N kez koptu" **yalnızca N ≥ 3** ve cihaz fare/klavye/tablet/oyun kolu
     **değilse** gösterilir (bunlar boştayken kendiliğinden uyup kopar; kapatılan kulaklık da kopma sayılır, bu
     yüzden eşik yüksek). Linwas'tan yapılan "Bağlantıyı kes / Unut / Bluetooth'u kapat" kopma sayılmaz.
+  - **Bluetooth ses (aşama 7):** bağlı bir ses cihazının "Ayarlar" penceresinde "Ses modu" ve "Sesi bu cihazdan
+    çal". İki sade mod: **Müzik** (A2DP, en iyi kalite, mikrofon yok) ve **Konuşma** (HSP/HFP, mikrofonlu); ham
+    profil adları gösterilmez, profil önceliğe göre seçilir (`a2dp-sink*`, `headset-head-unit*`; kullanılamayanlar
+    atlanır). `pactl` ile (PulseAudio ve PipeWire-pulse): `pactl list cards` (yalnızca `bluez_card.*`),
+    `pactl list short sinks`, `pactl get-default-sink`, `pactl set-card-profile <kart> <profil>`,
+    `pactl set-default-sink <sink>`; komutlar pactl(1)'den, çıktı biçimi PulseAudio kaynağından (`pactl.c`)
+    doğrulandı. Profil değişince ses çıkışı yeniden oluşur: Linwas çıkışın belirmesini en çok 3 sn bekleyip
+    varsayılan yapar. Ses kartı yoksa (cihaz bağlı değil, ses sunucusu görmüyor) bölüm gizli kalır.
+  - **Dosya gönderme (aşama 7):** bağlı telefon/bilgisayar satırında "Dosya gönder…" → dosya seçimi → masaüstünün
+    kendi aracı başlatılır: `bluetooth-sendto --device=<ADRES> -- <DOSYA…>` (GNOME) ya da `blueman-sendto --device
+    <ADRES> -- <DOSYA…>`; aktarımı aracın penceresi gösterir (karşı cihazda kabul gerekir). Seçenekler araçların
+    kaynak kodundan doğrulandı. **OBEX'i kendimiz yapmadık:** obexd aktarım nesnesini bitince hemen siliyor
+    (bluez `session.c`: `pending_request_free` → `obc_transfer_unregister`), yoklamayla tamamlanma/ret güvenilir
+    izlenemez; sinyal dinlemek ayrı bir karmaşıklık. Araç yoksa iki aracın adı söylenir (paket adı dağıtıma göre
+    değişir: Ubuntu 22.04'te `bluetooth-sendto` `gnome-bluetooth` içinde, 24.04'te `gnome-bluetooth-sendto`
+    paketinde; Blueman için `blueman`; Debian 12/Pardus 23'te doğrulanacak).
+  - **Bu bilgisayar (aşama 7):** Bluetooth sekmesinin altında kart: görünen ad (`org.bluez.Adapter1` `Alias`,
+    `busctl set-property -- …`; boş ad bilgisayar adına döner) ve **görünürlük**. Varsayılan gizli; "Görünür yap"
+    `bluetoothctl discoverable on` yapar (süre "süresiz" ayarlıysa 180 sn'ye sınırlanır, eşleştirme kapalıysa açılır;
+    açık unutulmasın), "Şimdi gizle" kapatır; sonuç `bluetoothctl show` ile geri okunup doğrulanır.
   - **Doğrulanan komutlar:** `ping -n -c N -i 0.4 -W 1.0 <IP>` (iputils belgesi; çıktı biçimine değil cevap
     satırlarındaki `time=` değerine bakılır), `nmcli networking connectivity [check]` (full / limited / portal /
     none / unknown). Yalnızca IP adresi ping'lenir (seçenek enjeksiyonuna karşı).

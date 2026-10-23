@@ -151,3 +151,134 @@ def test_rename_validates_before_running_anything(monkeypatch):
     assert network.bluetooth_rename("--version", "Ad") == (False, "invalid address")
     with pytest.raises(AliasError):
         network.bluetooth_rename(MAC, "a" * 65)
+
+
+# --- Bu bilgisayarın görünürlüğü ---
+
+SHOW_HIDDEN = """Controller 00:11:22:33:44:55 (public)
+\tManufacturer: 0x000f (15)
+\tVersion: 0x0a (10)
+\tName: virci
+\tAlias: Benim Bilgisayarım
+\tClass: 0x007c010c (8143116)
+\tPowered: yes
+\tPowerState: on
+\tDiscoverable: no
+\tDiscoverableTimeout: 0x000000b4 (180)
+\tPairable: yes
+\tUUID: Generic Attribute Profile (00001801-0000-1000-8000-00805f9b34fb)
+"""
+
+
+def test_parse_adapter_reads_name_visibility_and_timeout():
+    info = network.parse_adapter(SHOW_HIDDEN)
+    assert info.alias == "Benim Bilgisayarım"
+    assert (info.discoverable, info.timeout, info.pairable) == (False, 180, True)
+    visible = network.parse_adapter(
+        SHOW_HIDDEN.replace("Discoverable: no", "Discoverable: yes")
+        .replace("0x000000b4 (180)", "0x00000000 (0)")
+        .replace("Pairable: yes", "Pairable: no")
+    )
+    assert (visible.discoverable, visible.timeout, visible.pairable) == (True, 0, False)
+
+
+def test_parse_adapter_falls_back_to_name_and_tolerates_missing_fields():
+    info = network.parse_adapter("Controller AA:BB:CC:DD:EE:FF\n\tName: virci\n")
+    assert (info.alias, info.timeout, info.discoverable, info.pairable) == (
+        "virci",
+        None,
+        False,
+        True,
+    )
+
+
+@pytest.mark.parametrize("out", ["", "\n", "No default controller available\n", "Device AA:BB x\n"])
+def test_parse_adapter_is_none_without_a_controller(out):
+    assert network.parse_adapter(out) is None
+
+
+class FakeController:
+    """`bluetoothctl show/discoverable/...` komutlarını taklit eder."""
+
+    def __init__(self, discoverable=False, timeout=180, pairable=True):
+        self.state = {"discoverable": discoverable, "timeout": timeout, "pairable": pairable}
+        self.calls = []
+
+    def __call__(self, *args, timeout=15):
+        self.calls.append(args)
+        if args == ("show",):
+            return 0, (
+                "Controller 00:11:22:33:44:55 (public)\n\tName: virci\n\tAlias: virci\n"
+                f"\tDiscoverable: {'yes' if self.state['discoverable'] else 'no'}\n"
+                f"\tDiscoverableTimeout: 0x00000000 ({self.state['timeout']})\n"
+                f"\tPairable: {'yes' if self.state['pairable'] else 'no'}\n"
+            )
+        if args[0] == "discoverable":
+            self.state["discoverable"] = args[1] == "on"
+        elif args[0] == "discoverable-timeout":
+            self.state["timeout"] = int(args[1])
+        elif args[0] == "pairable":
+            self.state["pairable"] = args[1] == "on"
+        return 0, ""
+
+
+def test_make_visible_turns_discoverable_on_and_verifies(monkeypatch):
+    fake = FakeController()
+    monkeypatch.setattr(network, "_btctl", fake)
+    assert network.bluetooth_set_visible(True) is True
+    assert ("discoverable", "on") in fake.calls
+    assert ("discoverable-timeout", "180") not in fake.calls  # süre zaten sınırlı: dokunulmaz
+    assert ("pairable", "on") not in fake.calls
+    assert network.bluetooth_set_visible(False) is True
+    assert fake.state["discoverable"] is False
+
+
+def test_make_visible_limits_an_unlimited_timeout_and_enables_pairing(monkeypatch):
+    fake = FakeController(timeout=0, pairable=False)
+    monkeypatch.setattr(network, "_btctl", fake)
+    assert network.bluetooth_set_visible(True, seconds=120) is True
+    assert fake.state["timeout"] == 120 and fake.state["pairable"] is True  # açık unutulmasın
+    order = [c[0] for c in fake.calls if c[0] != "show"]
+    assert order.index("discoverable-timeout") < order.index("discoverable")  # süre önce
+
+
+def test_hiding_does_not_touch_timeout_or_pairing(monkeypatch):
+    fake = FakeController(discoverable=True, timeout=0, pairable=False)
+    monkeypatch.setattr(network, "_btctl", fake)
+    assert network.bluetooth_set_visible(False) is True
+    assert [c[0] for c in fake.calls if c[0] != "show"] == ["discoverable"]
+
+
+def test_visibility_failures_are_reported(monkeypatch):
+    monkeypatch.setattr(network, "_btctl", lambda *a, timeout=15: (1, "No default controller"))
+    assert network.bluetooth_set_visible(True) is False  # denetleyici yok
+    fake = FakeController()
+    original = fake.__call__
+
+    def stuck(*args, timeout=15):
+        if args and args[0] == "discoverable":
+            return 0, ""  # "başarılı" der, değiştirmez
+        return original(*args, timeout=timeout)
+
+    monkeypatch.setattr(network, "_btctl", stuck)
+    assert network.bluetooth_set_visible(True) is False
+
+
+def test_computer_name_is_written_on_the_adapter_object(monkeypatch):
+    calls = []
+    monkeypatch.setattr(network, "_run_rc", lambda cmd, timeout=30: calls.append(cmd) or (0, ""))
+    monkeypatch.setattr(network, "bluetooth_adapters", lambda: ["hci0"])
+    assert network.bluetooth_set_computer_name("  Salon   Bilgisayarı ") == (True, "")
+    assert calls == [
+        [
+            "busctl", "--system", "set-property", "--", "org.bluez", "/org/bluez/hci0",
+            "org.bluez.Adapter1", "Alias", "s", "Salon Bilgisayarı",
+        ]
+    ]  # fmt: skip
+    assert network.bluetooth_set_computer_name("")[0] is True and calls[-1][-1] == ""  # sıfırla
+
+
+def test_computer_name_validation(monkeypatch):
+    monkeypatch.setattr(network, "_run_rc", lambda *a, **k: pytest.fail("çalıştırılmamalı"))
+    with pytest.raises(AliasError):
+        network.bluetooth_set_computer_name("x" * 65)

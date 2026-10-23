@@ -19,7 +19,7 @@ Son güncelleme: 17 Ekim 2026
   katmanı → [eco-entegrasyonu.md](eco-entegrasyonu.md). Eco düzeninin görünümü karara bağlandı (kararlar.md).
 
 ## Wi-Fi ve Bluetooth geliştirmeleri — Pardus'ta denenecekler (bulutta donanım yok; ayrıştırıcılar örnek çıktıyla test edildi)
-Karar ve kapsam: kararlar.md › Wi-Fi ve Bluetooth geliştirmeleri. Aşama 1–6 kodlandı (bulut, 23 Ekim 2026).
+Karar ve kapsam: kararlar.md › Wi-Fi ve Bluetooth geliştirmeleri. Aşama 1–7 kodlandı (bulut, 23 Ekim 2026).
 - [ ] **Bağlantı ayrıntıları:** Wi-Fi sekmesinde "Bağlantı ayrıntıları" kartı: hız, IP, güvenlik görünür; "Gelişmiş
   ayrıntılar"da ağ geçidi, DNS, kanal, MAC, BSSID. `nmcli -t -f GENERAL.HWADDR,IP4.ADDRESS,IP4.GATEWAY,IP4.DNS
   device show wlan0` çıktısının biçimi doğru mu?
@@ -49,6 +49,16 @@ Karar ve kapsam: kararlar.md › Wi-Fi ve Bluetooth geliştirmeleri. Aşama 1–
 - [ ] **Bluetooth ölçümü:** rıza açıkken birkaç dakika sonra `~/.local/share/linwas/net_quality.jsonl` içinde
   `"kind":"bt"` satırları oluşuyor mu? Kulaklığı kapatıp açınca ve Linwas'tan "Bağlantıyı kes" ile kesince sayım
   doğru mu (Linwas'tan kesilen sayılmaz; ≥ 3 kopmada cihaz penceresinde not çıkar, fare/klavyede çıkmaz)?
+- [ ] **Bluetooth ses:** kulaklık bağlıyken Ayarlar › "Ses modu": Müzik/Konuşma geçişi çalışıyor mu
+  (`pactl list cards` → `Active Profile`)? "Sesi bu cihazdan çal" varsayılan çıkışı değiştiriyor mu
+  (`pactl get-default-sink`)? Pardus'ta ses sunucusu PulseAudio mu PipeWire mi, profil adları (`a2dp-sink`,
+  `headset-head-unit…`) beklenen gibi mi? Ses kartı görünmüyorsa bölüm gizli kalıyor mu?
+- [ ] **Dosya gönderme:** telefon bağlıyken "Dosya gönder…" aracı açıyor, telefonda kabul edince dosya geliyor mu?
+  Pardus'ta `bluetooth-sendto` hangi paketten (`dpkg -S $(which bluetooth-sendto)`)? Yoksa hata iletisi doğru mu;
+  paket adı belli olunca iletiye ve bir "Kur" düğmesine (kuyruk, `package.install`) eklenecek.
+- [ ] **Bu bilgisayar:** "Görünür yap" → telefon bilgisayarı buluyor mu, ~3 dk sonra kendiliğinden gizleniyor mu
+  (`bluetoothctl show` → Discoverable)? "Yeniden adlandır" telefonda yeni adı gösteriyor mu, boş ad bilgisayar
+  adına dönüyor mu?
 - [ ] **KARAR BEKLİYOR — QR ile paylaş:** `segno` (BSD, saf Python) bağımlılığı eklensin mi? Eklenirse:
   `pyproject.toml` bağımlılığı, `packaging/build-deb.sh` (şimdi `--no-deps`) ve CI değişir; Wi-Fi şifresi ve
   hotspot kartında "QR kodu göster" (`WIFI:T:WPA;S:<ad>;P:<şifre>;;` biçimi) eklenir.

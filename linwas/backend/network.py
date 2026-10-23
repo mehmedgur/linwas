@@ -939,18 +939,14 @@ def bluetooth_device_path(adapter: str, mac: str) -> str:
     return f"/org/bluez/{adapter}/dev_{mac.replace(':', '_')}"
 
 
-def bluetooth_rename(mac: str, name: str) -> tuple[bool, str]:
-    """Cihaza takma ad verir (`org.bluez.Device1` özelliği `Alias`); boş ad varsayılana döndürür.
+def _set_alias(interface: str, paths: list[str], alias: str) -> tuple[bool, str]:
+    """D-Bus özelliği `Alias`'ı `busctl set-property` ile yazar; ilk başarılı nesnede durur.
 
-    `bluetoothctl set-alias` "geçerli cihaz"a bağlıdır, tek seferlik komutta kullanılamaz; bu yüzden
-    D-Bus özelliği `busctl set-property` ile yazılır. Ad kullanıcıdan geldiği için komutta `--`
-    sonrasına konur: yoksa "-H sunucu" gibi bir ad busctl'e seçenek olarak geçerdi.
+    Ad kullanıcıdan geldiği için komutta `--` sonrasına konur: yoksa "-H sunucu" gibi bir ad
+    busctl'e seçenek olarak geçerdi (uzak makineye bağlanma seçeneği dahil).
     """
-    if not _valid_mac(mac):
-        return False, "invalid address"
-    alias = validate_alias(name)
     last = ""
-    for adapter in bluetooth_adapters():  # cihaz hangi denetleyiciye bağlıysa onda başarılı olur
+    for path in paths:
         code, out = _run_rc(
             [
                 "busctl",
@@ -958,8 +954,8 @@ def bluetooth_rename(mac: str, name: str) -> tuple[bool, str]:
                 "set-property",
                 "--",
                 "org.bluez",
-                bluetooth_device_path(adapter, mac),
-                "org.bluez.Device1",
+                path,
+                interface,
                 "Alias",
                 "s",
                 alias,
@@ -970,6 +966,92 @@ def bluetooth_rename(mac: str, name: str) -> tuple[bool, str]:
             return True, ""
         last = out
     return False, last
+
+
+def bluetooth_rename(mac: str, name: str) -> tuple[bool, str]:
+    """Cihaza takma ad verir (`org.bluez.Device1` özelliği `Alias`); boş ad varsayılana döndürür.
+
+    `bluetoothctl set-alias` "geçerli cihaz"a bağlıdır, tek seferlik komutta kullanılamaz; bu yüzden
+    D-Bus özelliği yazılır. Cihaz hangi denetleyiciye bağlıysa onun yolunda başarılı olur.
+    """
+    if not _valid_mac(mac):
+        return False, "invalid address"
+    alias = validate_alias(name)
+    paths = [bluetooth_device_path(adapter, mac) for adapter in bluetooth_adapters()]
+    return _set_alias("org.bluez.Device1", paths, alias)
+
+
+# --- Bu bilgisayarın Bluetooth görünürlüğü ---
+
+VISIBLE_SECONDS = 180  # "görünür yap" süresi; BlueZ'un varsayılanı (DiscoverableTimeout)
+
+
+@dataclass
+class BluetoothAdapter:
+    """Bu bilgisayarın Bluetooth denetleyicisi (`bluetoothctl show`)."""
+
+    alias: str = ""  # diğer cihazların bu bilgisayarı gördüğü ad
+    discoverable: bool = False  # yakındaki cihazlar bulabiliyor mu
+    timeout: int | None = None  # görünürlük süresi (sn); 0 = süresiz, None = bilinmiyor
+    pairable: bool = True  # eşleştirme isteklerini kabul ediyor mu
+
+
+def parse_adapter(out: str) -> BluetoothAdapter | None:
+    """`bluetoothctl show` çıktısı (bluetoothctl kaynağındaki `print_property` biçimi).
+
+    "Controller AA:… (public)" satırı yoksa (denetleyici yok) None.
+    """
+    lines = [line for line in out.splitlines() if line.strip()]
+    if not lines or not lines[0].startswith("Controller "):
+        return None
+    fields: dict[str, str] = {}
+    for line in lines[1:]:
+        key, sep, value = line.strip().partition(": ")
+        if sep and key not in fields:
+            fields[key] = value.strip()
+    timeout = None
+    m = re.search(r"\((\d+)\)", fields.get("DiscoverableTimeout", ""))
+    if m:
+        timeout = int(m.group(1))
+    return BluetoothAdapter(
+        alias=fields.get("Alias") or fields.get("Name") or "",
+        discoverable=fields.get("Discoverable") == "yes",
+        timeout=timeout,
+        pairable=fields.get("Pairable", "yes") == "yes",
+    )
+
+
+def bluetooth_adapter_info() -> BluetoothAdapter | None:
+    return parse_adapter(_btctl("show")[1])
+
+
+def bluetooth_set_visible(visible: bool, seconds: int = VISIBLE_SECONDS) -> bool:
+    """Bilgisayarı yakındaki cihazlara görünür yapar ya da gizler; sonucu geri okuyup doğrular.
+
+    Görünürlük süresi "süresiz" (0) ayarlıysa `seconds` olarak sınırlanır: açık unutulmasın.
+    Eşleştirme kapalıysa açılır (aksi halde telefon bu bilgisayarla eşleşemez).
+    """
+    info = bluetooth_adapter_info()
+    if info is None:
+        return False
+    if visible:
+        if info.timeout == 0:
+            _btctl("discoverable-timeout", str(int(seconds)))
+        if not info.pairable:
+            _btctl("pairable", "on")
+    _btctl("discoverable", "on" if visible else "off")
+    after = bluetooth_adapter_info()
+    return after is not None and after.discoverable == visible
+
+
+def bluetooth_set_computer_name(name: str) -> tuple[bool, str]:
+    """Bu bilgisayarın diğer cihazlarda görünen adını değiştirir (`org.bluez.Adapter1` `Alias`).
+
+    Boş ad, sistemin verdiği ada (bilgisayar adı) döndürür.
+    """
+    alias = validate_alias(name)
+    paths = [f"/org/bluez/{adapter}" for adapter in bluetooth_adapters()]
+    return _set_alias("org.bluez.Adapter1", paths, alias)
 
 
 def bluetooth_scan(timeout: int = 10) -> list[BluetoothDevice]:

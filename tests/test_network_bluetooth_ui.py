@@ -42,6 +42,7 @@ def _no_history(monkeypatch):
     from linwas.ui.pages import network_bluetooth as module
 
     monkeypatch.setattr(module, "device_history", lambda mac: BluetoothSummary(0, 0, None, None))
+    monkeypatch.setattr(module.btaudio, "audio_info", lambda mac: None)  # gerçek pactl çağrılmasın
 
 
 # --- Geçmiş metni ---
