@@ -681,6 +681,16 @@ deneyim** (son günlerde nasıldı, neden koptu). Her aşama ayrı commit; ayrı
     çözümleme ve TCP 443 (`example.com`, IANA belge alan adı) → tanı kodu (ok, no_address, gateway_down,
     gateway_lossy, portal, dns_failed, internet_down, slow). Sonuç sade dille üç satır (router, adlar,
     internet) + hüküm; adresler ve süreler "Ayrıntılar" arkasında; sorun varsa "Asistana sor".
+  - **Ağ ayarları (aşama 3):** kayıtlı ağın satırında "Ayarlar" düğmesi → pencere. Önce temeller: "otomatik
+    bağlan", veri kullanımı (sistem karar versin / sınırlı / sınırsız = `connection.metered` unknown / yes / no),
+    DNS (otomatik / Cloudflare 1.1.1.1 + 1.0.0.1 / Google 8.8.8.8 + 8.8.4.4 / özel, en çok 3 IPv4). **Elle IP
+    "Gelişmiş: IP adresi" arkasında** (adres, alt ağ maskesi "24" ya da "255.255.255.0", router; elle IP'de
+    bir DNS seçmek şart, yoksa adlar çözülmez). IP ya da DNS değişirse etkin ağ bir an yeniden bağlanır;
+    özel IP kipleri (shared, link-local…) olduğu gibi bırakılır. Değerler yazmadan önce doğrulanır
+    (adres ağ/yayın adresi olamaz, router aynı ağda olmalı, 8 ≤ önek ≤ 30). Komutlar: `nmcli connection modify id
+    <ad> connection.autoconnect … connection.metered … ipv4.method|addresses|gateway|dns|ignore-auto-dns …`
+    (boş değer özelliği varsayılana döndürür; nmcli(1) ve nmcli-examples'tan doğrulandı), okuma
+    `nmcli -t -f connection.autoconnect,… connection show id <ad>`.
   - **Doğrulanan komutlar:** `ping -n -c N -i 0.4 -W 1.0 <IP>` (iputils belgesi; çıktı biçimine değil cevap
     satırlarındaki `time=` değerine bakılır), `nmcli networking connectivity [check]` (full / limited / portal /
     none / unknown). Yalnızca IP adresi ping'lenir (seçenek enjeksiyonuna karşı).

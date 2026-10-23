@@ -32,11 +32,18 @@ from PySide6.QtWidgets import (
 
 from linwas.backend import netquality, network
 from linwas.backend.desktop import detect_desktop
-from linwas.backend.network import BluetoothDevice, WifiDetails, WifiNetwork, WifiStatus
+from linwas.backend.network import (
+    BluetoothDevice,
+    WifiDetails,
+    WifiNetwork,
+    WifiProfile,
+    WifiStatus,
+)
 from linwas.backend.settings_launcher import command_for, open_settings
 from linwas.core import netlog
 from linwas.ui import icons
 from linwas.ui.pages.base import BasePage
+from linwas.ui.pages.network_profile_dialog import NetworkSettingsDialog
 from linwas.ui.pages.network_quality import QualityCard
 from linwas.ui.widgets.card import Card
 from linwas.ui.widgets.details_toggle import DetailsToggle
@@ -509,6 +516,7 @@ class _WifiTab(QWidget):
         self._status: WifiStatus | None = None
         self._busy = False
         self._show_weak = False  # çok zayıf (kullanılamaz) ağlar varsayılan gizli
+        self._profile_job: _Job | None = None
         self._nets: list[WifiNetwork] = []
 
         content = QWidget()
@@ -668,6 +676,7 @@ class _WifiTab(QWidget):
         else:
             row.add_button(tr("Connect"), lambda: self._connect(net, row))
         if net.saved:
+            row.add_button(tr("Settings"), lambda: self._open_settings(net))
             row.add_button(tr("Forget"), lambda: self._forget(net.ssid))
         return row
 
@@ -771,6 +780,46 @@ class _WifiTab(QWidget):
                 return network.wifi_forget(ssid)
 
             self._start(work, lambda _r: None)
+
+    # --- Ağ ayarları (otomatik bağlan, veri kullanımı, DNS, IP) ---
+
+    def _open_settings(self, net: WifiNetwork) -> None:
+        if self._profile_job is not None:
+            return
+        self._profile_job = self._jobs.run(
+            lambda: network.wifi_profile(net.ssid),
+            lambda profile: self._on_profile(net, profile),
+        )
+
+    def _on_profile(self, net: WifiNetwork, profile: object) -> None:
+        self._profile_job = None
+        if not isinstance(profile, WifiProfile):
+            _show_error(
+                self,
+                tr("Network settings"),
+                tr("This network's settings could not be read."),
+                "",
+            )
+            return
+        dlg = NetworkSettingsDialog(profile, net.active, self)
+        if dlg.exec() != QDialog.DialogCode.Accepted:
+            return
+        change = dlg.change()
+        reconnect = net.active and network.reconnect_needed(profile, change)
+        self._start(
+            lambda: network.wifi_profile_save(net.ssid, change, reconnect),
+            self._settings_saved,
+        )
+
+    def _settings_saved(self, result: object) -> None:
+        ok, msg = result if isinstance(result, tuple) else (False, "")
+        if not ok:
+            _show_error(
+                self,
+                tr("Network settings"),
+                tr("The settings could not be saved."),
+                msg,
+            )
 
     def showEvent(self, event: object) -> None:  # type: ignore[override]
         self._timer.start()

@@ -2337,6 +2337,22 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <source>Details</source>
         <translation>Ayrıntılar</translation>
     </message>
+    <message>
+        <source>Settings</source>
+        <translation>Ayarlar</translation>
+    </message>
+    <message>
+        <source>Network settings</source>
+        <translation>Ağ ayarları</translation>
+    </message>
+    <message>
+        <source>This network's settings could not be read.</source>
+        <translation>Bu ağın ayarları okunamadı.</translation>
+    </message>
+    <message>
+        <source>The settings could not be saved.</source>
+        <translation>Ayarlar kaydedilemedi.</translation>
+    </message>
 </context>
 <context>
     <name>InstalledAppsView</name>
@@ -9621,6 +9637,137 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>Connection quality over the last 24 hours</source>
         <translation>Son 24 saatte bağlantı kalitesi</translation>
+    </message>
+</context>
+<context>
+    <name>NetworkProfileDialog</name>
+    <message>
+        <source>Enter a valid IP address, for example 192.168.1.50.</source>
+        <translation>Geçerli bir IP adresi girin, örneğin 192.168.1.50.</translation>
+    </message>
+    <message>
+        <source>Enter a valid subnet mask, for example 255.255.255.0 (or 24).</source>
+        <translation>Geçerli bir alt ağ maskesi girin, örneğin 255.255.255.0 (ya da 24).</translation>
+    </message>
+    <message>
+        <source>Enter a valid router address, for example 192.168.1.1.</source>
+        <translation>Geçerli bir router adresi girin, örneğin 192.168.1.1.</translation>
+    </message>
+    <message>
+        <source>The router address must be in the same network as the IP address.</source>
+        <translation>Router adresi, IP adresiyle aynı ağda olmalı.</translation>
+    </message>
+    <message>
+        <source>Enter valid DNS server addresses (up to three, all different).</source>
+        <translation>Geçerli DNS sunucu adresleri girin (en çok üç, hepsi farklı).</translation>
+    </message>
+    <message>
+        <source>You can use at most three DNS servers.</source>
+        <translation>En çok üç DNS sunucusu kullanabilirsiniz.</translation>
+    </message>
+    <message>
+        <source>With a manual IP address, choose a DNS server too (for example your router's address).</source>
+        <translation>Elle IP adresiyle birlikte bir DNS sunucusu da seçin (örneğin router'ınızın adresi).</translation>
+    </message>
+    <message>
+        <source>These settings are not valid.</source>
+        <translation>Bu ayarlar geçerli değil.</translation>
+    </message>
+    <message>
+        <source>Settings for {name}</source>
+        <translation>{name} ayarları</translation>
+    </message>
+    <message>
+        <source>Connect automatically when this network is in range</source>
+        <translation>Bu ağ erişimdeyken otomatik bağlan</translation>
+    </message>
+    <message>
+        <source>Let the system decide</source>
+        <translation>Sistem karar versin</translation>
+    </message>
+    <message>
+        <source>Metered connection (limit data use)</source>
+        <translation>Sınırlı bağlantı (veri kullanımını azalt)</translation>
+    </message>
+    <message>
+        <source>Unlimited connection</source>
+        <translation>Sınırsız bağlantı</translation>
+    </message>
+    <message>
+        <source>Data usage:</source>
+        <translation>Veri kullanımı:</translation>
+    </message>
+    <message>
+        <source>Automatic (from the router)</source>
+        <translation>Otomatik (router'dan)</translation>
+    </message>
+    <message>
+        <source>Cloudflare (1.1.1.1)</source>
+        <translation>Cloudflare (1.1.1.1)</translation>
+    </message>
+    <message>
+        <source>Google (8.8.8.8)</source>
+        <translation>Google (8.8.8.8)</translation>
+    </message>
+    <message>
+        <source>Custom…</source>
+        <translation>Özel…</translation>
+    </message>
+    <message>
+        <source>DNS server:</source>
+        <translation>DNS sunucusu:</translation>
+    </message>
+    <message>
+        <source>Preferred DNS server</source>
+        <translation>Tercih edilen DNS sunucusu</translation>
+    </message>
+    <message>
+        <source>Alternate DNS server (optional)</source>
+        <translation>Yedek DNS sunucusu (isteğe bağlı)</translation>
+    </message>
+    <message>
+        <source>Advanced: IP address</source>
+        <translation>Gelişmiş: IP adresi</translation>
+    </message>
+    <message>
+        <source>Automatic (DHCP)</source>
+        <translation>Otomatik (DHCP)</translation>
+    </message>
+    <message>
+        <source>Manual</source>
+        <translation>Elle</translation>
+    </message>
+    <message>
+        <source>IP address:</source>
+        <translation>IP adresi:</translation>
+    </message>
+    <message>
+        <source>Address:</source>
+        <translation>Adres:</translation>
+    </message>
+    <message>
+        <source>Subnet mask:</source>
+        <translation>Alt ağ maskesi:</translation>
+    </message>
+    <message>
+        <source>Router:</source>
+        <translation>Router:</translation>
+    </message>
+    <message>
+        <source>This network uses a special IP mode, so its address settings are not changed here.</source>
+        <translation>Bu ağ özel bir IP kipi kullanıyor, bu yüzden adres ayarları burada değiştirilmez.</translation>
+    </message>
+    <message>
+        <source>Changes to the IP address or DNS reconnect this network for a moment.</source>
+        <translation>IP adresi ya da DNS değişikliği bu ağı bir an için yeniden bağlar.</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Kaydet</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Vazgeç</translation>
     </message>
 </context>
 </TS>

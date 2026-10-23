@@ -18,6 +18,22 @@ Son güncelleme: 17 Ekim 2026
 - **Eco entegrasyonu:** yol (ayrı süreç + D-Bus / yetenek kaydı), izin modeli ve eco'nun kendi masaüstü
   katmanı → [eco-entegrasyonu.md](eco-entegrasyonu.md). Eco düzeninin görünümü karara bağlandı (kararlar.md).
 
+## Wi-Fi ve Bluetooth geliştirmeleri — Pardus'ta denenecekler (bulutta donanım yok; ayrıştırıcılar örnek çıktıyla test edildi)
+Karar ve kapsam: kararlar.md › Wi-Fi ve Bluetooth geliştirmeleri. Aşama 1–3 kodlandı (bulut, 23 Ekim 2026).
+- [ ] **Bağlantı ayrıntıları:** Wi-Fi sekmesinde "Bağlantı ayrıntıları" kartı: hız, IP, güvenlik görünür; "Gelişmiş
+  ayrıntılar"da ağ geçidi, DNS, kanal, MAC, BSSID. `nmcli -t -f GENERAL.HWADDR,IP4.ADDRESS,IP4.GATEWAY,IP4.DNS
+  device show wlan0` çıktısının biçimi doğru mu?
+- [ ] **Kalite ölçümü:** "Bağlantı kalitemi ölç"ü aç, birkaç dakika sonra çizelge ve hüküm görünüyor mu?
+  `ping -n -c 3 -i 0.4 -W 1.0 <router>` Pardus'ta çalışıyor mu (iputils-ping kurulu mu)? Ölçümü kapatınca yeni
+  not yazılmıyor mu? Ayarlar › Kullanıcı verileri'nde "Bağlantı kalitesi notları" görünüp siliniyor mu?
+- [ ] **Bağlantı testi:** "Bağlantıyı test et" üç satır + hüküm gösteriyor mu; "Ayrıntılar" ham sonucu açıyor mu;
+  router'ı kapatıp/Wi-Fi'ı koparıp sorunlu sonuçları ("Asistana sor" dahil) dene.
+- [ ] **Zayıf ağlar / adsız Bluetooth cihazları:** listeler süzülüyor mu, "N … göster" çalışıyor mu?
+- [ ] **Ağ ayarları:** kayıtlı ağda "Ayarlar": otomatik bağlan, veri kullanımı, DNS (Cloudflare/Google) kaydediliyor
+  mu (`nmcli connection show "<ad>"` ile kontrol)? Elle IP: yanlış girişte doğru hata, doğru girişte bağlantı
+  yeniden kuruluyor mu (dikkat: yanlış IP bağlantıyı keser; "Otomatik (DHCP)"e dönülebilir)?
+  `nmcli -t -f connection.autoconnect,… connection show id <ad>` çıktısı beklenen biçimde mi (anahtar:değer)?
+
 ## Eco düzeni — bekleyenler
 - [ ] Pardus'ta Ayarlar › Görünüm › Düzen › "Eco düzeni" ile açık/koyu denemesi (GNOME oturumu).
 - [ ] Eco ekran görüntüsündeki özel başlık çubuğu, arama kutusu ve "Son değiştirilen" listesi (kenar

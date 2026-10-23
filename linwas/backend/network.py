@@ -369,6 +369,234 @@ def wifi_forget(ssid: str) -> bool:
     return _run_rc(["nmcli", "connection", "delete", "id", ssid])[0] == 0
 
 
+# --- Wi-Fi ağ ayarları (kayıtlı bağlantı profili) ---
+
+# Hazır DNS seçenekleri (sağlayıcıların herkese açık adresleri)
+DNS_PRESETS: dict[str, tuple[str, ...]] = {
+    "cloudflare": ("1.1.1.1", "1.0.0.1"),
+    "google": ("8.8.8.8", "8.8.4.4"),
+}
+METERED_VALUES = ("unknown", "yes", "no")  # connection.metered (profilde yalnız bu üçü geçerli)
+MAX_DNS = 3
+_PROFILE_FIELDS = (
+    "connection.autoconnect,connection.metered,ipv4.method,ipv4.addresses,"
+    "ipv4.gateway,ipv4.dns,ipv4.ignore-auto-dns"
+)
+
+
+class ProfileError(ValueError):
+    """Geçersiz ağ ayarı; `code` arayüzde sade bir iletiye çevrilir."""
+
+    def __init__(self, code: str) -> None:
+        super().__init__(code)
+        self.code = code
+
+
+@dataclass
+class WifiProfile:
+    name: str
+    autoconnect: bool = True
+    metered: str = "unknown"
+    ipv4_method: str = "auto"  # "auto" | "manual" | başka (shared, link-local, disabled)
+    address: str = ""  # ilk IPv4 adresi (önek olmadan)
+    prefix: int | None = None
+    gateway: str = ""
+    dns: list[str] = field(default_factory=list)
+    ignore_auto_dns: bool = False
+
+    @property
+    def ip_editable(self) -> bool:
+        """Yalnızca otomatik (DHCP) ve elle IP düzenlenir; diğer kipler olduğu gibi kalır."""
+        return self.ipv4_method in ("auto", "manual")
+
+    @property
+    def dns_choice(self) -> str:
+        """ "auto" | "cloudflare" | "google" | "custom"."""
+        if not self.dns:
+            return "auto"
+        for key, servers in DNS_PRESETS.items():
+            if tuple(self.dns) == servers:
+                return key
+        return "custom"
+
+
+@dataclass
+class ProfileChange:
+    """Ayarlar penceresinden gelen değişiklik. None olan alanlara dokunulmaz."""
+
+    autoconnect: bool
+    metered: str = "unknown"
+    ipv4_method: str | None = None  # "auto" | "manual"
+    address: str = ""
+    netmask: str = ""  # "24" ya da "255.255.255.0"
+    gateway: str = ""
+    dns_choice: str | None = None  # "auto" | "cloudflare" | "google" | "custom"
+    dns: list[str] = field(default_factory=list)  # yalnızca "custom" için
+
+
+def _split_list(value: str) -> list[str]:
+    """nmcli'nin liste değerini ("a, b", "a b", "a|b") parçalar; "--" ve boşlar atılır."""
+    return [part for part in re.split(r"[,\s|]+", value) if part and part != "--"]
+
+
+def parse_profile(name: str, out: str) -> WifiProfile:
+    """`nmcli -t -f connection.autoconnect,... connection show id AD` çıktısı."""
+    values: dict[str, str] = {}
+    for line in out.splitlines():
+        key, sep, value = line.partition(":")
+        if sep:
+            values[key.strip()] = unescape_terse(value).strip()
+    profile = WifiProfile(name=name)
+    profile.autoconnect = values.get("connection.autoconnect", "yes").lower() != "no"
+    metered = values.get("connection.metered", "unknown").lower()
+    profile.metered = metered if metered in ("yes", "no") else "unknown"
+    profile.ipv4_method = values.get("ipv4.method", "auto") or "auto"
+    addresses = _split_list(values.get("ipv4.addresses", ""))
+    if addresses:
+        try:
+            iface = ipaddress.ip_interface(addresses[0])
+            profile.address, profile.prefix = str(iface.ip), iface.network.prefixlen
+        except ValueError:
+            profile.address = addresses[0].split("/")[0]
+    profile.gateway = (_split_list(values.get("ipv4.gateway", "")) or [""])[0]
+    profile.dns = _split_list(values.get("ipv4.dns", ""))
+    profile.ignore_auto_dns = values.get("ipv4.ignore-auto-dns", "no").lower() == "yes"
+    return profile
+
+
+def wifi_profile(name: str) -> WifiProfile | None:
+    """Kayıtlı ağın ayarları; okunamazsa None."""
+    out = _nmcli("-t", "-f", _PROFILE_FIELDS, "connection", "show", "id", name)
+    return parse_profile(name, out) if out.strip() else None
+
+
+def _prefix_of(netmask: str) -> int:
+    """ "24" ya da "255.255.255.0" → 24 (8-30 arası; ev/ofis ağları için makul)."""
+    try:
+        prefix = ipaddress.IPv4Network(f"0.0.0.0/{netmask.strip()}").prefixlen
+    except ValueError:
+        raise ProfileError("bad_mask") from None
+    if not 8 <= prefix <= 30:
+        raise ProfileError("bad_mask")
+    return prefix
+
+
+def _servers_of(change: ProfileChange) -> list[str] | None:
+    """Seçime göre DNS sunucuları: None = dokunma, [] = otomatik, liste = elle."""
+    if change.dns_choice is None:
+        return None
+    if change.dns_choice == "auto":
+        return []
+    if change.dns_choice in DNS_PRESETS:
+        return list(DNS_PRESETS[change.dns_choice])
+    servers: list[str] = []
+    for raw in change.dns:
+        raw = raw.strip()
+        if not raw:
+            continue
+        try:
+            addr = ipaddress.IPv4Address(raw)
+        except ValueError:
+            raise ProfileError("bad_dns") from None
+        if str(addr) in servers:
+            raise ProfileError("bad_dns")
+        servers.append(str(addr))
+    if not servers:
+        raise ProfileError("bad_dns")
+    if len(servers) > MAX_DNS:
+        raise ProfileError("too_many_dns")
+    return servers
+
+
+def build_modify_args(name: str, change: ProfileChange) -> list[str]:
+    """`nmcli` argümanları (komut çalıştırmaz). Geçersiz değerde ProfileError."""
+    if change.metered not in METERED_VALUES:
+        raise ProfileError("bad_metered")
+    args = [
+        "connection",
+        "modify",
+        "id",
+        name,
+        "connection.autoconnect",
+        "yes" if change.autoconnect else "no",
+        "connection.metered",
+        change.metered,
+    ]
+    servers: list[str] | None = None
+    if change.ipv4_method == "manual":
+        try:
+            ip = ipaddress.IPv4Address(change.address.strip())
+        except ValueError:
+            raise ProfileError("bad_address") from None
+        iface = ipaddress.IPv4Interface(f"{ip}/{_prefix_of(change.netmask)}")
+        net = iface.network
+        if ip in (net.network_address, net.broadcast_address):
+            raise ProfileError("bad_address")
+        gateway = change.gateway.strip()
+        if gateway:
+            try:
+                gw = ipaddress.IPv4Address(gateway)
+            except ValueError:
+                raise ProfileError("bad_gateway") from None
+            if gw not in net or gw in (ip, net.network_address, net.broadcast_address):
+                raise ProfileError("gateway_outside")
+        servers = _servers_of(change)  # önce adres hataları, sonra DNS
+        if not servers:
+            # Elle IP'de DHCP'nin DNS'i gelmez: adlar çözülsün diye bir DNS şart
+            raise ProfileError("no_dns")
+        args += [
+            "ipv4.method",
+            "manual",
+            "ipv4.addresses",
+            str(iface),
+            "ipv4.gateway",
+            gateway,
+        ]
+    elif change.ipv4_method == "auto":
+        args += ["ipv4.method", "auto", "ipv4.addresses", "", "ipv4.gateway", ""]
+        servers = _servers_of(change)
+    elif change.ipv4_method is not None:
+        raise ProfileError("bad_method")
+    else:
+        servers = _servers_of(change)
+    if servers is not None:
+        # Boş değer özelliği varsayılana döndürür (nmcli(1), connection modify)
+        args += ["ipv4.dns", " ".join(servers), "ipv4.ignore-auto-dns", "yes" if servers else "no"]
+    return args
+
+
+def reconnect_needed(old: WifiProfile, change: ProfileChange) -> bool:
+    """IP ya da DNS değiştiyse etkin bağlantı yeniden kurulur (diğerleri anında işler)."""
+    servers = _servers_of(change)
+    if servers is not None and servers != old.dns:
+        return True
+    if change.ipv4_method is None:
+        return False
+    if change.ipv4_method != old.ipv4_method:
+        return True
+    if change.ipv4_method == "manual":
+        return (
+            change.address.strip() != old.address
+            or _prefix_of(change.netmask) != old.prefix
+            or change.gateway.strip() != old.gateway
+        )
+    return False
+
+
+def wifi_profile_save(
+    name: str, change: ProfileChange, reconnect: bool = False
+) -> tuple[bool, str]:
+    """Ayarları yazar; `reconnect` ise etkin bağlantıyı yeniden kurar. (başarılı, çıktı)."""
+    args = build_modify_args(name, change)
+    code, out = _run_rc(["nmcli", *args], timeout=30)
+    if code != 0:
+        return False, out
+    if reconnect:
+        code, out = _run_rc(["nmcli", "connection", "up", "id", name], timeout=60)
+        return code == 0, out
+    return True, ""
+
+
 # --- Bluetooth ---
 
 
