@@ -15,7 +15,7 @@ Son güncelleme: 6 Ekim 2026
   kaynağı bu `docs/` klasörü.
 
 ## Karar bekleyenler
-- (yok)
+- **Eco entegrasyonu:** yol, kod yeri ve izin modeli → [eco-entegrasyonu.md](eco-entegrasyonu.md).
 
 ## İnceleme bekleyenler
 - [ ] **PR #1 — Eski sistem desteğinin kaldırılması:** CI yeşil, Pardus 23'te "Destekleniyor"
