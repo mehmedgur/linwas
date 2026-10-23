@@ -2210,8 +2210,8 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Bağlantı kalitemi ölç</translation>
     </message>
     <message>
-        <source>While Linwas is running, it notes your signal strength and the delay to your router once a minute. Nothing leaves this computer, and the notes are deleted after 7 days.</source>
-        <translation>Linwas çalışırken dakikada bir sinyal gücünü ve router'a gecikmeyi not eder. Hiçbir şey bu bilgisayardan çıkmaz; notlar 7 gün sonra silinir.</translation>
+        <source>While Linwas is running, it notes your signal strength and the delay to your router once a minute, and whether your paired Bluetooth devices are connected (with their battery level). Nothing leaves this computer, and the notes are deleted after 7 days.</source>
+        <translation>Linwas çalışırken dakikada bir sinyal gücünü ve router'a gecikmeyi, ayrıca eşleşmiş Bluetooth cihazlarının bağlı olup olmadığını (pil yüzdesiyle) not eder. Hiçbir şey bu bilgisayardan çıkmaz; notlar 7 gün sonra silinir.</translation>
     </message>
     <message>
         <source>Measuring is off, so no new notes are added.</source>
@@ -2368,6 +2368,14 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <message>
         <source>The hotspot could not be turned on. This Wi-Fi card may not support it.</source>
         <translation>Etkin nokta açılamadı. Bu Wi-Fi kartı desteklemiyor olabilir.</translation>
+    </message>
+    <message>
+        <source>Device settings</source>
+        <translation>Cihaz ayarları</translation>
+    </message>
+    <message>
+        <source>won't connect by itself</source>
+        <translation>kendiliğinden bağlanmaz</translation>
     </message>
 </context>
 <context>
@@ -5191,8 +5199,8 @@ Devam edilsin mi?</translation>
         <translation>Bağlantı kalitesi notları</translation>
     </message>
     <message>
-        <source>Signal and delay measured once a minute while Linwas runs; kept for 7 days</source>
-        <translation>Linwas açıkken dakikada bir ölçülen sinyal ve gecikme; 7 gün saklanır</translation>
+        <source>Wi-Fi signal and delay and Bluetooth device status, noted once a minute while Linwas runs; kept for 7 days</source>
+        <translation>Linwas açıkken dakikada bir not edilen Wi-Fi sinyal ve gecikmesi ile Bluetooth cihaz durumu; 7 gün saklanır</translation>
     </message>
 </context>
 <context>
@@ -9882,6 +9890,45 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>Turning on the hotspot disconnects this computer from its current Wi-Fi network. Other devices get internet only if this computer has another connection, such as a network cable.</source>
         <translation>Etkin nokta açılınca bu bilgisayar şu an bağlı olduğu Wi-Fi ağından ayrılır. Diğer cihazlar yalnızca bu bilgisayarın başka bir bağlantısı (örneğin ağ kablosu) varsa internete çıkabilir.</translation>
+    </message>
+</context>
+<context>
+    <name>NetworkBluetooth</name>
+    <message>
+        <source>Cancel</source>
+        <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Connect automatically when this device is nearby</source>
+        <translation>Bu cihaz yakındayken kendiliğinden bağlan</translation>
+    </message>
+    <message>
+        <source>Leave empty to use the name the device reports.</source>
+        <translation>Boş bırakırsanız cihazın kendi bildirdiği ad kullanılır.</translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation>Ad:</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Kaydet</translation>
+    </message>
+    <message>
+        <source>Settings for {name}</source>
+        <translation>{name} ayarları</translation>
+    </message>
+    <message>
+        <source>The connection dropped {n} times in the last 7 days.</source>
+        <translation>Bağlantı son 7 günde {n} kez koptu.</translation>
+    </message>
+    <message>
+        <source>The name is too long (at most 64 characters).</source>
+        <translation>Ad çok uzun (en çok 64 karakter).</translation>
+    </message>
+    <message>
+        <source>This name is not valid.</source>
+        <translation>Bu ad geçerli değil.</translation>
     </message>
 </context>
 </TS>

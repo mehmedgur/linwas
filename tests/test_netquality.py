@@ -231,6 +231,47 @@ def test_collect_wifi_sample_skips_hotspot(monkeypatch):
     assert not network.is_hotspot("Ev")
 
 
+def test_collect_bluetooth_samples_only_for_paired_devices(monkeypatch):
+    monkeypatch.setattr(network, "bluetooth_state", lambda: "on")
+    devices = [
+        network.BluetoothDevice(
+            "AA:00:00:00:00:01", "Kulaklık", True, True, "audio-headset", -50, 80
+        ),
+        network.BluetoothDevice("AA:00:00:00:00:02", "Fare", True, False, "input-mouse"),
+        network.BluetoothDevice(
+            "AA:00:00:00:00:03", "Rastgele", False, False
+        ),  # eşleşmemiş: yazılmaz
+    ]
+    monkeypatch.setattr(network, "bluetooth_list_devices", lambda: devices)
+    samples = nq.collect_bluetooth_samples(now=77)
+    assert [(s.kind, s.name, s.ident, s.connected, s.ts) for s in samples] == [
+        ("bt", "Kulaklık", "AA:00:00:00:00:01", True, 77),
+        ("bt", "Fare", "AA:00:00:00:00:02", False, 77),
+    ]
+    assert (samples[0].signal, samples[0].battery) == (-50, 80)
+    assert (samples[1].signal, samples[1].battery) == (None, None)
+
+
+@pytest.mark.parametrize("state", ["off", "blocked", "missing"])
+def test_collect_bluetooth_samples_skips_when_bluetooth_is_not_on(monkeypatch, state):
+    monkeypatch.setattr(network, "bluetooth_state", lambda: state)
+    monkeypatch.setattr(network, "bluetooth_list_devices", lambda: pytest.fail("listelenmemeli"))
+    assert nq.collect_bluetooth_samples(now=1) == []  # çizelgede boşluk kalır
+
+
+def test_default_sampler_collects_wifi_and_bluetooth():
+    assert nq.Sampler()._collectors == [nq.collect_wifi_sample, nq.collect_bluetooth_samples]
+
+
+def test_sampler_stores_every_sample_of_a_list_collector():
+    stored = []
+    first = netlog.Sample(ts=1, kind="bt", name="A", ident="A")
+    second = netlog.Sample(ts=1, kind="bt", name="B", ident="B")
+    sampler = nq.Sampler(collectors=[lambda: [first, second]], store=stored.append)
+    sampler.sample_once()
+    assert stored == [first, second]
+
+
 def test_note_user_action_requires_consent(monkeypatch):
     written = []
     monkeypatch.setattr(netlog, "append", lambda sample, path=None: written.append(sample))

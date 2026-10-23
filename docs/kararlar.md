@@ -713,6 +713,21 @@ deneyim** (son günlerde nasıldı, neden koptu). Her aşama ayrı commit; ayrı
     o durumda ≥ 8 karakterlik şifre nmcli'ce reddedilir, hata "Ayrıntılar"da görünür).
     Bilinen sınır: şifre `nmcli` komut satırı argümanı olarak kısa süre geçer (aynı kullanıcının `ps` çıktısında
     görünebilir); Wi-Fi'a bağlanırken de aynıdır (nmcli şifreyi stdin'den almıyor).
+  - **Bluetooth cihaz ayarları (aşama 6):** eşleşmiş cihazın satırında "Ayarlar" → pencere: **ad** (takma ad;
+    boş bırakılırsa cihazın kendi adı) ve **"yakındayken kendiliğinden bağlan"** (= BlueZ `Trusted`). Satırda yalnızca
+    istisna yazılır: güvenilir olmayan cihazda "kendiliğinden bağlanmaz" (süzülmüş görünüm). Komutlar (BlueZ
+    belgelerinden doğrulandı): `bluetoothctl trust|untrust <MAC>` (sonuç `info` ile geri okunup doğrulanır);
+    yeniden adlandırma `busctl --system set-property -- org.bluez /org/bluez/<hciN>/dev_<MAC_> org.bluez.Device1
+    Alias s <ad>` — `bluetoothctl set-alias` "geçerli cihaz"a bağlı olduğundan tek seferlik komutta kullanılamaz.
+    **Güvenlik:** busctl, kullanıcının yazdığı adı seçenek sanabilir (`-H sunucu` uzak makineye bağlanmak demektir;
+    `-h`/`--version` yerelde denenerek doğrulandı), bu yüzden ad `--` sonrasına konur; 64 karakter üstü ve denetim
+    karakterleri reddedilir. Denetleyici adı (`hci0`…) `/sys/class/bluetooth` içinden okunur; cihaz hangisindeyse
+    onda başarılı olur.
+  - **Bluetooth ölçümü:** aynı rıza (`net_measure`) ve dosya: dakikada bir eşleşmiş cihazların bağlı olup olmadığı,
+    sinyal ve pil (`collect_bluetooth_samples`); rıza metinleri (Wi-Fi kartı + Ayarlar) buna göre güncellendi.
+    Cihaz penceresinde "Bağlantı son 7 günde N kez koptu" **yalnızca N ≥ 3** ve cihaz fare/klavye/tablet/oyun kolu
+    **değilse** gösterilir (bunlar boştayken kendiliğinden uyup kopar; kapatılan kulaklık da kopma sayılır, bu
+    yüzden eşik yüksek). Linwas'tan yapılan "Bağlantıyı kes / Unut / Bluetooth'u kapat" kopma sayılmaz.
   - **Doğrulanan komutlar:** `ping -n -c N -i 0.4 -W 1.0 <IP>` (iputils belgesi; çıktı biçimine değil cevap
     satırlarındaki `time=` değerine bakılır), `nmcli networking connectivity [check]` (full / limited / portal /
     none / unknown). Yalnızca IP adresi ping'lenir (seçenek enjeksiyonuna karşı).

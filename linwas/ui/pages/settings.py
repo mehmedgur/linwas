@@ -647,7 +647,10 @@ class SettingsPage(BasePage):
             ),
             "network": (
                 tr("Connection quality notes"),
-                tr("Signal and delay measured once a minute while Linwas runs; kept for 7 days"),
+                tr(
+                    "Wi-Fi signal and delay and Bluetooth device status, noted once a minute "
+                    "while Linwas runs; kept for 7 days"
+                ),
             ),
             "log": (tr("Log files"), tr("Written only when the detailed log is on")),
         }.get(key, (key, ""))

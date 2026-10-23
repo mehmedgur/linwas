@@ -208,8 +208,9 @@ class QualityCard(Card):
         note = QLabel(
             tr(
                 "While Linwas is running, it notes your signal strength and the delay to your "
-                "router once a minute. Nothing leaves this computer, and the notes are deleted "
-                "after 7 days."
+                "router once a minute, and whether your paired Bluetooth devices are connected "
+                "(with their battery level). Nothing leaves this computer, and the notes are "
+                "deleted after 7 days."
             ),
             self,
         )

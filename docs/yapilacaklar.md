@@ -19,7 +19,7 @@ Son güncelleme: 17 Ekim 2026
   katmanı → [eco-entegrasyonu.md](eco-entegrasyonu.md). Eco düzeninin görünümü karara bağlandı (kararlar.md).
 
 ## Wi-Fi ve Bluetooth geliştirmeleri — Pardus'ta denenecekler (bulutta donanım yok; ayrıştırıcılar örnek çıktıyla test edildi)
-Karar ve kapsam: kararlar.md › Wi-Fi ve Bluetooth geliştirmeleri. Aşama 1–5 kodlandı (bulut, 23 Ekim 2026).
+Karar ve kapsam: kararlar.md › Wi-Fi ve Bluetooth geliştirmeleri. Aşama 1–6 kodlandı (bulut, 23 Ekim 2026).
 - [ ] **Bağlantı ayrıntıları:** Wi-Fi sekmesinde "Bağlantı ayrıntıları" kartı: hız, IP, güvenlik görünür; "Gelişmiş
   ayrıntılar"da ağ geçidi, DNS, kanal, MAC, BSSID. `nmcli -t -f GENERAL.HWADDR,IP4.ADDRESS,IP4.GATEWAY,IP4.DNS
   device show wlan0` çıktısının biçimi doğru mu?
@@ -41,6 +41,14 @@ Karar ve kapsam: kararlar.md › Wi-Fi ve Bluetooth geliştirmeleri. Aşama 1–
   "Göster/Kopyala/Kapat" çalışıyor mu? "Kapat" sonrası Wi-Fi eski ağa kendiliğinden dönüyor mu? Kapatıp açınca
   aynı ad/şifre geliyor mu? Başarısız olursa hata ayrıntısı ne (dnsmasq, güvenlik duvarı, kart desteği)?
   Kalite ölçümü açıkken hotspot sırasında çizelgede boşluk kalıyor, "kopma" sayılmıyor mu?
+- [ ] **Bluetooth cihaz ayarları:** eşleşmiş cihazda "Ayarlar": yeniden adlandırma çalışıyor mu (`busctl --system
+  set-property -- org.bluez /org/bluez/hci0/dev_… org.bluez.Device1 Alias s "Ad"`; "Access denied" çıkarsa D-Bus
+  ilkesi/kullanıcı grubu)? Satırda ve GNOME Ayarlar'da yeni ad görünüyor mu, boş ad cihazın kendi adına dönüyor mu?
+  "Kendiliğinden bağlan" kapatılınca (untrust) cihaz açılınca bağlanmıyor, açılınca (trust) bağlanıyor mu? Satırda
+  "kendiliğinden bağlanmaz" yalnızca güvenilmeyen cihazda çıkıyor mu?
+- [ ] **Bluetooth ölçümü:** rıza açıkken birkaç dakika sonra `~/.local/share/linwas/net_quality.jsonl` içinde
+  `"kind":"bt"` satırları oluşuyor mu? Kulaklığı kapatıp açınca ve Linwas'tan "Bağlantıyı kes" ile kesince sayım
+  doğru mu (Linwas'tan kesilen sayılmaz; ≥ 3 kopmada cihaz penceresinde not çıkar, fare/klavyede çıkmaz)?
 - [ ] **KARAR BEKLİYOR — QR ile paylaş:** `segno` (BSD, saf Python) bağımlılığı eklensin mi? Eklenirse:
   `pyproject.toml` bağımlılığı, `packaging/build-deb.sh` (şimdi `--no-deps`) ve CI değişir; Wi-Fi şifresi ve
   hotspot kartında "QR kodu göster" (`WIFI:T:WPA;S:<ad>;P:<şifre>;;` biçimi) eklenir.

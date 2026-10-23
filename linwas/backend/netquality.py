@@ -3,7 +3,8 @@
 Bağlantı testi yalnızca kullanıcı "Bağlantıyı test et"e basınca çalışır: yerel ağ geçidine ping, bir
 ad çözümleme ve bir TCP bağlantısı (hedef `TEST_HOST`, IANA'nın belge alan adı). Örnekleyici
 yalnızca açık rıza (`app_settings.net_measure`) varken çalışır ve dakikada bir **yalnızca yerel ağ
-geçidine** ping atar; dışarıya hiçbir şey gönderilmez. Komutlar: nmcli (NetworkManager) ve ping
+geçidine** ping atar, eşleşmiş Bluetooth cihazlarının durumunu (bağlı mı, pil) okur; dışarıya hiçbir
+şey gönderilmez. Komutlar: nmcli (NetworkManager) ve ping
 (iputils); seçenekler resmi belgelerden doğrulandı (ping: -n -c -i -W; nmcli networking
 connectivity: full/limited/portal/none/unknown).
 """
@@ -287,6 +288,26 @@ def collect_wifi_sample(now: int | None = None) -> netlog.Sample | None:
     )
 
 
+def collect_bluetooth_samples(now: int | None = None) -> list[netlog.Sample]:
+    """Eşleşmiş cihazların durumu (bağlı mı, sinyal, pil). Bluetooth kapalı/yoksa boş liste."""
+    if network.bluetooth_state() != "on":
+        return []
+    ts = int(time.time()) if now is None else now
+    return [
+        netlog.Sample(
+            ts=ts,
+            kind=netlog.KIND_BT,
+            name=dev.name,
+            ident=dev.mac,
+            connected=dev.connected,
+            signal=dev.rssi,
+            battery=dev.battery,
+        )
+        for dev in network.bluetooth_list_devices()
+        if dev.paired
+    ]
+
+
 def note_user_action(kind: str, name: str, ident: str = "") -> None:
     """Kullanıcı Linwas'tan bağlantıyı kesti/kapattı: kopma sayılmaması için işaret düşer.
 
@@ -311,7 +332,11 @@ class Sampler:
         store: Callable[[netlog.Sample], None] = netlog.append,
     ) -> None:
         self._interval = interval
-        self._collectors = collectors if collectors is not None else [collect_wifi_sample]
+        self._collectors = (
+            collectors
+            if collectors is not None
+            else [collect_wifi_sample, collect_bluetooth_samples]
+        )
         self._store = store
         self._stop = threading.Event()
         self._thread: threading.Thread | None = None

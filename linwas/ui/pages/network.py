@@ -44,6 +44,7 @@ from linwas.backend.settings_launcher import command_for, open_settings
 from linwas.core import netlog
 from linwas.ui import icons
 from linwas.ui.pages.base import BasePage
+from linwas.ui.pages.network_bluetooth import BluetoothDeviceDialog
 from linwas.ui.pages.network_hotspot import HotspotCard, HotspotDialog
 from linwas.ui.pages.network_profile_dialog import NetworkSettingsDialog
 from linwas.ui.pages.network_quality import QualityCard
@@ -1035,7 +1036,7 @@ class _BtTab(QWidget):
             tr("Hide unnamed devices"),
         )
         self._mine.set_rows(
-            [(d.mac, d.name, d.connected, d.battery) for d in paired],
+            [(d.mac, d.name, d.connected, d.battery, d.trusted) for d in paired],
             lambda: [self._row(d) for d in paired],
             tr("No paired devices yet. Search for devices below to add one."),
         )
@@ -1085,6 +1086,8 @@ class _BtTab(QWidget):
             subtitle = tr("Signal: {quality}").format(quality=quality_text(dev.quality))
         else:
             subtitle = tr("Ready to pair")
+        if dev.paired and not dev.trusted:  # yalnızca istisna gösterilir (süzülmüş görünüm)
+            subtitle += " · " + tr("won't connect by itself")
         icon_name = _BT_ICONS.get(dev.icon, "bluetooth")
         row = _Row(
             _tile(icon_name, _ON_TILE if dev.connected else "tile", 36, self),
@@ -1094,12 +1097,13 @@ class _BtTab(QWidget):
             self,
         )
         if dev.connected:
-            row.add_button(tr("Disconnect"), lambda: self._disconnect(dev.mac))
+            row.add_button(tr("Disconnect"), lambda: self._disconnect(dev))
         elif dev.paired:
             row.add_button(tr("Connect"), lambda: self._connect(dev, row))
         else:
             row.add_button(tr("Pair"), lambda: self._connect(dev, row), primary=True)
         if dev.paired:
+            row.add_button(tr("Settings"), lambda: self._open_settings(dev))
             row.add_button(tr("Forget"), lambda: self._forget(dev))
         return row
 
@@ -1132,7 +1136,15 @@ class _BtTab(QWidget):
     def _toggle_bt(self) -> None:
         on = self._state == "on"
         self._status_card.set_busy()
-        self._start(lambda: network.bluetooth_set_enabled(not on), lambda _r: None)
+        connected = [d for d in self._devices if d.connected]
+
+        def work() -> bool:
+            if on:  # kullanıcı kapatıyor: cihazların kopması kopma sayılmasın
+                for dev in connected:
+                    netquality.note_user_action(netlog.KIND_BT, dev.name, dev.mac)
+            return network.bluetooth_set_enabled(not on)
+
+        self._start(work, lambda _r: None)
 
     def _connect(self, dev: BluetoothDevice, row: _Row) -> None:
         row.buttons[0].setText(tr("Connecting…") if dev.paired else tr("Pairing…"))
@@ -1152,14 +1164,57 @@ class _BtTab(QWidget):
 
         self._start(lambda: network.bluetooth_connect(dev.mac), done)
 
-    def _disconnect(self, mac: str) -> None:
-        self._start(lambda: network.bluetooth_disconnect(mac), lambda _r: None)
+    def _disconnect(self, dev: BluetoothDevice) -> None:
+        def work() -> tuple[bool, str]:
+            netquality.note_user_action(netlog.KIND_BT, dev.name, dev.mac)  # kopma sayılmasın
+            return network.bluetooth_disconnect(dev.mac)
+
+        self._start(work, lambda _r: None)
 
     def _forget(self, dev: BluetoothDevice) -> None:
         if _confirm_forget(
             self, dev.name or dev.mac, tr("You will need to pair this device again to use it.")
         ):
-            self._start(lambda: network.bluetooth_forget(dev.mac), lambda _r: None)
+
+            def work() -> bool:
+                netquality.note_user_action(netlog.KIND_BT, dev.name, dev.mac)
+                return network.bluetooth_forget(dev.mac)
+
+            self._start(work, lambda _r: None)
+
+    # --- Cihaz ayarları (ad, otomatik bağlan) ---
+
+    def _open_settings(self, dev: BluetoothDevice) -> None:
+        dlg = BluetoothDeviceDialog(dev, self)
+        if dlg.exec() != QDialog.DialogCode.Accepted:
+            return
+        change = dlg.change()
+        if change.name is None and change.trusted is None:
+            return
+
+        def work() -> list[str]:
+            failures: list[str] = []
+            if change.name is not None:
+                ok, msg = network.bluetooth_rename(dev.mac, change.name)
+                if not ok:
+                    failures.append(msg or "rename")
+            if change.trusted is not None and not network.bluetooth_set_trusted(
+                dev.mac, change.trusted
+            ):
+                failures.append("trust")
+            return failures
+
+        self._start(work, self._settings_saved)
+
+    def _settings_saved(self, result: object) -> None:
+        if isinstance(result, list) and not result:
+            return
+        _show_error(
+            self,
+            tr("Device settings"),
+            tr("The settings could not be saved."),
+            "\n".join(result) if isinstance(result, list) else "",
+        )
 
     def showEvent(self, event: object) -> None:  # type: ignore[override]
         self._timer.start()

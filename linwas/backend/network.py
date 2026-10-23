@@ -759,6 +759,7 @@ class BluetoothDevice:
     icon: str = ""  # "phone", "audio-headset", "input-mouse"... (BlueZ)
     rssi: int | None = None  # dBm; yalnızca yakın zamanda taramada görüldüyse
     battery: int | None = None  # yüzde (destekleyen cihazlarda)
+    trusted: bool = False  # güvenilir cihaz: açılınca kendiliğinden bağlanabilir
 
     @property
     def quality(self) -> str | None:
@@ -839,6 +840,7 @@ def parse_info(mac: str, name: str, out: str) -> BluetoothDevice:
         icon=fields.get("Icon", ""),
         rssi=rssi,
         battery=battery,
+        trusted=fields.get("Trusted") == "yes",
     )
 
 
@@ -888,6 +890,86 @@ def bluetooth_disconnect(mac: str) -> tuple[bool, str]:
 
 def bluetooth_forget(mac: str) -> bool:
     return _valid_mac(mac) and _btctl("remove", mac)[0] == 0
+
+
+def bluetooth_set_trusted(mac: str, trusted: bool) -> bool:
+    """Cihazı güvenilir yapar/yapmaz (`bluetoothctl trust|untrust`); sonucu geri okuyup doğrular."""
+    if not _valid_mac(mac):
+        return False
+    _btctl("trust" if trusted else "untrust", mac)
+    return parse_info(mac, mac, _btctl("info", mac)[1]).trusted == trusted
+
+
+class AliasError(ValueError):
+    """Geçersiz cihaz adı; `code` arayüzde sade bir iletiye çevrilir."""
+
+    def __init__(self, code: str) -> None:
+        super().__init__(code)
+        self.code = code
+
+
+ALIAS_MAX = 64
+
+
+def validate_alias(name: str) -> str:
+    """Cihaz takma adını temizler (boşlukları sadeleştirir). Boş ad, cihazın kendi adına döner."""
+    alias = " ".join(name.split())
+    if len(alias) > ALIAS_MAX:
+        raise AliasError("too_long")
+    if any(ord(ch) < 32 or ord(ch) == 127 for ch in alias):
+        raise AliasError("bad_chars")
+    return alias
+
+
+def bluetooth_adapters(sysfs: Path = Path("/sys/class/bluetooth")) -> list[str]:
+    """Bluetooth denetleyicilerinin BlueZ adları ("hci0", "hci1"…); bulunamazsa ["hci0"].
+
+    Çekirdek `/sys/class/bluetooth` altında bağlantılar için "hci0:256" gibi girdiler de açar;
+    yalnızca denetleyiciler alınır.
+    """
+    try:
+        names = [p.name for p in sysfs.iterdir() if re.fullmatch(r"hci\d+", p.name)]
+    except OSError:
+        names = []
+    return sorted(names, key=lambda n: int(n[3:])) or ["hci0"]
+
+
+def bluetooth_device_path(adapter: str, mac: str) -> str:
+    """BlueZ D-Bus nesne yolu: /org/bluez/hci0/dev_AA_BB_CC_DD_EE_FF (org.bluez.Device belgesi)."""
+    return f"/org/bluez/{adapter}/dev_{mac.replace(':', '_')}"
+
+
+def bluetooth_rename(mac: str, name: str) -> tuple[bool, str]:
+    """Cihaza takma ad verir (`org.bluez.Device1` özelliği `Alias`); boş ad varsayılana döndürür.
+
+    `bluetoothctl set-alias` "geçerli cihaz"a bağlıdır, tek seferlik komutta kullanılamaz; bu yüzden
+    D-Bus özelliği `busctl set-property` ile yazılır. Ad kullanıcıdan geldiği için komutta `--`
+    sonrasına konur: yoksa "-H sunucu" gibi bir ad busctl'e seçenek olarak geçerdi.
+    """
+    if not _valid_mac(mac):
+        return False, "invalid address"
+    alias = validate_alias(name)
+    last = ""
+    for adapter in bluetooth_adapters():  # cihaz hangi denetleyiciye bağlıysa onda başarılı olur
+        code, out = _run_rc(
+            [
+                "busctl",
+                "--system",
+                "set-property",
+                "--",
+                "org.bluez",
+                bluetooth_device_path(adapter, mac),
+                "org.bluez.Device1",
+                "Alias",
+                "s",
+                alias,
+            ],
+            timeout=10,
+        )
+        if code == 0:
+            return True, ""
+        last = out
+    return False, last
 
 
 def bluetooth_scan(timeout: int = 10) -> list[BluetoothDevice]:
