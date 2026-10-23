@@ -19,7 +19,7 @@ Son güncelleme: 17 Ekim 2026
   katmanı → [eco-entegrasyonu.md](eco-entegrasyonu.md). Eco düzeninin görünümü karara bağlandı (kararlar.md).
 
 ## Wi-Fi ve Bluetooth geliştirmeleri — Pardus'ta denenecekler (bulutta donanım yok; ayrıştırıcılar örnek çıktıyla test edildi)
-Karar ve kapsam: kararlar.md › Wi-Fi ve Bluetooth geliştirmeleri. Aşama 1–3 kodlandı (bulut, 23 Ekim 2026).
+Karar ve kapsam: kararlar.md › Wi-Fi ve Bluetooth geliştirmeleri. Aşama 1–5 kodlandı (bulut, 23 Ekim 2026).
 - [ ] **Bağlantı ayrıntıları:** Wi-Fi sekmesinde "Bağlantı ayrıntıları" kartı: hız, IP, güvenlik görünür; "Gelişmiş
   ayrıntılar"da ağ geçidi, DNS, kanal, MAC, BSSID. `nmcli -t -f GENERAL.HWADDR,IP4.ADDRESS,IP4.GATEWAY,IP4.DNS
   device show wlan0` çıktısının biçimi doğru mu?
@@ -33,6 +33,17 @@ Karar ve kapsam: kararlar.md › Wi-Fi ve Bluetooth geliştirmeleri. Aşama 1–
   mu (`nmcli connection show "<ad>"` ile kontrol)? Elle IP: yanlış girişte doğru hata, doğru girişte bağlantı
   yeniden kuruluyor mu (dikkat: yanlış IP bağlantıyı keser; "Otomatik (DHCP)"e dönülebilir)?
   `nmcli -t -f connection.autoconnect,… connection show id <ad>` çıktısı beklenen biçimde mi (anahtar:değer)?
+- [ ] **Şifreyi göster:** kayıtlı güvenli ağda Ayarlar › Şifre › "Göster": şifre okunuyor mu (anahtarlık kilitliyse
+  ya da şifre yalnızca başka kullanıcıya aitse `nmcli -s -g 802-11-wireless-security.psk connection show id <ad>`
+  ne diyor)? 30 sn sonra / pencere kapanınca gizleniyor mu, "Kopyala" çalışıyor mu? Açık ağda satır yok mu?
+- [ ] **Hotspot:** "Aç…" → pencere (ad = bilgisayar adı, rastgele şifre) → "Aç": telefon ağı görüp bağlanabiliyor
+  mu; ağ kablosu takılıyken internete çıkıyor mu? Açıkken durum kartı "Etkin nokta açık", ağ listesi gizli, kartta
+  "Göster/Kopyala/Kapat" çalışıyor mu? "Kapat" sonrası Wi-Fi eski ağa kendiliğinden dönüyor mu? Kapatıp açınca
+  aynı ad/şifre geliyor mu? Başarısız olursa hata ayrıntısı ne (dnsmasq, güvenlik duvarı, kart desteği)?
+  Kalite ölçümü açıkken hotspot sırasında çizelgede boşluk kalıyor, "kopma" sayılmıyor mu?
+- [ ] **KARAR BEKLİYOR — QR ile paylaş:** `segno` (BSD, saf Python) bağımlılığı eklensin mi? Eklenirse:
+  `pyproject.toml` bağımlılığı, `packaging/build-deb.sh` (şimdi `--no-deps`) ve CI değişir; Wi-Fi şifresi ve
+  hotspot kartında "QR kodu göster" (`WIFI:T:WPA;S:<ad>;P:<şifre>;;` biçimi) eklenir.
 
 ## Eco düzeni — bekleyenler
 - [ ] Pardus'ta Ayarlar › Görünüm › Düzen › "Eco düzeni" ile açık/koyu denemesi (GNOME oturumu).

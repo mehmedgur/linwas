@@ -2353,6 +2353,22 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <source>The settings could not be saved.</source>
         <translation>Ayarlar kaydedilemedi.</translation>
     </message>
+    <message>
+        <source>Hotspot</source>
+        <translation>Etkin nokta</translation>
+    </message>
+    <message>
+        <source>Hotspot is on</source>
+        <translation>Etkin nokta açık</translation>
+    </message>
+    <message>
+        <source>Broadcasting “{ssid}”.</source>
+        <translation>“{ssid}” ağı yayınlanıyor.</translation>
+    </message>
+    <message>
+        <source>The hotspot could not be turned on. This Wi-Fi card may not support it.</source>
+        <translation>Etkin nokta açılamadı. Bu Wi-Fi kartı desteklemiyor olabilir.</translation>
+    </message>
 </context>
 <context>
     <name>InstalledAppsView</name>
@@ -9768,6 +9784,104 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>Cancel</source>
         <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation>Şifre:</translation>
+    </message>
+</context>
+<context>
+    <name>PasswordRow</name>
+    <message>
+        <source>Show</source>
+        <translation>Göster</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Gizle</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Kopyala</translation>
+    </message>
+    <message>
+        <source>Copied</source>
+        <translation>Kopyalandı</translation>
+    </message>
+    <message>
+        <source>The password could not be read. It may be locked in the system keyring or kept by another account.</source>
+        <translation>Şifre okunamadı. Sistem anahtarlığında kilitli ya da başka bir hesapta saklı olabilir.</translation>
+    </message>
+    <message>
+        <source>The password is hidden again after 30 seconds.</source>
+        <translation>Şifre 30 saniye sonra yeniden gizlenir.</translation>
+    </message>
+</context>
+<context>
+    <name>NetworkHotspot</name>
+    <message>
+        <source>Cancel</source>
+        <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Create a Wi-Fi network that your phone and other devices can join.</source>
+        <translation>Telefonunuzun ve diğer cihazların bağlanabileceği bir Wi-Fi ağı oluşturun.</translation>
+    </message>
+    <message>
+        <source>Hotspot</source>
+        <translation>Etkin nokta</translation>
+    </message>
+    <message>
+        <source>Network name:</source>
+        <translation>Ağ adı:</translation>
+    </message>
+    <message>
+        <source>New password</source>
+        <translation>Yeni şifre</translation>
+    </message>
+    <message>
+        <source>Other devices can join with the password below.</source>
+        <translation>Diğer cihazlar aşağıdaki şifreyle bağlanabilir.</translation>
+    </message>
+    <message>
+        <source>Password:</source>
+        <translation>Şifre:</translation>
+    </message>
+    <message>
+        <source>Phones and other devices can join this network with the password.</source>
+        <translation>Telefonlar ve diğer cihazlar bu ağa şifreyle bağlanabilir.</translation>
+    </message>
+    <message>
+        <source>The network name is empty or too long (at most 32 bytes; letters like ş and ğ count double).</source>
+        <translation>Ağ adı boş ya da çok uzun (en çok 32 bayt; ş ve ğ gibi harfler çift sayılır).</translation>
+    </message>
+    <message>
+        <source>The password must be 8 to 63 characters long and use only basic characters (no ş, ğ, ı or emoji).</source>
+        <translation>Şifre 8 ile 63 karakter arasında olmalı ve yalnızca temel karakterler içermeli (ş, ğ, ı ya da emoji olmaz).</translation>
+    </message>
+    <message>
+        <source>These settings are not valid.</source>
+        <translation>Bu ayarlar geçerli değil.</translation>
+    </message>
+    <message>
+        <source>Turn off</source>
+        <translation>Kapat</translation>
+    </message>
+    <message>
+        <source>Turn on</source>
+        <translation>Aç</translation>
+    </message>
+    <message>
+        <source>Turn on hotspot</source>
+        <translation>Etkin noktayı aç</translation>
+    </message>
+    <message>
+        <source>Turn on…</source>
+        <translation>Aç…</translation>
+    </message>
+    <message>
+        <source>Turning on the hotspot disconnects this computer from its current Wi-Fi network. Other devices get internet only if this computer has another connection, such as a network cable.</source>
+        <translation>Etkin nokta açılınca bu bilgisayar şu an bağlı olduğu Wi-Fi ağından ayrılır. Diğer cihazlar yalnızca bu bilgisayarın başka bir bağlantısı (örneğin ağ kablosu) varsa internete çıkabilir.</translation>
     </message>
 </context>
 </TS>

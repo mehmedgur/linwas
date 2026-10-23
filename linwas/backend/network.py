@@ -565,6 +565,19 @@ def build_modify_args(name: str, change: ProfileChange) -> list[str]:
     return args
 
 
+def wifi_password(name: str) -> str | None:
+    """Kayıtlı ağın şifresi (WPA/WPA2/WPA3-Personal parolası); yoksa ya da okunamazsa None.
+
+    `nmcli -s` (--show-secrets) gizli bilgiyi gösterir; açık ve kurumsal (802.1X) ağlarda ya da
+    şifre başka bir hesabın/anahtarlığın elindeyse boş döner. Şifre hiçbir yere kaydedilmez.
+    """
+    out, _ = _run(
+        ["nmcli", "-s", "-g", "802-11-wireless-security.psk", "connection", "show", "id", name]
+    )
+    value = unescape_terse(out.rstrip("\n"))
+    return value if value and value != "--" else None
+
+
 def reconnect_needed(old: WifiProfile, change: ProfileChange) -> bool:
     """IP ya da DNS değiştiyse etkin bağlantı yeniden kurulur (diğerleri anında işler)."""
     servers = _servers_of(change)
@@ -595,6 +608,143 @@ def wifi_profile_save(
         code, out = _run_rc(["nmcli", "connection", "up", "id", name], timeout=60)
         return code == 0, out
     return True, ""
+
+
+# --- Hotspot (erişim noktası) ---
+
+HOTSPOT_NAME = "Linwas Hotspot"  # Linwas'ın oluşturduğu hotspot bağlantısının adı
+_PASSWORD_ALPHABET = "abcdefghjkmnpqrstuvwxyz23456789"  # karışan harfler (l, o, 0, 1, i) yok
+
+
+class HotspotError(ValueError):
+    """Geçersiz hotspot ayarı; `code` arayüzde sade bir iletiye çevrilir."""
+
+    def __init__(self, code: str) -> None:
+        super().__init__(code)
+        self.code = code
+
+
+@dataclass
+class HotspotInfo:
+    name: str  # bağlantı adı
+    ssid: str  # yayınlanan ağ adı
+    device: str
+
+
+def parse_hotspot(name: str, device: str, out: str) -> HotspotInfo | None:
+    """`nmcli -t -f 802-11-wireless.mode,802-11-wireless.ssid connection show id AD` çıktısı.
+
+    Kip "ap" ise bağlantı bir erişim noktasıdır (hotspot).
+    """
+    values: dict[str, str] = {}
+    for line in out.splitlines():
+        key, sep, value = line.partition(":")
+        if sep:
+            values[key.strip()] = unescape_terse(value).strip()
+    if values.get("802-11-wireless.mode", "").lower() != "ap":
+        return None
+    return HotspotInfo(name=name, ssid=values.get("802-11-wireless.ssid") or name, device=device)
+
+
+def hotspot_info(status: WifiStatus) -> HotspotInfo | None:
+    """Wi-Fi kartı şu an bir hotspot yayınlıyorsa bilgisi; değilse None.
+
+    `status.ssid` aslında etkin bağlantının (profilin) adıdır; Linwas'ınkinde HOTSPOT_NAME.
+    """
+    if not status.connected or not status.device or not status.ssid:
+        return None
+    out = _nmcli(
+        "-t",
+        "-f",
+        "802-11-wireless.mode,802-11-wireless.ssid",
+        "connection",
+        "show",
+        "id",
+        status.ssid,
+    )
+    return parse_hotspot(status.ssid, status.device, out)
+
+
+def is_hotspot(name: str) -> bool:
+    """Bu bağlantı profili bir erişim noktası (hotspot) mı? Başka araçların hotspot'u da sayılır."""
+    out = _nmcli("-t", "-f", "802-11-wireless.mode", "connection", "show", "id", name)
+    return parse_hotspot(name, "", out) is not None
+
+
+def default_hotspot_ssid() -> str:
+    """Bilgisayar adı (en çok 32 bayt); alınamazsa "Linwas"."""
+    name = (os.uname().nodename if hasattr(os, "uname") else "") or "Linwas"
+    return name.encode("utf-8")[:32].decode("utf-8", errors="ignore") or "Linwas"
+
+
+def generate_hotspot_password(length: int = 12) -> str:
+    """Okunaklı, tahmini zor rastgele şifre (WPA2 için 8-63 karakter)."""
+    import secrets
+
+    return "".join(secrets.choice(_PASSWORD_ALPHABET) for _ in range(length))
+
+
+def hotspot_defaults() -> tuple[str, str]:
+    """Hotspot penceresinin ilk (ağ adı, şifre) değerleri.
+
+    Daha önce Linwas hotspot'u açıldıysa adı ve şifresi korunur (diğer cihazlar aynı ağa
+    kendiliğinden bağlanır). Yoksa bilgisayar adı ve rastgele bir şifre önerilir.
+    """
+    out = _nmcli(
+        "-t",
+        "-f",
+        "802-11-wireless.mode,802-11-wireless.ssid",
+        "connection",
+        "show",
+        "id",
+        HOTSPOT_NAME,
+    )
+    previous = parse_hotspot(HOTSPOT_NAME, "", out)
+    if previous is not None:
+        password = wifi_password(HOTSPOT_NAME)
+        if password:
+            return previous.ssid, password
+    return default_hotspot_ssid(), generate_hotspot_password()
+
+
+def validate_hotspot(ssid: str, password: str) -> None:
+    """Ağ adı 1-32 bayt, şifre 8-63 yazdırılabilir ASCII olmalı; değilse HotspotError."""
+    if not ssid or len(ssid.encode("utf-8")) > 32 or any(ord(ch) < 32 for ch in ssid):
+        raise HotspotError("bad_ssid")
+    if not 8 <= len(password) <= 63 or any(not 32 <= ord(ch) <= 126 for ch in password):
+        raise HotspotError("bad_password")
+
+
+def hotspot_start(device: str, ssid: str, password: str) -> tuple[bool, str]:
+    """Hotspot'u açar (bu Wi-Fi kartı o an bağlı olduğu ağdan ayrılır). (başarılı, çıktı).
+
+    Eski Linwas hotspot profili silinip yenisi oluşturulur; şifre profilde saklanır.
+    """
+    validate_hotspot(ssid, password)
+    if not device:
+        return False, "no Wi-Fi device"
+    _run_rc(["nmcli", "connection", "delete", "id", HOTSPOT_NAME])  # yoksa hata yok sayılır
+    cmd = [
+        "nmcli",
+        "device",
+        "wifi",
+        "hotspot",
+        "ifname",
+        device,
+        "con-name",
+        HOTSPOT_NAME,
+        "ssid",
+        ssid,
+        "password",
+        password,
+    ]
+    code, out = _run_rc(cmd, timeout=45)
+    return code == 0, out
+
+
+def hotspot_stop(name: str) -> bool:
+    """Hotspot'u kapatır (`nmcli connection down`)."""
+    return _run_rc(["nmcli", "connection", "down", "id", name])[0] == 0
 
 
 # --- Bluetooth ---

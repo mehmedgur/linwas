@@ -21,6 +21,7 @@ from linwas.backend import network
 from linwas.backend.network import ProfileChange, WifiProfile
 from linwas.ui import icons
 from linwas.ui.widgets.details_toggle import DetailsToggle
+from linwas.ui.widgets.password_row import PasswordRow
 
 
 def tr(text: str) -> str:
@@ -51,7 +52,13 @@ def _mask_text(prefix: int | None) -> str:
 class NetworkSettingsDialog(QDialog):
     """Önce günlük kullanıcının işine yarayanlar; elle IP "Gelişmiş: IP adresi" arkasında."""
 
-    def __init__(self, profile: WifiProfile, active: bool, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        profile: WifiProfile,
+        active: bool,
+        parent: QWidget | None = None,
+        secured: bool = False,
+    ) -> None:
         super().__init__(parent)
         self._profile = profile
         self.setWindowTitle(tr("Settings for {name}").format(name=profile.name))
@@ -79,6 +86,10 @@ class NetworkSettingsDialog(QDialog):
         self._dns.addItem(tr("Custom…"), "custom")
         self._dns.setCurrentIndex(max(0, self._dns.findData(profile.dns_choice)))
         form.addRow(tr("DNS server:"), self._dns)
+        if secured:
+            # Şifre yalnızca "Göster"e basılınca okunur (süzülmüş görünüm: varsayılan gizli)
+            self._password = PasswordRow(lambda: network.wifi_password(profile.name), self)
+            form.addRow(tr("Password:"), self._password)
         self._dns_custom = QWidget(self)
         custom = QVBoxLayout(self._dns_custom)
         custom.setContentsMargins(0, 0, 0, 0)

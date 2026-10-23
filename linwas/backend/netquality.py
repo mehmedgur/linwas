@@ -266,6 +266,8 @@ def collect_wifi_sample(now: int | None = None) -> netlog.Sample | None:
     device, ssid, bssid, signal, freq = active
     if not ssid:
         return netlog.Sample(ts=ts, kind=netlog.KIND_WIFI, name="", connected=False)
+    if network.is_hotspot(ssid):  # hotspot yayınlarken bir ağa istemci değiliz: ölçülecek geçit yok
+        return None
     rtt = loss = None
     gateway = _gateway_of(device)
     if gateway:

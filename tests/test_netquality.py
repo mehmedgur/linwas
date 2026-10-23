@@ -217,6 +217,20 @@ def test_collect_wifi_sample_variants(monkeypatch):
     assert (no_ping.rtt_ms, no_ping.loss, no_ping.band) == (None, None, "2.4")
 
 
+def test_collect_wifi_sample_skips_hotspot(monkeypatch):
+    table = {
+        "WIFI": "enabled\n",
+        "DEVICE,TYPE,STATE,CONNECTION": "wlan0:wifi:connected:Linwas Hotspot\n",
+        "802-11-wireless.mode": "802-11-wireless.mode:ap\n",
+    }
+    monkeypatch.setattr(network, "_nmcli", fake_nmcli(table))
+    monkeypatch.setattr(nq, "ping", lambda host: pytest.fail("hotspot'ta ping atılmaz"))
+    assert nq.collect_wifi_sample(now=5) is None  # çizelgede boşluk kalır, kopma sayılmaz
+    assert network.is_hotspot("Linwas Hotspot")
+    monkeypatch.setattr(network, "_nmcli", fake_nmcli({}))
+    assert not network.is_hotspot("Ev")
+
+
 def test_note_user_action_requires_consent(monkeypatch):
     written = []
     monkeypatch.setattr(netlog, "append", lambda sample, path=None: written.append(sample))

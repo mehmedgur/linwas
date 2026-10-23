@@ -231,3 +231,23 @@ def test_wifi_profile_save_runs_modify_then_optional_up(monkeypatch):
     monkeypatch.setattr(network, "_run_rc", lambda *a, **k: pytest.fail("çalıştırılmamalı"))
     with pytest.raises(ProfileError):
         network.wifi_profile_save("Ev", ProfileChange(autoconnect=True, metered="x"))
+
+
+def test_wifi_password_reads_secret_and_unescapes(monkeypatch):
+    calls = []
+
+    def fake(cmd, timeout=10):
+        calls.append(cmd)
+        return "p\\:ss\\\\wörd 1\n", ""
+
+    monkeypatch.setattr(network, "_run", fake)
+    assert network.wifi_password("Ev Ağı") == "p:ss\\wörd 1"  # ":" ve "\\" kaçırılmıştır
+    assert calls[0] == [
+        "nmcli", "-s", "-g", "802-11-wireless-security.psk", "connection", "show", "id", "Ev Ağı",
+    ]  # fmt: skip
+
+
+@pytest.mark.parametrize("out", ["", "\n", "--\n"])
+def test_wifi_password_unavailable(monkeypatch, out):
+    monkeypatch.setattr(network, "_run", lambda cmd, timeout=10: (out, ""))
+    assert network.wifi_password("Açık Ağ") is None

@@ -34,6 +34,7 @@ from linwas.backend import netquality, network
 from linwas.backend.desktop import detect_desktop
 from linwas.backend.network import (
     BluetoothDevice,
+    HotspotInfo,
     WifiDetails,
     WifiNetwork,
     WifiProfile,
@@ -43,6 +44,7 @@ from linwas.backend.settings_launcher import command_for, open_settings
 from linwas.core import netlog
 from linwas.ui import icons
 from linwas.ui.pages.base import BasePage
+from linwas.ui.pages.network_hotspot import HotspotCard, HotspotDialog
 from linwas.ui.pages.network_profile_dialog import NetworkSettingsDialog
 from linwas.ui.pages.network_quality import QualityCard
 from linwas.ui.widgets.card import Card
@@ -162,12 +164,18 @@ class _StatusCard(Card):
         row.addWidget(self._toggle, 0, Qt.AlignmentFlag.AlignVCenter)
         self.layout.addLayout(row)
 
-    def show_state(self, title: str, subtitle: str, on: bool | None) -> None:
-        """on: True açık, False kapalı, None aç/kapat yok (aygıt bulunamadı)."""
+    def show_state(
+        self, title: str, subtitle: str, on: bool | None, highlight: bool | None = None
+    ) -> None:
+        """on: True açık, False kapalı, None aç/kapat yok (aygıt bulunamadı, hotspot açık).
+
+        `highlight` simge kutusunu vurgular; verilmezse `on` değerini izler.
+        """
         self._title.setText(title)
         self._subtitle.setText(subtitle)
         self._subtitle.setVisible(bool(subtitle))
-        icons.bind(self._tile, self._icon_name, _ON_TILE if on else "tile", 48)
+        lit = bool(on) if highlight is None else highlight
+        icons.bind(self._tile, self._icon_name, _ON_TILE if lit else "tile", 48)
         self._toggle.setVisible(on is not None)
         self._toggle.setEnabled(True)
         self._toggle.setText(tr("Turn off") if on else tr("Turn on"))
@@ -517,6 +525,8 @@ class _WifiTab(QWidget):
         self._busy = False
         self._show_weak = False  # çok zayıf (kullanılamaz) ağlar varsayılan gizli
         self._profile_job: _Job | None = None
+        self._hotspot_job: _Job | None = None
+        self._hotspot: HotspotInfo | None = None  # bu bilgisayar şu an hotspot yayınlıyorsa
         self._nets: list[WifiNetwork] = []
 
         content = QWidget()
@@ -550,6 +560,12 @@ class _WifiTab(QWidget):
         self._list_card.add_footer(self._weak_btn)
         layout.addWidget(self._list_card)
 
+        self._hotspot_card = HotspotCard(content)
+        self._hotspot_card.setVisible(False)
+        self._hotspot_card.start_requested.connect(self._hotspot_start)
+        self._hotspot_card.stop_requested.connect(self._hotspot_stop)
+        layout.addWidget(self._hotspot_card)
+
         footer = QHBoxLayout()
         footer.addStretch(1)
         footer.addWidget(_settings_button("wifi", tr("More Wi-Fi settings"), content))
@@ -577,9 +593,12 @@ class _WifiTab(QWidget):
             self._refresh_btn.setEnabled(False)
             self._refresh_btn.setText(tr("Searching…"))
 
-        def fetch() -> tuple[WifiStatus, list[WifiNetwork], WifiDetails | None]:
+        def fetch() -> tuple[WifiStatus, list[WifiNetwork], WifiDetails | None, HotspotInfo | None]:
             status = network.wifi_status()
-            return status, network.wifi_list(rescan=rescan), network.wifi_details(status)
+            hotspot = network.hotspot_info(status)
+            if hotspot is not None:  # erişim noktası kipinde ağ taraması/ayrıntı anlamsız
+                return status, [], None, hotspot
+            return status, network.wifi_list(rescan=rescan), network.wifi_details(status), None
 
         self._loading = self._jobs.run(fetch, self._on_loaded)
 
@@ -589,12 +608,18 @@ class _WifiTab(QWidget):
         self._refresh_btn.setText(tr("Refresh"))
         if not isinstance(result, tuple):
             return
-        status, nets, details = result
+        status, nets, details, hotspot = result
         self._status = status
+        self._hotspot = hotspot
         self._show_status(status)
         self._show_details(details)
-        self._quality.set_connection(status.connected, details.gateway if details else "")
+        self._quality.set_connection(
+            status.connected and hotspot is None, details.gateway if details else ""
+        )
+        self._quality.setVisible(hotspot is None)  # hotspot'ta ölçülecek bir geçit yok
         self._show_networks(nets)
+        self._hotspot_card.setVisible(bool(status.device) and status.enabled)
+        self._hotspot_card.show_info(hotspot)
 
     def _show_status(self, status: WifiStatus) -> None:
         if not status.device:
@@ -606,6 +631,13 @@ class _WifiTab(QWidget):
         elif not status.enabled:
             self._status_card.show_state(
                 tr("Wi-Fi is off"), tr("Turn it on to see networks nearby."), False
+            )
+        elif self._hotspot is not None:
+            self._status_card.show_state(
+                tr("Hotspot is on"),
+                tr("Broadcasting “{ssid}”.").format(ssid=self._hotspot.ssid),
+                None,
+                highlight=True,
             )
         elif status.connected:
             details = [
@@ -622,7 +654,7 @@ class _WifiTab(QWidget):
             self._status_card.show_state(
                 tr("Not connected"), tr("Choose a network below to connect."), True
             )
-        self._list_card.setVisible(bool(status.device) and status.enabled)
+        self._list_card.setVisible(bool(status.device) and status.enabled and self._hotspot is None)
 
     def _show_details(self, details: WifiDetails | None) -> None:
         self._details_card.setVisible(details is not None)
@@ -781,6 +813,51 @@ class _WifiTab(QWidget):
 
             self._start(work, lambda _r: None)
 
+    # --- Hotspot ---
+
+    def _hotspot_start(self) -> None:
+        if self._hotspot_job is not None or self._status is None or not self._status.device:
+            return
+        self._hotspot_card.set_busy()
+        self._hotspot_job = self._jobs.run(network.hotspot_defaults, self._on_hotspot_defaults)
+
+    def _on_hotspot_defaults(self, result: object) -> None:
+        self._hotspot_job = None
+        if not (isinstance(result, tuple) and len(result) == 2) or self._status is None:
+            self._hotspot_card.show_info(self._hotspot)
+            return
+        dlg = HotspotDialog(str(result[0]), str(result[1]), self)
+        if dlg.exec() != QDialog.DialogCode.Accepted:
+            self._hotspot_card.show_info(self._hotspot)
+            return
+        ssid, password = dlg.values()
+        device = self._status.device
+        current = self._status.ssid if self._status.connected else ""
+
+        def work() -> tuple[bool, str]:
+            if current:  # bağlı olduğu ağdan ayrılmak kullanıcının tercihi: kopma sayılmasın
+                netquality.note_user_action(netlog.KIND_WIFI, current)
+            return network.hotspot_start(device, ssid, password)
+
+        self._start(work, self._hotspot_started)
+
+    def _hotspot_started(self, result: object) -> None:
+        ok, msg = result if isinstance(result, tuple) else (False, "")
+        if not ok:
+            _show_error(
+                self,
+                tr("Hotspot"),
+                tr("The hotspot could not be turned on. This Wi-Fi card may not support it."),
+                msg,
+            )
+
+    def _hotspot_stop(self) -> None:
+        hotspot = self._hotspot
+        if hotspot is None:
+            return
+        self._hotspot_card.set_busy()
+        self._start(lambda: network.hotspot_stop(hotspot.name), lambda _r: None)
+
     # --- Ağ ayarları (otomatik bağlan, veri kullanımı, DNS, IP) ---
 
     def _open_settings(self, net: WifiNetwork) -> None:
@@ -801,7 +878,7 @@ class _WifiTab(QWidget):
                 "",
             )
             return
-        dlg = NetworkSettingsDialog(profile, net.active, self)
+        dlg = NetworkSettingsDialog(profile, net.active, self, secured=bool(net.security))
         if dlg.exec() != QDialog.DialogCode.Accepted:
             return
         change = dlg.change()

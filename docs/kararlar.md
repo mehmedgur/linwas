@@ -691,6 +691,28 @@ deneyim** (son günlerde nasıldı, neden koptu). Her aşama ayrı commit; ayrı
     <ad> connection.autoconnect … connection.metered … ipv4.method|addresses|gateway|dns|ignore-auto-dns …`
     (boş değer özelliği varsayılana döndürür; nmcli(1) ve nmcli-examples'tan doğrulandı), okuma
     `nmcli -t -f connection.autoconnect,… connection show id <ad>`.
+  - **Şifreyi göster (aşama 4):** kayıtlı güvenli ağın "Ayarlar" penceresinde "Şifre" satırı. Varsayılan gizli
+    ve **okunmaz**; "Göster" şifreyi o an `nmcli -s -g 802-11-wireless-security.psk connection show id <ad>` ile
+    okur (kaçırılmış `:` ve `\` geri getirilir), 30 saniye sonra ya da pencere kapanınca/gizlenince yeniden
+    gizler; "Kopyala" panoya koyar. Şifre hiçbir yere kaydedilmez. Açık/kurumsal (802.1X) ağda ya da anahtarlık
+    şifreyi vermiyorsa sade bir açıklama çıkar. Bileşen `ui/widgets/password_row.py` (hotspot kartı da kullanır).
+  - **QR ile paylaş: ertelendi.** QR üretmek için bir kütüphane gerekir (`segno`: BSD, saf Python, bağımlılığı
+    yok); `packaging/build-deb.sh` Linwas'ı `--no-deps` kurduğu için eklemek derleme betiğini, `pyproject.toml`
+    bağımlılıklarını ve CI'yi etkiler. Kullanıcıya soruldu; cevaba göre eklenecek (yapilacaklar.md).
+  - **Hotspot (aşama 5):** Wi-Fi sekmesinin altında "Etkin nokta" kartı. Kapalıyken tek satır + "Aç…"; pencerede
+    ağ adı (bilgisayar adı, en çok 32 bayt) ve rastgele 12 karakterlik şifre (karışan harfler yok; "Yeni şifre"
+    ile yenilenir; 8–63 yazdırılabilir ASCII) ile **uyarı**: bu bilgisayar şu an bağlı olduğu Wi-Fi'dan ayrılır,
+    diğer cihazlar internete yalnızca bilgisayarın başka bir bağlantısı (ağ kablosu) varsa çıkar. Daha önce Linwas
+    hotspot'u açıldıysa ad ve şifre korunur (diğer cihazlar kendiliğinden bağlanır). Açıkken durum kartı "Etkin
+    nokta açık" der; ağ listesi, bağlantı ayrıntıları ve kalite kartı **gizlenir** (erişim noktası kipinde
+    anlamsız); hotspot kartında ağ adı, gizli şifre (Göster/Kopyala) ve "Kapat" kalır. Hotspot açıkken kalite
+    örneği alınmaz; hotspot için ağdan ayrılmak kopma sayılmaz.
+    Komutlar: `nmcli device wifi hotspot ifname <aygıt> con-name "Linwas Hotspot" ssid <ad> password <şifre>`,
+    durdurma `nmcli connection down id "Linwas Hotspot"` (nmcli(1) ve NetworkManager kaynağından doğrulandı: profil
+    `autoconnect=no`, `ipv4.method=shared`, `ipv6.method=ignore`; WPA2/CCMP, kart WPA/RSN bilmiyorsa WEP'e düşer —
+    o durumda ≥ 8 karakterlik şifre nmcli'ce reddedilir, hata "Ayrıntılar"da görünür).
+    Bilinen sınır: şifre `nmcli` komut satırı argümanı olarak kısa süre geçer (aynı kullanıcının `ps` çıktısında
+    görünebilir); Wi-Fi'a bağlanırken de aynıdır (nmcli şifreyi stdin'den almıyor).
   - **Doğrulanan komutlar:** `ping -n -c N -i 0.4 -W 1.0 <IP>` (iputils belgesi; çıktı biçimine değil cevap
     satırlarındaki `time=` değerine bakılır), `nmcli networking connectivity [check]` (full / limited / portal /
     none / unknown). Yalnızca IP adresi ping'lenir (seçenek enjeksiyonuna karşı).

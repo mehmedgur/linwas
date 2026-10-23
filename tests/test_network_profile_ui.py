@@ -151,8 +151,8 @@ def test_wifi_tab_settings_button_saves_through_backend(qapp, monkeypatch, tmp_p
     )
 
     class FakeDialog:
-        def __init__(self, profile, active, parent=None):
-            assert profile is MANUAL and active is True
+        def __init__(self, profile, active, parent=None, secured=False):
+            assert profile is MANUAL and active is True and secured is True
 
         def exec(self):
             return QDialog.DialogCode.Accepted
@@ -176,3 +176,30 @@ def test_wifi_tab_settings_button_saves_through_backend(qapp, monkeypatch, tmp_p
     assert name == "Ev Ağı" and change.address == "192.168.1.51"
     assert reconnect is True  # etkin ağda IP değişti: yeniden bağlanır
     assert _wait(lambda: tab._profile_job is None and not tab._busy)
+
+
+def test_password_row_only_for_secured_networks(qapp):
+    from linwas.ui.pages.network_profile_dialog import NetworkSettingsDialog
+
+    open_net = NetworkSettingsDialog(AUTO, False, secured=False)
+    assert not hasattr(open_net, "_password")
+    dlg = NetworkSettingsDialog(AUTO, False, secured=True)
+    dlg.show()
+    row = dlg._password
+    assert row._edit.isVisible() and row._edit.text() == ""  # varsayılan gizli, okunmaz
+    assert not row._copy.isEnabled()
+
+
+def test_dialog_reads_the_password_of_its_own_network_on_demand(qapp, monkeypatch):
+    from linwas.ui.pages.network_profile_dialog import NetworkSettingsDialog
+
+    reads = []
+    monkeypatch.setattr(network, "wifi_password", lambda name: reads.append(name) or "gizli şifre")
+    dlg = NetworkSettingsDialog(AUTO, False, secured=True)
+    dlg.show()
+    assert reads == []  # açılışta okunmaz
+    dlg._password._show.click()
+    assert _wait(lambda: dlg._password.revealed)
+    assert reads == ["Ev Ağı"] and dlg._password._edit.text() == "gizli şifre"
+    dlg.hide()  # pencere kapanınca şifre ekrandan silinir
+    assert not dlg._password.revealed and dlg._password._edit.text() == ""
