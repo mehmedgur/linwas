@@ -23,6 +23,17 @@ def _edition(argv: list[str]) -> str:
     return value if value in ("linwas", "eco") else "linwas"
 
 
+def _make_window(themes):  # noqa: ANN001, ANN202 - Qt türleri burada içe aktarılmaz
+    """Sürüme göre ana pencere: eco = ayarlar uygulaması, linwas = iskelet pencere."""
+    if themes.edition == "eco":
+        from linwas.ui.eco.settings_window import EcoSettingsWindow
+
+        return EcoSettingsWindow(themes)
+    from linwas.ui.main_window import MainWindow
+
+    return MainWindow()
+
+
 def _self_check(argv: list[str]) -> int:
     """PySide6 yükleniyor mu, çeviri bulunuyor mu, pencere oluşturulabiliyor mu?"""
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
@@ -30,7 +41,6 @@ def _self_check(argv: list[str]) -> int:
     from PySide6.QtWidgets import QApplication
 
     from linwas.translations import install_translator, qm_path, selected_language
-    from linwas.ui.main_window import MainWindow
     from linwas.ui.theme.manager import ThemeManager
 
     app = QApplication([sys.argv[0]])
@@ -38,7 +48,7 @@ def _self_check(argv: list[str]) -> int:
     translator = install_translator(app, lang)
     themes = ThemeManager(app, _edition(argv))
     themes.apply()
-    window = MainWindow()
+    window = _make_window(themes)
     window.show()
     app.processEvents()
 
@@ -66,7 +76,6 @@ def main(argv: list[str] | None = None) -> int:
     from PySide6.QtWidgets import QApplication
 
     from linwas.translations import install_translator, selected_language
-    from linwas.ui.main_window import MainWindow
     from linwas.ui.theme.manager import ThemeManager
 
     app = QApplication(argv)
@@ -74,9 +83,10 @@ def main(argv: list[str] | None = None) -> int:
     app.setApplicationVersion(__version__)
     app.setDesktopFileName("linwas")
     install_translator(app, selected_language())
-    ThemeManager(app, _edition(argv)).apply()
+    themes = ThemeManager(app, _edition(argv))
+    themes.apply()
 
-    window = MainWindow()
+    window = _make_window(themes)
     window.show()
     return app.exec()
 

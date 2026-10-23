@@ -40,3 +40,12 @@ Kod `linwas/eco/` altında başlar. Eco deposu: github.com/mehmedgur/eco (özel)
 - [ ] Linwas'ın izin modeli (root helper, polkit) ile eco politika motorunun ilişkisi.
 - [ ] Bağdaştırıcı arayüzünün kapsamı (ayar okuma/yazma, "ayarlarda aç", tema/ölçek) ve ilk
   bağdaştırıcılar: KDE/Plasma + mevcut GNOME/XFCE/Cinnamon.
+
+## Durum (23 Ekim 2026)
+- Aşama 1: `linwas/core/theme.py`, `color.py` (sürüm + açık/koyu palet, kontrast testleri).
+- Aşama 2: `linwas/ui/theme/` (QSS, QPalette, Figtree gömme, sistem açık/koyu takibi);
+  eco teması `--edition=eco` ya da `LINWAS_EDITION=eco` ile açılır.
+- Aşama 3: `linwas/resources/icons/` (16 özgün SVG simge).
+- Aşama 4: `linwas/ui/eco/` ayarlar penceresi + Hakkında sayfası, `linwas/backend/sysinfo.py`,
+  `linwas/core/settings.py` (şema + arka uç arayüzü).
+- Çalıştırma (Pardus/Ubuntu): `./scripts/run-dev.sh --edition=eco`

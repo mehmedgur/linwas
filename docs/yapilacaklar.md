@@ -14,6 +14,19 @@ Son güncelleme: 6 Ekim 2026
   sürüyor; kararlar ve tasarım için claude.ai sohbeti de kullanılabilir. Belgelerin tek doğru
   kaynağı bu `docs/` klasörü.
 
+## Eco sürümü — bekleyenler (aşama 1–4 tamam: tema, Qt katmanı, simgeler, Hakkında iskeleti)
+- [ ] Eco arka ucu: ayar şeması (`linwas/core/settings.py`) eco servisine D-Bus ile bağlanacak;
+  eco tarafındaki servis/arayüz adı eco belgelerinde henüz yok.
+- [ ] Eco ayar sayfaları: Hakkında dışındakiler yer tutucu (Görünüm, Ekran, Ağ, Ses, Depolama,
+  Kullanıcılar, Güvenlik, Uygulamalar, Erişilebilirlik). İlk sürümde hangileri? (açık soru)
+- [ ] Özel başlık çubuğu + arama kutusu + "Son değiştirilen" listesi (görselde var, henüz yok);
+  pencere düğmeleri Linwas ile aynı olacak (özel başlık çubuğu doğrulaması bekliyor).
+- [ ] Hakkında: "Güncellemeleri kontrol et" düğmesi, grafik kartı satırı, lisans bölümü.
+- [ ] Gezinmede kayan seçim çubuğu animasyonu ve dar pencere kipleri.
+- [ ] Bu dal eski `main` üzerinde; `main`'deki "eski sistem desteğini kaldır" commit'leri birleştirilmeli.
+- [ ] Eco `Co-Authored-By` kuralı (eco Karar 22) ile linwas2 commit eki arasında çelişki: eco'ya
+  taşınacak kodda ek kullanılmamalı.
+
 ## Karar bekleyenler
 - **Eco entegrasyonu:** yol, kod yeri ve izin modeli → [eco-entegrasyonu.md](eco-entegrasyonu.md).
 

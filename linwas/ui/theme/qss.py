@@ -14,6 +14,8 @@ def build_stylesheet(edition: str, mode: str) -> str:
     button_height = tokens["olcu"]["dugme_yukseklik"]
     button_pad = tokens["olcu"]["dugme_yatay_ic"]
     field_height = tokens["olcu"]["metin_kutusu"]
+    card_radius = tokens["kose"]["katman"]
+    nav_item_gap = tokens["olcu"]["gezinme_ogesi_aralik"]
     c = {name: to_qss(getattr(pal, name)) for name in theme.Palette.__dataclass_fields__}
 
     return f"""
@@ -24,6 +26,23 @@ QLabel[role="secondary"] {{ color: {c["text_secondary"]}; }}
 QLabel[role="tertiary"] {{ color: {c["text_tertiary"]}; }}
 QFrame[frameShape="4"] {{ border: none; background: {c["divider"]}; min-height: 1px;
     max-height: 1px; }}
+QFrame#card {{ background: {c["surface"]}; border: 1px solid {c["border"]};
+    border-radius: {card_radius}px; }}
+QFrame#card QLabel {{ background: transparent; }}
+QLabel#pageTitle {{ font-size: {tokens["yazi"]["title"]["boyut"]}px;
+    font-weight: {tokens["yazi"]["title"]["agirlik"]}; }}
+QLabel#cardTitle {{ font-weight: {tokens["yazi"]["bodyStrong"]["agirlik"]}; }}
+QLabel#cardValue {{ font-weight: {tokens["yazi"]["bodyStrong"]["agirlik"]}; }}
+QWidget#pageContent {{ background: {c["window_bg"]}; }}
+QScrollArea {{ background: {c["window_bg"]}; border: none; }}
+QListWidget#nav {{ background: {c["surface"]}; border: none; border-right: 1px solid {c["border"]};
+    padding: 8px 12px 8px 16px; outline: none; }}
+QListWidget#nav::item {{ padding-left: 8px; margin-bottom: {nav_item_gap}px;
+    border-radius: {radius}px; color: {c["text_secondary"]}; }}
+QListWidget#nav::item:hover {{ background: {c["selected_bg"]}; }}
+QListWidget#nav::item:selected {{ background: {c["selected_bg"]}; color: {c["accent"]}; }}
+QListWidget#nav::item:disabled {{ color: {c["text_tertiary"]}; background: transparent;
+    padding-top: 12px; }}
 QToolTip {{ background: {c["surface"]}; color: {c["text"]}; border: 1px solid {c["border"]};
     padding: 4px 8px; }}
 QPushButton {{ min-height: {button_height}px; padding: 0 {button_pad}px; border-radius: {radius}px;
