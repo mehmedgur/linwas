@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 from PySide6.QtCore import QObject, Qt, Signal
-from PySide6.QtGui import QColor, QFont, QGuiApplication, QPalette
+from PySide6.QtGui import QColor, QFont, QGuiApplication, QIcon, QPalette
 from PySide6.QtWidgets import QApplication
 
 from linwas.core import theme
 from linwas.core.color import parse_color
 from linwas.ui.theme.fonts import load_bundled_fonts
+from linwas.ui.theme.icons import load_icon
 from linwas.ui.theme.qss import build_stylesheet
 
 # Kullanıcı tercihi: sistemi izle ya da elle seç
@@ -90,6 +91,11 @@ class ThemeManager(QObject):
         }[preference]
         QGuiApplication.styleHints().setColorScheme(scheme)
         self.apply()
+
+    def icon(self, name: str, color: str | None = None, size: int = 16) -> QIcon:
+        """Temanın metin renginde (ya da verilen renkte) simge; tema değişince yenilenmeli."""
+        pal = theme.palette(self._edition, self._mode)
+        return load_icon(name, color or pal.text, size)
 
     def _on_scheme_changed(self, _scheme: Qt.ColorScheme) -> None:
         self.apply()
