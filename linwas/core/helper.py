@@ -486,7 +486,6 @@ def _exec_snap_install_classic(seq: int, params: dict[str, str]) -> bool:
 
 # backend.power ile aynı yollar (helper backend'e bağımlı olmasın diye burada da tanımlı)
 _LID_DROPIN = Path("/etc/systemd/logind.conf.d/90-linwas-lid.conf")
-_POWER_SUPPLY = Path("/sys/class/power_supply")
 
 
 def _exec_power_set_lid_action(seq: int, params: dict[str, str]) -> bool:
@@ -515,7 +514,6 @@ def _exec_power_set_lid_action(seq: int, params: dict[str, str]) -> bool:
     return True
 
 
-_BATTERY_RULE = Path("/etc/udev/rules.d/90-linwas-battery.rules")
 # power.save_config'in değiştirdiği dosyalar (core.power_apply ile aynı yollar)
 _POWER_FILES = [
     Path("/etc/linwas/power.json"),
@@ -523,41 +521,6 @@ _POWER_FILES = [
     _LID_DROPIN,
     Path("/etc/UPower/UPower.conf"),
 ]
-
-
-def _write_battery_rule(seq: int, battery: str, percent: str) -> bool:
-    """Sınırın açılışta da uygulanması için udev kuralı (udev(7): ATTR{...} atama)."""
-    try:
-        if percent == "100":
-            _BATTERY_RULE.unlink(missing_ok=True)
-        else:
-            _BATTERY_RULE.parent.mkdir(parents=True, exist_ok=True)
-            _BATTERY_RULE.write_text(
-                "# Linwas tarafından yazıldı (Güç ve Pil › Pil koruma)\n"
-                f'SUBSYSTEM=="power_supply", KERNEL=="{battery}", '
-                f'ATTR{{charge_control_end_threshold}}="{percent}"\n',
-                encoding="utf-8",
-            )
-            _BATTERY_RULE.chmod(0o644)
-    except OSError as exc:
-        _error(seq, f"Pil kuralı yazılamadı: {exc}")
-        return False
-    return True
-
-
-def _exec_battery_set_charge_limit(seq: int, params: dict[str, str]) -> bool:
-    """Şarj sınırını hemen (sysfs) ve kalıcı olarak (udev kuralı) uygular."""
-    base = _POWER_SUPPLY / params["battery"]
-    target = base / "charge_control_end_threshold"
-    try:
-        if (base / "type").read_text().strip() != "Battery" or not target.exists():
-            _error(seq, "Bu pil şarj sınırını desteklemiyor")
-            return False
-        target.write_text(params["percent"])
-    except OSError as exc:
-        _error(seq, f"Şarj sınırı yazılamadı: {exc}")
-        return False
-    return _write_battery_rule(seq, params["battery"], params["percent"])
 
 
 def _exec_power_save_config(seq: int, params: dict[str, str]) -> bool:
@@ -646,6 +609,7 @@ def _exec_power_give_back(seq: int, params: dict[str, str]) -> bool:
         ["systemctl", "disable", "--now", "--", power_apply.SERVICE_NAME], seq
     ):
         return False
+    power_apply.release_ppd_now()  # servis ppd'yi durdurmuşsa (özel planda) geri açılır
     for unit in units if isinstance(units, list) else []:
         # Yalnızca bilinen araç birimleri (kayıt dosyası değiştirilmiş olsa bile)
         if unit in known and not _run(["systemctl", "enable", "--now", "--", unit], seq):
@@ -1098,9 +1062,6 @@ _EXECUTORS: dict[str, Any] = {
     "snap.install_classic": _exec_snap_install_classic,
     "power.set_lid_action": lambda seq, p: _with_file_backup(
         seq, "lid", [_LID_DROPIN], lambda: _exec_power_set_lid_action(seq, p)
-    ),
-    "battery.set_charge_limit": lambda seq, p: _with_file_backup(
-        seq, "battery", [_BATTERY_RULE], lambda: _exec_battery_set_charge_limit(seq, p)
     ),
     "power.save_config": lambda seq, p: _with_file_backup(
         seq, "power", _POWER_FILES, lambda: _exec_power_save_config(seq, p)

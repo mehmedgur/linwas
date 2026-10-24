@@ -2,7 +2,7 @@
 
 (Önceki çalışma adı: v1.1. Kod sıfırdan yazıldığı için sürüm adı **Linwas 2.0** oldu.)
 
-Son güncelleme: 7 Ekim 2026
+Son güncelleme: 25 Ekim 2026
 Depo (2.0): github.com/mehmedgur/linwas2 (geliştirme süresince private; kod düz dosyalar halinde)
 Eski depo (v1.0, yalnızca referans): github.com/mehmedgur/linwas
 Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyruk senaryosu)
@@ -391,7 +391,8 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 5. **Oyun:** Steam + Proton, Lutris / Heroic, GameMode, uyumluluk kontrolü (AI değerlendirmesi + "tahmindir" uyarısı + ProtonDB linki; AI kapalıysa ProtonDB araması tarayıcıda açılır).
 6. **Kişisel dosya yedeği:** harici disk / USB.
 7. **"Windows'ta nasıl?" rehberi:** ayarlar + programlar + klavye kısayolları + kavramlar (`data/windows_map.json`); sistem ayarı karşılıkları `data/settings_map.json` ile bağlantılı.
-8. **Güç ve pil:** enerji modu, pil sağlığı, kapak kapanınca davranışı, pil koruma (%80, destekleyen cihazlarda).
+8. **Güç ve pil:** enerji modu, pil sağlığı, kapak kapanınca davranışı. (Pil koruma / şarj sınırı
+   25 Ekim 2026'da kaldırıldı, aşağıda.)
    - **Gelişmiş güç seçenekleri (10 Ekim 2026, kullanıcı kararı):** Windows'taki gibi.
      - **Planlar:** Linwas planları Tasarruf / Dengeli / Performans + kullanıcının özel planları. Her ayarın
        Prizde ve Pilde ayrı değeri var; prize takınca/çıkarınca otomatik uygulanır. Plan sistem genelidir
@@ -400,7 +401,7 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
        Linwas görür ve uyarır.
      - **Bölümler:** Ekran ve uyku (karartma/kapatma, uyku, hazırda bekletme, karma uyku, uyanma
        zamanlayıcıları); Düğmeler ve kapak (güç/uyku düğmesi, kapak: prizde/pilde/harici ekran bağlıyken);
-       İşlemci (turbo, EPP, en düşük/en yüksek işlemci durumu, governor); Pil (şarj sınırı, düşük/kritik
+       İşlemci (turbo, EPP, en düşük/en yüksek işlemci durumu, governor); Pil (düşük/kritik
        seviye ve eylemi, bildirim); USB/PCIe/disk (USB seçici askıya alma, ASPM, SATA ALPM, disk kapanma);
        Kablosuz (Wi-Fi güç tasarrufu, pilde Bluetooth kapatma); Ekran kartı ve parlaklık (AMD/Intel/NVIDIA
        güç modu, pilde parlaklık, uyarlanabilir parlaklık); Tanılama raporu.
@@ -439,6 +440,42 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
        `Battery.minutes_left`) ve ayrı satırda sağlık · döngü. Gelişmiş ayarlar varsayılan kapalı
        ("Gelişmiş ayarları göster"); her satırda ad + kısa açıklama, değiştirilmiş satırda "Varsayılan"
        düğmesi (yerleşik planda fabrika değeri, özel planda Sistem varsayılanı).
+     - **Hazır planlar, GNOME'un güç kipi ve özel planlar (25 Ekim 2026, kullanıcı kararı):**
+       - **Hazır 3 plan salt okunur.** Değerleri her zaman fabrika değeri (ayar dosyasındaki değerleri
+         yok sayılır); kullanıcı yalnızca seçer. Başvuru GNOME'un varsayılanları
+         (`org.gnome.desktop.session idle-delay` 300 sn, `idle-dim` açık, `sleep-inactive-{ac,battery}-
+         timeout` 900 sn): **Dengeli** bunların aynısı + ppd `balanced`; **Tasarruf** ppd `power-saver`,
+         pilde ekran 3 dk / uyku 10 dk, pilde USB/PCI/SATA/Wi-Fi/ekran kartı tasarrufu, pilde parlaklık
+         %50; **Performans** ppd `performance`, prizde SATA tam güç ve Wi-Fi tasarrufu kapalı.
+       - **İşlemciyi power-profiles-daemon (ppd) yönetir** (GNOME/KDE menüsündeki güç kipi). ppd 0.30
+         kaynağından doğrulandı: intel_pstate'te governor (`powersave`), EPP (Tasarruf `power`, Dengeli
+         prizde `balance_performance` / pilde `balance_power`, Performans `performance`) ve EPB yazar;
+         amd_pstate'te ek olarak `boost` ve `scaling_min_freq`; diğer sürücülerde `cpufreq/boost`.
+         Turboya (intel `no_turbo`) ve en yüksek hıza dokunmaz. Bu yüzden ppd çalışırken Linwas
+         `powerplan.ppd_owned()` ayarlarına yazmaz (sonuç "ppd").
+       - **Özel planlar "Gelişmiş"in arkasında:** plan kartında yalnızca hazır 3 plan (özel plan etkinse o
+         da) görünür; "Yeni plan…" seçili planın kopyasını oluşturur, düzenleme/seçme/içe-dışa aktarma
+         Gelişmiş ayarlar kartında ("Bu planı kullan").
+       - **A + B karışımı:** özel planda varsayılan olarak yalnızca ppd'nin boş bıraktığı işlemci
+         ayarları değişir. "Bu planda işlemciyi Linwas yönetsin" (`cpu_control`) açılırsa bütün işlemci
+         ayarları açılır; plan etkinken ppd `systemctl mask --runtime --now` ile durdurulur (ppd D-Bus
+         ile kendiliğinden başlatılabildiği için yalnızca durdurmak yetmez; geçici kilit yeniden
+         başlatınca kalkar), plandan çıkınca, servis kapanınca ve "Yönetimi geri ver"de geri açılır.
+         Bu sürede menüdeki güç kipi görünmez; sayfa bunu yazar.
+       - **Menü ile eşleme:** GNOME/KDE menüsünden kip değişirse (ppd'de geçici tutma yoksa ve otomatik
+         geçiş devrede değilse) Linwas aynı adlı hazır plana geçer.
+       - **Yoklama kalktı:** servis ve masaüstü ajanı UPower ve ppd sinyallerini `gdbus monitor` ile
+         dinler (`core/power_events.py`, çıktı `stdbuf -oL` ile satır satır); servis zamanlı planın
+         başlangıç/bitiş anında ve en geç 5 dakikada bir, ajan en geç dakikada bir uyanır. UPower'ın
+         yerine kendi servisimizi yazmıyoruz (GNOME yine kendi UPower'ını kullanır, ikisi çakışır).
+       - **Düşük pil çakışması:** Linwas'ın "Pil tasarrufu" açıksa GNOME'un kendi düşük pil geçişi
+         (`power-saver-profile-on-low-battery`) kapatılır, kapalıysa GNOME'unki çalışır. GNOME'da
+         tanılama raporu artık "pil tasarrufu kapalı" önerisi vermez.
+       - **Pil koruma (şarj sınırı) kaldırıldı:** arayüz, `battery.set_charge_limit` işlemi, udev
+         kuralı, tanılama önerisi ve çevirileri silindi. Eski sürüm kural yazdıysa servis açılışta
+         `/etc/udev/rules.d/90-linwas-battery.rules`'u siler ve sınırı %100'e döndürür.
+       - **KDE:** sistem tarafı (servis, ppd, sysfs, logind, UPower) masaüstünden bağımsız; ekran/uyku
+         süreleri şimdilik yalnızca GNOME'da (KDE'de PowerDevil ayarı; KDE desteğiyle birlikte).
 
 9. **Görev çubuğu Linwas temasını izler (13 Ekim 2026):** Linwas'ta Açık/Koyu seçiliyse paletin
    `mode` alanıyla görev çubuğu ve menüler de o temada çizilir (uygulama ile panel arasında keskin

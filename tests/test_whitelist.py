@@ -265,14 +265,3 @@ class TestPowerParams:
         assert validate("power.set_lid_action", {"action": "lock"}) == {"action": "lock"}
         with pytest.raises(ValidationError):
             validate("power.set_lid_action", {"action": "reboot"})
-
-    @pytest.mark.parametrize("bat", ["BAT0", "BAT1", "BATT"])
-    def test_battery_ok(self, bat):
-        validate("battery.set_charge_limit", {"battery": bat, "percent": "80"})
-
-    @pytest.mark.parametrize(
-        "bat,pct", [("../x", "80"), ("BAT0/../../etc", "80"), ("BAT0", "79"), ("BAT0", "1e2")]
-    )
-    def test_battery_bad(self, bat, pct):
-        with pytest.raises(ValidationError):
-            validate("battery.set_charge_limit", {"battery": bat, "percent": pct})

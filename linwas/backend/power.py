@@ -3,7 +3,6 @@
 - Pil: /sys/class/power_supply/<ad>/ (Linux ABI: sysfs-class-power)
 - Enerji modu: `powerprofilesctl` (power-profiles-daemon); kullanıcı yetkisiyle
 - Kapak kapanınca: systemd-logind HandleLidSwitch= (logind.conf(5)); yazma root helper'da
-- Pil koruma: charge_control_end_threshold (yalnızca destekleyen cihazlarda); yazma root helper'da
 """
 
 from __future__ import annotations
@@ -31,9 +30,6 @@ LINWAS_LOGIND_DROPIN = Path("/etc/systemd/logind.conf.d/90-linwas-lid.conf")
 LID_ACTIONS = ("suspend", "lock", "ignore", "poweroff")
 LID_DEFAULT = "suspend"
 
-# Pil koruma seçenekleri (yüzde); 100 = koruma kapalı
-CHARGE_LIMITS = (60, 80, 100)
-
 
 def _read(path: Path) -> str:
     try:
@@ -57,7 +53,6 @@ class Battery:
     status: str  # Charging / Discharging / Full / Not charging / Unknown
     health: int | None  # tam kapasite / tasarım kapasitesi, yüzde
     cycle_count: int | None
-    charge_limit: int | None  # charge_control_end_threshold; desteklenmiyorsa None
     minutes_left: int | None = None  # boşalmaya/dolmaya kalan dakika; çekirdek vermiyorsa None
 
 
@@ -109,7 +104,6 @@ def list_batteries(root: Path = POWER_SUPPLY) -> list[Battery]:
                 status=_read(base / "status") or "Unknown",
                 health=_battery_health(base),
                 cycle_count=cycles or None,  # 0 = bilgi yok (ABI)
-                charge_limit=_read_int(base / "charge_control_end_threshold"),
                 minutes_left=_minutes_left(base, _read(base / "status")),
             )
         )

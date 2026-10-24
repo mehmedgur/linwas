@@ -3,6 +3,9 @@
 Üstte güç planı seçimi ve sık ayarlar, altta Windows'taki gibi "Gelişmiş güç seçenekleri"
 ağaç listesi (her satırda Prizde / Pilde). Plan şifresiz değiştirilir (kurulu pakette); plan
 ayarları root helper'ın `power.save_config` işlemiyle kaydedilir (kararlar.md › Güç ve pil).
+
+Hazır üç plan salt okunurdur; plan kartında yalnızca onlar (ve etkinse özel plan) görünür.
+Özel planlar Gelişmiş ayarlar kartında oluşturulur, düzenlenir ve seçilir.
 """
 
 from __future__ import annotations
@@ -209,7 +212,7 @@ class _SwitchWorker(QThread):
 
 
 class _AgentWorker(QThread):
-    """Kaydettikten sonra masaüstü ayarlarını hemen uygular (ajanın 20 sn'sini beklemeden)."""
+    """Kaydettikten sonra masaüstü ayarlarını hemen uygular (ajanın uyanmasını beklemeden)."""
 
     def run(self) -> None:
         power_agent.apply_now()
@@ -411,40 +414,6 @@ class PowerPage(BasePage):
         self._bat_tip.hide()
         card.layout.addWidget(self._bat_tip)
 
-        # Pil koruma (yalnızca destekleyen cihazlarda)
-        self._limit_box = _tile_frame(card)
-        box = QHBoxLayout(self._limit_box)
-        box.setContentsMargins(14, 12, 14, 12)
-        box.setSpacing(12)
-        shield = QLabel(self._limit_box)
-        shield.setFixedSize(32, 32)
-        icons.bind(shield, "battery", "tile", 32)
-        box.addWidget(shield, 0, Qt.AlignmentFlag.AlignTop)
-        info = QVBoxLayout()
-        info.setSpacing(2)
-        info.addWidget(_title_label(tr("Battery protection"), self._limit_box))
-        info.addWidget(
-            _note_label(
-                tr(
-                    "Stopping charging at 80% helps the battery last longer if the laptop is "
-                    "usually plugged in."
-                )
-                + " "
-                + tr("The limit is kept after restarting."),
-                self._limit_box,
-            )
-        )
-        box.addLayout(info, 1)
-        self._limit = QComboBox(self._limit_box)
-        for pct in power.CHARGE_LIMITS:
-            text = tr("No limit (100%)") if pct == 100 else tr("Stop at {n}%").format(n=pct)
-            self._limit.addItem(text, pct)
-        box.addWidget(self._limit, 0, Qt.AlignmentFlag.AlignVCenter)
-        limit_btn = QPushButton(tr("Apply"), self._limit_box)
-        limit_btn.clicked.connect(self._apply_limit)
-        box.addWidget(limit_btn, 0, Qt.AlignmentFlag.AlignVCenter)
-        self._limit_box.hide()
-        card.layout.addWidget(self._limit_box)
         return card
 
     def _stat_tile(self, caption: str, parent: QWidget) -> tuple[QFrame, QLabel, QLabel]:
@@ -483,13 +452,10 @@ class PowerPage(BasePage):
         self._plan_tiles: list[OptionTile] = []
 
         row = QHBoxLayout()
-        for text, slot in (
-            (tr("New plan…"), self._new_plan),
-            (tr("Import…"), self._import_plan),
-        ):
-            btn = QPushButton(text, card)
-            btn.clicked.connect(slot)
-            row.addWidget(btn)
+        custom_btn = QPushButton(tr("Custom plans…"), card)
+        custom_btn.setToolTip(tr("Create and edit your own plans in the advanced settings"))
+        custom_btn.clicked.connect(lambda: self._on_report_action("advanced"))
+        row.addWidget(custom_btn)
         row.addStretch(1)
         reapply = QPushButton(tr("Reapply plan"), card)
         reapply.setToolTip(
@@ -510,6 +476,14 @@ class PowerPage(BasePage):
         all_btn.clicked.connect(lambda: self._on_report_action("advanced"))
         title_row.addWidget(all_btn)
         card.layout.addLayout(title_row)
+        self._quick_note = self._secondary(
+            tr(
+                "Ready-made plans use the recommended values and cannot be changed. To use other "
+                'values, create a custom plan under "Advanced power settings".'
+            ),
+            card,
+        )
+        card.layout.addWidget(self._quick_note)
         # Satırlar: solda ad + açıklama, sağda Prizde / Pilde seçimleri
         grid = QGridLayout()
         grid.setHorizontalSpacing(12)
@@ -587,6 +561,18 @@ class PowerPage(BasePage):
         self._edit_combo = QComboBox(card)
         self._edit_combo.currentIndexChanged.connect(self._on_edit_plan_changed)
         row.addWidget(self._edit_combo, 1)
+        self._use_btn = QPushButton(tr("Use this plan"), card)
+        self._use_btn.clicked.connect(lambda: self._activate(self._edit_plan))
+        row.addWidget(self._use_btn)
+        body.addLayout(row)
+        row = QHBoxLayout()
+        new_btn = QPushButton(tr("New plan…"), card)
+        new_btn.setToolTip(tr("Creates a custom plan as a copy of the selected plan"))
+        new_btn.clicked.connect(self._new_plan)
+        row.addWidget(new_btn)
+        import_btn = QPushButton(tr("Import…"), card)
+        import_btn.clicked.connect(self._import_plan)
+        row.addWidget(import_btn)
         self._rename_btn = QPushButton(tr("Rename…"), card)
         self._rename_btn.clicked.connect(self._rename_plan)
         row.addWidget(self._rename_btn)
@@ -596,7 +582,38 @@ class PowerPage(BasePage):
         export_btn = QPushButton(tr("Export…"), card)
         export_btn.clicked.connect(self._export_plan)
         row.addWidget(export_btn)
+        row.addStretch(1)
         body.addLayout(row)
+        self._readonly_lbl = self._secondary(
+            tr(
+                "Ready-made plans cannot be changed; they follow the system power mode and the "
+                'desktop defaults. To change settings, make a copy with "New plan…".'
+            ),
+            card,
+        )
+        body.addWidget(self._readonly_lbl)
+
+        # İşlemciyi Linwas yönetsin (yalnızca özel planda; ppd varken)
+        self._cpu_box = QWidget(card)
+        self._cpu_box.setObjectName("CardRow")
+        cpu = QVBoxLayout(self._cpu_box)
+        cpu.setContentsMargins(0, 4, 0, 4)
+        cpu.setSpacing(2)
+        self._cpu_chk = QCheckBox(tr("Let Linwas manage the processor in this plan"), card)
+        self._cpu_chk.toggled.connect(self._on_cpu_control)
+        cpu.addWidget(self._cpu_chk)
+        cpu.addWidget(
+            self._secondary(
+                tr(
+                    "Normally the system power mode sets the processor and Linwas changes only "
+                    "the settings it leaves free. When this is on, every processor setting can "
+                    "be changed, but while this plan is in use the power mode in the system "
+                    "menu is turned off. It comes back when you switch to another plan."
+                ),
+                card,
+            )
+        )
+        body.addWidget(self._cpu_box)
 
         # Ayar listesi düz düzen: açılır kapanır bölümler, her ayar bir satır. (Önceki ağaç
         # listesinde satır yüksekliği içeriğe uymuyor, kaydırınca yazılar kayıyordu.)
@@ -608,9 +625,9 @@ class PowerPage(BasePage):
         self._section_open = {"display", "buttons", "cpu"}
 
         row = QHBoxLayout()
-        reset = QPushButton(tr("Restore plan defaults"), card)
-        reset.clicked.connect(self._reset_plan)
-        row.addWidget(reset)
+        self._reset_plan_btn = QPushButton(tr("Restore plan defaults"), card)
+        self._reset_plan_btn.clicked.connect(self._reset_plan)
+        row.addWidget(self._reset_plan_btn)
         reset_all = QPushButton(tr("Restore all defaults"), card)
         reset_all.clicked.connect(self._reset_all)
         row.addWidget(reset_all)
@@ -853,8 +870,8 @@ class PowerPage(BasePage):
             elif bat.health >= 60:
                 note.setText(tr("Worn"))
                 tip = tr(
-                    "The battery holds less charge than when it was new. Battery protection and "
-                    "the Power saver plan help it last longer."
+                    "The battery holds less charge than when it was new. The Power saver plan "
+                    "helps it last longer."
                 )
             else:
                 note.setText(tr("Needs replacing soon"))
@@ -874,11 +891,6 @@ class PowerPage(BasePage):
             tip = tr("The battery is low. Plug in the charger soon.")
         self._bat_tip.setText(tip)
         self._bat_tip.setVisible(bool(tip))
-        if bat.charge_limit is not None:
-            self._limit_box.show()
-            idx = self._limit.findData(bat.charge_limit)
-            if idx >= 0:
-                self._limit.setCurrentIndex(idx)
 
     def _fill_status(self, status: dict, ppd_now: str, state: powerplan.PowerState) -> None:
         source = tr("plugged in") if state.on_ac else tr("on battery")
@@ -896,7 +908,18 @@ class PowerPage(BasePage):
             line += " — " + tr("because of the schedule")
         self._now_lbl.setText(line)
 
-        # Sistem menüsünden güç kipi değiştirildiyse uyar
+        results = status.get("results", {}) if status else {}
+        if plan.cpu_control and isinstance(results, dict) and results.get("ppd_profile") == "ppd":
+            self._ppd_warn.setText(
+                tr(
+                    "Linwas manages the processor in this plan, so the power mode in the system "
+                    "menu is turned off for now."
+                )
+            )
+            self._ppd_warn.show()
+            return
+        # Otomatik geçiş varken sistem menüsünden güç kipi değiştirildiyse uyar (yoksa Linwas
+        # menüdeki seçime uyan hazır plana kendisi geçer)
         want = self._saved.value(plan, "ppd_profile", "ac" if state.on_ac else "bat")
         if want != AUTO and ppd_now and ppd_now != want:
             self._ppd_warn.setText(
@@ -983,8 +1006,7 @@ class PowerPage(BasePage):
             self._control_lbl.setText(
                 tr(
                     "Plans, automatic switching and the settings below are applied by Linwas. "
-                    "Changes in the system menu are set back when the plan or power source "
-                    "changes."
+                    "Choosing a power mode in the system menu switches to the matching plan."
                 )
             )
         else:
@@ -1050,15 +1072,15 @@ class PowerPage(BasePage):
         plan = self._draft.plan(self._edit_plan)
         if plan is None:
             return
-        unsupported = self._support.unsupported if self._support else {}
         for sid, btn in self._reset_btns.items():
             changed = any(
                 self._draft.value(plan, sid, src) != self._default_value(sid, src)
                 for src in powerplan.SOURCES
             )
             # Varsayılandaysa düğme görünmez ama yer tutar (sütun zıplamasın)
+            changed = changed and not self._lock_reason(sid)
             btn.setText(tr("Default") if changed else "")
-            btn.setEnabled(changed and sid not in unsupported)
+            btn.setEnabled(changed)
 
     def _reset_setting(self, sid: str) -> None:
         plan = self._draft.plan(self._edit_plan)
@@ -1233,8 +1255,9 @@ class PowerPage(BasePage):
         for tile in self._plan_tiles:
             tile.deleteLater()
         self._plan_tiles = []
-        self._plan_ids = [p.id for p in self._draft.plans]
-        for i, plan in enumerate(self._draft.plans):
+        shown = [p for p in self._draft.plans if p.builtin or p.id == self._draft.active]
+        self._plan_ids = [p.id for p in shown]
+        for i, plan in enumerate(shown):
             tile = OptionTile(
                 texts.plan_name(plan),
                 texts.plan_description(plan),
@@ -1258,6 +1281,14 @@ class PowerPage(BasePage):
         custom = bool(plan and not plan.builtin)
         self._rename_btn.setEnabled(custom)
         self._delete_btn.setEnabled(custom)
+        self._reset_plan_btn.setVisible(custom)
+        self._readonly_lbl.setVisible(not custom)
+        self._use_btn.setEnabled(bool(plan) and self._edit_plan != self._draft.active)
+        owned = self._support.ppd_owned if self._support else frozenset()
+        self._cpu_box.setVisible(custom and bool(owned or (plan and plan.cpu_control)))
+        self._cpu_chk.blockSignals(True)
+        self._cpu_chk.setChecked(bool(plan and plan.cpu_control))
+        self._cpu_chk.blockSignals(False)
 
     def _choices(self, sid: str, current: str) -> list[str]:
         spec = SPECS[sid]
@@ -1278,6 +1309,23 @@ class PowerPage(BasePage):
             combo.addItem(texts.value_text(sid, v), v)
         combo.setCurrentIndex(max(0, combo.findData(value)))
         combo.blockSignals(False)
+
+    def _lock_reason(self, sid: str) -> str:
+        """Ayar değiştirilemiyorsa nedeni (power_texts.reason_text kodu); değiştirilebilirse ""."""
+        unsupported = self._support.unsupported if self._support else {}
+        if sid in unsupported:
+            return unsupported[sid]
+        plan = self._draft.plan(self._edit_plan)
+        if plan is None or not SPECS[sid].per_plan:
+            return ""
+        if plan.builtin:
+            return "builtin"
+        if plan.cpu_control and sid == "ppd_profile":
+            return "linwas_cpu"
+        owned = self._support.ppd_owned if self._support else frozenset()
+        if not plan.cpu_control and sid in owned:
+            return "ppd"
+        return ""
 
     def _visible(self, sid: str) -> bool:
         spec = SPECS[sid]
@@ -1300,7 +1348,6 @@ class PowerPage(BasePage):
         self._tree_combos.clear()
         self._reset_btns.clear()
         split_cols = self._laptop
-        unsupported = self._support.unsupported if self._support else {}
         card = self._advanced_card
 
         # Sütun başlıkları (sık ayarlar kartıyla aynı)
@@ -1362,9 +1409,9 @@ class PowerPage(BasePage):
                     sep.setFixedHeight(1)
                     grid.addWidget(sep, line, 0, 1, 4)
                     line += 1
-                reason = unsupported.get(spec.id, "")
+                reason = self._lock_reason(spec.id)
                 name = texts.setting_name(spec.id)
-                if reason:
+                if reason and reason != "builtin":
                     name = f"{name} ({texts.reason_text(reason)})"
                 info_box = QWidget(box)
                 info_box.setObjectName("CardRow")
@@ -1427,12 +1474,12 @@ class PowerPage(BasePage):
         self._quick_title.setText(
             tr("Common settings for {plan}").format(plan=texts.plan_name(plan))
         )
-        unsupported = self._support.unsupported if self._support else {}
+        self._quick_note.setVisible(plan.builtin)
         for lbl in self._quick_heads:
             lbl.setVisible(self._laptop)
         for (sid, src), combo in self._quick_combos.items():
             self._fill_combo(combo, sid, self._draft.value(plan, sid, src))
-            combo.setEnabled(sid not in unsupported)
+            combo.setEnabled(not self._lock_reason(sid))
             combo.setVisible(src == "ac" or self._laptop)
 
     def _fill_automation(self) -> None:
@@ -1494,6 +1541,19 @@ class PowerPage(BasePage):
             self._fill_quick()
         finally:
             self._filling = False
+
+    def _on_cpu_control(self, on: bool) -> None:
+        plan = self._draft.plan(self._edit_plan)
+        if self._filling or plan is None or plan.builtin:
+            return
+        plan.cpu_control = on
+        self._filling = True
+        try:
+            self._fill_tree()
+            self._fill_quick()
+        finally:
+            self._filling = False
+        self._update_dirty()
 
     def _on_automation(self, *_args: object) -> None:
         if self._filling:
@@ -1557,14 +1617,21 @@ class PowerPage(BasePage):
     # --- Plan işlemleri ---
 
     def _on_plan_clicked(self, index: int) -> None:
-        if not 0 <= index < len(self._plan_ids):
-            return
-        plan_id = self._plan_ids[index]
+        if 0 <= index < len(self._plan_ids):
+            self._activate(self._plan_ids[index])
+
+    def _activate(self, plan_id: str) -> None:
         if plan_id == self._draft.active:
             return
         other_changes = self._dirty_except_active()
         self._draft.active = plan_id
         if other_changes or self._saved.plan(plan_id) is None:
+            self._filling = True
+            try:
+                self._fill_plans()
+                self._fill_plan_combos()
+            finally:
+                self._filling = False
             self._update_dirty()  # diğer değişikliklerle birlikte kaydedilir
             return
         if power.can_switch_plan_directly():
@@ -1704,7 +1771,6 @@ class PowerPage(BasePage):
 
     def _on_report_action(self, action: str) -> None:
         target = {
-            "charge_limit": self._battery_card,
             "automation": self._automation_card,
             "advanced": self._advanced_card,
         }.get(action)
@@ -1712,19 +1778,3 @@ class PowerPage(BasePage):
             self._adv_toggle.setChecked(True)
         if target is not None:
             self._scroll.ensureWidgetVisible(target, 0, 40)
-
-    def _apply_limit(self) -> None:
-        if not self._battery_name:
-            return
-        pct = self._limit.currentData()
-        self.task_run_now.emit(
-            Task(
-                label=tr("Battery charge limit: {n}%").format(n=pct),
-                steps=[
-                    TaskStep(
-                        op_id="battery.set_charge_limit",
-                        params={"battery": self._battery_name, "percent": str(pct)},
-                    )
-                ],
-            )
-        )

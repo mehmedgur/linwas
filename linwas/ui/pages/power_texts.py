@@ -221,6 +221,9 @@ def reason_text(code: str) -> str:
         "no_iw": tr("The iw tool is not installed"),
         "no_hdparm": tr("The hdparm tool is not installed"),
         "managed": tr("Managed by another power tool"),
+        "ppd": tr("Set by the system power mode"),
+        "linwas_cpu": tr("Not used while Linwas manages the processor"),
+        "builtin": tr("Ready-made plans cannot be changed"),
     }.get(code, code)
 
 

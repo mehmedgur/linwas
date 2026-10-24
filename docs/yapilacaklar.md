@@ -3,7 +3,7 @@
 > **Kural:** Her kodlama aşamasına geçmeden önce Claude bu listeyi okur ve bekleyen fikirleri
 > kullanıcıya hatırlatır.
 
-Son güncelleme: 23 Ekim 2026
+Son güncelleme: 25 Ekim 2026
 
 ## DEVİR NOTU — 23 Ekim 2026 (bulut → Pardus bilgisayarı, Claude Code CLI)
 **Dal:** `claude/gallant-shannon-r0gpxa` — hepsi push'lı, **ana dala birleştirilmedi, PR açılmadı** (istenince açılır;
@@ -378,7 +378,8 @@ Karar ve kapsam: kararlar.md › Wi-Fi ve Bluetooth geliştirmeleri. Aşama 1–
 - [ ] **Windows Uygulamaları eklentisi:** Wine tabanlı ayrı alan. Bottles gibi mevcut açık kaynak
   araçlarla entegrasyon araştırılacak. Mevcut EXE/Wine desteği buraya taşınabilir.
 - [ ] **KDE desteği** (masaüstü eklentisi). Kullanıcının bilgisayarında KDE oturumu olduğu için
-  test kolay.
+  test kolay. Güç: masaüstü ajanına PowerDevil parçası (ekran kapanma/karartma/uyku; Plasma 5
+  `powermanagementprofilesrc`, Plasma 6 `powerdevilrc` — anahtarlar resmi kaynaktan doğrulanacak).
 - [ ] **Yeni AI sağlayıcıları:** Claude, internetsiz yerel model.
 - [ ] **Başka dağıtım aileleri:** Fedora (dnf), Arch (pacman) için paket yöneticisi eklentileri.
 - [ ] **Okul / kurum paketi** (ör. Pardus kullanan okul laboratuvarları için toplu ayar ve kısıtlama).
@@ -418,6 +419,13 @@ Karar ve kapsam: kararlar.md › Wi-Fi ve Bluetooth geliştirmeleri. Aşama 1–
   geliyor mu; AMD/Intel/NVIDIA'da ekran kartı güç modu; `iw` ile Wi-Fi tasarrufu; TLP kurulu Ubuntu'da uyarı
   ve salt okunur bölümler; UPower.conf değişince upower yeniden başlıyor mu; powertop CSV ayrıştırma
   (sürüme göre biçim farkı); masaüstü bilgisayarda sayfa adı "Güç".
+- [ ] **Güç planları: hazır planlar, ppd ve özel planlar (25 Ekim 2026):** plan kartında yalnızca 3
+  hazır plan; hazır planın ayarları gri, "Yeni plan…" kopya oluşturuyor mu; GNOME sağ üst menüden güç
+  kipini değiştirince Linwas'ta aynı plan seçili oluyor mu; özel planda "İşlemciyi Linwas yönetsin"
+  açıkken menüde güç kipi kayboluyor mu (`systemctl is-enabled power-profiles-daemon` → `masked-runtime`),
+  başka plana geçince geri geliyor mu; prizi çekince plan 20 sn beklemeden hemen değişiyor mu; Linwas
+  "Pil tasarrufu" açıkken `gsettings get org.gnome.settings-daemon.plugins.power
+  power-saver-profile-on-low-battery` → false; eski şarj sınırı kuralı varsa servis açılınca siliniyor mu.
 - [ ] **Ayarlar (aşama 1–3, denenmedi):** `gdbus call … Notify` bildiriminin GNOME/Cinnamon/XFCE'de
   görünmesi ve "Aç" düğmesinin `gdbus monitor` ile yakalanması; oturum açılışında `--background`
   başlatma; tek kopya (menüden ikinci açılışta pencerenin öne gelmesi); KDE/Cinnamon'da tepsi simgesi.

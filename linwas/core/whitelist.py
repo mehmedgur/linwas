@@ -41,9 +41,7 @@ class ParamKind(Enum):
     # Kapak kapanınca davranışı (logind HandleLidSwitch=)
     LID_ACTION = "lid_action"
     # Pil adı (/sys/class/power_supply altında, ör. BAT0)
-    BATTERY_NAME = "battery_name"
     # Pil şarj sınırı yüzdesi
-    CHARGE_LIMIT = "charge_limit"
     # Geri alma kaydı kimliği (uuid4)
     RECORD_ID = "record_id"
     # "true" | "false"
@@ -205,8 +203,6 @@ def _validate_snap_name(value: str) -> str:
 
 # Linwas'ın sunduğu kapak davranışları (backend.power.LID_ACTIONS ile aynı)
 _LID_ACTIONS = ("suspend", "lock", "ignore", "poweroff")
-_RE_BATTERY = re.compile(r"^BAT[0-9A-Za-z_]{0,8}$")
-_CHARGE_LIMITS = ("60", "80", "100")
 
 
 def _validate_lid_action(value: str) -> str:
@@ -224,24 +220,12 @@ def _validate_prime_mode(value: str) -> str:
     return value
 
 
-def _validate_battery_name(value: str) -> str:
-    if not _RE_BATTERY.match(value):
-        raise ValidationError(f"Geçersiz pil adı: {value!r}")
-    return value
-
-
 def _validate_swap_size_gb(value: str) -> str:
     from linwas.core.hibernate import MAX_SIZE_GB, MIN_SIZE_GB
 
     if not value.isdigit() or not MIN_SIZE_GB <= int(value) <= MAX_SIZE_GB:
         raise ValidationError(f"Geçersiz swap boyutu: {value!r}")
     return str(int(value))
-
-
-def _validate_charge_limit(value: str) -> str:
-    if value not in _CHARGE_LIMITS:
-        raise ValidationError(f"Geçersiz şarj sınırı: {value!r}")
-    return value
 
 
 def _validate_bool(value: str) -> str:
@@ -331,8 +315,6 @@ _VALIDATORS: dict[ParamKind, object] = {
     ParamKind.SNAP_NAME: _validate_snap_name,
     ParamKind.LID_ACTION: _validate_lid_action,
     ParamKind.PRIME_MODE: _validate_prime_mode,
-    ParamKind.BATTERY_NAME: _validate_battery_name,
-    ParamKind.CHARGE_LIMIT: _validate_charge_limit,
     ParamKind.RECORD_ID: _validate_record_id,
     ParamKind.BOOL: _validate_bool,
     ParamKind.PAUSE_WEEKS: _validate_pause_weeks,
@@ -445,12 +427,6 @@ OPERATIONS: dict[str, OperationSpec] = {
         ("action", ParamKind.LID_ACTION),
         risk=RiskLevel.LOW,
         label="Change what happens when the lid is closed",
-    ),
-    "battery.set_charge_limit": _op(
-        ("battery", ParamKind.BATTERY_NAME),
-        ("percent", ParamKind.CHARGE_LIMIT),
-        risk=RiskLevel.LOW,
-        label="Set battery charge limit",
     ),
     "power.save_config": _op(
         ("config", ParamKind.POWER_CONFIG),

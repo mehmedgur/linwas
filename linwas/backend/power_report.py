@@ -18,7 +18,7 @@ from pathlib import Path
 from linwas.backend import power, power_support
 from linwas.backend.driver_health import _package_available
 from linwas.backend.drivers import dpkg_installed
-from linwas.core import power_apply, powerplan
+from linwas.core import power_agent, power_apply, powerplan
 from linwas.core.powerplan import AUTO
 
 POWERTOP_CSV = Path("/var/lib/linwas-power/powertop.csv")
@@ -196,8 +196,6 @@ def collect() -> PowerReport:
             findings.append(Finding("warning", "battery_worn", {"n": str(bat.health)}))
         elif bat.health is not None and bat.health < 80:
             findings.append(Finding("info", "battery_aging", {"n": str(bat.health)}))
-        if bat.charge_limit == 100 and state.on_ac:
-            findings.append(Finding("suggestion", "charge_limit", fix=("ui", "charge_limit")))
     watts = _discharge_watts()
     if watts is not None and watts >= 20:
         findings.append(Finding("warning", "high_drain", {"w": str(watts)}))
@@ -216,7 +214,8 @@ def collect() -> PowerReport:
             return cfg.value(plan, sid, "bat")
 
         unsupported = support.unsupported
-        if not cfg.battery_saver.enabled:
+        # GNOME pil azalınca kendisi Tasarruf'a geçer; Linwas'ınki kapalıyken öneri gereksiz
+        if not cfg.battery_saver.enabled and not power_agent.is_supported_desktop():
             findings.append(Finding("suggestion", "battery_saver_off", fix=("ui", "automation")))
         for sid in ("usb_autosuspend", "wifi_powersave", "pci_runtime_pm"):
             if sid not in unsupported and bat_value(sid) != "on":

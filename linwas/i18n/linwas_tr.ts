@@ -3432,10 +3432,6 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
         <translation>Tek tıkla aşağıdakiler düzelir: başka güç araçları kapatılır (silinmez), Linwas güç servisi başlatılır ve plan uygulanır. Yönetimi istediğin zaman geri verebilirsin.</translation>
     </message>
     <message>
-        <source>Plans, automatic switching and the settings below are applied by Linwas. Changes in the system menu are set back when the plan or power source changes.</source>
-        <translation>Planlar, otomatik geçiş ve aşağıdaki ayarlar Linwas tarafından uygulanır. Sistem menüsündeki değişiklikler plan ya da güç kaynağı değişince geri alınır.</translation>
-    </message>
-    <message>
         <source>The Linwas power service is running.</source>
         <translation>Linwas güç servisi çalışıyor.</translation>
     </message>
@@ -3620,10 +3616,6 @@ Devam edilsin mi?</translation>
         <translation>Pil kapasitesinin büyük kısmını yitirmiş. Değiştirmeyi düşün; o zamana kadar uzun işlerde şarj aletini takılı tut.</translation>
     </message>
     <message>
-        <source>The battery holds less charge than when it was new. Battery protection and the Power saver plan help it last longer.</source>
-        <translation>Pil yeniyken olduğundan daha az şarj tutuyor. Pil koruma ve Güç tasarrufu planı ömrünü uzatır.</translation>
-    </message>
-    <message>
         <source>The battery is low. Plug in the charger soon.</source>
         <translation>Pil azaldı. Şarj aletini yakında tak.</translation>
     </message>
@@ -3636,24 +3628,12 @@ Devam edilsin mi?</translation>
         <translation>Yıpranmış</translation>
     </message>
     <message>
-        <source>Apply</source>
-        <translation>Uygula</translation>
-    </message>
-    <message>
         <source>Balanced</source>
         <translation>Dengeli</translation>
     </message>
     <message>
         <source>Battery</source>
         <translation>Pil</translation>
-    </message>
-    <message>
-        <source>Battery charge limit: {n}%</source>
-        <translation>Pil şarj sınırı: %{n}</translation>
-    </message>
-    <message>
-        <source>Battery protection</source>
-        <translation>Pil koruma</translation>
     </message>
     <message>
         <source>Charging</source>
@@ -3674,10 +3654,6 @@ Devam edilsin mi?</translation>
     <message>
         <source>Longer battery life, slower computer</source>
         <translation>Daha uzun pil ömrü, daha yavaş bilgisayar</translation>
-    </message>
-    <message>
-        <source>No limit (100%)</source>
-        <translation>Sınır yok (%100)</translation>
     </message>
     <message>
         <source>On battery</source>
@@ -3712,24 +3688,12 @@ Devam edilsin mi?</translation>
         <translation>Bilgisayarı kapat</translation>
     </message>
     <message>
-        <source>Stop at {n}%</source>
-        <translation>%{n} olunca dur</translation>
-    </message>
-    <message>
-        <source>Stopping charging at 80% helps the battery last longer if the laptop is usually plugged in.</source>
-        <translation>Dizüstü genelde prize takılıysa şarjı %80'de durdurmak pilin ömrünü uzatır.</translation>
-    </message>
-    <message>
         <source>Unknown</source>
         <translation>Bilinmiyor</translation>
     </message>
     <message>
         <source>When I close the lid</source>
         <translation>Kapağı kapattığımda</translation>
-    </message>
-    <message>
-        <source>The limit is kept after restarting.</source>
-        <translation>Sınır yeniden başlattıktan sonra da korunur.</translation>
     </message>
     <message>
         <source>"System default" means Linwas does not change that setting. Settings under "all plans" are the same for every plan.</source>
@@ -4252,10 +4216,6 @@ Devam edilsin mi?</translation>
         <translation>Geçerli plan pilde ekran parlaklığını %{n} yapıyor.</translation>
     </message>
     <message>
-        <source>The laptop is plugged in and charges to 100%. A charge limit of 80% helps the battery last longer.</source>
-        <translation>Dizüstü prizde ve %100'e kadar şarj oluyor. %80 şarj sınırı pilin daha uzun ömürlü olmasına yardım eder.</translation>
-    </message>
-    <message>
         <source>USB selective suspend is not turned on for battery in the current plan.</source>
         <translation>Geçerli planda pilde USB seçici askıya alma açık değil.</translation>
     </message>
@@ -4326,6 +4286,62 @@ Devam edilsin mi?</translation>
     <message>
         <source>{m} min</source>
         <translation>{m} dk</translation>
+    </message>
+    <message>
+        <source>Create and edit your own plans in the advanced settings</source>
+        <translation>Kendi planlarını gelişmiş ayarlarda oluştur ve düzenle</translation>
+    </message>
+    <message>
+        <source>Creates a custom plan as a copy of the selected plan</source>
+        <translation>Seçili planın kopyası olarak özel plan oluşturur</translation>
+    </message>
+    <message>
+        <source>Custom plans…</source>
+        <translation>Özel planlar…</translation>
+    </message>
+    <message>
+        <source>Let Linwas manage the processor in this plan</source>
+        <translation>Bu planda işlemciyi Linwas yönetsin</translation>
+    </message>
+    <message>
+        <source>Linwas manages the processor in this plan, so the power mode in the system menu is turned off for now.</source>
+        <translation>Bu planda işlemciyi Linwas yönetiyor; bu yüzden sistem menüsündeki güç kipi şimdilik kapalı.</translation>
+    </message>
+    <message>
+        <source>Normally the system power mode sets the processor and Linwas changes only the settings it leaves free. When this is on, every processor setting can be changed, but while this plan is in use the power mode in the system menu is turned off. It comes back when you switch to another plan.</source>
+        <translation>Normalde işlemciyi sistemin güç kipi ayarlar; Linwas yalnızca onun boş bıraktığı ayarları değiştirir. Bu açıkken işlemcinin bütün ayarları değiştirilebilir, ama bu plan kullanılırken sistem menüsündeki güç kipi kapanır. Başka bir plana geçince geri gelir.</translation>
+    </message>
+    <message>
+        <source>Not used while Linwas manages the processor</source>
+        <translation>İşlemciyi Linwas yönetirken kullanılmaz</translation>
+    </message>
+    <message>
+        <source>Plans, automatic switching and the settings below are applied by Linwas. Choosing a power mode in the system menu switches to the matching plan.</source>
+        <translation>Planları, otomatik geçişi ve aşağıdaki ayarları Linwas uygular. Sistem menüsünden güç kipi seçilince ona uyan plana geçilir.</translation>
+    </message>
+    <message>
+        <source>Ready-made plans cannot be changed</source>
+        <translation>Hazır planlar değiştirilemez</translation>
+    </message>
+    <message>
+        <source>Ready-made plans cannot be changed; they follow the system power mode and the desktop defaults. To change settings, make a copy with "New plan…".</source>
+        <translation>Hazır planlar değiştirilemez; sistemin güç kipine ve masaüstünün varsayılanlarına uyar. Ayarları değiştirmek için "Yeni plan…" ile kopyasını oluştur.</translation>
+    </message>
+    <message>
+        <source>Ready-made plans use the recommended values and cannot be changed. To use other values, create a custom plan under "Advanced power settings".</source>
+        <translation>Hazır planlar önerilen değerleri kullanır ve değiştirilemez. Başka değerler için "Gelişmiş güç seçenekleri" bölümünde özel plan oluştur.</translation>
+    </message>
+    <message>
+        <source>Set by the system power mode</source>
+        <translation>Sistemin güç kipi ayarlıyor</translation>
+    </message>
+    <message>
+        <source>The battery holds less charge than when it was new. The Power saver plan helps it last longer.</source>
+        <translation>Pil yeniyken olduğundan daha az şarj tutuyor. Güç tasarrufu planı ömrünü uzatır.</translation>
+    </message>
+    <message>
+        <source>Use this plan</source>
+        <translation>Bu planı kullan</translation>
     </message>
 </context>
 <context>

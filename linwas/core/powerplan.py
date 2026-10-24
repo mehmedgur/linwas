@@ -7,6 +7,12 @@ Ayar dosyası `/etc/linwas/power.json` (herkes okur, yalnızca root helper yazar
 
 Her ayarın Prizde ("ac") ve Pilde ("bat") ayrı değeri vardır. "auto" = Linwas dokunmaz
 (sistem/masaüstü varsayılanı; daha önce Linwas değiştirdiyse eski değer geri yüklenir).
+
+Hazır üç plan (Tasarruf / Dengeli / Performans) salt okunurdur: değerleri her zaman fabrika
+değeridir, ayar dosyasındaki değerleri yok sayılır. İşlemciyi GNOME'un da kullandığı
+power-profiles-daemon (ppd) yönetir. Kullanıcı yalnızca özel planı (hazır planın kopyası)
+düzenler; özel planda "İşlemciyi Linwas yönetsin" (`cpu_control`) açıksa plan etkinken ppd
+geçici olarak durdurulur ve işlemcinin bütün ayarları Linwas'a geçer.
 """
 
 from __future__ import annotations
@@ -179,6 +185,19 @@ SETTINGS: tuple[SettingSpec, ...] = (
 
 SPECS: dict[str, SettingSpec] = {s.id: s for s in SETTINGS}
 
+# ppd'nin işlemci sürücüsüne yazdığı ayarlar (power-profiles-daemon 0.30 kaynağından,
+# src/ppd-driver-*.c): intel_pstate → scaling_governor, energy_performance_preference,
+# energy_perf_bias; amd_pstate → ek olarak boost ve scaling_min_freq; acpi-cpufreq gibi
+# diğerleri → cpufreq/boost. Turbo (intel no_turbo) ve en yüksek hıza hiçbirinde dokunmaz.
+_PPD_ALWAYS = frozenset({"cpu_epp", "cpu_governor"})
+
+
+def ppd_owned(cpu_driver: str) -> frozenset[str]:
+    """ppd çalışırken Linwas'ın dokunmadığı işlemci ayarları (çakışmasınlar diye)."""
+    if cpu_driver == "intel_pstate":
+        return _PPD_ALWAYS
+    return _PPD_ALWAYS | {"cpu_boost", "cpu_min"}
+
 
 def _all(value: str) -> dict[str, str]:
     return {"ac": value, "bat": value}
@@ -188,14 +207,16 @@ def _vals(ac: str, bat: str) -> dict[str, str]:
     return {"ac": ac, "bat": bat}
 
 
-# Fabrika değerleri; listede olmayan ayar "auto". Güvenli kalmak için riskli ayarlar
-# (ASPM powersupersave, disk kapanma, Bluetooth) varsayılan planlarda kullanılmaz.
+# Fabrika değerleri; listede olmayan ayar "auto". Başvuru GNOME'un kendi varsayılanlarıdır
+# (ekran 5 dk sonra kapanır, karartma açık, 15 dk sonra uyku; gsettings-desktop-schemas ve
+# gnome-settings-daemon şemaları): Dengeli bunların aynısıdır. İşlemciyi ppd'nin seçilen kipi
+# ayarlar (pilde Dengeli'yi kendisi balance_power'a çeker). Güvenli kalmak için riskli ayarlar
+# (ASPM powersupersave, disk kapanma, Bluetooth) hazır planlarda kullanılmaz.
 _FACTORY: dict[str, dict[str, dict[str, str]]] = {
     "power-saver": {
         "ppd_profile": _all("power-saver"),
-        "screen_off": _vals("10", "5"),
-        "sleep_after": _vals("30", "15"),
-        "cpu_boost": _vals("auto", "off"),
+        "screen_off": _vals("auto", "3"),
+        "sleep_after": _vals("auto", "10"),
         "usb_autosuspend": _vals("auto", "on"),
         "pci_runtime_pm": _vals("auto", "on"),
         "sata_alpm": _vals("auto", "med_power_with_dipm"),
@@ -208,7 +229,6 @@ _FACTORY: dict[str, dict[str, dict[str, str]]] = {
     },
     "performance": {
         "ppd_profile": _all("performance"),
-        "cpu_boost": _all("on"),
         "sata_alpm": _vals("max_performance", "auto"),
         "wifi_powersave": _vals("off", "auto"),
     },
@@ -227,6 +247,8 @@ class PowerPlan:
     name: str = ""  # yerleşik planlarda boş (arayüz çevirir)
     builtin: bool = False
     values: dict[str, dict[str, str]] = field(default_factory=dict)
+    # Yalnızca özel planda: True = işlemciyi Linwas yönetir (plan etkinken ppd durdurulur)
+    cpu_control: bool = False
 
     def get(self, setting: str, source: str) -> str:
         return self.values.get(setting, {}).get(source, AUTO)
@@ -280,11 +302,13 @@ def default_config() -> PowerConfig:
 
 
 def reset_plan(cfg: PowerConfig, plan_id: str) -> None:
-    """Yerleşik planı fabrika değerine döndürür; özel planda yalnızca değerleri siler."""
+    """Özel planın değerlerini siler (hepsi "Sistem varsayılanı"); hazır planlar zaten
+    değişmez."""
     plan = cfg.plan(plan_id)
-    if plan is None:
+    if plan is None or plan.builtin:
         return
-    plan.values = copy.deepcopy(_FACTORY.get(plan_id, {})) if plan.builtin else {}
+    plan.values = {}
+    plan.cpu_control = False
 
 
 def new_custom_plan(cfg: PowerConfig, name: str, based_on: str) -> PowerPlan:
@@ -300,6 +324,7 @@ def new_custom_plan(cfg: PowerConfig, name: str, based_on: str) -> PowerPlan:
         id=f"custom-{n}",
         name=_clean_name(name),
         values=copy.deepcopy(base.values) if base else {},
+        cpu_control=bool(base and base.cpu_control),
     )
     cfg.plans.append(plan)
     return plan
@@ -378,13 +403,18 @@ def config_from_dict(data: Any) -> PowerConfig:
             raise PowerConfigError(f"invalid plan id: {pid!r}")
         if any(p.id == pid for p in plans):
             raise PowerConfigError(f"duplicate plan id: {pid!r}")
-        builtin = pid in BUILTIN_PLANS
+        if pid in BUILTIN_PLANS:
+            plans.append(factory_plan(pid))  # hazır planlar salt okunur: kayıtlı değer yok sayılır
+            continue
+        control = raw.get("cpu_control", False)
+        if not isinstance(control, bool):
+            raise PowerConfigError("invalid cpu_control")
         plans.append(
             PowerPlan(
                 id=pid,
-                name="" if builtin else _clean_name(raw.get("name")),
-                builtin=builtin,
+                name=_clean_name(raw.get("name")),
                 values=_check_values(raw.get("values", {}), per_plan=True),
+                cpu_control=control,
             )
         )
     # Yerleşik planlar her zaman var
@@ -430,7 +460,9 @@ def config_to_dict(cfg: PowerConfig) -> dict[str, Any]:
         "version": CONFIG_VERSION,
         "active": cfg.active,
         "plans": [
-            {"id": p.id, **({} if p.builtin else {"name": p.name}), "values": p.values}
+            {"id": p.id}
+            if p.builtin
+            else {"id": p.id, "name": p.name, "values": p.values, "cpu_control": p.cpu_control}
             for p in cfg.plans
         ],
         "globals": cfg.globals,
@@ -480,7 +512,13 @@ def export_plan(cfg: PowerConfig, plan_id: str, name: str) -> str:
     if plan is None:
         raise PowerConfigError("unknown plan")
     return json.dumps(
-        {"kind": EXPORT_KIND, "version": CONFIG_VERSION, "name": name, "values": plan.values},
+        {
+            "kind": EXPORT_KIND,
+            "version": CONFIG_VERSION,
+            "name": name,
+            "values": plan.values,
+            "cpu_control": plan.cpu_control,
+        },
         ensure_ascii=False,
         indent=2,
     )
@@ -497,6 +535,7 @@ def import_plan(cfg: PowerConfig, text: str, default_name: str) -> PowerPlan:
     values = _check_values(data.get("values", {}), per_plan=True)
     plan = new_custom_plan(cfg, data.get("name") or default_name, based_on="")
     plan.values = values
+    plan.cpu_control = data.get("cpu_control", False) is True
     return plan
 
 
@@ -517,6 +556,22 @@ def _in_window(now: time, start: str, end: str) -> bool:
     if s < e:
         return s <= now < e
     return now >= s or now < e  # gece yarısını aşan aralık
+
+
+def seconds_to_boundary(cfg: PowerConfig, now: datetime) -> float | None:
+    """Zamanlı planın bir sonraki başlangıç/bitiş anına kalan saniye (kapalıysa None)."""
+    sched = cfg.schedule
+    if not sched.enabled or sched.start == sched.end:
+        return None
+    waits: list[float] = []
+    for clock in (sched.start, sched.end):
+        t = time.fromisoformat(clock)
+        target = now.replace(hour=t.hour, minute=t.minute, second=0, microsecond=0)
+        delta = (target - now).total_seconds()
+        if delta <= 0:
+            delta += 24 * 3600
+        waits.append(delta)
+    return min(waits)
 
 
 def effective_plan(

@@ -1,9 +1,18 @@
 """Güç planlarının sistem tarafı (root): sysfs, power-profiles-daemon, iw, hdparm.
 
 `linwas-power.service` bu modülü sürekli çalıştırır: `python -I -m linwas.core.power_apply`.
-Priz/pil, pil seviyesi, saat (zamanlı plan) ya da ayar dosyası değişince etkin planı uygular;
-takılan yeni aygıtlar için düşük seviye ayarları 10 dakikada bir yeniden uygular.
-Ayar değişince root helper (ya da plan değiştirici) servise SIGUSR1 gönderir.
+Yoklama yok: UPower (priz/pil, pil seviyesi) ve power-profiles-daemon (güç kipi) sinyalleri
+`gdbus monitor` ile dinlenir (core/power_events.py); zamanlı planın başlangıç/bitiş anında
+ve en geç 5 dakikada bir de uyanır. Takılan yeni aygıtlar için düşük seviye ayarları 10
+dakikada bir yeniden uygular. Ayar değişince root helper (ya da plan değiştirici) servise
+SIGUSR1 gönderir.
+
+power-profiles-daemon (ppd) GNOME/KDE menüsündeki güç kipini sağlar ve işlemciyi kendisi
+ayarlar. Hazır planlar yalnızca ppd'nin kipini seçer; GNOME menüsünden kip değişirse (ve
+bunu ppd'nin "geçici tutma"sı yapmadıysa) Linwas da aynı adlı hazır plana geçer. Özel planda
+"İşlemciyi Linwas yönetsin" açıksa plan etkinken ppd geçici olarak (`systemctl mask
+--runtime`: yeniden başlatınca kendiliğinden kalkar) durdurulur; ppd D-Bus ile kendiliğinden
+başlatılabildiği için yalnızca durdurmak yetmez.
 
 `--switch <plan>`: etkin planı değiştirir (polkit eylemi org.linwas.power.switch; etkin oturumda
 şifre sorulmaz). Plan kimliği ayar dosyasındaki planlarla doğrulanır.
@@ -31,6 +40,7 @@ import sys
 import threading
 import time
 from collections.abc import Iterable
+from datetime import datetime
 from pathlib import Path
 
 from linwas.core import powerplan
@@ -44,6 +54,8 @@ PID_FILE = STATE_DIR / "pid"
 LOGIND_DROPIN = Path("/etc/systemd/logind.conf.d/90-linwas-power.conf")
 LEGACY_LID_DROPIN = Path("/etc/systemd/logind.conf.d/90-linwas-lid.conf")
 UPOWER_CONF = Path("/etc/UPower/UPower.conf")
+# Eski sürümlerin "Pil koruma" (şarj sınırı) kuralı; özellik kaldırıldı (kararlar.md, 25 Ekim 2026)
+LEGACY_BATTERY_RULE = Path("/etc/udev/rules.d/90-linwas-battery.rules")
 
 CPU = Path("/sys/devices/system/cpu")
 INTEL_PSTATE = CPU / "intel_pstate"
@@ -59,8 +71,15 @@ RTC = Path("/sys/class/rtc")
 DRM = Path("/sys/class/drm")
 BACKLIGHT = Path("/sys/class/backlight")
 
-POLL_SECONDS = 20
+FALLBACK_SECONDS = 300  # sinyal gelmese de en geç bu kadar sürede bir denetle
 REAPPLY_SECONDS = 600
+PPD_UNIT = "power-profiles-daemon.service"
+# (D-Bus adı, nesne yolu); yeni ad ppd 0.20+, eski ad bütün sürümlerde
+PPD_BUSES = (
+    ("org.freedesktop.UPower.PowerProfiles", "/org/freedesktop/UPower/PowerProfiles"),
+    ("net.hadess.PowerProfiles", "/net/hadess/PowerProfiles"),
+)
+PPD_MASK_KEY = "linwas:ppd-masked"  # durum dosyasında: ppd'yi Linwas durdurdu
 
 # Başka bir güç aracı bunları yönetiyorsa Linwas dokunmaz (kararlar.md: salt okunur)
 LOW_LEVEL_SETTINGS = (
@@ -140,6 +159,11 @@ class _Writer:
             if old is not None and _selected(_read(path)) != old:
                 with contextlib.suppress(OSError):
                     path.write_text(old, encoding="utf-8")
+
+    def forget(self, paths: Iterable[Path]) -> None:
+        """Kayıtlı eski değeri yazmadan unutur (değeri artık ppd belirliyor)."""
+        for path in paths:
+            self.orig.pop(str(path), None)
 
     def restore_prefix(self, prefix: str) -> None:
         """Ön ekle başlayan bütün kayıtlı yolları geri yükler (artık var olmayanlar dahil)."""
@@ -450,6 +474,69 @@ def _apply_ppd(value: str, w: _Writer) -> bool:
     return bool(profiles)
 
 
+def cpu_driver() -> str:
+    """cpufreq sürücüsü (intel_pstate, amd-pstate-epp, acpi-cpufreq …); yoksa boş."""
+    policies = _policies()
+    return _read(policies[0] / "scaling_driver") if policies else ""
+
+
+def ppd_installed() -> bool:
+    return any(
+        Path(d, PPD_UNIT).exists() for d in ("/usr/lib/systemd/system", "/lib/systemd/system")
+    )
+
+
+def ppd_state() -> tuple[str, bool] | None:
+    """(etkin kip, geçici tutma var mı); ppd çalışmıyorsa None. Tutma: ör. GNOME pil azalınca
+    Tasarruf'u geçici olarak tutar (ActiveProfileHolds)."""
+    for bus, path in PPD_BUSES:
+        r = _run(
+            ["busctl", "get-property", bus, path, bus, "ActiveProfile", "ActiveProfileHolds"],
+            timeout=5,
+        )
+        if not r or r.returncode != 0:
+            continue
+        m = re.match(r'\s*s "([a-z-]+)"\s*\n\s*aa\{sv\} (\d+)', r.stdout)
+        if m:
+            return m.group(1), m.group(2) != "0"
+    return None
+
+
+def ppd_owned_now() -> frozenset[str]:
+    """ppd çalışıyorsa onun yönettiği işlemci ayarları; çalışmıyorsa boş küme."""
+    if not ppd_installed() or ppd_state() is None:
+        return frozenset()
+    return powerplan.ppd_owned(_cpu_driver_family())
+
+
+def _cpu_driver_family() -> str:
+    driver = cpu_driver()
+    if driver == "intel_pstate" and _read(INTEL_PSTATE / "status") == "active":
+        return "intel_pstate"
+    return driver
+
+
+def hold_ppd(originals: dict[str, str]) -> bool:
+    """ppd'yi geçici olarak durdurur (yeniden başlatınca kalkar). Durdurulduysa True."""
+    if not ppd_installed():
+        return False
+    if originals.get(PPD_MASK_KEY) != "1":
+        r = _run(["systemctl", "mask", "--runtime", "--now", "--", PPD_UNIT], timeout=30)
+        if not r or r.returncode != 0:
+            return False
+        originals[PPD_MASK_KEY] = "1"
+    return True
+
+
+def release_ppd(originals: dict[str, str]) -> None:
+    """Linwas durdurduysa ppd'yi yeniden açar (kip, ppd'nin kendi kaydından gelir)."""
+    if originals.pop(PPD_MASK_KEY, None) != "1":
+        return
+    _run(["systemctl", "unmask", "--runtime", "--", PPD_UNIT], timeout=30)
+    # --no-block: bilgisayar kapanırken servis dururken beklemesin (geçici kilit zaten kalkar)
+    _run(["systemctl", "start", "--no-block", "--", PPD_UNIT], timeout=30)
+
+
 _APPLIERS = {
     "ppd_profile": _apply_ppd,  # önce: profil EPP'yi değiştirir, sonra planın EPP'si yazılır
     "cpu_governor": _apply_cpu_governor,
@@ -468,6 +555,22 @@ _APPLIERS = {
     "gpu_power": _apply_gpu_power,
     "brightness": _apply_brightness,
 }
+
+
+def _owned_paths(sid: str) -> list[Path]:
+    """ppd'ye bırakılan ayarın, Linwas'ın daha önce yazmış olabileceği dosyaları."""
+    files = {
+        "cpu_epp": ["energy_performance_preference"],
+        "cpu_governor": ["scaling_governor"],
+        "cpu_boost": ["boost"],
+        "cpu_min": ["scaling_min_freq"],
+    }.get(sid, [])
+    paths = [p / name for p in _policies() for name in files]
+    if sid == "cpu_boost":
+        paths += [INTEL_PSTATE / "no_turbo", CPUFREQ / "boost"]
+    if sid == "cpu_min":
+        paths.append(INTEL_PSTATE / "min_perf_pct")
+    return paths
 
 
 # --- Durum dosyaları ---
@@ -492,17 +595,31 @@ def _write_json(path: Path, data: object) -> None:
 
 def apply_system(cfg: PowerConfig, plan: PowerPlan, source: str, changed: bool) -> dict[str, str]:
     """Planın sistem ayarlarını uygular. Sonuç: {ayar: "ok" | "unsupported" | "error" |
-    "managed"} ("managed": başka güç aracı yönettiği için dokunulmadı)."""
+    "managed" | "ppd"} ("managed": başka güç aracı yönettiği için, "ppd": işlemciyi
+    power-profiles-daemon yönettiği için dokunulmadı)."""
     conflicts = bool(conflicting_tools())
     originals = _load_state()
     w = _Writer(originals)
     results: dict[str, str] = {}
+    # İşlemciyi Linwas yönetecekse ppd önce durur; yoksa (durdurulmuşsa) önce geri açılır ki
+    # aşağıda kip seçilebilsin. Linwas'ın değiştirdiği işlemci değerleri "auto" ile geri döner.
+    control = plan.cpu_control and not conflicts and hold_ppd(originals)
+    if not control:
+        release_ppd(originals)
+    owned = frozenset() if control else ppd_owned_now()
     for sid, applier in _APPLIERS.items():
         spec = powerplan.SPECS[sid]
+        if sid == "ppd_profile" and control:
+            results[sid] = "ppd"  # ppd durduruldu; kip seçilmez
+            continue
         if spec.on_change_only and not changed:
             continue
         if conflicts and sid in LOW_LEVEL_SETTINGS:
             results[sid] = "managed"
+            continue
+        if sid in owned:
+            w.forget(_owned_paths(sid))  # ppd yeniden açılınca kendi değerini yazar
+            results[sid] = "ppd"
             continue
         w.failed = False
         try:
@@ -587,6 +704,17 @@ def _config_mtime() -> float:
         return 0.0
 
 
+def remove_legacy_charge_limit() -> None:
+    """Eski sürüm şarj sınırı koyduysa kuralı siler ve sınırı kaldırır (%100)."""
+    if not LEGACY_BATTERY_RULE.exists():
+        return
+    with contextlib.suppress(OSError):
+        LEGACY_BATTERY_RULE.unlink()
+    for limit in powerplan.POWER_SUPPLY.glob("*/charge_control_end_threshold"):
+        with contextlib.suppress(OSError):
+            limit.write_text("100", encoding="utf-8")
+
+
 def _ensure_clock() -> None:
     from linwas.core import clock
 
@@ -594,10 +722,60 @@ def _ensure_clock() -> None:
         clock.ensure()
 
 
+def release_ppd_now() -> None:
+    """Durum dosyasına bakarak ppd'yi geri açar (servis kapanırken, yönetimi geri verirken)."""
+    originals = _load_state()
+    if originals.get(PPD_MASK_KEY) != "1":
+        return
+    release_ppd(originals)
+    with contextlib.suppress(OSError):
+        _write_json(STATE_FILE, originals)
+
+
+def _sync_from_menu(
+    cfg: PowerConfig, plan: PowerPlan, reason: str, source: str, seen: str | None
+) -> str | None:
+    """GNOME/KDE menüsünden güç kipi değiştiyse etkin planı aynı adlı hazır plana geçirir.
+    `seen`: son uygulamadan sonra görülen kip. Dönüş: şimdi görülen kip."""
+    state = ppd_state()
+    if state is None:
+        return None
+    profile, held = state
+    want = cfg.value(plan, "ppd_profile", source)
+    if (
+        seen is not None
+        and profile != seen
+        and not held  # ör. GNOME'un düşük pil tutması: plan değişmez
+        and reason == "active"  # otomatik geçiş varken menüdeki seçim geçicidir
+        and want not in (AUTO, profile)
+        and profile in powerplan.BUILTIN_PLANS
+    ):
+        cfg.active = profile
+        with contextlib.suppress(OSError):
+            powerplan.write_config(cfg)
+    return profile
+
+
+def _next_wait(cfg: PowerConfig, last_full: float) -> float:
+    waits = [FALLBACK_SECONDS, max(1.0, REAPPLY_SECONDS - (time.monotonic() - last_full))]
+    boundary = powerplan.seconds_to_boundary(cfg, datetime.now())
+    if boundary is not None:
+        waits.append(boundary + 1)
+    return min(waits)
+
+
 def run_service() -> None:
+    from linwas.core import power_events
+
     wake = threading.Event()
+    forced_flag = threading.Event()
     stop = threading.Event()
-    signal.signal(signal.SIGUSR1, lambda *_: wake.set())
+
+    def _on_usr1(*_args: object) -> None:
+        forced_flag.set()
+        wake.set()
+
+    signal.signal(signal.SIGUSR1, _on_usr1)
     signal.signal(signal.SIGTERM, lambda *_: (stop.set(), wake.set()))
     STATE_DIR.mkdir(parents=True, exist_ok=True)
     os.chmod(STATE_DIR, 0o755)
@@ -605,15 +783,23 @@ def run_service() -> None:
     # Her açılışta saat ayarını denetle (silinmişse yeniden yazılır) ve saati eşitle; ağ henüz
     # yoksa chrony ayar gereği ilk ölçümde saati kendisi atlatır (core/clock.py).
     threading.Thread(target=_ensure_clock, daemon=True).start()
+    remove_legacy_charge_limit()
+    watcher = power_events.EventWatcher(wake)
+    watcher.start()
 
     last_key: tuple[object, ...] | None = None
     last_full = 0.0
+    seen_profile: str | None = None
     forced = False  # SIGUSR1: ayar değişti ya da "planı yeniden uygula"
     while not stop.is_set():
         cfg = powerplan.load_config()
         state = powerplan.read_power_state()
         plan, reason = powerplan.effective_plan(cfg, state)
         source = "ac" if state.on_ac else "bat"
+        if not forced and last_key is not None:
+            seen_profile = _sync_from_menu(cfg, plan, reason, source, seen_profile)
+            if cfg.active != plan.id and reason == "active":
+                plan, reason = powerplan.effective_plan(cfg, state)
         key = (plan.id, source, _config_mtime())
         changed = forced or key != last_key
         now = time.monotonic()
@@ -629,8 +815,13 @@ def run_service() -> None:
             with contextlib.suppress(OSError):
                 _write_json(STATUS_FILE, status)
             last_key, last_full = key, now
-        forced = wake.wait(POLL_SECONDS)
-        wake.clear()
+            seen_profile = (ppd_state() or (None, False))[0]
+        power_events.wait(wake, _next_wait(cfg, last_full))
+        forced = forced_flag.is_set()
+        forced_flag.clear()
+    watcher.stop()
+    # Servis kapanırken (ör. "Yönetimi geri ver") ppd'yi Linwas durdurduysa geri aç
+    release_ppd_now()
     with contextlib.suppress(OSError):
         PID_FILE.unlink()
 

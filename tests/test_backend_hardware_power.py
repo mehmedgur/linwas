@@ -98,25 +98,12 @@ class TestPower:
         bats = power.list_batteries(tmp_path)
         assert len(bats) == 1
         b = bats[0]
-        assert (b.name, b.capacity, b.health, b.cycle_count, b.charge_limit) == (
-            "BAT0",
-            72,
-            80,
-            None,
-            None,
-        )
+        assert (b.name, b.capacity, b.health, b.cycle_count) == ("BAT0", 72, 80, None)
 
-    def test_charge_limit_and_charge_full(self, tmp_path):
-        _battery(
-            tmp_path,
-            "BAT1",
-            type="Battery",
-            charge_full=3000,
-            charge_full_design=4000,
-            charge_control_end_threshold=80,
-        )
+    def test_charge_full(self, tmp_path):
+        _battery(tmp_path, "BAT1", type="Battery", charge_full=3000, charge_full_design=4000)
         b = power.list_batteries(tmp_path)[0]
-        assert b.health == 75 and b.charge_limit == 80
+        assert b.health == 75
 
     def test_profiles(self):
         out = (

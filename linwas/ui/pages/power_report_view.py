@@ -55,11 +55,6 @@ def finding_text(f: Finding) -> str:
         )
     if f.code == "battery_aging":
         return tr("The battery holds {n}% of its original capacity.").format(n=p.get("n", ""))
-    if f.code == "charge_limit":
-        return tr(
-            "The laptop is plugged in and charges to 100%. A charge limit of 80% helps the "
-            "battery last longer."
-        )
     if f.code == "high_drain":
         return tr("The computer is using {w} W on battery, which is high.").format(w=p.get("w", ""))
     if f.code == "busy_process":
@@ -109,7 +104,7 @@ class _CollectWorker(QThread):
 
 class PowerReportCard(Card):
     task_run_now = Signal(Task)
-    ui_action = Signal(str)  # "charge_limit" | "automation" | "advanced"
+    ui_action = Signal(str)  # "automation" | "advanced"
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)

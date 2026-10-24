@@ -22,6 +22,7 @@ NO_PPD = "no_ppd"
 NO_IW = "no_iw"
 NO_HDPARM = "no_hdparm"
 MANAGED = "managed"  # başka güç aracı yönetiyor
+PPD = "ppd"  # sistemin güç kipi (power-profiles-daemon) yönetiyor
 
 USER_SETTINGS = frozenset(s.id for s in SETTINGS if s.scope == "user")
 
@@ -73,6 +74,9 @@ class PowerSupport:
     conflicts: list[ConflictTool]
     hibernate: HibernateInfo
     laptop: bool
+    # power-profiles-daemon çalışırken onun yönettiği işlemci ayarları; özel planda "İşlemciyi
+    # Linwas yönetsin" kapalıyken bunlar değiştirilemez
+    ppd_owned: frozenset[str] = frozenset()
 
 
 AGENT_PATH = Path("/usr/lib/linwas/linwas-power-agent")
@@ -229,4 +233,6 @@ def detect(laptop: bool) -> PowerSupport:
         for sid in a.LOW_LEVEL_SETTINGS:
             unsupported.setdefault(sid, MANAGED)
 
-    return PowerSupport(unsupported, values, found, hibernate_info(), laptop)
+    return PowerSupport(
+        unsupported, values, found, hibernate_info(), laptop, ppd_owned=a.ppd_owned_now()
+    )

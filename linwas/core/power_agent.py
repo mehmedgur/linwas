@@ -8,7 +8,14 @@ Anahtarlar (GNOME 42–47 şemaları, `gsettings range` ile doğrulandı):
 - org.gnome.desktop.session idle-delay (uint32, sn; 0 = hiçbir zaman) — ekranı kapat
 - org.gnome.settings-daemon.plugins.power: idle-dim, sleep-inactive-{ac,battery}-timeout (sn),
   sleep-inactive-{ac,battery}-type (suspend | hibernate | nothing …), power-button-action
-  (nothing | suspend | hibernate | interactive), ambient-enabled
+  (nothing | suspend | hibernate | interactive), ambient-enabled,
+  power-saver-profile-on-low-battery (GNOME 40+; pil azalınca ppd'de Tasarruf'u tutar)
+
+Linwas'ın "Pil tasarrufu" otomasyonu açıksa GNOME'un kendi düşük pil geçişi kapatılır (ikisi
+aynı işi yapıp birbirini ezmesin); kapalıysa GNOME'unki varsayılanıyla çalışır.
+
+Yoklama yok: priz/pil değişimi UPower sinyalinden (core/power_events.py) gelir; ayar dosyası
+ve zamanlı plan için en geç dakikada bir bakılır.
 """
 
 from __future__ import annotations
@@ -17,7 +24,7 @@ import json
 import os
 import subprocess
 import sys
-import time
+from datetime import datetime
 from pathlib import Path
 
 from linwas.core import powerplan
@@ -25,7 +32,7 @@ from linwas.core.powerplan import AUTO, PowerConfig, PowerPlan
 
 SESSION = "org.gnome.desktop.session"
 GSD_POWER = "org.gnome.settings-daemon.plugins.power"
-POLL_SECONDS = 20
+FALLBACK_SECONDS = 60
 
 
 def _state_path() -> Path:
@@ -84,6 +91,9 @@ def desired_settings(cfg: PowerConfig, plan: PowerPlan, source: str) -> dict[tup
     out[(GSD_POWER, "ambient-enabled")] = (
         AUTO if ambient == AUTO else ("true" if ambient == "on" else "false")
     )
+    out[(GSD_POWER, "power-saver-profile-on-low-battery")] = (
+        "false" if cfg.battery_saver.enabled else AUTO
+    )
     return out
 
 
@@ -134,8 +144,14 @@ def apply_now() -> None:
 
 
 def run() -> None:
+    import threading
+
+    from linwas.core import power_events
+
     if not is_supported_desktop():
         return
+    wake = threading.Event()
+    power_events.EventWatcher(wake, buses=(power_events.UPOWER_BUS,)).start()
     last: tuple[object, ...] | None = None
     while True:
         cfg = powerplan.load_config()
@@ -150,7 +166,8 @@ def run() -> None:
         if key != last:
             apply_user(cfg, plan, source)
             last = key
-        time.sleep(POLL_SECONDS)
+        boundary = powerplan.seconds_to_boundary(cfg, datetime.now())
+        power_events.wait(wake, min(FALLBACK_SECONDS, (boundary or FALLBACK_SECONDS) + 1))
 
 
 if __name__ == "__main__":
