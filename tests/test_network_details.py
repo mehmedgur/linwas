@@ -178,6 +178,7 @@ def test_weak_unknown_networks_are_noise():
     def net(signal, active=False, saved=False):
         return WifiNetwork("x", signal, "WPA2", active, "AA", saved=saved)
 
+    pytest.importorskip("PySide6")
     from linwas.ui.pages.network import is_weak_unknown
 
     assert is_weak_unknown(net(10))
