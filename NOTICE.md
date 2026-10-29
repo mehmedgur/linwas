@@ -2,7 +2,7 @@
 
 Linwas
 Copyright (C) 2026 Mehmed Gürbüz and Linwas contributors
-<https://github.com/mehmedgur/linwas2>
+<https://github.com/mehmedgur/linwas>
 
 This program is free software: you can redistribute it and/or modify it under the terms of the
 GNU General Public License as published by the Free Software Foundation, either version 3 of the
@@ -23,7 +23,7 @@ modified version of those files.
    b. this NOTICE file;
    c. in the program's "About" or "Developer" information shown to users (the Appropriate Legal
       Notices), and in the output of `--version`, the line:
-      `Based on Linwas — Copyright (C) 2026 Mehmed Gürbüz — https://github.com/mehmedgur/linwas2`
+      `Based on Linwas — Copyright (C) 2026 Mehmed Gürbüz — https://github.com/mehmedgur/linwas`
    d. the same line in the copyright file of any package built from it
       (for example `/usr/share/doc/<package>/copyright`).
 

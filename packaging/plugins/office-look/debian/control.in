@@ -10,7 +10,7 @@ Replaces: pardus-ofis-deneyimi, pardus-libreoffice-writer-sade
 Provides: pardus-ofis-deneyimi
 Section: editors
 Priority: optional
-Homepage: https://github.com/mehmedgur/linwas2
+Homepage: https://github.com/mehmedgur/linwas
 Description: Microsoft Office-like look for LibreOffice (Linwas)
  Makes LibreOffice Writer, Calc and Impress feel like Microsoft Office:
  a simple ribbon with few tabs and named groups, an in-window File menu

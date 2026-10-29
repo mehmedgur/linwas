@@ -1,0 +1,28 @@
+name: Hata bildir
+description: Linwas'ta bir şey beklendiği gibi çalışmıyor
+labels: [hata]
+body:
+  - type: textarea
+    id: ne-oldu
+    attributes:
+      label: Ne oldu?
+      description: Ne yaptın, ne bekliyordun, ne oldu? Ekran görüntüsü eklenebilir.
+    validations:
+      required: true
+  - type: input
+    id: dagitim
+    attributes:
+      label: Dağıtım ve sürüm
+      placeholder: ör. Pardus 23, Ubuntu 24.04
+    validations:
+      required: true
+  - type: input
+    id: masaustu
+    attributes:
+      label: Masaüstü
+      placeholder: ör. GNOME, Cinnamon, XFCE
+  - type: input
+    id: surum
+    attributes:
+      label: Linwas sürümü
+      description: Hakkında ekranında ya da `linwas --version` çıktısında yazar.

@@ -1,9 +1,9 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Linwas
 Upstream-Contact: Mehmed Gürbüz <mehmedgrbz11@gmail.com>
-Source: https://github.com/mehmedgur/linwas2
+Source: https://github.com/mehmedgur/linwas
 Comment:
- Based on Linwas — Copyright (C) 2026 Mehmed Gürbüz — https://github.com/mehmedgur/linwas2
+ Based on Linwas — Copyright (C) 2026 Mehmed Gürbüz — https://github.com/mehmedgur/linwas
  .
  Linwas is licensed under the GNU GPL version 3 or later with additional terms
  permitted by section 7 (attribution, marking of modified versions, no

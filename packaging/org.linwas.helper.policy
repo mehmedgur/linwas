@@ -6,7 +6,7 @@
      helper sürecinde çalıştığı için şifreyi hatırlatmaya (auth_admin_keep) gerek yok. -->
 <policyconfig>
   <vendor>Linwas</vendor>
-  <vendor_url>https://github.com/mehmedgur/linwas2</vendor_url>
+  <vendor_url>https://github.com/mehmedgur/linwas</vendor_url>
   <icon_name>linwas</icon_name>
   <action id="org.linwas.helper.run">
     <description>Apply system changes with Linwas</description>

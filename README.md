@@ -1,8 +1,29 @@
 # Linwas 2.0
 
+[![CI](https://github.com/mehmedgur/linwas/actions/workflows/ci.yml/badge.svg)](https://github.com/mehmedgur/linwas/actions/workflows/ci.yml)
+[![Lisans: GPL-3.0-or-later](https://img.shields.io/badge/lisans-GPL--3.0--or--later-blue)](LICENSE)
+[![Son sürüm](https://img.shields.io/github/v/release/mehmedgur/linwas)](https://github.com/mehmedgur/linwas/releases/latest)
+
 Windows'tan Linux'a geçenler için, terminal kullanmadan Linux'u yönetmeyi sağlayan masaüstü yardımcısı.
 
-> **Durum:** Geliştirme aşamasında (aşama 0 — iskelet). Henüz son kullanıcıya uygun değildir.
+> **Durum:** Önizleme sürümü. Hata bulursan [bildir](https://github.com/mehmedgur/linwas/issues/new/choose).
+
+## İndir ve kur
+1. [Son sürüm](https://github.com/mehmedgur/linwas/releases/latest) sayfasından `Linwas-Kurulum.deb` dosyasını indir.
+2. Dosyaya çift tıkla, açılan yazılım merkezinde **Kur**'a bas.
+3. Uygulama menüsünden **Linwas**'ı aç.
+
+Çift tıklayınca kurulum açılmıyorsa `Linwas-Kurulum.run` dosyasını indir, sağ tıklayıp
+**Özellikler › İzinler › Çalıştırılabilir** yap ve çift tıkla; pencereli kurulum başlar.
+
+## Neler yapar
+- **Program kur ve kaldır:** uygulama mağazası, Flatpak, kurulu programlar; Windows programları (Bottles).
+- **Sürücü ve donanım:** eksik sürücü/ürün yazılımı, NVIDIA/hibrit ekran kartı, donanım bilgisi.
+- **Ağ:** Wi-Fi, Bluetooth, erişim noktası, bağlantı kalitesi ve sorun giderme.
+- **Güç:** güç planları, pil raporu, hazırda bekletme.
+- **Windows'tan taşıma:** dosya ve ayarları aktarma, Windows'a benzeyen görev çubuğu ve Office görünümü.
+- **Bakım:** güncelleme merkezi, disk temizliği, yedekleme, görev yöneticisi, kaynak izleyici.
+- **Yapay zekâ yardımcısı (isteğe bağlı):** kendi API anahtarınla sorulara cevap ve görev önerisi.
 
 ## Desteklenen sistemler
 | Dağıtım | Sürüm |
@@ -19,6 +40,10 @@ Linwas bu sistemlerde çalışmaz: güncel Qt daha yeni bir sistem kütüphanesi
 Bu sürümlerin güvenlik güncellemeleri de sona erdiği için sisteminizi dağıtımınızın **resmi
 yükseltme rehberini** izleyerek yükseltmenizi öneririz (Ubuntu 20.04 → 22.04, Linux Mint 20 → 21,
 Debian 11 → 12). Yükseltmeden önce mutlaka kişisel dosyalarınızı yedekleyin.
+
+## Katkı
+Katkılar memnuniyetle karşılanır: [CONTRIBUTING.md](CONTRIBUTING.md). Güvenlik açıkları için
+[SECURITY.md](SECURITY.md).
 
 ## Geliştirme sürümünü denemek
 

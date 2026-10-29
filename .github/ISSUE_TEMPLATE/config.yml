@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Güvenlik açığı
+    url: https://github.com/mehmedgur/linwas/security/advisories/new
+    about: Güvenlik açıklarını herkese açık konu yerine buradan gizli bildir.

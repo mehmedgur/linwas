@@ -35,8 +35,8 @@
   </description>
   <launchable type="desktop-id">linwas.desktop</launchable>
   <icon type="stock">linwas</icon>
-  <url type="homepage">https://github.com/mehmedgur/linwas2</url>
-  <url type="bugtracker">https://github.com/mehmedgur/linwas2/issues</url>
+  <url type="homepage">https://github.com/mehmedgur/linwas</url>
+  <url type="bugtracker">https://github.com/mehmedgur/linwas/issues</url>
   <categories>
     <category>System</category>
     <category>Settings</category>

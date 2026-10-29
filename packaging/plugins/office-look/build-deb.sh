@@ -33,7 +33,7 @@ install -m 755 "$HERE/debian/postinst" "$HERE/debian/prerm" "$PKG/DEBIAN/"
 install -m 644 "$HERE/debian/triggers" "$PKG/DEBIAN/"
 cat > "$PKG/usr/share/doc/linwas-office-look/copyright" <<'COPY'
 linwas-office-look — part of Linwas.
-Based on Linwas — Copyright (C) 2026 Mehmed Gürbüz — https://github.com/mehmedgur/linwas2
+Based on Linwas — Copyright (C) 2026 Mehmed Gürbüz — https://github.com/mehmedgur/linwas
 License: GPL-3.0-or-later with additional terms (see /usr/share/doc/linwas/NOTICE.md),
 full text in /usr/share/common-licenses/GPL-3.
 
