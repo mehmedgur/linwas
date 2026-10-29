@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Masaüstü ortamı ve oturum türü algılama.
 
 `XDG_CURRENT_DESKTOP` ve `XDG_SESSION_TYPE` ortam değişkenlerine bakar. Qt'ye bağımlı değildir.

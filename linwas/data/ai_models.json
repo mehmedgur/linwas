@@ -1,0 +1,71 @@
+{
+  "_note": "Sağlayıcı başına gösterilecek seçilmiş modeller (sıra = öncelik; ilk üçü madalyalı). Kimlikler ve bağlam sınırları 6 Ekim 2026'da Gemini models.list (inputTokenLimit) ile, ücretsiz katman bilgisi ai.google.dev/gemini-api/docs/pricing sayfasıyla doğrulandı. Canlı listede olmayan model gösterilmez; hiçbiri yoksa tam liste gösterilir.",
+  "gemini": [
+    {
+      "id": "gemini-3.8-flash",
+      "label": "Gemini 3.8 Flash",
+      "role": "main",
+      "free": true
+    },
+    {
+      "id": "gemini-3.7-flash",
+      "label": "Gemini 3.7 Flash",
+      "role": "fast",
+      "free": true
+    },
+    {
+      "id": "gemini-3.1-pro-preview",
+      "label": "Gemini 3.1 Pro",
+      "role": "hard",
+      "free": false
+    },
+    {
+      "id": "gemini-3.6-flash",
+      "label": "Gemini 3.6 Flash",
+      "role": "free",
+      "free": true
+    },
+    {
+      "id": "gemini-3.5-flash",
+      "label": "Gemini 3.5 Flash",
+      "role": "free",
+      "free": true
+    },
+    {
+      "id": "gemini-3.5-flash-lite",
+      "label": "Gemini 3.5 Flash-Lite",
+      "role": "free",
+      "free": true
+    },
+    {
+      "id": "gemini-3.1-flash-lite",
+      "label": "Gemini 3.1 Flash-Lite",
+      "role": "free",
+      "free": true
+    },
+    {
+      "id": "gemini-3-flash-preview",
+      "label": "Gemini 3 Flash (Preview)",
+      "role": "free",
+      "free": true
+    },
+    {
+      "id": "gemini-2.5-pro",
+      "label": "Gemini 2.5 Pro",
+      "role": "free",
+      "free": true
+    },
+    {
+      "id": "gemini-2.5-flash",
+      "label": "Gemini 2.5 Flash",
+      "role": "free",
+      "free": true
+    },
+    {
+      "id": "gemini-2.5-flash-lite",
+      "label": "Gemini 2.5 Flash-Lite",
+      "role": "free",
+      "free": true
+    }
+  ]
+}

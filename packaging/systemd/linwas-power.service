@@ -1,0 +1,14 @@
+# Linwas güç planları (Güç › Gelişmiş güç seçenekleri). Ayar: /etc/linwas/power.json
+[Unit]
+Description=Linwas power plans
+After=power-profiles-daemon.service upower.service
+
+[Service]
+Type=simple
+ExecStart=/usr/lib/linwas/linwas-power
+Restart=on-failure
+RestartSec=10
+Nice=5
+
+[Install]
+WantedBy=multi-user.target

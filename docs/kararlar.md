@@ -2,7 +2,7 @@
 
 (Önceki çalışma adı: v1.1. Kod sıfırdan yazıldığı için sürüm adı **Linwas 2.0** oldu.)
 
-Son güncelleme: 7 Ekim 2026
+Son güncelleme: 25 Ekim 2026
 Depo (2.0): github.com/mehmedgur/linwas2 (geliştirme süresince private; kod düz dosyalar halinde)
 Eski depo (v1.0, yalnızca referans): github.com/mehmedgur/linwas
 Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyruk senaryosu)
@@ -42,6 +42,19 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - Tüm hedef dağıtımlarda sanal makine testleri.
 - Paketteki Maintainer bilgisinin gözden geçirilmesi.
 
+## Lisans (27 Ekim 2026, kullanıcı kararı)
+- Amaç: herkes kullanabilsin ve kaynak kodunu değiştirebilsin, ama Linwas'tan geldiği unutulmasın; geliştirici
+  bilgisinde her zaman Linwas yer alsın.
+- **GPL-3.0-or-later** (`LICENSE`, Debian'ın `common-licenses/GPL-3` kopyası) + GPL bölüm 7 ek şartları (`NOTICE.md`):
+  7(b) atıf korunur (dosya başlıkları, NOTICE, Hakkında › Geliştirici kartı ve `--version`'daki `linwas.ATTRIBUTION`
+  satırı, paket telif dosyası); 7(c) değiştirilmiş sürüm belirtilir; 7(e) "Linwas" adı/logosu başka ürünün adı olamaz
+  (`TRADEMARKS.md`). Her .py/.sh/.js dosyasında 3 satırlık SPDX başlığı (NOTICE'a işaret eder; GPL 7 bunu ister).
+- Katkılar `CLA.md` ile (taslak; hukukçu incelemesi bekliyor): telif katkıcıda kalır, projeye yeniden lisanslama hakkı
+  verilir (ileride ücretli kurumsal lisans için). GNOME eklentileri de GPL-3.0-or-later (GNOME'un "GPL-2.0-or-later ile
+  uyumlu" şartını karşılar). Office görünümünün kurulumda ürettiği `.ui` dosyaları MPL-2.0 (depoda değil).
+- Açık: "Linwas" marka tescili (TÜRKPATENT); yayından önce git geçmişi kararı (kişisel e-postalar) ve iç notların
+  (`docs/`, `CLAUDE.md`) temizliği.
+
 ## Eklenti mimarisi
 - Linwas = sabit çekirdek + eklentiler. Kullanıcı için tek uygulama; eklenti kurulunca menüye/sayfalara kendi parçasını ekler.
 - Eklenti kapıları:
@@ -55,53 +68,202 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
   - İlk açılış sihirbazı adımı
 - **Yerleşik özellikler de eklenti olarak yazılır** (Oyun, Yazıcı, Yedekleme, Windows'tan taşıma, Görev Yöneticisi, Disk temizliği, Güç ve pil, Wine vb.).
 - **Sürümlü arayüz:** eklenti desteklediği arayüz sürümünü bildirir; uyumsuz eklenti kapatılır ve kullanıcıya söylenir.
-- **Şimdilik yalnızca resmi eklentiler.** Resmi eklentiler imzalı APT deposundan .deb olarak gelir; ayrı bir eklenti imza sistemi şimdilik yazılmaz (APT imzası yeterli). Üçüncü taraf eklentiler gündeme gelirse kendi imza sistemi ve izin ekranı eklenir.
+- **Resmi eklentiler** imzalı APT deposundan .deb olarak gelir (Python kodlu, entry point); APT imzası yeterli.
+- **Üçüncü taraf eklentiler (17 Ekim 2026, kullanıcı kararı):**
+  - **Kodsuz (bildirimsel):** tek `manifest.json`; Python kodu çalıştıramaz. Yapabilecekleri: sorun giderme
+    belirti kartları ve reçeteleri, tarama denetimleri (hazır denetim türleriyle: komut/dosya/servis/paket/
+    çekirdek modülü/boş alan), rehber ve arama girdileri, görevler (yalnızca izin listesindeki işlemler ve
+    sabit, kurulumda doğrulanan parametreler), Linwas sayfasına ya da sistem ayarına gitme, https bağlantısı.
+    Eklentilere kapalı işlemler (ör. `deb.install`, `file.write_text`, `apt.add_source`/`add_key`,
+    Timeshift geri yükleme) ayrı bir izin listesinde tutulur. Python kodlu üçüncü taraf eklenti sonraki
+    sürümde ayrı süreçte çalışma koşuluyla değerlendirilir.
+  - **Güven:** Linwas'ın incelediği, Linwas anahtarıyla imzalı **katalog** (imzalı `index.json` +
+    eklenti dosyalarının SHA-256'sı; doğrulama sistemde zaten olan `gpgv` ile, yeni bağımlılık yok).
+    Katalog bir eklentiyi geri çekerse Linwas onu kapatır. **Geliştirici kipi** (Ayarlar'da, varsayılan
+    kapalı): imzasız yerel dosya büyük uyarıyla kurulabilir; bu eklentiler "Geliştirici" rozeti taşır.
+  - **İzin ekranı:** kurulumdan önce eklentinin kullanacağı her işlem (risk düzeyiyle), açacağı sayfalar ve
+    bağlantılar tek tek gösterilir; güncelleme yeni izin isterse yeniden onay alınır.
+  - **Önce altyapı:** boştaki kapılar (tarama, sorun giderme, rehber, AI bağlamı) bağlanır, Ayarlar ›
+    Eklentiler kartlı sayfa olur (aç/kapat, sürüm, yayıncı, rozet, izinler, hata). Aşamalar: yapilacaklar.md.
 - Gelecekte olası eklentiler: bkz. `yapilacaklar.md`.
 
 ## Hedef kullanıcı ve genel UX
 - Tamamen yeni Linux kullanıcısı. Sade dil, teknik terim olursa yanında açıklama.
 - Terminal hiç kullanılmaz; kurulum dahil her şey GUI.
 - Komutlar varsayılan gizli, "Detay" ile görülür.
+- **Süzülmüş veri (23 Ekim 2026, kullanıcı kararı):** kullanıcıya ham veri değil, süzülmüş ve yorumlanmış bilgi
+  gösterilir. Önce sade özet ya da hüküm ("Bağlantı son 24 saatte kararlıydı"); sayılar, adresler ve teknik alanlar
+  "Ayrıntılar" / "Gelişmiş ayrıntılar" arkasındadır (varsayılan kapalı; `widgets/details_toggle.py`, kart
+  içinde `QToolButton#DetailsToggle`). Gürültülü kayıtlar (çok zayıf Wi-Fi ağları, adsız Bluetooth cihazları,
+  tekrarlar) varsayılan gizli, "N … göster" ile açılır; bağlı ve kayıtlı olanlar her zaman görünür. Destek
+  eylemleri ("Tümünü kopyala", "Asistana sor") ham veriyi içerir.
 - İlk açılış: kısa tanıtım turu → kurulum sihirbazı (sistem taraması, Windows'tan taşıma, Timeshift önerisi ve ilk tam yedek, isteğe bağlı AI anahtarı).
 - Tema: Windows benzeri tasarım; Açık / Koyu / Sistem (Ayarlar'dan).
 - Dil: Türkçe + İngilizce (Qt Linguist altyapısı).
-- Pencere kapatma: Ayarlar'dan seçilir. Varsayılan: sistem tepsisi destekleniyorsa tepsiye küçülür; desteklenmiyorsa (ör. Debian/Pardus GNOME) uygulama kapanır, arka planda iş varsa bildirimle devam eder.
+- **Pencere kapatma (8 Ekim 2026 kararı):** varsayılan her kapatmada sorulur: "Arka plana küçült" / "Tamamen kapat" / "Vazgeç" + "Seçimimi hatırla" (işaretlenirse Ayarlar › Genel › "Pencereyi kapattığımda"ya yazılır; oradan "Her seferinde sor"a dönülür). Eski ayar dosyalarındaki "auto" da sorar.
+- ~~Pencere kapatma varsayılanı~~ → aşağıdaki **Ayarlar (7 Ekim 2026)** kararına bakın (tepside arka planda çalışma). Pencere kapatma: Ayarlar'dan seçilir. Varsayılan: sistem tepsisi destekleniyorsa tepsiye küçülür; desteklenmiyorsa (ör. Debian/Pardus GNOME) uygulama kapanır, arka planda iş varsa bildirimle devam eder.
 - Erişilebilirlik: yazı boyutu, yüksek kontrast, tam klavye kullanımı, ekran okuyucu (Orca) uyumu.
 - Telemetri yok.
 
 ## Arayüz tasarımı ve teknolojisi
-- Teknoloji: **Qt Widgets + QSS** (PySide6). QML seçilmedi: erişilebilirlik Widgets'ta daha güçlü.
-- **Kural (7 Ekim 2026): Tasarımda Microsoft Windows tasarım rehberi ne diyorsa o uygulanır.** Kaynak: learn.microsoft.com/windows/apps/design (tipografi, geometri, boşluk, başlık çubuğu, gezinme, komutlar, simgeler, malzemeler, renk, hareket, iletişim kutuları). Rehberle çelişen önceki taslak kararları geçersizdir.
-- Windows 11 tasarım ilkeleri: Zahmetsiz, Sakin, Kişisel, Tanıdık, Bütün ve tutarlı.
-- **Ayrıntılı tasarım sistemi:** [tasarim-sistemi.md](tasarim-sistemi.md) ve [tasarim/tokens.json](tasarim/tokens.json) (arayüz kodunun tek kaynağı).
-- Tasarım değerleri tek dosyada: `ui/theme/tokens.py` (Açık / Koyu / Yüksek kontrast); QSS bu değerlerden üretilir.
-- **Tasarım sistemi (rehberden):**
-  - Yazı ölçeği: Açıklama 12/16 · Gövde 14/20 · Gövde vurgulu 14/20 yarı kalın · Alt başlık 20/28 · Başlık 28/36. Yalnızca normal ve yarı kalın (Semibold) ağırlık; kalın/italik yok. Cümle düzeni büyük harf. Yazı tipi Segoe UI Variable; Linux'ta Noto Sans (Segoe pakete gömülemez).
-  - Köşe: kontroller ve sayfa içi öğeler 4 px; pencere, menü (flyout) ve iletişim kutusu 8 px; birbirine değen düz kenarlar ve büyütülmüş pencere 0 px.
-  - Boşluk (8 tabanlı): düğmeler arası 8 · başlık–kontrol 8 · etiket–kontrol 12 · içerik alanları arası 12 · yüzey iç boşluğu 16.
-  - Başlık çubuğu: standart 32 px; ortada arama kutusu olduğu için **48 px**. Geri düğmesi en solda, ardından 16 px uygulama simgesi, 16 px sonra 12 px başlık metni. Pencere düğmeleri 46×32.
-  - Gezinme: soldaki NavigationView (5'ten fazla öğe olduğu için). Pencere ≥1008 px'de açık, 641–1007'de yalnızca simge, ≤640'ta gizli. Ayarlar en altta. Sayfa başlığı alanı 52 px; iki seviyeden derin sayfalarda breadcrumb ("Sistem › Güncellemeler").
-  - Komutlar: menü çubuğu yok (uygulama karmaşık değil); sık kullanılan komutlar doğrudan ekranda (sayfa başlığının sağında). Menüler 8 px köşeli açılır menü (flyout).
-  - Simgeler: tek renk, 1 px çizgi, sade geometrik (Segoe Fluent Icons tarzında, kendi çizimimiz); 16 px, ayar kartlarında 20 px.
-  - Malzemeler: pencere zemini Mica (Linux'ta düz yedek renk: açık #F3F3F3, koyu #202020); menüler Acrylic (Linux'ta yarı saydam yedek yüzey); iletişim kutusu arkası Smoke (yarı saydam siyah). Qt bulanıklaştırma yapamadığı için gerçek Mica/Acrylic yok.
-  - Renk: WinUI tema değerleri. Vurgu (Windows varsayılanı) açık #005FB8, koyu #60CDFF; vurgu idareli ve yalnızca etkileşim/durum için. Durum renkleri: başarılı #0F7B0F, uyarı #9D5D00, hata #C42B1C (koyu temada #6CCB5F, #FCE100, #FF99A4).
-  - Hareket (Windows rehberi, animasyonlar açık): renk/durum geçişleri 83 ms doğrusal; giriş ve konum 167/250/333 ms, cubic-bezier(0,0,0,1); çıkışlar 167 ms. Uygulananlar: sayfa girişi (aşağıdan 28 px kayarak belirme, 250 ms), alt sayfaya iniş (0,94'ten yakınlaşma, 250 ms), gezinme seçim çubuğunun öğeler arasında kayması (250 ms), iletişim kutusu (arka plan 167 ms soluklaşma, kutu 1,05'ten küçülerek 250 ms), bilgi çubuğu girişi (167 ms), anahtar topuzu (167 ms). Önceki "animasyon yok" kararının yerine geçer. Sistemin "hareketi azalt" ayarı açıksa tüm hareketler kapanır. Qt'de QPropertyAnimation ile uygulanır.
-  - Kontroller: düğme 32 px (yatay iç boşluk 11), vurgu düğmesi = varsayılan eylem; açma/kapama anahtarı 40×20; metin kutusu 32 px, odakta altta 2 px vurgu çizgisi; liste öğesi en az 40 px, seçili öğede 3×16 vurgu çubuğu; ayar kartı en az 68 px, kartlar arası 4 px; bilgi çubuğu (InfoBar) en az 48 px, 4 önem düzeyi.
-  - İletişim kutusu: genişlik 320–548 px, iç boşluk 24, başlık 20/28 yarı kalın; komut alanında düğmeler eşit genişlikte, **ana eylem solda, güvenli eylem (İptal) sağda**; düğme metinleri özel ("Yedek al ve başlat", "Evet/Hayır" değil); Esc = İptal. Satır içi hatalar iletişim kutusuyla değil sayfada gösterilir.
-  - Odak görseli: 2 px dış + 1 px iç halka (açık temada siyah/beyaz).
-- Ortak bileşen kütüphanesi; sayfalar bunlardan kurulur. Her yeni bileşen yukarıdaki değerleri kullanır, yeni ölçü icat edilmez.
+- Teknoloji: **Qt Widgets + QSS** (PySide6). QML seçilmedi: animasyon yok, erişilebilirlik Widgets'ta daha güçlü.
+- Tasarım değerleri (renk, yazı, boşluk, köşe) tek dosyada: `ui/theme/tokens.py`. Açık / Koyu / Yüksek kontrast setleri; QSS bu değerlerden üretilir.
+- Ortak bileşen kütüphanesi (kart, menü öğesi, rozet, ana buton, durum çubuğu, görev kartı); sayfalar bunlardan kurulur.
+- Simgeler: kendi SVG simge setimiz (Windows benzeri çizgi stil), HiDPI uyumlu. Çizimler `ui/theme/icon_data.py`'de (masaüstü simge temasına bağlı değil); renk temadan gelir, tema değişince `ui/icons.py` bağlı simgeleri yeniler. QSS'teki onay işareti/ok simgeleri `~/.cache/linwas/icons` altına yazılır.
+- Animasyon: yok.
 - Erişilebilirlik her bileşene baştan eklenir.
 - Tasarım akışı: sayfa sayfa — tuvalde taslak → onay → Qt'ye aktarım → sıradaki sayfa.
-- Geçerli taslak: tuvalde **v4** (ana pencere 1200×760, onay iletişim kutusu, bileşen durumları). v1–v3 yalnızca geçmiş için duruyor.
+- Onaylı taslaklar: ana pencere (Sistem › Genel bakış) ve kuyruk senaryosu (Kuyruk → Onay → Çalışıyor → Sonuç).
+  - Ana pencere: üstte başlık çubuğu; solda daraltılabilir menü (arama kutusu, rozetler, açılır alt menüler, altta sistem durumu kartı, Yardımcı paneli düğmesi, Ayarlar); ortada içerik (Genel bakış: Timeshift rozeti, 4 hızlı işlem kutusu, Güncellemeler/Sürücüler/Wi-Fi/Bluetooth kartları); sağda AI yardımcı paneli (sağlayıcı seçimi, sohbet, önerilen görev kartı + "Kuyruğa ekle", ekran görüntüsü/log ekleme, "Sistem bilgimi ekle", token çubuğu); altta durum çubuğu (kuyruk sayısı, ilerleme, Detay, "Uygula (tek onay)").
+  - Vurgu rengi `#0067c0`, yazı tipi Noto Sans, açık tema zemin `#f3f3f3`, kartlar beyaz, kenarlık `#e0e3e7`, köşe 8 px (kartlar 10 px).
+  - ~~Windows görünümü~~ → **macOS havası (12 Ekim 2026, kullanıcı onayı):** tuval "Linwas macOS Görünümü"
+    (claude.ai artifact AYgNY1TjwxLtui1ERsfg1D: Güç ve pil, Wi-Fi, Giriş, Bileşenler). Kenar çubuğu
+    System Settings gibi: her öğenin simgesi renkli yuvarlak kare içinde, seçili öğe vurgu zeminli beyaz
+    yazı, üstte beyaz kullanıcı kartı, gri yuvarlak arama. İçerik zemini `#f5f5f7`, kenar çubuğu `#ebebef`,
+    kartlar beyaz + köşe 12 px + hafif gölge; iç satır ayırıcısı metin hizasından başlar; bölüm başlıkları
+    kartın dışında küçük gri. macOS tipi anahtar (beyaz yuvarlak düğme); düğme köşesi 8 px; vurgu `#0066d6`;
+    yazı `#1d1d1f`, ikincil `#6e6e73`. Pencere düğmeleri (trafik ışıkları) yok, başlığı masaüstü çizer.
+  - **Eco düzeni (23 Ekim 2026, kullanıcı kararı):** Linwas, eco (Linux Ekosistemi) projesinin ayarlar
+    uygulaması olacak; macOS/Windows yanında üçüncü bir **düzen** (`UiStyle.ECO`, Ayarlar › Görünüm ›
+    Düzen › "Eco düzeni"). Açık ve koyu tema birlikte; vurgu teal (`#2f6f73` / koyu `#5cb7bc`); yazı tipi
+    **Figtree** (pakete gömülü, SIL OFL 1.1; ağırlıklar 400/500/700); cam/bulanıklık yok; köşe 7 px
+    (kartlar 10 px); pencere düğmeleri Linwas ile aynı. Değerler `docs/tasarim/tokens-eco.json`, kodda
+    `ui/theme/tokens.py` (`ECO_LIGHT`, `ECO_DARK`, `METRICS[UiStyle.ECO]`); `tests/test_eco_style.py`
+    ikisinin uyumunu ve WCAG AA kontrastını denetler. Türetilen renkler (koyu vurgu, ikincil metin) belgede
+    "turetilmis" diye işaretli. Ayrıntı: [eco-entegrasyonu.md](eco-entegrasyonu.md).
+  - **Seçim kartları ve Wi-Fi/Bluetooth (17 Ekim 2026):** birkaç seçenekten biri yuvarlak köşeli seçim
+    kartlarıyla seçilir (`widgets/option_tile.py`: başlık + gri açıklama, seçili kart vurgu kenarlıklı ve
+    açık vurgu zeminli; seçim düğmesi içi beyaz noktalı dolu daire). Wi-Fi ve Bluetooth sekmeleri: üstte
+    durum kartı (simge kutusu, durum, aç/kapat; aygıt yoksa sürücü yönlendirmesi), altında kart içinde
+    liste (Wi-Fi: Kayıtlı/Şifreli/Açık, gizli ağ, IP; Bluetooth: Aygıtlarım / Diğer aygıtlar), unutmada
+    onay, altta "Diğer … ayarları". nmcli/bluetoothctl çağrıları arka planda.
+  - **Güç ve pil sayfası (17 Ekim 2026):** pil özeti (pil biçimli gösterge, büyük yüzde, durum/kalan
+    süre; Pil sağlığı / Şarj döngüsü / Güç kaynağı kutuları; pil yıpranmış ya da azsa yapıcı öneri), plan
+    seçim kartları (simgeli, 3 sütun), sık ayarlar satır tablosu (ad + açıklama, Prizde / Pilde), otomasyon
+    kutuları (Pil tasarrufu, Zamanlama); kaydet çubuğu sayfanın altında sabit. Gelişmiş güç ayarları
+    (ağaç liste) sık ayarların hemen altında ve **açık başlar** (kullanıcı: "her şeyi kontrol
+    edebiliyordum, görünür olsun"); sık ayarlar kartında "Bu planın tüm ayarları" bağlantısı.
+  - **Sorun giderme genişletildi (17 Ekim 2026):** taramaya DNS, saat eşitleme, salt okunur sistem diski,
+    /home ve ayrı /boot doluluğu, bellek, sıcaklık (termal bölgeler, ≥ 90 °C), DKMS modülleri, yazılımla
+    çizim (ekran kartı sürücüsü yok), eski APT listesi (> 14 gün), açılış süresi (> 90 sn), pil sağlığı
+    (< %60) eklendi; her sorunda "Yardımcıya sor". Yeni belirti kartları: Bluetooth, mikrofon/kamera, pil
+    çabuk bitiyor, tarih/saat, güncellemeler başarısız, yavaş açılış. Yeni root işlemi `package.autoremove`
+    (`apt-get autoremove --purge`: eski çekirdekler, dolu /boot). Sabit genişlikli düğmeler (Disk temizliği,
+    durum çubuğu, Görev Yöneticisi) yazıya göre genişliyor (`widgets/fit.py`).
+  - **Dokunmatik yüzeyde sağ tık (18 Ekim 2026):** GNOME varsayılanı `click-method='fingers'` (sağ alt
+    köşe sol tık sayılır) Windows'tan gelenlerde "sağ tık çalışmıyor" diye görülüyor. İlk açılış
+    sihirbazında (dokunmatik yüzey varsa ve köşe tıklaması kapalıysa) "sağ alt köşeyle sağ tık" kutusu
+    işaretli gelir (`'areas'`); Sorun giderme'de "Sağ tık çalışmıyor" kartı aynı düzeltmeyi ve fare
+    ayarlarını sunar. `backend/touchpad.py`; şimdilik yalnız GNOME (Cinnamon/XFCE anahtarı doğrulanmadı).
+  - **Görev çubuğu eklentisi ve "Temizle" (18 Ekim 2026, hata):** takvim menüsüne eklenen medya kartında
+    `clear()` olmadığı için GNOME'un bildirim "Temizle" düğmesi ilk öğede hata verip bildirimleri
+    silmiyordu (`s.clear is not a function`, calendar.js:976). Karta boş `clear()` ve `canClear=false`
+    eklendi; eklenti dosyası görev çubuğu sayfası açılınca yenilenir, oturum yeniden açılınca geçerli.
+  - **Klasör renkleri (18 Ekim 2026, kullanıcı):** Dosyalar'da sağ tık › "Klasör rengi" (7 renk: kırmızı,
+    turuncu, sarı, yeşil, mavi, mor, gri + Varsayılan); `metadata::custom-icon` + Linwas'ın SVG simgeleri;
+    Nautilus (`python3-nautilus`), Nemo (`nemo-python`), Thunar (`thunarx-python`, gösterimi doğrulanacak).
+    Linwas sayfası Kişiselleştirme › Klasör renkleri. Ayrıntı: yapilacaklar.md › E.
+  - **macOS düzeni (18 Ekim 2026, kullanıcı kararları):** düzen seçilince pencere düğmeleri solda
+    (`close,minimize,maximize:`; Windows/GNOME düzenine geçince sağa döner), dock hep görünür, çöp kutusu
+    ve sürücüler dock'ta. Claude'un seçtikleri: çalışan programda nokta (`DOTS`), tıklayınca öne getir /
+    önizleme (`focus-or-previews`), bütün programlar düğmesi başta (`show-apps-at-top`), dinamik
+    saydamlık. "Dock" bölümü: konum (alt/sol/sağ), simge boyutu 24–64, görünürlük (hep görünür / pencere
+    gelince gizle / hep gizli), çöp kutusu, sürücüler, nokta, bildirim sayısı, programlar düğmesi başta,
+    her ekranda dock. "Önceki düzene dön" düğme yerleşimini ve dock ayarlarını da geri getirir. macOS'taki
+    büyüme (magnification) Dash to Dock'ta yok.
+  - **Görev çubuğu özelleştirme (18 Ekim 2026, kullanıcı seçimi):** Windows düzeninde (Dash to Panel)
+    Davranış: simgelerin yeri "Windows 11 gibi (ortada)" / "Windows 10 gibi (solda)" (Başlat ve görev
+    listesi `panel-element-positions` içinde `centerMonitor` / `stackedTL`), düğmeleri birleştirme
+    (`group-apps`), her ekranda (`multi-monitors`), simgede sayı ve ilerleme (`progress-show-count`,
+    `progress-show-bar`). Öğeler: Başlat, Etkinlikler, saat, sistem simgeleri, masaüstünü göster köşesi
+    (görünürlük `panel-element-positions`), köşede masaüstüne göz at (`show-showdesktop-hover`). Saat
+    ve tarih (her GNOME düzeninde): `clock-show-date/weekday/seconds`, `clock-format`; saatin yeri
+    sağda/ortada. Sabitlenmiş programlar: `org.gnome.shell favorite-apps` (sırala, çıkar, ekle). Anahtar
+    ve öğe adları Pardus 23'teki Dash to Panel şemasından/kaynağından doğrulandı.
+  - **Güç yönetimini tek tuşla devralma (17 Ekim 2026, kullanıcı):** sayfanın en üstünde "Güç yönetimi"
+    kartı (eski "başka güç aracı" ve "servis durdu" kartlarının yerine): durum başlığı + denetim listesi
+    (güç servisi, başka güç aracı, masaüstü ajanı). "Güç yönetimini Linwas'a ver" → root işlemi
+    `power.take_over`: TLP/auto-cpufreq/laptop-mode-tools servislerini `systemctl disable --now` ile
+    kapatır (paket silinmez), kapatılanları `/etc/linwas/power-takeover.json`'a yazar, `linwas-power.service`'i
+    açıp yeniden başlatır; sonra ajan çalışmıyorsa başlatılır. "Yönetimi geri ver" → `power.give_back`:
+    Linwas servisini kapatır, kayıttaki (yalnızca bilinen) araçları yeniden açar.
+  - **Hazırda bekletme kurulumu (17 Ekim 2026):** eksik yalnızca swap/resume ise Linwas `/swapfile`
+    (varsayılan RAM kadar, en az yarısı) oluşturur, fstab'a ve `/etc/default/grub.d/linwas-hibernate.cfg`
+    ile çekirdek satırına `resume=UUID=… resume_offset=…` ekler; Secure Boot kilidi, GRUB/initramfs-tools
+    olmaması, desteklenmeyen dosya sistemi, yer yokluğu ya da elle kurulmuş /swapfile'da kurmaz ve nedeni
+    yazar. Ayrıntı: yapilacaklar.md › Hazırda bekletme kurulumu.
+  - **Ölçek ve okunabilirlik (12 Ekim 2026, kullanıcı):** yazı küçük kalmasın. Qt'ye aktarımda gövde
+    16 px, başlık 32 px, ayar satırı en az 64 px, tıklama alanı en az 40 px. Her ekranda Windows / macOS /
+    Linux'taki karşılığı karşılaştırılır, en anlaşılır çözüm seçilir.
+  - **Düzen seçimi (12 Ekim 2026, kullanıcı):** Linwas'ın içinde düzen seçilir: Ayarlar › Görünüm › Düzen
+    = **macOS düzeni** (varsayılan, yukarıdaki) / **Windows düzeni** (önceki görünüm: vurgu `#0067c0`,
+    köşe 6/8 px, düz simgeler, seçili öğede solda vurgu çizgisi, altı çizili sekmeler; yazı 15 px).
+    Tema (açık/koyu/yüksek kontrast) düzenden bağımsız. Kod: `tokens.UiStyle`, `tokens.METRICS`,
+    `tokens.colors(theme, style)`, `stylesheet.build(theme, style)`, ayar `ui_style`. Windows düzeninin
+    ayrıntılı tasarımı sonra konuşulacak.
+  - **macOS düzeni ilkeleri (12 Ekim 2026, kullanıcı; dış görüş):** birebir kopya değil. Tek tip simgeler
+    (aynı çizgi kalınlığı 1.8, aynı boyut); kenar çubuğu simgeleri 13 Ekim'de yeniden
+    renkli yapıldı (aşağıya bakın); kartlarda tek köşe/kenarlık/boşluk sistemi; pencere
+    başlığını masaüstü çizer (çift başlık çubuğu yok); Genel bakış'ta gerçek **sistem sağlığı** özeti
+    (sistem diski, ayrıysa kişisel dosyalar diski, bellek, pil sağlığı; durum rozeti İyi / Göz atın /
+    İlgilenin; `backend/health.py`).
+  - **Ana ekran düzeltmeleri (13 Ekim 2026, dış görüş üzerine):** Genel bakış: bilgisayar kartı (ad ›
+    model › dağıtım · masaüstü › işlemci · RAM · ekran kartları; "Donanım ayrıntıları"), aynı hizada üç
+    durum kartı (Güncellemeler, Sürücüler, Wi-Fi ve Bluetooth; durumlar: denetleniyor / güncel /
+    işlem gerekiyor / desteklenmiyor / hata + "Yeniden dene" — önceden hiç doldurulmuyordu),
+    **Öneriler** ayrı ve yalnızca doğrulanmış olanlar (APT'de güncelleme var, Timeshift kurulu değil,
+    fwupd'nin bildirdiği firmware güncellemesi, pil sağlığı < %80; yoksa "Şu an ilgilenmeniz gereken
+    bir şey yok"), Hızlı işlemler (kişisel yedeğin sistem geri yükleme olmadığı yazılı), en altta
+    Sistem sağlığı. Kartlar klavyeyle açılır (Enter/Boşluk). Yapay zekâ paneli kapalıyken yer kaplamaz
+    (dar şerit kaldırıldı); kenar çubuğunun altındaki "Yardımcı" ya da F1 açar/kapatır (yapay zekâ
+    ayarlı değilse AI sayfası açılır). Alt durum çubuğu yalnızca bekleyen ya da çalışan görev varken
+    görünür.
+  - **Kenar çubuğu (13 Ekim 2026, kullanıcı):** macOS Sistem Ayarları gibi kategoriler, aç/kapa yok:
+    başlıksız üst grup (Genel bakış, Yapay zekâ sorusu) · Sistem (Güncelleme merkezi, Programlar, Görev
+    yöneticisi, Disk temizliği, Güç) · Bağlantılar ve aygıtlar (Wi-Fi/Bluetooth, Donanım ve yazıcılar,
+    Ekran) · Kişiselleştirme (Tema, Görev çubuğu, Yazı tipleri) · Düzenleme (Program klasörleri, Çalışma
+    grupları, Pencere grupları) · Yedekleme ve taşıma · Yardım (Sorun giderme, Windows'ta nasıldı?, Tüm
+    ayarlar) · eklenti sayfaları "Eklentiler" altında. Basit tek renkli simge yok: macOS düzeninde her
+    öğenin kendi renkli, üstten alta degradeli kutusu + beyaz kalın simge (seçiliyken de renk korunur);
+    Windows düzeninde düz simge. Kategori başlığı 14 px yarı kalın ikincil renk; tüm öğeleri gizliyse
+    başlık da gizlenir.
+  - Kenar çubuğu (eski): üstte logo + ad, her öğede simge. Genel bakış kartlarında vurgu renkli simge kutusu, tıklanabilir kartlarda üzerine gelince vurgu kenarlık; durum kartları ilgili sayfayı açar.
 
 ## Menü yapısı
 - **AI Soru** (geniş sohbet ekranı; ayrıca her sayfada yardımcı panel)
-- **Sistem:** Genel bakış, Güncellemeler, Sürücüler, Wi-Fi ve Bluetooth, **Yedekler ve geri alma**, Donanım ve yazıcı, Görev Yöneticisi, Disk temizliği, Yedekleme (kişisel dosyalar), Güç ve pil (yalnızca dizüstü), Windows'tan taşıma, Tüm ayarlar (Denetim Masası)
+- **Sistem:** Genel bakış, Güncellemeler, Sürücüler, Wi-Fi ve Bluetooth, **Yedekler ve geri alma**, Donanım ve yazıcı, Görev Yöneticisi, Disk temizliği, Yedekleme (kişisel dosyalar), Güç ve pil (masaüstü bilgisayarda adı "Güç", pil bölümleri gizli), Windows'tan taşıma, Tüm ayarlar (Denetim Masası)
 - **Arayüz:** Windows görünümü, tema/duvar kağıdı, yazı tipleri, ekran/ölçekleme
 - **Program:** Üstte arama, altta "Windows'ta ne kullanıyordun?" bölümü; **Kurulu programlar** sekmesi; Oyun sekmesi
 - **Sorun Giderme:** Üstte tek tıkla tam tarama, altta belirti kartları
+  - **Hız testi (27 Ekim 2026, kullanıcı isteği):** Wi-Fi › Bağlantı kalitesi › "Bağlantıyı test et" internet
+    erişilebilirse indirme, yükleme (Mbps) ve ping (ms, ipucunda jitter) da ölçer (`netquality.run_speed_test`). Sunucu
+    Cloudflare'in açık hız testi: `GET speed.cloudflare.com/__down?bytes=N`, `POST /__up` (cloudflare/speedtest README,
+    `bytes` sorgusu 1 KB istekle denendi). Ping 1.1.1.1'e ICMP (yoksa TCP 443), ortanca. İndirme 4 bağlantı 8 sn, yükleme
+    2 bağlantı 6 sn; ilk 1 sn (ısınma) sayılmaz; en çok 150 MB + 40 MB veri (kotalı hat). Kartta harcanan veri ve
+    sunucunun Cloudflare olduğu yazar. Yalnızca düğmeye basınca çalışır.
+  - **Ağ teşhisi (27 Ekim 2026, kullanıcı isteği):** "İnternet yok" yalnızca servisi yeniden başlatmayı öneriyordu ve
+    kullanıcının sorununu çözmedi; artık nedeni katman katman bulunur (`backend/netdiag.py`, root yok): sürücüsüz/görünmeyen
+    ağ kartı → NetworkManager durmuş → ağ kapalı → Wi-Fi tuşla/BIOS'ta (rfkill hard) ya da ayardan (soft) kapalı →
+    kablo takılı değil / takılı ama bağlanmamış / Wi-Fi'a bağlı değil / kart `/etc/network/interfaces`'te (yönetilmiyor)
+    → adres alınamadı (DHCP, 169.254) → varsayılan yol yok → Docker/sanal makine ağı ev ağıyla çakışıyor → modem yanıt
+    vermiyor (Wi-Fi sinyali < 30 ise "sinyal zayıf") → oturum açma sayfası (portal) → DNS → modemin interneti yok ya da
+    VPN engelliyor (1.1.1.1/9.9.9.9:443 TCP) → vekil sunucu yanıt vermiyor (ortam, GNOME, KDE `kioslaverc`).
+    İlk bozuk katman tanıdır. Her nedenin kendi başlığı, ne yapılacağı ve düğmesi var; kullanıcı yetkisiyle yapılanlar
+    (`nmcli networking on`, `radio wifi on`, `device connect`, `connection down`) sonrası teşhis kendiliğinden yinelenir.
+    Servis başlatma root işlemleriyle (`service.enable` + `service.restart`). Ayrı DNS denetimi kalktı (teşhis kapsıyor).
+    Tarama ve "İnternet yok" kartındaki "Nedenini bul" aynı teşhisi kullanır.
 - **Ayarlar:** Linwas'ın kendi ayarları (işlem geçmişi ve eklenti listesi burada)
-- Menü özellikleri: rozetler; arama kutusu başlık çubuğunun ortasında (Windows terimlerini de arar); Yardımcı paneli düğmesi sayfa başlığının sağında. Sistem alt sayfaları Windows Ayarlar düzeninde kartlar + breadcrumb ile açılır.
+- **Ayarlar (7 Ekim 2026 kararı):**
+  - **Düzen:** sayfa içinde solda kategori listesi, sağda seçilen bölüm; üstte "Ayarlarda ara". Bölümler: Genel, Görünüm, Yapay zekâ, Bildirimler ve başlangıç, Gizlilik ve veriler, Yedekleme ve sıfırlama, Eklentiler, Hakkında.
+  - **Kaydetme:** değişiklik anında kaydedilir ve uygulanır ("Kaydet" düğmesi yok); root gerektirenler yine şifre sorar.
+  - **Teknik ayarlar ayrı yerde (Denetim Masası gibi):** basit Ayarlar sayfasında teknik ayar yok; teknik ayarların hepsi ayrı bir "Gelişmiş" sayfasında (ör. komut çıktılarını ve paket adlarını gösterme, ayrıntılı günlük, tanılama).
+  - **Yapay zekâ:** AI ayarları penceresi bu bölüme taşınır (sağlayıcı, API anahtarı, model); aylık token sınırı (yaklaşınca uyarı, aşılınca durdurma); sohbet geçmişi saklama süresi (hiç / 7 gün / 30 gün / her zaman) + tümünü sil; asistanın erişim izinleri (sistem bilgisi, ekran görüntüsü, log ekleme).
+  - **Bildirimler ve başlangıç:** Linwas oturum açılınca tepside sessizce başlar (varsayılan açık, kapatılabilir); masaüstü bildirimleri (güncelleme, yeniden başlatma, yedek, sorun), sessiz saatler.
+  - **Gizlilik ve veriler:** Linwas'ın tuttuğu veriler (işlem geçmişi, AI sohbetleri, geri alma kayıtları) görülür ve tek tıkla silinir; hata raporu izni.
+  - **Uygulama (aşama 1–3, 7 Ekim 2026):** `ui/pages/settings.py` (bölümler: Genel, Görünüm, Yapay zekâ, Bildirimler ve başlangıç, Gizlilik ve veriler, Eklentiler; arama bölüm metinlerinde arar). AI ayarları penceresi `ui/pages/settings_ai.py` bölümüne taşındı (anahtar düzenleme bitince, sınır değişince kaydedilir; karşılama sihirbazı aynı bölümü pencerede açar); ⚙ düğmesi Ayarlar › Yapay zekâ'yı açar; sınırın %80'inde panelde uyarı. Sohbet saklama `ai_retention` (açılışta ve değişince eski sohbetler silinir; "Saklama" seçiliyse hiç kaydedilmez); `ai_allow_system_info` kapalıysa sistem bilgisi eklenemez. **Arka plan:** Pardus GNOME'da tepsi yok (AppIndicator eklentisi kurulu değil), bu yüzden tepsiye bağlı değil: pencere kapatılınca Linwas gizlenip çalışmaya devam eder (tepsi varsa simge de gösterilir), ilk seferde "çalışmaya devam ediyor" bildirimi; tamamen kapatma Ayarlar › Genel'de. Oturumla başlatma `~/.config/autostart/linwas.desktop` (`linwas --background`, penceresiz). Tek kopya: `QLocalServer` (`linwas-<uid>`); ikinci başlatma pencereyi öne getirir, .deb/.exe yolunu iletir. Bildirimler `gdbus call … Notify` (bildirimdeki "Aç" `gdbus monitor` ile dinlenir); saatte bir: güncelleme sayısı, yeniden başlatma (açılış başına bir kez), otomatik güncelleme sonucu, sürücüsüz aygıt; aynı durum bir kez bildirilir (`~/.local/share/linwas/notify_state.json`); sessiz saatlerde gönderilmez.
+  - **Uygulama (aşama 4–5, 7 Ekim 2026):** Gizlilik ve veriler: tutulan veriler boyutlarıyla (`core/user_data.py`: işlem geçmişi, AI sohbetleri, AI kullanım sayaçları, bildirim durumu, sürücü değişikliği geçmişi, günlükler) tek tek ya da toplu silinir; ayarlar ve API anahtarları korunur; geri alma kayıtları root'a ait olduğundan yalnızca sayısı gösterilir (Yedekler ve geri alma'ya bağlantı). Yedekleme ve sıfırlama: ayarlar + AI tercihleri + aylık sınırlar JSON'a dışa/içe aktarılır (`"format": "linwas-settings"`; API anahtarları ve bu bilgisayara ait ilk açılış bilgileri taşınmaz); sıfırlama ilk açılış bilgilerini korur; sonrasında tema/başlangıç/AI hemen uygulanır, sayfa yeniden kurulur. Hakkında: sürüm, sistem, masaüstü, Python, Qt/PySide6; **geliştirici kartı (8 Ekim 2026 kararı, kodlandı 10 Ekim 2026 — deneme bekliyor):** Lisanslar kartının üstünde geliştirici (mehmedgur; gerçek ad kullanıcı isterse), e-posta (mehmedgrbz11@gmail.com, .deb Maintainer satırıyla aynı), proje sayfası (github.com/mehmedgur/linwas2), "Sorun bildir" düğmesi buraya taşınır, lisans (yayın öncesi karar; o zamana dek "karar verilmedi"); bilgiler tek yerde (`linwas/__init__.py`); sistem bilgisini kopyala; sorun bildir (GitHub Issues); lisanslar (Linwas lisansı yayın öncesi karar). **Gelişmiş sayfası** (`ui/pages/advanced.py`, menüde yok; Ayarlar'ın sol altındaki bağlantıyla): teknik ayrıntıları göster (`show_details`, görev penceresinde komut çıktısı baştan açık), ayrıntılı günlük (`debug_log`, `~/.local/state/linwas/linwas.log`, 1 MB × 3), ayar/veri/günlük klasörlerini aç, tanılama (`backend/diagnostics.py`: pkexec, polkit kuralı, sistem yardımcısı, zamanlayıcı, gdbus, anahtarlık, 2 GB boş alan, internet, Flatpak, fwupd, Timeshift; sonuçlar kopyalanabilir), otomatik güncellemeyi şimdi çalıştır (`service.restart linwas-autoupdate.service`), paket sistemi bakımı (paket listesini yenile, bozuk paketleri onar, önbelleği temizle).
+  - **Yedekleme ve sıfırlama:** Linwas ayarlarını dosyaya dışa/içe aktarma (yeni bilgisayara taşıma), varsayılanlara sıfırlama. **Hakkında:** sürüm, sistem bilgisini kopyala, lisanslar.
+- Menü özellikleri: daraltma, arama kutusu (Windows terimlerini de arar), açılır alt menüler, bildirim rozetleri, sistem durumu kartı, yardımcı paneli düğmesi.
 - Genel bakışta hızlı işlemler: Görev Yöneticisi, Disk temizliği, Dosyalarımı yedekle, Windows'tan taşı.
 
 ## Yedekler ve geri alma
@@ -121,7 +283,7 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - Linwas'ın yaptığı işler Linwas içinde kalır (**Linwas öncelikli**); aynı ayarı sistem de yapabiliyorsa sistem ayarı ikincil link olarak verilir.
 - Linwas'ın yapmadığı ayarlar için **"Sistem ayarlarında aç"** butonu: masaüstüne göre doğru ayar uygulaması, mümkünse doğru bölümde açılır (GNOME: Ayarlar bölüm adıyla; Cinnamon: Sistem Ayarları modül adıyla; XFCE: ilgili ayrı ayar uygulaması).
 - Butonun yerleri: ilgili Linwas sayfaları, arama sonuçları ("Linux'ta burada: Ayarlar › Fare"), "Tüm ayarlar (Denetim Masası)" sayfası, AI cevapları.
-- "Tüm ayarlar (Denetim Masası)": Windows'taki gibi kategoriler.
+- "Tüm ayarlar (Denetim Masası)": Windows'taki gibi kategoriler. **Görünüm (8 Ekim 2026 kararı, kodlandı — `ui/pages/all_settings.py`, denenmedi):** klasik Denetim Masası "Kategori görünümü": her kategori bir satır; solda büyük simge (kendi SVG setimiz, gerekirse yeni simge), sağda kalın başlık ve altında "Tarih ve saat · Dil ve bölge · …" biçiminde tıklanabilir bağlantılar. Linwas'ın kendi sayfası olan ayarlarda küçük "Linwas" etiketi; sistemdeki karşılığı sağ tık menüsündeki "Sistem ayarlarında aç" ile açılır (satırdaki ayrı "Sistem" düğmesi kalkar). Sağ üstte arama kutusu + "Sistem ayarlarını aç". Kategoriler: Sistem; Donanım ve ses; Ağ ve İnternet; Görünüm ve kişiselleştirme; Gizlilik ve bildirimler; Erişim kolaylığı (iki sütun). Arama kategori adında ve bağlantı metinlerinde arar (Türkçe İ/ı duyarsız). Görsel düzen (8 Ekim 2026 düzeltmesi): her kategori ayrı kart (vurgu renkli 52 px simge kutusu, başlık + kısa açıklama, ince çizgi); altında her ayar kendi simgesiyle düğme (iki sütun), Linwas etiketi açık mavi küçük rozet. Sağ tık ve klavyedeki menü tuşu aynı menüyü açar. Sistem karşılığı da Linwas sayfası da olmayan ayar soluk (devre dışı) gösterilir.
 - Yardım: yan panelde adım adım rehber; önce metin, en sık 10–15 ayar için ekran görüntüsü.
 - Eşleşmeler `data/settings_map.json` içinde, masaüstü ve sürüme göre; Pardus 23 ve Ubuntu 22.04'te tek tek doğrulanır. Bölüm bulunamazsa ayar uygulamasının ana ekranı açılır.
 - Güvenlik: kullanıcı yetkisiyle açılır, şifre istemez, kuyruğa girmez; yalnızca bilinen ayar uygulamaları açılabilir.
@@ -151,9 +313,50 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
   - **Herhangi bir .deb dosyası:** kullanıcı indirdiği .deb'i Linwas ile açar; Linwas risk analizini (kaynak, imza, bağımlılıklar, ne değiştireceği) gösterir, onayla kuyruğa ekler.
 - Ubuntu'da Flatpak gerekirse Linwas onu da kurar (kuyruk üzerinden).
 - **Snap:** Snap ile kurulu uygulamalar listede gösterilir ve güncellenebilir; yeni kurulum kaynağı olarak sunulmaz. Mint'te gösterilmez.
-- Güncellemeler: bildirilir, kullanıcı başlatır.
-- Sürücüler: önerilen tek tıkla + "Diğer seçenekler".
-- EXE: risk analizi; Linux alternatifi varsa önerilir, yoksa Wine ile açılır.
+- ~~Güncellemeler: bildirilir, kullanıcı başlatır.~~ → **Güncelleme merkezi** (7 Ekim 2026 kararı, aşağıda).
+- Sürücüler: önerilen tek tıkla + "Diğer seçenekler" (Güncelleme merkezi › Sürücüler altında).
+- **Güncelleme merkezi (7 Ekim 2026 kararı; Windows Update benzeri, daha gelişmiş):**
+  - **Tek sayfa:** Güncellemeler + Sürücüler + Firmware birleşir. Üstte durum ("Güncelsiniz" / "N güncelleme"), "Denetle" düğmesi, son denetim zamanı; altında bölümler: Sistem güncellemeleri, Sürücüler, Firmware, Güncelleme geçmişi, Gelişmiş seçenekler.
+  - **Otomatik kurulum:** güvenlik + sistem güncellemeleri (dağıtım deposu) kendiliğinden kurulur. Sürücü değişikliği, yeni çekirdek serisi ve firmware her zaman kullanıcı onayıyla. **Linwas'ın kendi systemd zamanlayıcısı** + root helper (unattended-upgrades değil); geri alma kaydı tutulur, hata AI'a sorulabilir.
+  - **Duraklatma:** Windows gibi "1 hafta duraklat", açılır listeden 5 haftaya kadar; süre dolunca kendiliğinden devam eder. Gelişmiş seçeneklerde tamamen kapatma.
+  - **Koşullar:** pilde çalışırken ve ölçülü bağlantıda (NetworkManager) bekler; Timeshift varsa kurulumdan önce anlık görüntü (sınırlı sayıda tutulur).
+  - **Yeniden başlatma:** bildirim + rozet; "Şimdi yeniden başlat" ya da "Bu gece şu saatte". Linwas kendiliğinden yeniden başlatmaz.
+  - **Sürücüler:** sürüm seçimi (ör. NVIDIA 535/550, önerilen işaretli), önceki sürücüye dönme (değişiklikten önce yedek), Secure Boot açıksa MOK kaydı adımları sade dille, kurulum sonrası sorunlar (siyah ekran, çözünürlük) için hazır çözümler + AI.
+  - **Kapsam:** yazıcı/tarayıcı sürücüleri (takılan aygıta göre paket önerisi), firmware (fwupd; sürüm notları, geçmiş, yeniden başlatma gereksinimi), yeni donanım için yeni çekirdek (Ubuntu HWE, Debian/Pardus backports; tam yedekle).
+  - **Uygulama (aşama 1–2, 7 Ekim 2026):** sayfa `ui/pages/update_center.py` (kenar çubuğunda "Güncelleme merkezi"; eski "drivers" sayfa kimliği Sürücüler bölümüne yönlenir). Geçmiş `/var/log/apt/history.log` (+ .gz) dosyasından okunur (herkes okuyabilir); otomatik kurulum apt'ye `-o Linwas::Auto=1` verir, geçmişte "Otomatik" rozeti böyle bulunur. Otomatik kurulum `core/autoupdate.py`: `linwas-autoupdate.timer` (günlük, açılıştan 15 dk sonra, `Persistent=true`) → `linwas-autoupdate.service` (oneshot, root, parametresiz) → `apt-get update` + `apt-get upgrade` (yeni paket kurmaz/kaldırmaz). Ayar `/etc/linwas/autoupdate.json` (varsayılan: açık, yedek açık), yalnızca root helper işlemi `autoupdate.configure` (enabled, snapshot, pause_weeks −1…5) yazar. Durum `/var/lib/linwas-autoupdate/state.json`. Pil: prize/USB-C güç kaynağı takılı değilse ya da pil şarj olmadan %30'un altındaysa beklenir; ölçülü: NetworkManager `Metered` özelliği 1 ya da 3. Yedek: Timeshift, açıklama "Linwas otomatik güncelleme", son 3 tanesi tutulur. Yeniden başlatma gerekli: `/run/reboot-required` ya da çalışandan yeni kurulu çekirdek; "Şimdi" `systemctl reboot` (kullanıcı, logind), "Bu saatte" root işlemi `power.schedule_reboot` (`shutdown -r SS:DD`), iptal `power.cancel_reboot`.
+  - **Uygulama (aşama 3–4, 7 Ekim 2026):** NVIDIA seçenekleri depodan okunur (`backend/driver_options.py`; Ubuntu `nvidia-driver-<n>[-open]`, Debian/Pardus `nvidia-driver`, `nvidia-tesla-<n>-driver`, `nvidia-legacy-<n>xx-driver`); önerilen `ubuntu-drivers devices` ya da `nvidia-detect`, yoksa Debian'da `nvidia-driver`, Ubuntu'da en yeni seri; legacy sürümler "yalnızca eski kartlar için" işaretli. Sürücü değişikliği görevi: Timeshift yedeği (kuruluysa) → `package.install` ya da açık kaynağa dönüş için yeni root işlemi `driver.remove_nvidia` (`apt-get purge '.*nvidia.*'` + autoremove) → Secure Boot açık ve anahtar kayıtlı değilse yeni root işlemi `secureboot.enroll_mok` (8 haneli tek kullanımlık şifre Linwas'ta üretilip gösterilir, `mokutil --import`'a standart girdiden verilir; anahtar Ubuntu `/var/lib/shim-signed/mok/MOK.der`, Debian `/var/lib/dkms/mok.pub`). Başarılı değişiklik `~/.local/share/linwas/driver_changes.json`'a yazılır; "Önceki sürücüye dön" buradan. Sorun giderme kartı + "Asistana sor" (aygıt/sürücü/Secure Boot bilgisi). Aygıt Yöneticisi: `backend/devices.py` (PCI `lspci -vmmnnk`, USB sysfs + `lsusb` adları); sürücüsüz ekran/ağ/Bluetooth/ses/kamera/depolama aygıtları "sorunlu". Yazıcı/tarayıcı: USB üretici kimliğine göre paket (HP `hplip`, Epson `printer-driver-escpr`, Brother `printer-driver-brlaser`, Canon `printer-driver-gutenprint`, Samsung `printer-driver-splix`; IPP-over-USB aygıtlarda `ipp-usb`); Sürücüler bölümünde "Yazıcılar ve tarayıcılar" ve Donanım sayfasında önerilir.
+  - **Donanımdan bağımsızlık (7 Ekim 2026):** öneriler yalnızca o makinenin deposunda gerçekten bulunan paketlerden gösterilir (Ubuntu'da `firmware-*` yok, `linux-firmware` içinde gelir). AMD: `firmware-amd-graphics`, `mesa-vulkan-drivers`, `mesa-va-drivers`; Intel: `intel-media-va-driver`, `mesa-vulkan-drivers`; işlemci mikrokodu `intel-microcode` / `amd64-microcode` (/proc/cpuinfo üreticisine göre).
+  - **Görünüm (7 Ekim 2026 düzeltmesi):** Windows'taki "durum + alt alta satırlar" düzeni yerine Linwas'ın kendi düzeni: başlıkta tek satır durum + Denetle / Tümünü kur; büyük sayılı üç kutucuk (Sistem, Sürücüler, Firmware); altta yan yana "Son değişiklikler" (son 3 işlem) ve "Otomatik güncellemeler" (durum, son çalışma, Duraklat/Devam et, Ayarlar).
+  - **Uygulama (aşama 5, 7 Ekim 2026):** Firmware bölümü `ui/pages/firmware_view.py` + `backend/firmware.py`: `fwupdmgr get-devices|get-updates|get-history --json` (kullanıcı yetkisiyle); aygıt başına güncelleme, sürüm notları (HTML → düz metin), "Önemli" (urgency high/critical), "prize takılı olmalı" (require-ac; pilde düğme kapalı), yeniden başlatmada tamamlanır (needs-reboot); işlemci mikrokodu kartı. Eski metin sayımı (• sayma) hatalıydı, JSON'a geçildi. Yeni root işlemleri: `firmware.refresh` (`fwupdmgr refresh --force`), `firmware.update_device` (40 haneli aygıt kimliği). Yeni çekirdek (`backend/kernel.py`, Sürücüler bölümünde kart): Ubuntu HWE (`linux-generic-hwe-<sürüm>`, `package.install`); Debian türevlerinde depoda tanımlı `*-backports` varsa yeni root işlemi `kernel.install_backports` (`apt-get install -t <suite> linux-image-<mimari>`); saf Debian'da backports yoksa `apt.add_source` ile resmi `deb.debian.org` backports satırı (`linwas-backports.list`). Pardus gibi türevlere Debian deposu eklenmez. Kurulumdan önce Timeshift yedeği.
+  - **Sürücüler geliştirmesi (8 Ekim 2026 kararı):**
+    - **Görünüm — donanım kartları:** her donanım (ekran kartı, Wi-Fi/ağ, ses, Bluetooth, kamera, yazıcı/tarayıcı) büyük simgeli kart: model adı, kullanılan sürücü, durum rozeti (Çalışıyor / Önerilen var / Sorunlu), işlem düğmesi. Sade metin; "Ayrıntılar" açılınca paket adı, sürüm, çekirdek modülü, PCI/USB kimliği.
+    - **Uygulama (aşama 1, 8 Ekim 2026):** `backend/hardware_cards.py` aygıtları (`devices.list_devices`) ve sürücü önerilerini birleştirir; öneri üretici kimliğine göre (10de NVIDIA, 1002 AMD, 8086 Intel, 14e4 Broadcom, 10ec Realtek, 14c3 MediaTek) aygıta bağlanır, eşleşmezse gruptaki ilk aygıta, aygıt yoksa aygıtsız karta. Ekran kartlarının HDMI ses denetleyicisi ayrı kart olmaz. Sürücü sürümü `/sys/module/<sürücü>/version`. USB sınıf 06 (Still Imaging: telefon, fotoğraf makinesi) artık yazıcı sayılmaz.
+    - **Sürücü sağlık kontrolü:** kurulu sürücü gerçekten çalışıyor mu — yüklü çekirdek modülü, çizimi hangi kartın yaptığı, kurulu paket ile yüklü modül sürüm uyuşmazlığı (yeniden başlatma gerekir), DKMS derleme hatası; sonuç sade dille + tek tık düzeltme (kuyruk üzerinden).
+    - **Uygulama (aşama 2, 8 Ekim 2026):** `backend/driver_health.py`; Sürücüler sayfasının üstünde "Sürücü sağlık kontrolü" kartı, "Denetle" ile. Denetimler: NVIDIA (paket kurulu + modül yüklü mü; `/sys/module/nvidia/version` ile `modinfo -F version nvidia|nvidia-current` farklıysa yeniden başlatma; Secure Boot anahtarı; nouveau hâlâ yüklü), DKMS (`dkms status`: her modül çalışan çekirdek için "installed" mı; değilse eksikse `linux-headers-<uname -r>` + yeni root işlemi `driver.rebuild_modules` = `dkms autoinstall -k <çalışan çekirdek>`), çizim (`glxinfo -B` renderer; llvmpipe/softpipe = hızlandırma yok → asistana sor). Düzeltmeler: Şimdi yeniden başlat (`systemctl reboot`, onaylı), Sürücüleri yeniden hazırla, Anahtarı kaydet. `dkms`/`modinfo` /usr/sbin'de aranır.
+    - **Eksik firmware tespiti:** çekirdek günlüğündeki "firmware yüklenemedi" kayıtları; gereken paket depoda doğrulanıp önerilir.
+    - Sağlık kontrolü ve firmware tespiti **yalnızca elle** ("Denetle" düğmesi); arka planda çalışmaz, bildirim göndermez.
+    - **Uygulama (aşama 3, 8 Ekim 2026):** `backend/firmware_missing.py`, sağlık kontrolünün parçası. Kaynaklar: (1) `journalctl -k -b` "Direct firmware load for … failed" / "firmware: failed to load …" (normal kullanıcı çoğunlukla okuyamaz: Pardus'ta `dmesg_restrict=1`, journal grubu yok → atlanır); aygıtı çalışan sürücülerin satırları sayılmaz (iwlwifi önce yeni sürümü dener); (2) bağlı sürücüsü olmayan önemli aygıtta modülün `modinfo -F firmware` dosyalarının hiçbiri /lib/firmware'de (.xz/.zst dahil) yoksa. Dosya ön eki → paket (Pardus 23'te doğrulandı: firmware-iwlwifi, -realtek, -atheros, -brcm80211, -misc-nonfree (MediaTek de burada; firmware-mediatek yok), -amd-graphics, -sof-signed, -intel-sound, -libertas, -ti-connectivity; Ubuntu linux-firmware); ilk depoda bulunan önerilir. Paket kurulu ama dosya günlükte eksikse "yeniden başlat".
+    - **Hibrit grafik (PRIME):** varsayılan Dengeli (tümleşik kart çizer, güçlü kart gerektiğinde); programı güçlü kartla açma listesi + menü kısayolu; Ubuntu'da (`prime-select` varsa) ayrıca Tasarruf / Performans modu. Komutlar ve ortam değişkenleri resmi belgeden doğrulanacak.
+    - **Uygulama (aşama 4, 8 Ekim 2026):** `backend/hybrid_gpu.py` + `ui/pages/hybrid_view.py`; Sürücüler sayfasında iki ekran kartı varsa "Hibrit grafik" kartı. Tümleşik kart = Intel varsa o, yoksa ilk. Program seçilince menü kısayolu `~/.local/share/applications/<aynı ad>.desktop` olarak kopyalanır: `PrefersNonDefaultGPU=true` + her `Exec=` başına `env` (NVIDIA kapalı kaynak: `__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia __VK_LAYER_NV_optimus=NVIDIA_only`; diğerleri `DRI_PRIME=1`) + `X-Linwas-GPU=true` işareti; yalnızca işaretli dosyalar silinir, kullanıcının kendi kısayolu `.linwas-orig` olarak saklanıp geri konur. Ubuntu'da `prime-select` varsa kip seçimi (yeni root işlemi `prime.select`: intel / on-demand / nvidia).
+    - **Yeni sürüm bildirimi:** depoda kart için daha yeni NVIDIA serisi çıkınca bildirim + sürüm notu; kurulum yine onayla.
+    - **Uygulama (aşama 5, 8 Ekim 2026):** saatlik bildirim döngüsü (`ui/notifier.py`) NVIDIA ekran kartı varsa günde en çok bir kez `driver_options.nvidia_options()` okur; `newer_series()` kurulu seri numaralı paketten (`nvidia-driver-<n>`) daha yeni seriyi bulur (açık çekirdek -open, legacy, tesla hariç). Her yeni seri için bir kez bildirim ("Güncellemeler" bildirim ayarına bağlı), "Aç" Sürücüler bölümünü açar. Debian/Pardus `nvidia-driver` tek paket olduğundan bildirim çıkmaz (yeni sürüm normal güncellemeyle gelir). Sürüm notu bağlantısı eklenmedi (NVIDIA sayfa adresi doğrulanmadı).
+    - Sıra (her biri ayrı commit, aralarda kullanıcı dener): görünüm → sağlık → firmware → PRIME → bildirim.
+  - **Aygıt Yöneticisi:** Donanım ve yazıcı altında ayrı görünüm; bütün PCI/USB aygıtları, kullandığı sürücü, durumu; sürücüsüz/sorunlu aygıtlar en üstte uyarıyla. Güncelleme merkezi ile karşılıklı bağlantı.
+- EXE: risk analizi; Linux alternatifi varsa önerilir, yoksa Wine ile açılır. (6 Ekim 2026 ayrıntıları:)
+  - **Açma:** Programlar › "Windows programı aç (.exe)…" ve "Windows programları" sekmesi; .exe/.msi çift tıklanınca Linwas açılır (kurulu pakette ilk açılışta `xdg-mime default`, kullanıcı düzeyinde).
+  - **.deb dosyaları (18 Ekim 2026, kullanıcı):** çift tıklanan .deb Linwas'ta açılır (risk analizi →
+    kurulum). Kurulu pakette ilk açılışta `xdg-mime default linwas.desktop` (asıl tür ve eski adları,
+    kullanıcı düzeyinde); önceki uygulama (ör. Arşiv Yöneticisi) ayarlara yazılır. Ayarlar › Genel ›
+    "Dosyaları açma" kutusu kapatılınca ona dönülür (yoksa kullanıcının mimeapps.list'inden Linwas
+    satırı silinir). `backend/file_handlers.py`.
+  - **Analiz** (`backend/exe_inspect.py`, salt okunur): PE başlığı (mimari, konsol/pencere, imza tablosu var mı — Linux'ta doğrulanamaz, .NET), sürüm bilgisi (şirket/ürün), kurulum türü (Inno/NSIS/MSI/InstallShield/WiX), çift uzantı hilesi, tarayıcının yazdığı indirme adresi (xattr), SHA256. Risk: yüksek = geçersiz PE / çift uzantı / ARM; orta = imzasız veya yapımcı yok.
+  - **Virüs taraması:** yalnızca "VirusTotal'da denetle" düğmesi (tarayıcıda, yalnızca SHA256 ile; dosya gönderilmez). ClamAV yok.
+  - **Wine:** dağıtım deposundan; yeni root işlemi `wine.setup` (i386 mimarisi + `wine wine64 wine32:i386`).
+  - **Ortam (WINEPREFIX) — karma:** varsayılan tek ortak ortam (`~/.local/share/linwas/wine/shared`); yüksek riskli dosya her zaman ayrı ortamda; kullanıcı "Ayrı ortamda aç" seçebilir; ortak ortamda 60 sn içinde hata koduyla kapanan program için "ayrı ortamda yeniden dene" önerilir. Ayrı ortam silinince kısayolları da silinir; ortak ortamdaki program Wine'ın "Program Ekle/Kaldır" penceresiyle kaldırılır.
+  - **Bottles'a geçiş (7 Ekim 2026 kararı, kodlandı):** Windows programları Bottles üzerinden çalıştırılacak; Linwas Bottles'ı arka planda resmi komut satırı aracıyla (`bottles-cli`, Flatpak'ta `flatpak run --command=bottles-cli com.usebottles.bottles …`) yönetir, kullanıcı Bottles penceresini görmez. Akış: Bottles yoksa Flatpak olarak kurulur (kuyrukta adım) → programa özel şişe (uygulama/oyun profili, 64 bit + 32 bit desteği) → kurulum dosyası şişede çalışır → program şişeye kaydedilir, menüye kısayol eklenir → çıktı JSON olarak okunur, hata AI'a iletilip sade dille gösterilir. Kabuk yok, sabit komutlar, kullanıcı yetkisiyle (şifre yok); Bottles kendi Wine sürümünü getirir. Bottles beğenilmezse yukarıdaki dağıtım Wine'ı yoluna geri dönülür (mevcut kod şimdilik korunur).
+    - **Uygulama ayrıntıları:** `backend/bottles.py` (`ENABLED = False` → Wine yoluna dönüş). Her programa ayrı şişe (ad: programın sadeleştirilmiş adı); Linwas'ın şişeleri `~/.local/share/linwas/bottles.json` kaydında. Flatpak Bottles ev klasörünü göremediği için kurulum dosyasının klasörü yalnızca o çalıştırmada salt okunur açılır (`flatpak run --filesystem=<klasör>:ro`). Kurulumdan sonra `--json programs` okunur, her programa `~/.local/share/applications/linwas-bottle-<şişe>--<program>.desktop` kısayolu yazılır (`bottles-cli run -b … -p …`). Kurulum dosyası olmayan EXE `bottles-cli add` ile eklenir, kendi klasöründen açılır. Şişe silme CLI'da yok: Linwas kaydındaki şişenin klasörü (`~/.var/app/com.usebottles.bottles/data/bottles/bottles/<ad>`) ve kısayolları silinir. Bottles yoksa görev: (Flatpak yoksa yeni root işlemi `flatpak.setup`: `flatpak` paketi + Flathub deposu) → `flatpak.install com.usebottles.bottles`. "Bu bir oyun" seçilirse `gaming` profili. Hata penceresinde "Asistana sor".
+  - **Windows sanal makinesi (7 Ekim 2026; aynı gün askıya alındı → yapilacaklar.md › Bekleyen fikirler; Wine/Bottles'ta çalışmayan büyük programlar için, ilk hedef Microsoft 365):** Bottles'ta Microsoft 365 kurulumu `30088-45` ve `0-2031 (17002)` hatalarıyla başarısız oldu (CrossOver da "kuruluyor ama çalışmıyor" diyor). Yol: QEMU/KVM içinde Windows + FreeRDP RemoteApp; Office pencereleri Linux masaüstünde yerel uygulama gibi görünür, menüye kısayol ve dosya ilişkilendirmesi eklenir, ev klasörü paylaşılır. Sıfırdan yazılmaz: altyapı olarak bakımı süren hazır parçalar (dockur/windows konteyneri; LinOffice/WinApps incelenir), Linwas yönetici ve Türkçe arayüz olur (donanım denetimi, kurulum, bellek ayarı, gerektiğinde başlat/durdur). **Windows sürümü:** Windows 11 Pro varsayılanı kullanılmaz; varsayılan **Windows 11 IoT Enterprise LTSC 2024** (en az 2 GB bellek, TPM isteğe bağlı, güvenlik desteği 11 Ekim 2034'e kadar, Microsoft 365 destekli); sürüm seçilebilir (perakende lisanslı Windows 11 Pro / 10 Pro). **Lisans:** geliştirme ve denemede lisanssız, Microsoft'un deneme (Evaluation) sürümüyle; lisans kararı en sona bırakıldı. Kurulum ekranında "Kendi Windows lisansınız ve Microsoft 365 aboneliğiniz gerekir; yoksa deneme süresiyle sınırlıdır" yazılır; Linwas etkinleştirmeyi atlatan yöntem önermez. **Donanıma göre öneri:** KVM yoksa ya da bellek 8 GB'tan azsa yalnızca web Office (+ LibreOffice/ONLYOFFICE); 8–16 GB "sınırda" uyarısıyla (sanal makineye 3–4 GB, yalnızca Office açıkken çalışır); 16 GB ve üstü rahat. Bottles küçük programlar için kalır.
+  - **Microsoft Office:** Wine/Bottles'ta çalışması garanti değil (Office 2016 gibi kurulum dosyalı sürümler kısmen/tamamen çalışabilir; Microsoft 365 genellikle kurulum/etkinleştirmede sorun çıkarır). Linwas kurmayı **dener**, söz "deneyebilirsin" düzeyindedir; çalışmazsa Office web sürümü ve LibreOffice önerilir.
 - **Program kaldırma** (6 Ekim 2026 kararı):
   - **İki yerden:** Program › **Kurulu programlar** sekmesi (Windows'taki "Programlar ve Özellikler" gibi) ve arama sonuçları (kurulu programda "Kur" yerine "Kaldır" butonu).
   - **Kurulu programlar listesi:** yalnızca kullanıcıya yönelik uygulamalar (AppStream); arama ve sıralama. Sütunlar: ad + simge, **kapladığı alan**, **kaynak rozeti** (APT / Flatpak / Snap / üçüncü taraf), **güncelleme var mı** (programa özel "Güncelle" butonu), **kurulma tarihi**.
@@ -175,13 +378,475 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
    - Yer imleri/profiller otomatik aktarılır. Hedef tarayıcı açıksa uyarı ve "Tarayıcıyı kapat" butonu. Kapatılmazsa aktarım beklemeye alınır.
    - **Sadece rehberle:** Chrome/Edge kayıtlı şifreleri (Windows'ta CSV dışa aktar → Linwas aktarır), Wi-Fi şifreleri, Outlook (.pst) e-postaları.
    - **Taşınmaz:** Windows programlarının kendisi, duvar kağıdı, oyunlar.
+   - **Başka Linux'a taşıma (12 Ekim 2026, kullanıcı kararı):** Windows'tan taşıma ile tek sayfada birleşir
+     (menü adı "Taşıma"; kaynak: Windows ya da Linux). Linux'ta iki yön: **Dışa aktar** (bu sistemden paket
+     oluştur) ve **İçe aktar** (paketi ya da eski bölümü yeni sisteme al); yeni sistemde ilk açılış sihirbazı
+     bulduğu paketi önerir.
+     - **Yol:** harici disk / USB (paket dosyası); aynı bilgisayardaki diğer bölüm (çift açılış ya da yeniden
+       kurulumda eski `/home`); bulut (GNOME Çevrimiçi Hesaplar ile bağlı Google Drive vb.; büyük veride
+       yavaşlık uyarısı).
+     - **Kapsam:** kişisel dosyalar; program listesi (yeni dağıtımda karşılığı kurulur, adı depoda
+       doğrulanır); program ayarları (tarayıcı profilleri, Thunderbird, LibreOffice, `~/.config`);
+       masaüstü düzeni (tema, duvar kağıdı, yazı tipleri, kısayollar, görev çubuğu, Linwas klasör/grupları);
+       sistem bilgileri (Wi-Fi şifreleri, yazıcılar, SSH/GPG anahtarları).
+     - **Hedef:** Linwas'ın desteklediği aileler (Ubuntu, Debian, Pardus, Mint); yeni sistemde de Linwas
+       kurulu olmalı.
+     - **Masaüstü farklıysa** (ör. GNOME → XFCE): ortak ayarlar karşılığına çevrilir (tema rengi, açık/koyu,
+       duvar kağıdı, yazı tipi, klavye düzeni); masaüstüne özel olanlar atlanır ve sonuçta listelenir.
+     - **Depo paketi mi Flatpak mı:** ikisi de varsa kullanıcıya sorulur (eski sistemdeki kuruluş biçimi
+       önerilen olarak işaretlenir).
+     - **Seçim:** hazır işaretli liste, her satırda boyut; hedef diskte yer yetiyor mu gösterilir.
+     - **Şifreleme:** isteğe bağlı; paket şifre/anahtar (Wi-Fi, tarayıcı şifreleri, SSH/GPG) içeriyorsa
+       zorunlu (parola sorulur; unutulursa açılamayacağı söylenir).
+     - **Uygulama (12 Ekim 2026):** `backend/linux_transfer.py`, arayüz `ui/pages/linux_transfer.py`
+       (Taşıma sayfasının başlangıç ekranında üç yol: Windows'tan getir / Başka Linux'tan getir / Bu
+       bilgisayarı başka Linux'a taşı). Paket klasörü `Linwas-Tasima-<bilgisayar>-<tarih>/`:
+       `linwas-transfer.json` + öğe başına `tar.gz` (şifreliyse `.tar.gz.gpg`, GnuPG simetrik AES256,
+       parola boruyla verilir, diske yazılmaz) + parola denetimi için `check.gpg`. Önbellek, kilit ve
+       soket dosyaları alınmaz. İçe aktarmada kişisel klasörler var olan dosyaların üstüne yazmaz ve
+       yeni sistemdeki klasör adına çevrilir (ör. Belgeler → Documents); program/masaüstü ayar
+       klasörlerinin var olan hâli silinmez, `<ad>.linwas-onceki-<tarih>` olarak kenara alınır. Aynı
+       masaüstünde dconf dalları (GNOME/Cinnamon) ya da xfconf dosyaları (XFCE) birebir; farklı
+       masaüstünde tema, simge teması, yazı tipi, açık/koyu, duvar kağıdı çevrilir (kurulu olmayan tema
+       atlanır ve listelenir). Wi-Fi: `nmcli -s -g` ile dışa, `nmcli connection add` ile içe (aynı adlı
+       ağ atlanır; 802.1X atlanır). Programlar: APT kökenliyse depoda aday + Flathub'da aynı ad;
+       Flatpak kökenliyse Flathub + depoda tahmini paket adı; ikisi varsa tabloda seçim (eskisi gibi
+       önerilir), kurulum tek görevle (gerekirse önce `flatpak.setup`). Bulut: gvfs bağlantıları
+       (`/run/user/<uid>/gvfs`). Diğer bölüm: `/proc/mounts`'taki `/media`, `/run/media`, `/mnt`
+       altında ev klasörü aranır; program listesi ve masaüstü/Wi-Fi bu yolla gelmez. Menü adı
+       "Windows'tan taşı" → "Taşıma".
 2. **Görev Yöneticisi:** "Kapat" doğrudan zorla kapatır; masaüstü ve sistem süreçleri kapatılamaz. CPU/RAM, başlangıç programları.
+   - **Kaynak izleyici (25 Ekim 2026, kullanıcı isteği):** geliştirici ortamı için ayrı yerleşik eklenti
+     `linwas.resource_monitor` (menüde Sistem › Kaynak İzleyici). CPU (çekirdek, frekans, sıcaklık, yük), bellek (önbellek,
+     takas), disk (okuma/yazma hızı, meşguliyet, `/` ve ayrıysa ev doluluğu), ağ (indirme/yükleme hızı, açılıştan beri
+     toplam), her GPU için ayrı kart ve en çok CPU kullanan 8 süreç; saniyede bir, son 1 dakikanın grafiği. Sayfa
+     görünmezken ölçüm durur; "Duraklat" düğmesi. Hepsi `/proc` + `/sys` (root yok, `backend/resource_monitor.py`, Qt'siz).
+     Sanal aygıtlar (loop/zram/dm, docker/köprü/VPN) çift sayılmasın diye yalnızca `device` bağlantısı olan disk ve ağ
+     kartları sayılır. GPU: NVIDIA `nvidia-smi --query-gpu=…`, AMD `gpu_busy_percent` + `mem_info_vram_*`, Intel kullanım
+     oranı root ister → anlık frekans (i915 `gt_act_freq_mhz`, xe `tile0/gt0/freq0/act_freq`). Uyuyan (runtime suspend)
+     GPU sorgulanmaz, "Uykuda" yazar (sorgu hibrit dizüstüde kartı uyandırır). Süreç CPU %'si `ps`'in ömür boyu
+     ortalaması değil, iki örnek arası `/proc/<pid>/stat` farkı; çekirdek başına (Windows'tan farklı; sayfada yazar).
+     Neden Linwas sayfası: Qt sayfası GNOME, KDE ve Eco kabuğunda aynı çalışır; Eco oturumunda `plasmashell` çalışmadığı
+     için KDE panel eklentisi (plasmoid) görünmezdi.
 3. **Disk temizliği:** yalnızca elle; kazanılacak alan önceden gösterilir.
 4. **Yazıcı ve tarayıcı:** otomatik bulma; bulunamazsa AI çözüm üretir, görevleri kuyruğa hazır koyar, kullanıcı tek onayla uygular.
 5. **Oyun:** Steam + Proton, Lutris / Heroic, GameMode, uyumluluk kontrolü (AI değerlendirmesi + "tahmindir" uyarısı + ProtonDB linki; AI kapalıysa ProtonDB araması tarayıcıda açılır).
 6. **Kişisel dosya yedeği:** harici disk / USB.
 7. **"Windows'ta nasıl?" rehberi:** ayarlar + programlar + klavye kısayolları + kavramlar (`data/windows_map.json`); sistem ayarı karşılıkları `data/settings_map.json` ile bağlantılı.
-8. **Güç ve pil:** enerji modu, pil sağlığı, kapak kapanınca davranışı, pil koruma (%80, destekleyen cihazlarda).
+8. **Güç ve pil:** enerji modu, pil sağlığı, kapak kapanınca davranışı. (Pil koruma / şarj sınırı
+   25 Ekim 2026'da kaldırıldı, aşağıda.)
+   - **Gelişmiş güç seçenekleri (10 Ekim 2026, kullanıcı kararı):** Windows'taki gibi.
+     - **Planlar:** Linwas planları Tasarruf / Dengeli / Performans + kullanıcının özel planları. Her ayarın
+       Prizde ve Pilde ayrı değeri var; prize takınca/çıkarınca otomatik uygulanır. Plan sistem genelidir
+       (`/etc/linwas/`, yalnızca root helper yazar); ekran/uyku süreleri Linwas'ı açan kullanıcıya uygulanır.
+       Planda "Sistem güç profili" (power-profiles-daemon) ayarı da var; GNOME menüsünden değiştirilirse
+       Linwas görür ve uyarır.
+     - **Bölümler:** Ekran ve uyku (karartma/kapatma, uyku, hazırda bekletme, karma uyku, uyanma
+       zamanlayıcıları); Düğmeler ve kapak (güç/uyku düğmesi, kapak: prizde/pilde/harici ekran bağlıyken);
+       İşlemci (turbo, EPP, en düşük/en yüksek işlemci durumu, governor); Pil (düşük/kritik
+       seviye ve eylemi, bildirim); USB/PCIe/disk (USB seçici askıya alma, ASPM, SATA ALPM, disk kapanma);
+       Kablosuz (Wi-Fi güç tasarrufu, pilde Bluetooth kapatma); Ekran kartı ve parlaklık (AMD/Intel/NVIDIA
+       güç modu, pilde parlaklık, uyarlanabilir parlaklık); Tanılama raporu.
+     - **Arayüz:** üstte plan seçimi + sık ayarlar kartlarla; altta "Gelişmiş güç seçenekleri" ağaç listesi,
+       her satırda Prizde / Pilde değeri. Desteklenmeyen ayar gizlenmez, nedeniyle birlikte devre dışı gösterilir.
+     - **Masaüstü bilgisayar:** sayfa görünür (adı "Güç"), pil/kapak/priz-pil ayrımı gizli.
+     - **Uygulayıcı:** ek paket yok; root helper + sysfs/logind/udev ve priz/pil değişiminde uygulayan Linwas
+       systemd servisi. TLP / auto-cpufreq gibi araç kuruluysa uyarılır, düşük seviye bölümler (işlemci,
+       USB/PCIe/disk, kablosuz) salt okunur olur ve aracı kaldırma önerilir (kuyruğa eklenir).
+     - **Hazırda bekletme:** sistem destekliyorsa seçenek olarak sunulur, desteklemiyorsa nedeni yazılır
+       (swap/resume yok, Secure Boot kilidi vb.); Linwas kurulum yapmaz (kurulum bekleyen fikir).
+     - **Tanılama raporu:** uygulama içi özet (hata/uyarı/öneri, tek tıkla düzelt) + istenirse HTML rapor;
+       powertop varsa ayrıntı eklenir, yoksa kurulumu önerilir.
+     - **Ekler:** varsayılana sıfırla (plan / tümü), plan içe/dışa aktarma (dosya), zamanlı plan (belirli
+       saatlerde başka plan), pil seviyesine göre geçiş (%X altında Tasarruf).
+     - Komutlar, sysfs yolları ve gsettings anahtarları kodlarken resmi belgeden doğrulanır; donanımdan
+       bağımsız (AMD/Intel/NVIDIA, tüm desteklenen dağıtımlar).
+     - **Uygulama (10 Ekim 2026):** `core/powerplan.py` (katalog, model, doğrulama, etkin plan:
+       pil tasarrufu > zamanlı plan > seçili plan), `core/power_apply.py` (`linwas-power.service`, root;
+       20 sn'de bir priz/pil/saat/ayar değişimini denetler, değişince uygular, düşük seviye ayarları
+       10 dk'da bir yeniler; Linwas'ın değiştirdiği değerlerin eskisi `/run/linwas-power/state.json`'da,
+       "Sistem varsayılanı" seçilince geri yüklenir; parlaklık ve sistem güç profili yalnızca plan/kaynak
+       değişiminde), `core/power_agent.py` (GNOME gsettings; XDG autostart). Plan değiştirme şifresiz:
+       polkit eylemi `org.linwas.power.switch` (allow_active=yes) → `/usr/lib/linwas/linwas-power-switch`;
+       kaynak koddan çalışırken root helper. Ayarı kaydetmek root helper `power.save_config` (şifre;
+       `/etc/linwas/power.json`, logind `90-linwas-power.conf`, `UPower.conf`; yedekli). Düğmeler/kapak ve
+       Pil seviyeleri tüm planlar için ortak (logind/UPower genel ayar); kapak ayarı açılışta geçerli.
+       Güç düğmesinde "kapat" yok (GNOME bunu sunmuyor). USB askıya almada fare/klavye (HID) ve Bluetooth
+       hariç. Tanılama: `backend/power_report.py` + root işlemi `power.powertop_report`
+       (`/var/lib/linwas-power/powertop.csv`).
+     - **Geri bildirim düzeltmeleri (13 Ekim 2026):** servis durumu `power_apply.service_state()`
+       ("missing" kurulu değil / "stopped" / "running"). Çalışmıyorsa sayfanın üstünde neden kartı;
+       plan, sık ayarlar, gelişmiş ayarlar ve otomatik geçiş kartları kilitli (uygulanamayan ayar
+       değiştirilemez); durmuşsa "Servisi başlat" (`service.enable` + `service.restart`). Pil: yüzde
+       çubuğun sağında; altında durum · kalan süre (yalnızca çekirdek enerji/akım verirse,
+       `Battery.minutes_left`) ve ayrı satırda sağlık · döngü. Gelişmiş ayarlar varsayılan kapalı
+       ("Gelişmiş ayarları göster"); her satırda ad + kısa açıklama, değiştirilmiş satırda "Varsayılan"
+       düğmesi (yerleşik planda fabrika değeri, özel planda Sistem varsayılanı).
+     - **Hazır planlar, GNOME'un güç kipi ve özel planlar (25 Ekim 2026, kullanıcı kararı):**
+       - **Hazır 3 plan salt okunur.** Değerleri her zaman fabrika değeri (ayar dosyasındaki değerleri
+         yok sayılır); kullanıcı yalnızca seçer. Başvuru GNOME'un varsayılanları
+         (`org.gnome.desktop.session idle-delay` 300 sn, `idle-dim` açık, `sleep-inactive-{ac,battery}-
+         timeout` 900 sn): **Dengeli** bunların aynısı + ppd `balanced`; **Tasarruf** ppd `power-saver`,
+         pilde ekran 3 dk / uyku 10 dk, pilde USB/PCI/SATA/Wi-Fi/ekran kartı tasarrufu, pilde parlaklık
+         %50; **Performans** ppd `performance`, prizde SATA tam güç ve Wi-Fi tasarrufu kapalı.
+       - **İşlemciyi power-profiles-daemon (ppd) yönetir** (GNOME/KDE menüsündeki güç kipi). ppd 0.30
+         kaynağından doğrulandı: intel_pstate'te governor (`powersave`), EPP (Tasarruf `power`, Dengeli
+         prizde `balance_performance` / pilde `balance_power`, Performans `performance`) ve EPB yazar;
+         amd_pstate'te ek olarak `boost` ve `scaling_min_freq`; diğer sürücülerde `cpufreq/boost`.
+         Turboya (intel `no_turbo`) ve en yüksek hıza dokunmaz. Bu yüzden ppd çalışırken Linwas
+         `powerplan.ppd_owned()` ayarlarına yazmaz (sonuç "ppd").
+       - **Özel planlar "Gelişmiş"in arkasında:** plan kartında yalnızca hazır 3 plan (özel plan etkinse o
+         da) görünür; "Yeni plan…" seçili planın kopyasını oluşturur, düzenleme/seçme/içe-dışa aktarma
+         Gelişmiş ayarlar kartında ("Bu planı kullan").
+       - **A + B karışımı:** özel planda varsayılan olarak yalnızca ppd'nin boş bıraktığı işlemci
+         ayarları değişir. "Bu planda işlemciyi Linwas yönetsin" (`cpu_control`) açılırsa bütün işlemci
+         ayarları açılır; plan etkinken ppd `systemctl mask --runtime --now` ile durdurulur (ppd D-Bus
+         ile kendiliğinden başlatılabildiği için yalnızca durdurmak yetmez; geçici kilit yeniden
+         başlatınca kalkar), plandan çıkınca, servis kapanınca ve "Yönetimi geri ver"de geri açılır.
+         Bu sürede menüdeki güç kipi görünmez; sayfa bunu yazar.
+       - **Menü ile eşleme:** GNOME/KDE menüsünden kip değişirse (ppd'de geçici tutma yoksa ve otomatik
+         geçiş devrede değilse) Linwas aynı adlı hazır plana geçer.
+       - **Yoklama kalktı:** servis ve masaüstü ajanı UPower ve ppd sinyallerini `gdbus monitor` ile
+         dinler (`core/power_events.py`, çıktı `stdbuf -oL` ile satır satır); servis zamanlı planın
+         başlangıç/bitiş anında ve en geç 5 dakikada bir, ajan en geç dakikada bir uyanır. UPower'ın
+         yerine kendi servisimizi yazmıyoruz (GNOME yine kendi UPower'ını kullanır, ikisi çakışır).
+       - **Düşük pil çakışması:** Linwas'ın "Pil tasarrufu" açıksa GNOME'un kendi düşük pil geçişi
+         (`power-saver-profile-on-low-battery`) kapatılır, kapalıysa GNOME'unki çalışır. GNOME'da
+         tanılama raporu artık "pil tasarrufu kapalı" önerisi vermez.
+       - **Pil koruma (şarj sınırı) kaldırıldı:** arayüz, `battery.set_charge_limit` işlemi, udev
+         kuralı, tanılama önerisi ve çevirileri silindi. Eski sürüm kural yazdıysa servis açılışta
+         `/etc/udev/rules.d/90-linwas-battery.rules`'u siler ve sınırı %100'e döndürür.
+       - **KDE:** sistem tarafı (servis, ppd, sysfs, logind, UPower) masaüstünden bağımsız; ekran/uyku
+         süreleri şimdilik yalnızca GNOME'da (KDE'de PowerDevil ayarı; KDE desteğiyle birlikte).
+
+9. **Görev çubuğu Linwas temasını izler (13 Ekim 2026):** Linwas'ta Açık/Koyu seçiliyse paletin
+   `mode` alanıyla görev çubuğu ve menüler de o temada çizilir (uygulama ile panel arasında keskin
+   geçiş olmasın); "Sistem" seçiliyse masaüstünün açık/koyu ayarı izlenir.
+10. **Görev çubuğu ve masaüstü gruplama (10 Ekim 2026, kullanıcı kararı):** amaç, çok pencereyle
+   çalışırken görev çubuğunu sade tutmak. Üç ayrı, isteğe bağlı eklenti; kullanıcı istediğini açar
+   (çizimli karşılaştırma: claude.ai artifact "Görev Çubuğu Gruplama Seçenekleri").
+   - **Ortak:** aynı programın pencereleri varsayılan olarak tek düğmede toplanır (GNOME: Dash to Panel,
+     KDE: Görev Yöneticisi gruplama, XFCE: Pencere Düğmeleri gruplama). Tasarım masaüstü bağımsız; ilk
+     teslim GNOME, sonra KDE ve XFCE.
+   - **C. Klasörler (ilk):** Android ana ekran klasörü gibi; masaüstüne ve görev çubuğuna sabitlenen klasör
+     simgesi, tıklayınca Linwas'ın açılır penceresinde program ızgarası. Düzenleme açılır pencereden ("+" ile
+     ekle, çıkar, yeniden adlandır, sırala) ve masaüstünde simgeyi klasörün üstüne sürükle-bırak (DING'in
+     bunu ilettiği kodlarken doğrulanacak). Masaüstü simgeleri kapalıysa (Pardus GNOME'da Desktop Icons NG
+     kurulu değil) ilk klasörde kurulumu önerilir.
+     - **Uygulama (10 Ekim 2026):** `backend/app_folders.py` (kayıt `~/.local/share/linwas/app-folders.json`,
+       kısayol `~/.local/share/applications/linwas-folder-<kimlik>.desktop` + masaüstünde güvenilir kopya:
+       0755 + `gio set … metadata::trusted true`), `ui/app_folder_popup.py` (`linwas --app-folder <kimlik>
+       %U`; ana pencereden bağımsız süreç), sayfa Arayüz › Program klasörleri (`ui/pages/app_folders.py`).
+       Sürükle-bırak DING kaynağından doğrulandı (fileItem.js: güvenilir kısayola bırakılan dosyalar
+       argüman olarak verilir). Masaüstündeki kısayol klasöre taşınır (`folder-items/<klasör>/`), çıkarılınca
+       geri döner. Görev çubuğu: GNOME `favorite-apps` (Dash to Panel de kullanır). Klasör simgesi 2×2
+       program simgesinden üretilir, her değişimde yeni adla yazılır (önbellek). Masaüstü simgeleri
+       kapalıysa: kurulu ama kapalı → `gnome-extensions enable`; kurulu değil → `package.install`
+       (`gnome-shell-extension-desktop-icons-ng`, UUID `ding@rastersoft.com`), sonra `enabled-extensions`'a
+       yazılır, oturum yeniden açılınca görünür.
+     - **Masaüstünde sağ tık (13 Ekim 2026, kullanıcı):** seçili program simgelerinde "Klasörde grupla
+       (Linwas)" (ad sorulur, simgeler klasöre taşınır), "Klasöre ekle (Linwas)" (var olan klasör seçilir),
+       klasör simgesinde "Klasörü çöz (Linwas)" (programlar masaüstüne döner). XFCE: Thunar özel eylemleri
+       `~/.config/Thunar/uca.xml` (xfdesktop thunar-uca'yı yükler; Linwas eylemleri `unique-id`
+       "linwas-folder-…", kullanıcınınkilere dokunulmaz; `%F`). GNOME (DING) ve Nautilus: Betikler alt
+       menüsü `~/.local/share/nautilus/scripts` (seçili dosyalar argüman). Komut `linwas --folder-action
+       <group|add|ungroup> <dosyalar>` (`backend/folder_menu.py`, `ui/folder_actions.py`); Linwas açılışında
+       ve klasör sayfasında geçerli dilde yazılır. XFCE güveni: kısayola `metadata::xfce-exe-checksum` =
+       içeriğin SHA-256'sı (libxfce4util), GNOME'un `metadata::trusted`'ı ile birlikte. Görev çubuğuna
+       sabitleme XFCE'de henüz yok.
+   - **Masaüstü kapsamı (10 Ekim 2026, kullanıcı kararı):** çalışma grupları GNOME, XFCE ve Cinnamon için
+     birlikte yazılır (kullanıcı üçünü de kullanıyor); KDE sonraki sürümde. Ortak: X11'de `wmctrl` ile geçiş,
+     pencere taşıma ve "program hep kendi grubunda açılsın" ajanı; masaüstüne özel: masaüstü sayısı/adları,
+     görev çubuğu yalnızca geçerli masaüstü, grup değiştirici (GNOME: Dash to Panel/Dash to Dock
+     `isolate-workspaces`, Workspace Indicator, auto-move-windows; XFCE: xfconf xfwm4 + Pencere Düğmeleri +
+     Çalışma Alanı Değiştirici; Cinnamon: org.cinnamon gsettings + pencere listesi + çalışma alanı
+     değiştirici). GNOME Wayland'de geçiş/taşıma dışarıdan yapılamaz; GNOME kısayolları gösterilir.
+   - **A. Çalışma grupları (ikinci):** kullanıcının grupları ("Proje", "E-posta" …), her grup bir sanal
+     masaüstü; görev çubuğu yalnızca o grubun pencerelerini gösterir; grup değiştirici; grup açılınca
+     programları birlikte başlatma (grubun klasörüyle). X11'de dışarıdan pencere taşıma; Wayland'de
+     masaüstüne özel yol (doğrulanacak).
+     - **Uygulama (10 Ekim 2026):** `backend/workgroups.py` (kayıt `~/.local/share/linwas/workgroups.json`,
+       gruplar açılmadan önceki masaüstü ayarı `workgroups-before.json`; son grup silinince geri yüklenir),
+       sayfa Arayüz › Çalışma grupları (`ui/pages/workgroups.py`). Grup sırası = masaüstü sırası; sıra
+       değişince/grup silinince pencereler X11'de yeni sıraya taşınır (silinenin pencereleri ilk gruba).
+       Her grup için menü kısayolu `linwas-group-<kimlik>.desktop` (`linwas --open-group`): her masaüstünde
+       panele/favorilere sabitlenebilir; gruba geçer, o grupta penceresi olmayan programları başlatır.
+       XFCE/Cinnamon kural ajanı `linwas --workgroups-agent` (XDG autostart `linwas-workgroups.desktop`,
+       1 sn'de bir `wmctrl -lx`; pencere sınıfı StartupWMClass / masaüstü kimliği / Exec'ten eşleşir).
+       Hazırlık satırları: görev çubuğu yalnızca geçerli grup, grup değiştirici (GNOME eksikse
+       `gnome-shell-extensions` paketi), X11'de `wmctrl` (yoksa kurulum önerisi).
+   - **B. Pencere gruplama eklentisi (üçüncü):** farklı programların pencerelerini kullanıcının seçtiği tek
+     düğmede birleştirir, önizlemeli açılır liste. Her masaüstüne ayrı eklenti (GNOME Shell JS, KDE
+     Plasmoid QML, XFCE paneli C); önce GNOME. GNOME sürümleri arası bakım gerektirir.
+     - **Kararlar (10 Ekim 2026, kullanıcı):** grup düğmesi panelde ayrı düğme (Dash to Panel kendi
+       program düğmelerine dışarıdan ekleme yapılmasına izin vermiyor); gruba alınan programlar Dash to
+       Panel görev çubuğundan gizlenir; GNOME 42–48 desteklenir.
+     - **Uygulama (10 Ekim 2026):** `backend/window_groups.py` (kayıt `~/.local/share/linwas/window-groups.json`,
+       eklentinin göstereceği çevrilmiş metinler de bu dosyada), sayfa Arayüz › Pencere grupları
+       (`ui/pages/window_groups.py`). Eklenti `linwas-window-groups@linwas`, kullanıcı klasörüne
+       (`~/.local/share/gnome-shell/extensions/`) kurulur; kaynağı `resources/gnome-extension/`: ortak
+       `core.js` + GNOME 42–44 için eski içe aktarma, 45+ için ES modülü başı/sonu, kurulumda kabuk sürümüne
+       göre birleştirilir. Linwas güncellenince sayfa açılışında eklenti dosyaları yenilenir. Eklenti JSON'u
+       izler (Gio.FileMonitor); grubun penceresi yoksa düğme gizlenir; düğme simgesi grubun ilk programı,
+       yanında pencere sayısı; açılır listede Clutter.Clone önizleme, başlık, kapat düğmesi. Bir program
+       yalnızca bir grupta olabilir. Dash to Panel gizleme: `global.dashToPanel.panels[].taskbar`
+       prototipinde `getAppInfos` süzülür (eski ve yeni ESM sürümünde resmi kaynaktan doğrulandı);
+       sabitlenmiş (favorite-apps) programlar yerinde kalır; hata olursa süzme bırakılır. Ubuntu Dock'ta
+       gizleme yok (yalnızca düğme). Durum: `org.gnome.Shell.Extensions.GetExtensionInfo` (`state` 1 =
+       çalışıyor; boş = oturum yeniden açılmalı).
+   - **D. Görev çubuğu ayarları (12 Ekim 2026, kullanıcı kararı):** Arayüz › Görev çubuğu sayfası; ilk
+     teslim GNOME (Dash to Panel), sonra XFCE/Cinnamon. Linux'ta bugün olmayan ya da dağınık olanlar:
+     - **Hazır düzen:** "Windows gibi" (altta tek panel: Dash to Panel) / "macOS gibi" (üstte ince çubuk +
+       altta ortalanmış dock: Dash to Panel kapatılır, Dash to Dock açılır; Pardus 23 deposunda
+       `gnome-shell-extension-dashtodock` 436.84.1 var). Geçişten önce mevcut ayarlar saklanır, "Önceki
+       düzene dön" düğmesi.
+     - **Sağ tıkta son açılan dosyalar:** program simgesinin menüsünde o programla son açılan dosyalar
+       (`~/.local/share/recently-used.xbel`, GTK; `remember-recent-files` kapalıysa bölüm gizlenir ve
+       nedeni sayfada yazar). Linwas GNOME eklentisine eklenir; Dash to Panel menüsüne ekleme yolu
+       kodlarken resmi kaynaktan doğrulanacak.
+     - **Görünüm:** Saydam / Mat / Bulanık (blur) + saydamlık kaydırıcısı. Saydam ve mat Dash to Panel
+       ayarlarıyla (`trans-use-custom-opacity`, `trans-panel-opacity`, `trans-use-custom-bg`,
+       `trans-bg-color`, `trans-use-dynamic-opacity`). Bulanık: Pardus deposunda Blur my Shell yok; Linwas
+       GNOME eklentisi panelin arkasına `Shell.BlurEffect` uygular (GNOME 43'te varlığı kodlarken
+       doğrulanacak). Desteklenmeyen masaüstünde seçenek gizlenir.
+     - Ayrıca (Linux'ta dağınık, tek sayfada): konum (alt/üst/sol/sağ: `panel-positions`), boyut
+       (`panel-sizes`), otomatik gizleme (`intellihide`), pencere önizlemesi (`show-window-previews`).
+   - **F. Linwas görev çubuğu eklentisi + medya widget'ı (13 Ekim 2026, kullanıcı kararı):** D maddesi bu
+     eklentiye katılır. Görev çubuğunu Dash to Panel çizer; **Linwas'ın GNOME Shell eklentisi** onu
+     yönetir ve üstüne ekler (pencere grupları eklentisi gibi Linwas tarafından kurulur, sürümle
+     güncellenir; ayrı Linwas eklentisi olarak açılıp kapatılır).
+     - **Medya widget'ı** (MPRIS: Spotify, tarayıcıda YouTube Music, son çalan oynatıcı): (1) görev
+       çubuğunda küçük kontrol (şarkı adı + oynat/duraklat; tıklayınca büyük kart), (2) bildirim/takvim
+       menüsünde GNOME'un medya kartının yerine Linwas'ın modern kartı (kapak resmi, sanatçı, ilerleme,
+       önceki/oynat/sonraki, oynatıcı değiştirme). Hızlı ayarlar menüsüne konmaz.
+     - **Arka plan:** varsayılan temaya göre (açık/koyu + Linwas vurgu rengi); seçenek "kapak resminin
+       rengini al". Görev çubuğu ve widget için ayrı ayrı Saydam / Mat / Bulanık + saydamlık kaydırıcısı.
+     - GNOME 42–48 desteklenir (pencere grupları eklentisiyle aynı yapı).
+     - **Uygulama (13 Ekim 2026):** eklenti `linwas-taskbar@linwas`, kaynağı
+       `linwas/resources/gnome-taskbar/` (ortak `core.js` + eski/ESM başı-sonu), Python
+       `backend/taskbar.py`, sayfa Arayüz › Görev çubuğu (`ui/pages/taskbar.py`, yerleşik eklenti
+       `linwas.taskbar`). Ayar dosyası `~/.local/share/linwas/taskbar.json` (eklenti izler; Linwas'ın
+       açık/koyu renkleri ve vurgu rengi `palette`, çevrilmiş metinler `strings`). GNOME 43 kaynağından
+       (libgnome-shell.so gresource) doğrulandı: `Main.panel.statusArea.dateMenu._messageList`
+       `._sectionList` ve `._mediaSection` (MessageListSection, görünürlüğü `_sync` ile), MPRIS istemcisi
+       GNOME'unkine benzer `Gio.DBusProxy.makeProxyWrapper` ile (satır içi arayüz XML'i; `...Remote`
+       çağrıları tüm sürümlerde var), `Shell.BlurEffect` GNOME 43'te `sigma` (46+ `radius`; ikisi de
+       denenir). Dash to Panel açıksa arka plan onun `trans-use-custom-bg`, `trans-bg-color`,
+       `trans-use-custom-opacity`, `trans-panel-opacity` anahtarlarıyla, bulanıklık
+       `global.dashToPanel.panels[].panelBox`'a efekt olarak; kapalıysa `Main.panel` doğrudan boyanır.
+       Kapak resmi `~/.cache/linwas/covers/` altına önbelleklenir (http adresleri gvfs ile), ortalama
+       rengi GdkPixbuf ile. Oynatıcı seçimi: çalan > en son etkin; kapanan oynatıcı "son çalınan" olarak
+       kartta kalır ("%1 aç"). Yerleşim yalnızca Windows düzeninde (Dash to Panel): `panel-position`,
+       `panel-size`, `intellihide`, `show-window-previews`. macOS düzeni Dash to Dock'u (kimliği kurulu
+       klasörden bulunur, `dash-to-dock@…`) açar; kurulu değilse `package.install` görevi istenir;
+       Dash to Dock anahtarları (`dock-position`, `extend-height`, `dock-fixed`) yoksa yok sayılır
+       (kurulunca doğrulanacak). Henüz yok: sağ tıkta son dosyalar (D) — sonraki adım.
+     - **Düzeltme ve birleştirme (13 Ekim 2026, kullanıcı denemesi):** "Windows görünümü" sayfası
+       menüden kalktı, Görev çubuğu sayfasına katıldı (Windows tarzı görev çubuğu = "Windows gibi"
+       düzeni; pencere düğmeleri bölümü taşındı; `appearance` bağlantıları `taskbar`'ı açar). Sayfa
+       iki kısım: eklentisiz çalışanlar (hazır düzen, pencere düğmeleri, yerleşim) ve Linwas eklentisi
+       isteyenler (görünüm, medya). Dash to Panel yalnızca `panel-positions` / `panel-sizes`
+       (ekran başına JSON, ör. `{"0":"BOTTOM"}`) değişimini dinliyor (panelManager.js); konum/boyut
+       artık bu anahtarlara her ekran için yazılıyor (ekranlar `available-monitors`). Yeni GNOME
+       eklentisi kabuk yeniden başlayınca yüklenir: sayfada "oturumu kapatıp açın; X11'de Alt+F2 › r".
+       Kart saydamlığı: kart GNOME menüsünün opak zemini üstünde durduğu için fark görünmüyordu;
+       görev çubuğundaki medya menüsünde saydam/bulanık seçilince menü zemini kaldırılır (görünen yüzey
+       kart). Takvim menüsündeki kart menünün içinde kalır; orada saydamlık yalnızca menü rengine göre.
+       **Menüler ve kartlar (13 Ekim 2026, kullanıcı):** Saydam / Mat / Bulanık seçimi görev çubuğundaki
+       bütün açılır menülere uygulanır (`Main.panel.statusArea[*].menu.box`: hızlı ayarlar, takvim, ses,
+       ağ, diğer eklentilerin simgeleri; başka eklenti açılıp kapanınca yeniden taranır). Renk Linwas'ın
+       kart rengi (açık/koyu), saydamlık görev çubuğuyla aynı; mat = opak Linwas rengi. Eklenti
+       kapanınca menüler GNOME'un kendi görünümüne döner. Ayar sayfada Görünüm › "Menüler ve kartlar".
+   - **G. Tema (vurgu) rengi seçimi (13 Ekim 2026, kullanıcı kararı):** yalnızca **Linwas** penceresi ve
+     Linwas eklentileri (görev çubuğu, medya widget'ı) renk alır; masaüstünün sistem rengi değişmez.
+     Ayarlar › Görünüm'de hazır renkler + özel renk; seçilen renk açık ve koyu temada okunur kontrastta
+     tutulur (gerekirse otomatik koyulaştırılır).
+     - **Uygulama (13 Ekim 2026):** ayar `accent_color` (boş = düzenin rengi), `tokens.with_accent` /
+       `readable_accent` (yazıyla en az 4.5:1 kontrast), 8 hazır renk (`ACCENT_PRESETS`) + özel renk
+       (QColorDialog); seçilen renk görev çubuğu eklentisine `palette` ile gider.
+   - **E. Klasör renkleri (12 Ekim 2026, kullanıcı kararı):** Dosyalar'da (Nautilus) klasöre renk verme;
+     Windows'ta yok, macOS'ta etiket rengi gibi. `gio set <klasör> metadata::custom-icon-name folder-<renk>`
+     (kullanıcı makinesinde çalıştığı doğrulandı; Nautilus 43.2, simge teması breeze: folder-red/blue/
+     green/orange/yellow/violet/grey/brown/black/magenta/cyan var). Simge temasında renkli klasör yoksa
+     Linwas kendi renkli SVG'lerini `~/.local/share/icons/hicolor` altına kurar. Sağ tık menüsüne "Klasör
+     rengi" için `python3-nautilus` (Pardus deposunda 4.0-1+b1) + Linwas Nautilus eklentisi; kurulu değilse
+     yalnızca Linwas sayfasından (klasör seç → renk). "Varsayılana dön" metadata'yı siler.
+
+## Office görünümü (17 Ekim 2026, kullanıcı onayı)
+
+- **Amaç:** LibreOffice'i Microsoft Office benzeri yapmak, tek tıkla kurulum ve geri dönüş.
+  Tasarım "Writer Sade Arayüz Taslağı" (claude.ai Design tuvali).
+- **Paket:** `linwas-office-look` (Architecture: all, Linwas APT deposundan resmi eklenti),
+  kaynak `packaging/plugins/office-look/`. LibreOffice'e (writer, calc, impress) bağımlıdır,
+  bu yüzden kurulum LibreOffice'i de kurar. Önceki deneme paketi `pardus-ofis-deneyimi`'nin
+  yerine geçer (`Conflicts`/`Replaces`/`Provides`). Teknik bulgular: `packaging/plugins/office-look/NOTLAR.md`.
+- **İçerik:** LibreOffice eklentisi (Python UNO): pencere içi Dosya menüsü (Kaydet, Farklı
+  kaydet biçim kartları, Aç, son dosyalar, şablonlar, Yazdır önizlemesi, parola, ağ/bulut
+  konumları), şeridin sol üstünde Dosya düğmesi, Dosya sekmesine tıklayınca menü, kayıt
+  durumu rozeti ve otomatik kaydetme; varsayılanlar xcd (OOXML, Carlito, Impress şablon
+  penceresi kapalı); sade şerit (Writer: Dosya, Yaz, Ekle, Sayfa, Gözden geçir, Görünüm;
+  Calc: Dosya, Tablo, Ekle, Veri, Görünüm).
+- **Sade şerit kurulumda üretilir:** postinst, kurulu `notebookbar.ui` dosyasından
+  `linwas_simple.ui` ve onu etkinleştiren `linwas-office-look-ribbon.xcd` dosyasını üretir;
+  dpkg tetikleyicisi LibreOffice güncellenince yeniden üretir. Üretim başarısız olan uygulama
+  tam şeritte kalır (var olmayan .ui'ye işaret eden ayar LibreOffice'i askıda bırakır).
+- **Ayarlar kullanıcı başına:** şerit (sade/tam/klasik), Dosya menüsü, otomatik kaydetme,
+  kayıt biçimi, yazı tipi; "Yalnız benim için kapat" parola istemez. Hepsi paketteki
+  `linwas-office-look` aracında (LibreOffice kapalıyken kullanıcının profilini yazar);
+  Linwas `backend/office_look.py` ile bu aracı çağırır. Kurma/kaldırma kuyrukta
+  `package.install`/`package.remove`; yeni root işlemi yok.
+- **Linwas sayfası:** kenar çubuğunda yeni "Office" grubu › "Office görünümü"
+  (`ui/pages/office_look.py`). LibreOffice'teki "Office görünümü ayarları" öğesi
+  `linwas --page office_look` ile bu sayfayı açar; Linwas yoksa aracın zenity penceresi açılır.
+
+## Donanım ve yazıcılar yenilemesi (13 Ekim 2026, kullanıcı onayı)
+- Taslak: tuval "Linwas macOS Görünümü" › "Donanım ve yazıcılar · Genel bakış" ve "· Yazıcılar"
+  (claude.ai artifact AYgNY1TjwxLtui1ERsfg1D).
+- Sayfada sekmeler: **Genel bakış / Aygıtlar / Yazıcılar ve tarayıcılar**.
+  - Genel bakış: bilgisayar kartı (DMI: üretici, model, aile, anakart, BIOS sürümü/tarihi, kasa türü;
+    dağıtım ve masaüstü; "Her şey çalışıyor · N aygıt" özeti), bileşen kartları (işlemci, bellek, ekran
+    kartları, depolama, ekran, pil, ağ ve Bluetooth, ses ve kamera) durum rozeti ve "Ayrıntılar" ile;
+    üstte "Sistem raporu" (HTML) ve "Bilgileri kopyala".
+  - Aygıtlar: Aygıt Yöneticisi; arama, "Tümü / Sorunlu / Sürücüsüz" süzgeci, açılır kategoriler.
+  - Yazıcılar: yazıcı kartı (durum, varsayılan, mürekkep/toner düzeyi varsa, Test sayfası / Kuyruk /
+    Seçenekler / Kaldır), bulunan ama kurulmamış yazıcı için tek "Kur", boş durum, tarayıcılar, sorun
+    giderme.
+- **Ayrıntılar ayrı pencerede** açılır.
+- **İşlemci yükü ve sıcaklık sayfa açıkken 2 saniyede bir** güncellenir.
+- **Bellek ayrıntısı** (tür, hız, yuva) görünür; "Göster" denince yönetici parolası sorulur (root helper
+  işlemi, `dmidecode -t memory`; seri numaraları yazılmaz).
+- **Donanım bilgisi ayrı bir eklenti olarak yazılır** (kullanıcı kararı): okuma işlevleri ve bileşen
+  kartları/ayrıntı pencereleri Donanım eklentisinin parçası; sayfa ve başka eklentiler (Genel bakış'ın
+  sistem sağlığı, AI bağlamı, sistem raporu) bu eklentinin sağladığı arayüzden okur.
+- **Uygulama (13 Ekim 2026):** yerleşik eklenti `linwas.hardware_info` (`linwas/plugins/hardware_info/`):
+  `probe.py` (Qt'siz okuma: DMI, lscpu, /proc/stat yükü, hwmon sıcaklığı, /proc/meminfo, lsblk +
+  NVMe sıcaklığı, xrandr, pil), `widgets.py` (bilgisayar kartı, bileşen kartları, 2 sn zamanlayıcı —
+  yalnızca sekme görünürken, ayrıntı penceresi, HTML sistem raporu `~/.cache/linwas/system-report.html`,
+  panoya özet), `ai_context()` donanım özeti. Sayfasız eklentiler `BUILTIN_PLUGINS`'te sayfa denetimine
+  takılmaz. Root işlemi `hardware.memory_report`: `dmidecode -t memory` çıktısı ilerleme olarak
+  gönderilmez; seri numarasız özet `/var/lib/linwas/memory-modules.json` (0644). Yazıcılar: `lpstat -v`
+  (bağlantı türü), `lpoptions -p` (model, konum, `marker-*` düzeyleri), `lpstat -o` (kuyruk), test sayfası
+  `lp`, varsayılan `lpoptions -d` (kullanıcı düzeyi), kendi işlerini iptal `cancel -a`; kaldırma ve
+  seçenekler sistem yazıcı ayarlarında (root gerektirir). Taslaktaki ayrı "Seçenekler" ve "Kaldır"
+  düğmeleri tek "Seçenekler ve kaldırma…" düğmesinde birleşti.
+
+## Wi-Fi ve Bluetooth geliştirmeleri (23 Ekim 2026, kullanıcı onayı)
+Kapsam (kullanıcı seçti): Wi-Fi — bağlantı ayrıntıları, ağ ayarları, şifre göster + QR, bağlantı testi +
+hotspot; Bluetooth — yeniden adlandır + otomatik bağlan, bilgisayarın görünürlüğü, ses çıkışı + dosya
+gönderme (tür simgesi ve pil yüzdesi sayfada zaten vardı). Fikir: durum fotoğrafı yerine **ölçülmüş
+deneyim** (son günlerde nasıldı, neden koptu). Her aşama ayrı commit; ayrıntı ve kalanlar `yapilacaklar.md`.
+- **Bağlantı ayrıntıları (aşama 1):** varsayılan görünen (süzülmüş): hız + bant, IP adresi, güvenlik (sade dille).
+  "Gelişmiş ayrıntılar" arkasında: ağ geçidi, DNS, kanal, MAC, BSSID. "IP adresini kopyala" / "Tümünü kopyala"
+  (hepsini kopyalar). Bant `FREQ`'ten türetilir (nmcli'nin `BAND` alanı eski sürümlerde yok). Alan adları
+  NetworkManager kaynağından doğrulandı.
+- **Ağ listesi:** çok zayıf (< %30) ve ne bağlı ne kayıtlı ağlar gizli, "N zayıf ağı göster" ile açılır.
+  Bluetooth'ta adsız (adı yalnızca adresinden ibaret) yeni cihazlar gizli, "N adsız cihazı göster" ile açılır.
+- **Ölçüm ve kalite çizelgesi (aşama 2):**
+  - **Açık rıza, varsayılan kapalı:** Wi-Fi sekmesindeki "Bağlantı kalitemi ölç" kutusu (`net_measure`).
+  - **Ne ölçülür:** Linwas çalışırken (arka plan kipi dahil) dakikada bir: bağlı mı, sinyal, bant ve **yalnızca
+    yerel ağ geçidine** 3 ping (gecikme, kayıp). Dışarıya hiçbir şey gönderilmez. Wi-Fi kapalı/kart yoksa örnek
+    yazılmaz (çizelgede "veri yok"). Linwas kapalıyken de ölçülmez.
+  - **Saklama:** `~/.local/share/linwas/net_quality.jsonl`, 7 gün; ağ adı + sayılar (site/trafik yok).
+    Ayarlar › Kullanıcı verileri'nde görünür ve silinir.
+  - **Kopma sayımı:** bağlıyken bağlantı kopması; kullanıcının Linwas'tan yaptığı "Bağlantıyı kes / Kapat /
+    Unut" `user` işaretiyle yazılır, sayılmaz. Büyük zaman boşlukları (uyku, Linwas kapalı) sayılmaz.
+  - **Çizelge ve hüküm:** üstte tek cümlelik hüküm (kararlıydı / genel olarak kararlıydı / kararsızdı; kopmalar
+    ve kötü dilimlerin payından), altında yalnızca işe yarayan not (kopma sayısı, en yavaş saat); sayılar
+    (ölçüm sayısı, ortalama gecikme) hükmün üzerine gelince ipucunda. Çizelge: son 24 saat, 15 dakikalık
+    dilimler; dilimin durumu en kötü örneğe göre (iyi / yavaş / kötü / bağlantı yok [içi boş çubuk] /
+    gecikme verisi yok / veri yok). Eşikler sezgiseldir: geçide gecikme ≤ 30 ms iyi, ≤ 100 ms yavaş, üstü
+    kötü; kayıp ≤ %2 iyi, ≤ %10 yavaş.
+  - **Bağlantı testi** (yalnız düğmeyle): ağ geçidine ping → `nmcli networking connectivity check` → ad
+    çözümleme ve TCP 443 (`example.com`, IANA belge alan adı) → tanı kodu (ok, no_address, gateway_down,
+    gateway_lossy, portal, dns_failed, internet_down, slow). Sonuç sade dille üç satır (router, adlar,
+    internet) + hüküm; adresler ve süreler "Ayrıntılar" arkasında; sorun varsa "Asistana sor".
+  - **Ağ ayarları (aşama 3):** kayıtlı ağın satırında "Ayarlar" düğmesi → pencere. Önce temeller: "otomatik
+    bağlan", veri kullanımı (sistem karar versin / sınırlı / sınırsız = `connection.metered` unknown / yes / no),
+    DNS (otomatik / Cloudflare 1.1.1.1 + 1.0.0.1 / Google 8.8.8.8 + 8.8.4.4 / özel, en çok 3 IPv4). **Elle IP
+    "Gelişmiş: IP adresi" arkasında** (adres, alt ağ maskesi "24" ya da "255.255.255.0", router; elle IP'de
+    bir DNS seçmek şart, yoksa adlar çözülmez). IP ya da DNS değişirse etkin ağ bir an yeniden bağlanır;
+    özel IP kipleri (shared, link-local…) olduğu gibi bırakılır. Değerler yazmadan önce doğrulanır
+    (adres ağ/yayın adresi olamaz, router aynı ağda olmalı, 8 ≤ önek ≤ 30). Komutlar: `nmcli connection modify id
+    <ad> connection.autoconnect … connection.metered … ipv4.method|addresses|gateway|dns|ignore-auto-dns …`
+    (boş değer özelliği varsayılana döndürür; nmcli(1) ve nmcli-examples'tan doğrulandı), okuma
+    `nmcli -t -f connection.autoconnect,… connection show id <ad>`.
+  - **Şifreyi göster (aşama 4):** kayıtlı güvenli ağın "Ayarlar" penceresinde "Şifre" satırı. Varsayılan gizli
+    ve **okunmaz**; "Göster" şifreyi o an `nmcli -s -g 802-11-wireless-security.psk connection show id <ad>` ile
+    okur (kaçırılmış `:` ve `\` geri getirilir), 30 saniye sonra ya da pencere kapanınca/gizlenince yeniden
+    gizler; "Kopyala" panoya koyar. Şifre hiçbir yere kaydedilmez. Açık/kurumsal (802.1X) ağda ya da anahtarlık
+    şifreyi vermiyorsa sade bir açıklama çıkar. Bileşen `ui/widgets/password_row.py` (hotspot kartı da kullanır).
+  - **QR ile paylaş: ertelendi.** QR üretmek için bir kütüphane gerekir (`segno`: BSD, saf Python, bağımlılığı
+    yok); `packaging/build-deb.sh` Linwas'ı `--no-deps` kurduğu için eklemek derleme betiğini, `pyproject.toml`
+    bağımlılıklarını ve CI'yi etkiler. Kullanıcıya soruldu; cevaba göre eklenecek (yapilacaklar.md).
+  - **Hotspot (aşama 5):** Wi-Fi sekmesinin altında "Etkin nokta" kartı. Kapalıyken tek satır + "Aç…"; pencerede
+    ağ adı (bilgisayar adı, en çok 32 bayt) ve rastgele 12 karakterlik şifre (karışan harfler yok; "Yeni şifre"
+    ile yenilenir; 8–63 yazdırılabilir ASCII) ile **uyarı**: bu bilgisayar şu an bağlı olduğu Wi-Fi'dan ayrılır,
+    diğer cihazlar internete yalnızca bilgisayarın başka bir bağlantısı (ağ kablosu) varsa çıkar. Daha önce Linwas
+    hotspot'u açıldıysa ad ve şifre korunur (diğer cihazlar kendiliğinden bağlanır). Açıkken durum kartı "Etkin
+    nokta açık" der; ağ listesi, bağlantı ayrıntıları ve kalite kartı **gizlenir** (erişim noktası kipinde
+    anlamsız); hotspot kartında ağ adı, gizli şifre (Göster/Kopyala) ve "Kapat" kalır. Hotspot açıkken kalite
+    örneği alınmaz; hotspot için ağdan ayrılmak kopma sayılmaz.
+    Komutlar: `nmcli device wifi hotspot ifname <aygıt> con-name "Linwas Hotspot" ssid <ad> password <şifre>`,
+    durdurma `nmcli connection down id "Linwas Hotspot"` (nmcli(1) ve NetworkManager kaynağından doğrulandı: profil
+    `autoconnect=no`, `ipv4.method=shared`, `ipv6.method=ignore`; WPA2/CCMP, kart WPA/RSN bilmiyorsa WEP'e düşer —
+    o durumda ≥ 8 karakterlik şifre nmcli'ce reddedilir, hata "Ayrıntılar"da görünür).
+    Bilinen sınır: şifre `nmcli` komut satırı argümanı olarak kısa süre geçer (aynı kullanıcının `ps` çıktısında
+    görünebilir); Wi-Fi'a bağlanırken de aynıdır (nmcli şifreyi stdin'den almıyor).
+  - **Bluetooth cihaz ayarları (aşama 6):** eşleşmiş cihazın satırında "Ayarlar" → pencere: **ad** (takma ad;
+    boş bırakılırsa cihazın kendi adı) ve **"yakındayken kendiliğinden bağlan"** (= BlueZ `Trusted`). Satırda yalnızca
+    istisna yazılır: güvenilir olmayan cihazda "kendiliğinden bağlanmaz" (süzülmüş görünüm). Komutlar (BlueZ
+    belgelerinden doğrulandı): `bluetoothctl trust|untrust <MAC>` (sonuç `info` ile geri okunup doğrulanır);
+    yeniden adlandırma `busctl --system set-property -- org.bluez /org/bluez/<hciN>/dev_<MAC_> org.bluez.Device1
+    Alias s <ad>` — `bluetoothctl set-alias` "geçerli cihaz"a bağlı olduğundan tek seferlik komutta kullanılamaz.
+    **Güvenlik:** busctl, kullanıcının yazdığı adı seçenek sanabilir (`-H sunucu` uzak makineye bağlanmak demektir;
+    `-h`/`--version` yerelde denenerek doğrulandı), bu yüzden ad `--` sonrasına konur; 64 karakter üstü ve denetim
+    karakterleri reddedilir. Denetleyici adı (`hci0`…) `/sys/class/bluetooth` içinden okunur; cihaz hangisindeyse
+    onda başarılı olur.
+  - **Bluetooth ölçümü:** aynı rıza (`net_measure`) ve dosya: dakikada bir eşleşmiş cihazların bağlı olup olmadığı,
+    sinyal ve pil (`collect_bluetooth_samples`); rıza metinleri (Wi-Fi kartı + Ayarlar) buna göre güncellendi.
+    Cihaz penceresinde "Bağlantı son 7 günde N kez koptu" **yalnızca N ≥ 3** ve cihaz fare/klavye/tablet/oyun kolu
+    **değilse** gösterilir (bunlar boştayken kendiliğinden uyup kopar; kapatılan kulaklık da kopma sayılır, bu
+    yüzden eşik yüksek). Linwas'tan yapılan "Bağlantıyı kes / Unut / Bluetooth'u kapat" kopma sayılmaz.
+  - **Bluetooth ses (aşama 7):** bağlı bir ses cihazının "Ayarlar" penceresinde "Ses modu" ve "Sesi bu cihazdan
+    çal". İki sade mod: **Müzik** (A2DP, en iyi kalite, mikrofon yok) ve **Konuşma** (HSP/HFP, mikrofonlu); ham
+    profil adları gösterilmez, profil önceliğe göre seçilir (`a2dp-sink*`, `headset-head-unit*`; kullanılamayanlar
+    atlanır). `pactl` ile (PulseAudio ve PipeWire-pulse): `pactl list cards` (yalnızca `bluez_card.*`),
+    `pactl list short sinks`, `pactl get-default-sink`, `pactl set-card-profile <kart> <profil>`,
+    `pactl set-default-sink <sink>`; komutlar pactl(1)'den, çıktı biçimi PulseAudio kaynağından (`pactl.c`)
+    doğrulandı. Profil değişince ses çıkışı yeniden oluşur: Linwas çıkışın belirmesini en çok 3 sn bekleyip
+    varsayılan yapar. Ses kartı yoksa (cihaz bağlı değil, ses sunucusu görmüyor) bölüm gizli kalır.
+  - **Dosya gönderme (aşama 7):** bağlı telefon/bilgisayar satırında "Dosya gönder…" → dosya seçimi → masaüstünün
+    kendi aracı başlatılır: `bluetooth-sendto --device=<ADRES> -- <DOSYA…>` (GNOME) ya da `blueman-sendto --device
+    <ADRES> -- <DOSYA…>`; aktarımı aracın penceresi gösterir (karşı cihazda kabul gerekir). Seçenekler araçların
+    kaynak kodundan doğrulandı. **OBEX'i kendimiz yapmadık:** obexd aktarım nesnesini bitince hemen siliyor
+    (bluez `session.c`: `pending_request_free` → `obc_transfer_unregister`), yoklamayla tamamlanma/ret güvenilir
+    izlenemez; sinyal dinlemek ayrı bir karmaşıklık. Araç yoksa iki aracın adı söylenir (paket adı dağıtıma göre
+    değişir: Ubuntu 22.04'te `bluetooth-sendto` `gnome-bluetooth` içinde, 24.04'te `gnome-bluetooth-sendto`
+    paketinde; Blueman için `blueman`; Debian 12/Pardus 23'te doğrulanacak).
+  - **Bu bilgisayar (aşama 7):** Bluetooth sekmesinin altında kart: görünen ad (`org.bluez.Adapter1` `Alias`,
+    `busctl set-property -- …`; boş ad bilgisayar adına döner) ve **görünürlük**. Varsayılan gizli; "Görünür yap"
+    `bluetoothctl discoverable on` yapar (süre "süresiz" ayarlıysa 180 sn'ye sınırlanır, eşleştirme kapalıysa açılır;
+    açık unutulmasın), "Şimdi gizle" kapatır; sonuç `bluetoothctl show` ile geri okunup doğrulanır.
+  - **Öneriler, "Neden?" ve gölge kipi (aşama 8):** Wi-Fi ve Bluetooth sekmelerinin üstünde, yalnızca öneri varsa
+    görünen "Öneriler" kartı (en çok 2 öneri; süzülmüş). Kural (`core/netadvice.py`): son 7 günde bir ağ ya da
+    Bluetooth cihazı **≥ 3 kez koptuysa** ve **≥ 30 ölçüm** varsa öneri; fare/klavye/tablet/oyun kolu hiç öneri
+    almaz (uyumaları normal). Kullanıcının Linwas'tan kendi kesmeleri ve uzun zaman boşlukları kopma sayılmaz.
+    **Öneri bir şey değiştirmez**, "Ayarlara bak" ilgili ağın/cihazın mevcut ayar penceresini açar (değişiklik ve
+    geri alma orada, kullanıcı onayıyla); "Şimdi değil" öneriyi bir hafta susturur. **"Neden?"** (varsayılan
+    kapalı) kanıtı gösterir: ölçülen kopma ve ölçüm sayısı, ortalama sinyal/gecikme (Wi-Fi), kural eşiği, geçmiş
+    isabet ve "hiçbir şey sizin yerinize değiştirilmez" notu.
+    **Gölge kipi:** Linwas açıkken saatte bir, öneri gösterilsin ya da gösterilmesin, günde en çok bir kez sessizce
+    "bu ağ/cihaz yarın da kopacak" tahmini yazar; 24 saat sonra gerçek ölçümle karşılaştırır (tuttu = ≥ 1 kopma;
+    tutmadı; izlenemedi = kullanıcı o ağı/cihazı kullanmadı ya da < 10 ölçüm, oran dışı). Sonuçlanan en az 3
+    tahmin varsa "bu türden tahminlerde sorun ertesi gün a/b kez sürdü" yazılır; yoksa "yeterli geçmiş yok".
+    Böylece kuralın bu kullanıcıda işe yarayıp yaramadığı varsayılmaz, ölçülür (Eco karar 6'nın ölçülebilir
+    hâli). Öneriler otomatik **işlem yapmaz**; ileride otomatik eylem istenirse eşik bu isabet oranına bağlanır.
+    Veri: `~/.local/share/linwas/net_advice.jsonl` (tahmin, sonuç, "şimdi değil"; ağ/cihaz adı + sayılar), ölçümle
+    aynı rıza (`net_measure`; kapalıyken öneri gösterilmez), aynı 7 gün saklama ve aynı "Kullanıcı verileri"
+    öğesinde (birlikte görünür/silinir). Rıza metinleri ("öneri ve doğruluk denetimi") güncellendi.
+  - **Doğrulanan komutlar:** `ping -n -c N -i 0.4 -W 1.0 <IP>` (iputils belgesi; çıktı biçimine değil cevap
+    satırlarındaki `time=` değerine bakılır), `nmcli networking connectivity [check]` (full / limited / portal /
+    none / unknown). Yalnızca IP adresi ping'lenir (seçenek enjeksiyonuna karşı).
 
 ## AI
 - Sağlayıcılar: Gemini, ChatGPT, DeepSeek. AI isteğe bağlı; anahtar yoksa gizlenir.
@@ -190,6 +855,12 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - Anahtar: adım adım rehber + anahtar testi (model listesi çekilerek, token harcamadan).
 - **Anahtar saklama:** sistem anahtar kasası (keyring). Kasa yoksa Linwas bunu sade dille söyler ve kurulumunu kuyruğa önerir; kurulmazsa anahtar yalnızca o oturum için hatırlanır. Anahtarlar asla düz metin olarak kaydedilmez; loglarda ve hata raporlarında maskelenir.
 - Model seçimi: tam liste, sağlayıcının model listeleme servisinden canlı çekilir; model adları koda sabit yazılmaz.
+  - **Değişiklik (6 Ekim 2026):** Gemini'de yalnızca seçilmiş modeller gösterilir (`data/ai_models.json`):
+    3.8 Flash (ana), 3.7 Flash (hızlı/ucuz), 3.1 Pro (zor problemler, ücretli) + ücretsiz katmandaki
+    1M bağlamlı modeller. Her açılışta canlı listeyle karşılaştırılır; canlı listede olmayan gösterilmez,
+    hiçbiri yoksa tam liste gösterilir. Diğer sağlayıcılarda tam liste.
+  - Sohbet sırasında sağlayıcı/model değiştirilebilir; geçmiş korunur. AI sayfasında sohbet geçmişi
+    ve AI ayarları (anahtar, test, aylık sınır). Yan panel sürüklenerek genişletilir, şeride daraltılır.
 - Doğrulanan uç noktalar (bkz. `dogrulama-raporu.md`):
   - ChatGPT: `GET https://api.openai.com/v1/models`, `Authorization: Bearer`
   - Gemini: `GET https://generativelanguage.googleapis.com/v1beta/models`, anahtar `?key=` parametresi (URL'ler loglanırken anahtar maskelenmeli)
@@ -214,6 +885,10 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - Derleme GitHub Actions'ta (bkz. Geliştirme).
 - Dağıtım: .deb paketi; çift tıkla kurulum, postinst kendi APT deposunu ve imza anahtarını ekler. Güncellemeler sistem güncellemesiyle gelir. Resmi eklentiler aynı depodan ayrı .deb paketleri olarak.
 - Çift tıklama davranışı her dağıtımda test edilecek.
+- **APT deposu (aşama 5):** `stable` dağıtımı, `main` bileşeni, amd64; `packaging/build-apt-repo.sh` (apt-ftparchive + gpg) `pool/` ve `dists/stable/` üretir, `InRelease` ve `Release.gpg` ile imzalar. postinst kaynağı deb822 biçiminde `/etc/apt/sources.list.d/linwas.sources` olarak ekler (`Signed-By: /usr/share/keyrings/linwas-archive-keyring.gpg`); kullanıcı dosyayı `.disabled` yaptıysa yeniden eklemez; purge ikisini de siler.
+- **İmza anahtarı:** ed25519, 5 yıl geçerli, parolasız (CI imzalar); `packaging/create-signing-key.sh` ile ayrı bir klasörde (`~/.linwas-signing`) bir kez üretilir. Gizli anahtar GitHub gizli değeri `LINWAS_SIGNING_KEY`, depo adresi değişken `LINWAS_APT_URL`. Süre dolmadan uzatılıp açık anahtar bir Linwas güncellemesiyle dağıtılır.
+- **Yayın iş akışı:** `.github/workflows/release.yml` (`v*` etiketi veya elle): imzalı .deb + APT deposu → artifact. Yükleme adımı yayın yeri kararından sonra.
+- **CI APT testi:** Ubuntu 22.04 ve Debian 12 kapsayıcılarında geçici anahtarla imzalı yerel depo → postinst kaynağı → `apt-get update` imza kabulü → depodan güncelleme → purge.
 
 ## Test
 - Birim testleri: dağıtım/masaüstü algılama, çeviri eksiksizliği, whitelist ve parametre doğrulama, maskeleme, kuyruk, yedek/geri alma kaydı, ayar eşleşmeleri, eklenti yükleyici ve sürüm uyumu, .deb risk analizi.
@@ -254,4 +929,4 @@ linwas2/
 2. Arayüz temeli: tema değerleri, ortak bileşenler, ana pencere, menü, durum çubuğu, kuyruk/onay/çalışıyor/sonuç pencereleri.
 3. AI: üç sağlayıcı, anahtar kasası, kullanım sayacı, yardımcı paneli.
 4. Sayfalar ve yerleşik eklentiler, sırayla.
-5. Son paketleme: APT deposu, imza anahtarı, postinst, Linwas'a özel polkit kuralı.
+5. ✅ Son paketleme: APT deposu, imza anahtarı, postinst, Linwas'a özel polkit kuralı.

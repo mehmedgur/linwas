@@ -1,0 +1,12 @@
+# Günde bir kez; açılıştan 15 dk sonra ve kaçırılan çalıştırma sonradan yapılır
+[Unit]
+Description=Linwas automatic updates (daily)
+
+[Timer]
+OnBootSec=15min
+OnCalendar=daily
+RandomizedDelaySec=1h
+Persistent=true
+
+[Install]
+WantedBy=timers.target

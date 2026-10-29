@@ -1,0 +1,2 @@
+# LibreOffice şerit dosyaları değişince (güncelleme) sade şerit yeniden üretilir.
+interest-noawait /usr/lib/libreoffice/share/config/soffice.cfg/modules

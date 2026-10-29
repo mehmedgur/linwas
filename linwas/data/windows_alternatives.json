@@ -1,0 +1,165 @@
+{
+  "photoshop": {
+    "label": "Adobe Photoshop",
+    "apt": ["gimp", "krita"],
+    "flatpak": ["org.gimp.GIMP", "org.kde.krita"]
+  },
+  "lightroom": {
+    "label": "Adobe Lightroom",
+    "apt": ["darktable", "rawtherapee"],
+    "flatpak": ["org.darktable.Darktable", "com.rawtherapee.RawTherapee"]
+  },
+  "illustrator": {
+    "label": "Adobe Illustrator",
+    "apt": ["inkscape"],
+    "flatpak": ["org.inkscape.Inkscape"]
+  },
+  "premiere": {
+    "label": "Adobe Premiere",
+    "apt": ["kdenlive", "openshot"],
+    "flatpak": ["org.kde.kdenlive", "org.openshot.OpenShot"]
+  },
+  "after effects": {
+    "label": "Adobe After Effects",
+    "apt": ["natron"],
+    "flatpak": []
+  },
+  "word": {
+    "label": "Microsoft Word",
+    "apt": ["libreoffice-writer"],
+    "flatpak": ["org.libreoffice.LibreOffice"]
+  },
+  "excel": {
+    "label": "Microsoft Excel",
+    "apt": ["libreoffice-calc"],
+    "flatpak": ["org.libreoffice.LibreOffice"]
+  },
+  "powerpoint": {
+    "label": "Microsoft PowerPoint",
+    "apt": ["libreoffice-impress"],
+    "flatpak": ["org.libreoffice.LibreOffice"]
+  },
+  "office": {
+    "label": "Microsoft Office",
+    "apt": ["libreoffice"],
+    "flatpak": ["org.libreoffice.LibreOffice"]
+  },
+  "outlook": {
+    "label": "Microsoft Outlook",
+    "apt": ["thunderbird"],
+    "flatpak": ["org.mozilla.Thunderbird"]
+  },
+  "teams": {
+    "label": "Microsoft Teams",
+    "apt": [],
+    "flatpak": ["com.microsoft.Teams"]
+  },
+  "onenote": {
+    "label": "Microsoft OneNote",
+    "apt": ["xournalpp"],
+    "flatpak": ["com.github.xournalpp.xournalpp"]
+  },
+  "notepad": {
+    "label": "Notepad",
+    "apt": ["gedit", "kate"],
+    "flatpak": ["org.gnome.gedit", "org.kde.kate"]
+  },
+  "notepad++": {
+    "label": "Notepad++",
+    "apt": ["kate", "gedit"],
+    "flatpak": ["org.kde.kate"]
+  },
+  "vlc": {
+    "label": "VLC",
+    "apt": ["vlc"],
+    "flatpak": ["org.videolan.VLC"]
+  },
+  "winrar": {
+    "label": "WinRAR / 7-Zip",
+    "apt": ["p7zip-full", "file-roller"],
+    "flatpak": []
+  },
+  "7-zip": {
+    "label": "7-Zip",
+    "apt": ["p7zip-full"],
+    "flatpak": []
+  },
+  "chrome": {
+    "label": "Google Chrome",
+    "apt": ["chromium"],
+    "flatpak": ["com.google.Chrome"],
+    "third_party": "google-chrome"
+  },
+  "firefox": {
+    "label": "Firefox",
+    "apt": ["firefox-esr"],
+    "flatpak": ["org.mozilla.firefox"]
+  },
+  "steam": {
+    "label": "Steam",
+    "apt": ["steam"],
+    "flatpak": ["com.valvesoftware.Steam"]
+  },
+  "discord": {
+    "label": "Discord",
+    "apt": [],
+    "flatpak": ["com.discordapp.Discord"]
+  },
+  "slack": {
+    "label": "Slack",
+    "apt": [],
+    "flatpak": ["com.slack.Slack"]
+  },
+  "zoom": {
+    "label": "Zoom",
+    "apt": [],
+    "flatpak": ["us.zoom.Zoom"],
+    "third_party": "zoom"
+  },
+  "skype": {
+    "label": "Skype",
+    "apt": [],
+    "flatpak": ["com.skype.Client"]
+  },
+  "spotify": {
+    "label": "Spotify",
+    "apt": [],
+    "flatpak": ["com.spotify.Client"]
+  },
+  "vscode": {
+    "label": "Visual Studio Code",
+    "apt": [],
+    "flatpak": ["com.visualstudio.code"],
+    "third_party": "vscode"
+  },
+  "obs": {
+    "label": "OBS Studio",
+    "apt": ["obs-studio"],
+    "flatpak": ["com.obsproject.Studio"]
+  },
+  "audacity": {
+    "label": "Audacity",
+    "apt": ["audacity"],
+    "flatpak": ["org.audacityteam.Audacity"]
+  },
+  "handbrake": {
+    "label": "HandBrake",
+    "apt": ["handbrake"],
+    "flatpak": ["fr.handbrake.ghb"]
+  },
+  "putty": {
+    "label": "PuTTY",
+    "apt": ["putty"],
+    "flatpak": []
+  },
+  "filezilla": {
+    "label": "FileZilla",
+    "apt": ["filezilla"],
+    "flatpak": ["org.filezillaproject.Filezilla"]
+  },
+  "winamp": {
+    "label": "Winamp",
+    "apt": ["rhythmbox", "clementine"],
+    "flatpak": ["org.gnome.Rhythmbox3", "org.clementine_player.Clementine"]
+  }
+}

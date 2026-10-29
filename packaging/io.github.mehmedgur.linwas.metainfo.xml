@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Yazılım merkezleri (Pardus Paket Yükleyici, GNOME Yazılım, Discover) .deb'e çift tıklanınca
+     adı, açıklamayı ve simgeyi buradan gösterir; kurulumdan sonra "Aç" düğmesi masaüstü dosyasını açar. -->
+<component type="desktop-application">
+  <id>io.github.mehmedgur.linwas</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Linwas</name>
+  <summary>Manage Linux without the terminal</summary>
+  <summary xml:lang="tr">Linux'u terminal kullanmadan yönetin</summary>
+  <developer id="io.github.mehmedgur">
+    <name>Mehmed Gürbüz</name>
+  </developer>
+  <description>
+    <p>
+      Linwas helps people who switch from Windows to manage their Linux computer without the
+      terminal.
+    </p>
+    <p xml:lang="tr">
+      Linwas, Windows'tan Linux'a geçenlerin bilgisayarlarını terminal kullanmadan yönetmesine
+      yardım eder.
+    </p>
+    <ul>
+      <li>Install and remove programs, updates and drivers</li>
+      <li xml:lang="tr">Program kurma ve kaldırma, güncellemeler ve sürücüler</li>
+      <li>Wi-Fi, Bluetooth, power and battery settings</li>
+      <li xml:lang="tr">Wi-Fi, Bluetooth, güç ve pil ayarları</li>
+      <li>Troubleshooting that finds the cause and offers a fix</li>
+      <li xml:lang="tr">Nedeni bulup çözüm öneren sorun giderme</li>
+      <li>Moving files and settings from Windows</li>
+      <li xml:lang="tr">Windows'tan dosya ve ayar taşıma</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">linwas.desktop</launchable>
+  <icon type="stock">linwas</icon>
+  <url type="homepage">https://github.com/mehmedgur/linwas2</url>
+  <url type="bugtracker">https://github.com/mehmedgur/linwas2/issues</url>
+  <categories>
+    <category>System</category>
+    <category>Settings</category>
+  </categories>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="2.0.0" date="2026-10-27"/>
+  </releases>
+</component>

@@ -1,0 +1,10 @@
+#!/bin/sh
+# Sade şeridi kurulu LibreOffice'ten üretir. LibreOffice güncellenince dpkg tetikleyicisi
+# ("triggered") ile yeniden üretilir. Üretim başarısız olursa o uygulama tam şeritte kalır.
+set -e
+case "$1" in
+    configure|triggered)
+        /usr/bin/linwas-office-look generate-ribbons || true
+        ;;
+esac
+exit 0

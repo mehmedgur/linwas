@@ -1,0 +1,18 @@
+#!/bin/sh
+# Linwas kaldırma sonrası betiği.
+set -e
+
+if [ "$1" = "purge" ]; then
+    # Linwas'ın eklediği depo ve root'a ait geri alma kayıtları
+    rm -f /etc/apt/sources.list.d/linwas.sources /etc/apt/sources.list.d/linwas.sources.disabled
+    rm -rf /var/lib/linwas /var/lib/linwas-autoupdate
+    rm -f /etc/linwas/autoupdate.json
+    rm -f /etc/linwas/power.json /etc/systemd/logind.conf.d/90-linwas-power.conf
+    rm -rf /run/linwas-power /var/lib/linwas-power
+fi
+
+if [ -d /run/systemd/system ]; then
+    systemctl daemon-reload >/dev/null 2>&1 || true
+fi
+
+exit 0

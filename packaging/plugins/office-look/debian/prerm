@@ -1,0 +1,9 @@
+#!/bin/sh
+# Kurulumda üretilen (dpkg'nin bilmediği) şerit dosyalarını siler.
+set -e
+case "$1" in
+    remove|deconfigure)
+        /usr/bin/linwas-office-look remove-ribbons || true
+        ;;
+esac
+exit 0

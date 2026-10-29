@@ -1,0 +1,411 @@
+{
+  "_comment": "Programlar › Keşfet. APT adları Debian 12 ve Ubuntu 22.04'te, Flatpak kimlikleri Flathub API'sinde doğrulandı (7 Ekim 2026). third_party: third_party_apps.json kimliği.",
+  "apps": [
+    {
+      "id": "firefox",
+      "name": "Firefox",
+      "category": "internet",
+      "tr": "Hızlı ve gizliliğe önem veren web tarayıcısı",
+      "en": "Fast, privacy-focused web browser",
+      "apt": [
+        "firefox-esr"
+      ],
+      "flatpak": "org.mozilla.firefox",
+      "third_party": "",
+      "icon": "firefox-esr"
+    },
+    {
+      "id": "chrome",
+      "name": "Google Chrome",
+      "category": "internet",
+      "tr": "Google'ın web tarayıcısı",
+      "en": "Google's web browser",
+      "apt": [],
+      "flatpak": "com.google.Chrome",
+      "third_party": "google-chrome",
+      "icon": "google-chrome"
+    },
+    {
+      "id": "thunderbird",
+      "name": "Thunderbird",
+      "category": "communication",
+      "tr": "E-posta, takvim ve kişiler (Outlook gibi)",
+      "en": "Email, calendar and contacts (like Outlook)",
+      "apt": [
+        "thunderbird"
+      ],
+      "flatpak": "org.mozilla.Thunderbird",
+      "third_party": "",
+      "icon": "thunderbird"
+    },
+    {
+      "id": "transmission",
+      "name": "Transmission",
+      "category": "internet",
+      "tr": "Kolay torrent indirici",
+      "en": "Simple torrent downloader",
+      "apt": [
+        "transmission-gtk"
+      ],
+      "flatpak": "com.transmissionbt.Transmission",
+      "third_party": "",
+      "icon": "transmission"
+    },
+    {
+      "id": "filezilla",
+      "name": "FileZilla",
+      "category": "internet",
+      "tr": "FTP ile dosya gönderme ve alma",
+      "en": "Transfer files over FTP",
+      "apt": [
+        "filezilla"
+      ],
+      "flatpak": "org.filezillaproject.Filezilla",
+      "third_party": "",
+      "icon": "filezilla"
+    },
+    {
+      "id": "libreoffice",
+      "name": "LibreOffice",
+      "category": "office",
+      "tr": "Word, Excel ve PowerPoint dosyalarını açar ve düzenler",
+      "en": "Opens and edits Word, Excel and PowerPoint files",
+      "apt": [
+        "libreoffice"
+      ],
+      "flatpak": "org.libreoffice.LibreOffice",
+      "third_party": "",
+      "icon": "libreoffice-startcenter"
+    },
+    {
+      "id": "evince",
+      "name": "Belge Görüntüleyici",
+      "category": "office",
+      "tr": "PDF dosyalarını görüntüleme ve yazdırma",
+      "en": "View and print PDF files",
+      "apt": [
+        "evince"
+      ],
+      "flatpak": "org.gnome.Evince",
+      "third_party": "",
+      "icon": "org.gnome.Evince"
+    },
+    {
+      "id": "xournalpp",
+      "name": "Xournal++",
+      "category": "office",
+      "tr": "PDF üzerine not alma ve imza atma",
+      "en": "Write notes and sign PDF files",
+      "apt": [
+        "xournalpp"
+      ],
+      "flatpak": "com.github.xournalpp.xournalpp",
+      "third_party": "",
+      "icon": "com.github.xournalpp.xournalpp"
+    },
+    {
+      "id": "gimp",
+      "name": "GIMP",
+      "category": "graphics",
+      "tr": "Fotoğraf düzenleme (Photoshop gibi)",
+      "en": "Photo editing (like Photoshop)",
+      "apt": [
+        "gimp"
+      ],
+      "flatpak": "org.gimp.GIMP",
+      "third_party": "",
+      "icon": "gimp"
+    },
+    {
+      "id": "inkscape",
+      "name": "Inkscape",
+      "category": "graphics",
+      "tr": "Vektör çizim (Illustrator gibi)",
+      "en": "Vector drawing (like Illustrator)",
+      "apt": [
+        "inkscape"
+      ],
+      "flatpak": "org.inkscape.Inkscape",
+      "third_party": "",
+      "icon": "org.inkscape.Inkscape"
+    },
+    {
+      "id": "krita",
+      "name": "Krita",
+      "category": "graphics",
+      "tr": "Dijital resim ve çizim",
+      "en": "Digital painting and drawing",
+      "apt": [
+        "krita"
+      ],
+      "flatpak": "org.kde.krita",
+      "third_party": "",
+      "icon": "krita"
+    },
+    {
+      "id": "darktable",
+      "name": "darktable",
+      "category": "graphics",
+      "tr": "RAW fotoğraf işleme (Lightroom gibi)",
+      "en": "RAW photo processing (like Lightroom)",
+      "apt": [
+        "darktable"
+      ],
+      "flatpak": "org.darktable.Darktable",
+      "third_party": "",
+      "icon": "darktable"
+    },
+    {
+      "id": "vlc",
+      "name": "VLC",
+      "category": "media",
+      "tr": "Her türlü video ve müziği oynatır",
+      "en": "Plays any video or music",
+      "apt": [
+        "vlc"
+      ],
+      "flatpak": "org.videolan.VLC",
+      "third_party": "",
+      "icon": "vlc"
+    },
+    {
+      "id": "spotify",
+      "name": "Spotify",
+      "category": "media",
+      "tr": "Müzik ve podcast dinleme",
+      "en": "Music and podcasts",
+      "apt": [],
+      "flatpak": "com.spotify.Client",
+      "third_party": "",
+      "icon": "com.spotify.Client"
+    },
+    {
+      "id": "rhythmbox",
+      "name": "Rhythmbox",
+      "category": "media",
+      "tr": "Müzik arşivi ve çalar",
+      "en": "Music library and player",
+      "apt": [
+        "rhythmbox"
+      ],
+      "flatpak": "org.gnome.Rhythmbox3",
+      "third_party": "",
+      "icon": "org.gnome.Rhythmbox3"
+    },
+    {
+      "id": "audacity",
+      "name": "Audacity",
+      "category": "media",
+      "tr": "Ses kaydı ve düzenleme",
+      "en": "Record and edit audio",
+      "apt": [
+        "audacity"
+      ],
+      "flatpak": "org.audacityteam.Audacity",
+      "third_party": "",
+      "icon": "audacity"
+    },
+    {
+      "id": "kdenlive",
+      "name": "Kdenlive",
+      "category": "media",
+      "tr": "Video düzenleme",
+      "en": "Video editing",
+      "apt": [
+        "kdenlive"
+      ],
+      "flatpak": "org.kde.kdenlive",
+      "third_party": "",
+      "icon": "kdenlive"
+    },
+    {
+      "id": "obs",
+      "name": "OBS Studio",
+      "category": "media",
+      "tr": "Ekran kaydı ve canlı yayın",
+      "en": "Screen recording and live streaming",
+      "apt": [
+        "obs-studio"
+      ],
+      "flatpak": "com.obsproject.Studio",
+      "third_party": "",
+      "icon": "com.obsproject.Studio"
+    },
+    {
+      "id": "handbrake",
+      "name": "HandBrake",
+      "category": "media",
+      "tr": "Video dönüştürme ve küçültme",
+      "en": "Convert and shrink videos",
+      "apt": [
+        "handbrake"
+      ],
+      "flatpak": "fr.handbrake.ghb",
+      "third_party": "",
+      "icon": "fr.handbrake.ghb"
+    },
+    {
+      "id": "telegram",
+      "name": "Telegram",
+      "category": "communication",
+      "tr": "Mesajlaşma",
+      "en": "Messaging",
+      "apt": [
+        "telegram-desktop"
+      ],
+      "flatpak": "org.telegram.desktop",
+      "third_party": "",
+      "icon": "telegram"
+    },
+    {
+      "id": "discord",
+      "name": "Discord",
+      "category": "communication",
+      "tr": "Sesli ve yazılı sohbet toplulukları",
+      "en": "Voice and text chat communities",
+      "apt": [],
+      "flatpak": "com.discordapp.Discord",
+      "third_party": "",
+      "icon": "com.discordapp.Discord"
+    },
+    {
+      "id": "zoom",
+      "name": "Zoom",
+      "category": "communication",
+      "tr": "Görüntülü toplantı",
+      "en": "Video meetings",
+      "apt": [],
+      "flatpak": "us.zoom.Zoom",
+      "third_party": "zoom",
+      "icon": "Zoom"
+    },
+    {
+      "id": "vscode",
+      "name": "Visual Studio Code",
+      "category": "tools",
+      "tr": "Kod düzenleyici",
+      "en": "Code editor",
+      "apt": [],
+      "flatpak": "com.visualstudio.code",
+      "third_party": "vscode",
+      "icon": "com.visualstudio.code"
+    },
+    {
+      "id": "file-roller",
+      "name": "Arşiv Yöneticisi",
+      "category": "tools",
+      "tr": "ZIP ve RAR dosyalarını açma (WinRAR gibi)",
+      "en": "Open ZIP and RAR files (like WinRAR)",
+      "apt": [
+        "file-roller"
+      ],
+      "flatpak": "org.gnome.FileRoller",
+      "third_party": "",
+      "icon": "org.gnome.FileRoller"
+    },
+    {
+      "id": "keepassxc",
+      "name": "KeePassXC",
+      "category": "tools",
+      "tr": "Şifre yöneticisi",
+      "en": "Password manager",
+      "apt": [
+        "keepassxc"
+      ],
+      "flatpak": "org.keepassxc.KeePassXC",
+      "third_party": "",
+      "icon": "keepassxc"
+    },
+    {
+      "id": "bleachbit",
+      "name": "BleachBit",
+      "category": "tools",
+      "tr": "Gereksiz dosyaları temizler (CCleaner gibi)",
+      "en": "Cleans junk files (like CCleaner)",
+      "apt": [
+        "bleachbit"
+      ],
+      "flatpak": "org.bleachbit.BleachBit",
+      "third_party": "",
+      "icon": "bleachbit"
+    },
+    {
+      "id": "gparted",
+      "name": "GParted",
+      "category": "tools",
+      "tr": "Disk bölümlerini düzenleme",
+      "en": "Edit disk partitions",
+      "apt": [
+        "gparted"
+      ],
+      "flatpak": "",
+      "third_party": "",
+      "icon": "gparted"
+    },
+    {
+      "id": "disks",
+      "name": "Diskler",
+      "category": "tools",
+      "tr": "Disk ve USB bellek biçimlendirme",
+      "en": "Format disks and USB drives",
+      "apt": [
+        "gnome-disk-utility"
+      ],
+      "flatpak": "",
+      "third_party": "",
+      "icon": "org.gnome.DiskUtility"
+    },
+    {
+      "id": "timeshift",
+      "name": "Timeshift",
+      "category": "tools",
+      "tr": "Sistem yedeği ve geri yükleme",
+      "en": "System backup and restore",
+      "apt": [
+        "timeshift"
+      ],
+      "flatpak": "",
+      "third_party": "",
+      "icon": "timeshift"
+    },
+    {
+      "id": "stellarium",
+      "name": "Stellarium",
+      "category": "education",
+      "tr": "Bilgisayarda gökyüzü ve gezegenler",
+      "en": "Night sky and planets on your computer",
+      "apt": [
+        "stellarium"
+      ],
+      "flatpak": "org.stellarium.Stellarium",
+      "third_party": "",
+      "icon": "org.stellarium.Stellarium"
+    },
+    {
+      "id": "gcompris",
+      "name": "GCompris",
+      "category": "education",
+      "tr": "Çocuklar için eğitici oyunlar",
+      "en": "Educational games for children",
+      "apt": [
+        "gcompris-qt"
+      ],
+      "flatpak": "org.kde.gcompris",
+      "third_party": "",
+      "icon": "gcompris-qt"
+    },
+    {
+      "id": "tuxpaint",
+      "name": "Tux Paint",
+      "category": "education",
+      "tr": "Çocuklar için resim programı",
+      "en": "Drawing program for children",
+      "apt": [
+        "tuxpaint"
+      ],
+      "flatpak": "org.tuxpaint.Tuxpaint",
+      "third_party": "",
+      "icon": "tuxpaint"
+    }
+  ]
+}

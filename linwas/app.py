@@ -1,8 +1,15 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Uygulama giriş noktası.
 
 Komut satırı seçenekleri:
   --version      Sürümü yazdırır.
   --self-check   Pencere açmadan temel kontrolleri yapar (CI'da paket testi için).
+  --app-folder KİMLİK [DOSYALAR]  Program klasörünü açar; bırakılan kısayolları ekler.
+  --folder-action EYLEM DOSYALAR  Masaüstü sağ tık: group / add / ungroup (program klasörü).
+  --open-group KİMLİK             Çalışma grubuna geçer, programlarını başlatır.
+  --workgroups-agent              Yeni pencereleri kendi grubuna taşır (X11; oturumla başlar).
 """
 
 from __future__ import annotations
@@ -23,6 +30,9 @@ def _self_check() -> int:
     from linwas.ui.main_window import MainWindow
 
     app = QApplication([sys.argv[0]])
+    from linwas.ui.theme.fonts import load_bundled_fonts
+
+    load_bundled_fonts()
     lang = selected_language()
     translator = install_translator(app, lang)
     window = MainWindow()
@@ -37,6 +47,8 @@ def _self_check() -> int:
     ok = lang == "en" or translator is not None
     if not ok:
         print(f"translation file not found: {qm_path(lang)}", file=sys.stderr)
+    # Kapatırken "arka planda çalışsın mı?" sorusu açılmasın (CI'da yanıtlayan yok)
+    window._quitting = True
     window.close()
     return 0 if ok else 1
 
@@ -44,10 +56,33 @@ def _self_check() -> int:
 def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv if argv is None else argv)
     if "--version" in argv[1:]:
+        from linwas import ATTRIBUTION, __license__
+
         print(__version__)
+        print(ATTRIBUTION)
+        print(f"License: {__license__} with additional terms (NOTICE.md). NO WARRANTY.")
         return 0
     if "--self-check" in argv[1:]:
         return _self_check()
+    if len(argv) > 1 and argv[1] == "--workgroups-agent":
+        # Çalışma grupları: X11'de yeni pencereyi kendi grubuna taşıyan ajan (Qt yok)
+        from linwas.backend import workgroups
+
+        return workgroups.run_agent()
+    if len(argv) > 2 and argv[1] == "--open-group":
+        from linwas.backend import workgroups
+
+        return 0 if workgroups.open_group(workgroups.load_groups(), argv[2]) else 1
+    if len(argv) > 2 and argv[1] == "--folder-action":
+        # Masaüstü sağ tık eylemi (grupla / klasöre ekle / klasörü çöz)
+        from linwas.ui.folder_actions import run as folder_action
+
+        return folder_action(argv[2], argv[3:])
+    if len(argv) > 2 and argv[1] == "--app-folder":
+        # Program klasörü açılır penceresi; ana pencereden bağımsız, hafif süreç
+        from linwas.ui.app_folder_popup import run
+
+        return run(argv[2], argv[3:])
 
     from PySide6.QtWidgets import QApplication
 
@@ -58,10 +93,64 @@ def main(argv: list[str] | None = None) -> int:
     app.setApplicationName("Linwas")
     app.setApplicationVersion(__version__)
     app.setDesktopFileName("linwas")
-    install_translator(app, selected_language())
+    # Eco düzeni için gömülü Figtree yazı tipi (düzen seçilmese de yüklenir; küçüktür)
+    from linwas.ui.theme.fonts import load_bundled_fonts
 
-    window = MainWindow()
-    window.show()
+    load_bundled_fonts()
+    # LINWAS_LANG ortam değişkeni (geliştirme/test) ayarlardaki dili ezer
+    from linwas.core import app_settings
+
+    lang = selected_language() if "LINWAS_LANG" in os.environ else app_settings.load().language
+    install_translator(app, lang)
+    from linwas.core import logging_setup
+
+    logging_setup.setup(app_settings.load().debug_log)
+
+    # "Linwas ile aç": .deb ya da .exe/.msi verildiyse risk analizi penceresi açılır
+    deb = next((a for a in argv[1:] if a.endswith(".deb") and os.path.isfile(a)), None)
+    exe = next(
+        (a for a in argv[1:] if a.lower().endswith((".exe", ".msi")) and os.path.isfile(a)),
+        None,
+    )
+    background = "--background" in argv[1:]
+    # "--page <kimlik>": belirli bir sayfayı aç (ör. LibreOffice'ten Office görünümü ayarları)
+    page = argv[argv.index("--page") + 1] if "--page" in argv[1:-1] else None
+    if page:
+        message = "page:" + page
+    elif deb:
+        message = "deb:" + os.path.abspath(deb)
+    elif exe:
+        message = "exe:" + os.path.abspath(exe)
+    else:
+        message = "background" if background else "show"
+
+    # Masaüstü sağ tık eylemleri (program klasörü) geçerli dilde. Tek kopya denetiminden önce:
+    # arkada eski bir Linwas çalışsa da her açılışta yazılır. Yazılamasa da açılış sürer.
+    import contextlib
+
+    with contextlib.suppress(Exception):
+        from linwas.ui.folder_actions import install_menu_actions
+
+        install_menu_actions()
+
+    # Tek kopya: Linwas zaten çalışıyorsa (ör. arka planda) iletiyi ona gönderip çık
+    from linwas.ui.single_instance import SingleInstance
+
+    instance = SingleInstance()
+    if instance.send_to_running(message):
+        return 0
+    instance.listen()
+
+    window = MainWindow(background=background and not (deb or exe))
+    instance.message_received.connect(window.on_instance_message)
+    if not window.is_background:
+        window.show()
+    if page:
+        window.open_page(page)
+    if deb:
+        window.open_deb(os.path.abspath(deb))
+    if exe:
+        window.open_exe(os.path.abspath(exe))
     return app.exec()
 
 

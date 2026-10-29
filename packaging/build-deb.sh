@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 # Linwas .deb paketini gömülü Python + PySide6 ile derler.
 # Kullanım: packaging/build-deb.sh <paket-sürümü>     ör. 2.0.0~dev12
 # Gereken: internet erişimi, curl, sha256sum, dpkg-deb. Çeviriler önceden derlenmiş olmalı
@@ -63,14 +66,71 @@ find "$RUNTIME" -type d -name "__pycache__" -prune -exec rm -rf {} +
 echo "==> Başlatıcı, masaüstü girişi ve simge"
 install -D -m 0755 "$ROOT/packaging/linwas-launcher.sh" "$PKG/usr/bin/linwas"
 install -D -m 0644 "$ROOT/packaging/linwas.desktop" "$PKG/usr/share/applications/linwas.desktop"
+# Yazılım merkezleri .deb'e çift tıklanınca ad, açıklama ve simgeyi buradan okur
+install -D -m 0644 "$ROOT/packaging/io.github.mehmedgur.linwas.metainfo.xml" \
+    "$PKG/usr/share/metainfo/io.github.mehmedgur.linwas.metainfo.xml"
 install -D -m 0644 "$ROOT/linwas/resources/linwas.svg" \
     "$PKG/usr/share/icons/hicolor/scalable/apps/linwas.svg"
+
+# Lisans: GPL 3 + atıf şartları (NOTICE.md); telif dosyası atıf satırını taşır (NOTICE 1d)
+install -D -m 0644 "$ROOT/packaging/debian/copyright" "$PKG/usr/share/doc/linwas/copyright"
+install -D -m 0644 "$ROOT/NOTICE.md" "$PKG/usr/share/doc/linwas/NOTICE.md"
+install -D -m 0644 "$ROOT/TRADEMARKS.md" "$PKG/usr/share/doc/linwas/TRADEMARKS.md"
+
+# Figtree (eco düzeni) SIL OFL 1.1: telif satırı ve lisans metni pakete eşlik etmeli.
+install -D -m 0644 "$ROOT/linwas/resources/fonts/Figtree-OFL.txt" \
+    "$PKG/usr/share/doc/linwas/Figtree-OFL.txt"
+
+echo "==> Root helper ve polkit eylemi"
+install -D -m 0755 "$ROOT/packaging/linwas-helper.sh" "$PKG/usr/lib/linwas/linwas-helper"
+install -D -m 0644 "$ROOT/packaging/org.linwas.helper.policy" \
+    "$PKG/usr/share/polkit-1/actions/org.linwas.helper.policy"
+
+echo "==> Otomatik güncelleme zamanlayıcısı"
+install -D -m 0755 "$ROOT/packaging/linwas-autoupdate.sh" "$PKG/usr/lib/linwas/linwas-autoupdate"
+install -D -m 0644 "$ROOT/packaging/systemd/linwas-autoupdate.service" \
+    "$PKG/usr/lib/systemd/system/linwas-autoupdate.service"
+install -D -m 0644 "$ROOT/packaging/systemd/linwas-autoupdate.timer" \
+    "$PKG/usr/lib/systemd/system/linwas-autoupdate.timer"
+
+echo "==> Güç planları servisi ve masaüstü ajanı"
+install -D -m 0755 "$ROOT/packaging/linwas-power.sh" "$PKG/usr/lib/linwas/linwas-power"
+install -D -m 0755 "$ROOT/packaging/linwas-power-switch.sh" "$PKG/usr/lib/linwas/linwas-power-switch"
+install -D -m 0755 "$ROOT/packaging/linwas-power-agent.sh" "$PKG/usr/lib/linwas/linwas-power-agent"
+# Saat: uykudan uyanınca düzelt (core/clock.py; Windows ile çift açılışta RTC yerel saatte)
+install -D -m 0755 "$ROOT/packaging/linwas-clock-sleep.sh" \
+    "$PKG/usr/lib/systemd/system-sleep/linwas-clock"
+install -D -m 0644 "$ROOT/packaging/systemd/linwas-power.service" \
+    "$PKG/usr/lib/systemd/system/linwas-power.service"
+install -D -m 0644 "$ROOT/packaging/linwas-power-agent.desktop" \
+    "$PKG/etc/xdg/autostart/linwas-power-agent.desktop"
+
+# APT deposu (yayın yeri kararlaştırılınca): LINWAS_APT_URL ve imza anahtarı verilirse
+APT_URL=${LINWAS_APT_URL:-}
+if [ -n "$APT_URL" ]; then
+    if [ ! -f "$ROOT/packaging/linwas-archive-keyring.gpg" ]; then
+        echo "HATA: LINWAS_APT_URL verildi ama packaging/linwas-archive-keyring.gpg yok." >&2
+        exit 1
+    fi
+    install -D -m 0644 "$ROOT/packaging/linwas-archive-keyring.gpg" \
+        "$PKG/usr/share/keyrings/linwas-archive-keyring.gpg"
+    # Eklenti kataloğu deponun yanında, aynı anahtarla imzalı (core/plugins/catalog.py)
+    mkdir -p "$PKG/usr/share/linwas"
+    printf '{"url": "%s/plugins/index.json"}\n' "${APT_URL%/}" > "$PKG/usr/share/linwas/plugin-catalog.json"
+    chmod 0644 "$PKG/usr/share/linwas/plugin-catalog.json"
+fi
 
 echo "==> Paket bilgileri"
 INSTALLED_SIZE=$(du -sk --exclude=DEBIAN "$PKG" | cut -f1)
 mkdir -p "$PKG/DEBIAN"
 sed -e "s/@VERSION@/${VERSION}/" -e "s/@ARCH@/${ARCH}/" -e "s/@INSTALLED_SIZE@/${INSTALLED_SIZE}/" \
     "$ROOT/packaging/debian/control.in" > "$PKG/DEBIAN/control"
+sed -e "s|@APT_URL@|${APT_URL}|" "$ROOT/packaging/debian/postinst.in" > "$PKG/DEBIAN/postinst"
+install -m 0755 "$ROOT/packaging/debian/postrm" "$PKG/DEBIAN/postrm"
+# /etc altındaki dosyalar kullanıcı değiştirirse güncellemede korunur
+echo "/etc/xdg/autostart/linwas-power-agent.desktop" > "$PKG/DEBIAN/conffiles"
+install -m 0755 "$ROOT/packaging/debian/prerm" "$PKG/DEBIAN/prerm"
+chmod 0755 "$PKG/DEBIAN/postinst"
 
 # İzinler: klasörler 755, dosyalar 644; çalıştırılabilir dosyalar korunur, kimse dışarıdan yazamaz.
 chmod -R u+rwX,go+rX,go-w "$PKG"
