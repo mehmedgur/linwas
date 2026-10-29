@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """linwas-office-look aracı (packaging/plugins/office-look/tools): profil yazma, kapat/aç."""
 
 import json
@@ -71,7 +74,7 @@ def test_user_settings_file(home):
     cli.set_option("file_menu", "off")
     cli.set_option("autosave", "5")
     data = json.loads((home / "config" / "settings.json").read_text())
-    assert data == {"file_menu": False, "autosave_minutes": 5}
+    assert data == {"file_menu": False, "autosave_minutes": 5, "office_names": True}
     with pytest.raises(cli.ToolError):
         cli.set_option("autosave", "7")
 

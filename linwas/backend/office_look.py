@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Office görünümü: LibreOffice'i Microsoft Office benzeri yapan `linwas-office-look` paketi.
 
 Paket `packaging/plugins/office-look` altında; LibreOffice'e dokunan her şey oradaki

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Ağ önerileri ve gölge kipi: kanıta dayalı, geri alınabilir, ölçülmüş. Qt'ye bağımlı değildir.
 
 Öneri bir işlem yapmaz; ilgili ayar penceresini açar, değişiklik orada kullanıcının onayıyla yapılır

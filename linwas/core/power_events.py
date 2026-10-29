@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Güç olaylarını beklemek: priz/pil (UPower) ve güç kipi (power-profiles-daemon) değişimi.
 
 Sürekli yoklamak yerine `gdbus monitor` ile D-Bus sinyalleri dinlenir; her sinyal satırı

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Arka plan işi: bir işlevi iş parçacığında çalıştırır, sonucu sinyalle ana parçacığa verir."""
 
 from __future__ import annotations

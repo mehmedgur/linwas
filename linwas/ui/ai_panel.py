@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Sağ taraftaki AI yardımcı paneli.
 
 Konfigure edilmiş sağlayıcı yoksa panel gizlenir.
@@ -35,6 +38,30 @@ def tr(text: str) -> str:
 
 
 # --- Worker ---
+
+# Sağlayıcı başına canlı model listesi; iki panel (yan panel, AI sayfası) ortak kullanır
+_model_cache: dict[str, list[str]] = {}
+
+
+class _ModelWorker(QThread):
+    """Model listesini ağdan çeker; açılışta arayüz ağ yanıtını beklemesin."""
+
+    done = Signal(str, list)  # (sağlayıcı, modeller; hata olursa boş)
+
+    def __init__(self, provider_id: str) -> None:
+        super().__init__()
+        self._provider_id = provider_id
+
+    def run(self) -> None:
+        provider = get_provider(self._provider_id)
+        api_key = get_key(self._provider_id)
+        models: list[str] = []
+        if provider and api_key:
+            try:
+                models = provider.list_models(api_key)
+            except Exception:
+                models = []
+        self.done.emit(self._provider_id, models)
 
 
 class _ChatWorker(QThread):
@@ -175,8 +202,9 @@ class AIPanel(QWidget):
 
         self._session: AISession | None = None
         self._worker: _ChatWorker | None = None
-        # Sağlayıcı başına model listesi ve son seçilen model (ağ isteğini azaltır)
-        self._models: dict[str, list[str]] = {}
+        # Listesi alınamayan sağlayıcılar (yeniden denenmez; ayarlar değişince silinir)
+        self._failed: set[str] = set()
+        self._model_workers: list[_ModelWorker] = []
         # Son seçimler uygulama yeniden açılınca da hatırlanır
         self._prefs = ai_prefs.load()
         self._chosen_model: dict[str, str] = dict(self._prefs.models)
@@ -319,25 +347,33 @@ class AIPanel(QWidget):
             self._session = None
             self._send_btn.setEnabled(False)
 
-    def _load_models(self, provider_id: str) -> list[str]:
-        if provider_id in self._models:
-            return self._models[provider_id]
-        provider = get_provider(provider_id)
-        api_key = get_key(provider_id)
-        if not provider or not api_key:
-            return []
-        try:
-            models = provider.list_models(api_key)
-        except Exception:
-            return []
-        self._models[provider_id] = models
-        return models
+    def _fetch_models(self, provider_id: str) -> None:
+        # Biten iş parçacıkları burada bırakılır (çalışırken silinirse Qt çöker)
+        self._model_workers = [w for w in self._model_workers if w.isRunning()]
+        if any(w._provider_id == provider_id for w in self._model_workers):
+            return
+        worker = _ModelWorker(provider_id)
+        worker.done.connect(self._on_models)
+        self._model_workers.append(worker)
+        worker.start()
+
+    def _on_models(self, provider_id: str, models: list) -> None:
+        if models:
+            _model_cache[provider_id] = models
+        else:
+            self._failed.add(provider_id)
+        if self._provider_combo.currentData() == provider_id:
+            self._on_provider_changed(self._provider_combo.currentIndex())
 
     def _on_provider_changed(self, _index: int) -> None:
         provider_id = self._provider_combo.currentData()
         if not provider_id:
             return
-        models = self._load_models(provider_id)
+        models = _model_cache.get(provider_id)
+        loading = models is None and provider_id not in self._failed
+        if loading:
+            self._fetch_models(provider_id)
+        models = models or []
         self._model_combo.blockSignals(True)
         self._model_combo.clear()
         # Seçilmiş liste varsa (ör. Gemini) yalnızca o modeller gösterilir
@@ -361,6 +397,13 @@ class AIPanel(QWidget):
         if models:
             index = self._model_combo.findData(self._chosen_model.get(provider_id))
             self._model_combo.setCurrentIndex(max(index, 0))
+        elif loading:
+            # Liste gelene dek son seçilen model kullanılır; sohbet beklemeden başlayabilir
+            chosen = self._chosen_model.get(provider_id)
+            if chosen:
+                self._model_combo.addItem(chosen, chosen)
+            else:
+                self._model_combo.addItem(tr("Loading models…"), "")
         else:
             self._model_combo.addItem(tr("(model list unavailable)"), "")
         self._model_combo.blockSignals(False)
@@ -553,7 +596,8 @@ class AIPanel(QWidget):
         """Anahtarlar ya da AI ayarları değiştikten sonra paneli günceller."""
         from linwas.core import app_settings
 
-        self._models.clear()
+        _model_cache.clear()
+        self._failed.clear()
         self._refresh_providers()
         allowed = app_settings.load().ai_allow_system_info
         self._ctx_check.setEnabled(allowed)

@@ -38,3 +38,14 @@ packaging/         .deb paketleme
 - Kod İngilizce, yorumlar Türkçe.
 - Arayüz metinleri kodda İngilizce yazılır; Türkçe çeviri `linwas/i18n/linwas_tr.ts` dosyasında.
 - `ruff check .` ve `pytest` her değişiklikte temiz geçmeli.
+
+## Lisans
+Linwas özgür yazılımdır: **GNU GPL 3 ve sonrası** ([LICENSE](LICENSE)), GPL'nin 7. bölümünün izin verdiği
+ek şartlarla ([NOTICE.md](NOTICE.md)). Herkes kullanabilir, kaynak kodunu değiştirebilir ve dağıtabilir;
+her kopyada şunlar korunur:
+- kaynak dosyalardaki telif satırları ve "Based on Linwas — Copyright (C) 2026 Mehmed Gürbüz" atfı
+  (Hakkında ekranı, `--version`, paket telif dosyası);
+- değiştirilmiş sürümler kendilerini "değiştirilmiş sürüm" olarak belirtir;
+- "Linwas" adı ve logosu başka ürünün adı olamaz ([TRADEMARKS.md](TRADEMARKS.md)).
+
+Katkılar [CLA.md](CLA.md) ile kabul edilir (taslak; hukuk incelemesinden sonra yürürlüğe girer).

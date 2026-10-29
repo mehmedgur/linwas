@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Sorun Giderme: tek tıkla tarama ve belirti kartları.
 
 Çözümler ya izin listesindeki görevlerdir (kuyruk + onay) ya da ilgili Linwas sayfasına
@@ -9,7 +12,8 @@ from __future__ import annotations
 import os
 from collections.abc import Callable
 
-from PySide6.QtCore import QCoreApplication, Qt, QThread, Signal
+from PySide6.QtCore import QCoreApplication, Qt, QThread, QUrl, Signal
+from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import (
     QFrame,
     QGridLayout,
@@ -21,7 +25,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from linwas.backend import troubleshoot
+from linwas.backend import netdiag, troubleshoot
 from linwas.backend.desktop import detect_desktop
 from linwas.backend.settings_launcher import command_for, open_settings
 from linwas.core.plugins import ScanCheck
@@ -61,10 +65,6 @@ def _check_texts() -> dict[str, tuple[str, str]]:
         "sound": (tr("Sound system is running"), tr("Sound system is not responding")),
         "printing": (tr("Printing service is running"), tr("Printing service is stopped")),
         "updates": (tr("No security updates waiting"), tr("Security updates are waiting")),
-        "dns": (
-            tr("Web addresses are found (DNS)"),
-            tr("Connected, but web addresses are not found (DNS)"),
-        ),
         "clock": (tr("The clock is set automatically"), tr("The clock is not synchronized")),
         "readonly": (
             tr("The system disk can be written"),
@@ -97,6 +97,132 @@ def _check_texts() -> dict[str, tuple[str, str]]:
     }
 
 
+def _net_texts() -> dict[str, tuple[str, str]]:
+    """Ağ teşhisi nedeni → (başlık, ne yapmalı). Açıklamada {name} aygıt/bağlantı adıdır."""
+    return {
+        "no_driver": (
+            tr("The network card has no driver"),
+            tr(
+                "The computer has a network card, but no driver is loaded for it. "
+                "Check Drivers; a firmware package may be missing."
+            ),
+        ),
+        "no_adapter": (
+            tr("No network card found"),
+            tr(
+                "No Wi-Fi or Ethernet card is visible. A USB Wi-Fi adapter may be unplugged, "
+                "or the card may be turned off in the BIOS."
+            ),
+        ),
+        "nm_stopped": (
+            tr("The network service is not running"),
+            tr("NetworkManager, which connects you to networks, is stopped."),
+        ),
+        "networking_off": (
+            tr("Networking is turned off"),
+            tr("All network connections were switched off."),
+        ),
+        "wifi_hard_blocked": (
+            tr("Wi-Fi is switched off by a key or switch"),
+            tr(
+                "Press the airplane-mode or Wi-Fi key (often Fn with F2 or F12) or check the "
+                "switch on the side of the laptop. It may also be turned off in the BIOS."
+            ),
+        ),
+        "wifi_off": (
+            tr("Wi-Fi is off (airplane mode)"),
+            tr("Wi-Fi is turned off in the settings."),
+        ),
+        "wifi_not_connected": (
+            tr("Not connected to a Wi-Fi network"),
+            tr(
+                "Wi-Fi is on but not connected. Choose your network; if it doesn't connect, "
+                "the password may be wrong."
+            ),
+        ),
+        "ethernet_not_connected": (
+            tr("The cable is plugged in but not connected"),
+            tr("The network cable is plugged in, but the connection was not set up."),
+        ),
+        "cable_unplugged": (
+            tr("The network cable is unplugged"),
+            tr("No cable is detected. Check both ends of the cable and that the modem is on."),
+        ),
+        "unmanaged": (
+            tr("The network card is not managed"),
+            tr(
+                "The card is set up in /etc/network/interfaces, so the network settings can't "
+                "control it. Ask the assistant how to hand it over."
+            ),
+        ),
+        "getting_address": (
+            tr("Could not get an address from the modem"),
+            tr(
+                "The modem did not give an address (DHCP). Reconnect; if that doesn't help, "
+                "restart the modem."
+            ),
+        ),
+        "no_address": (
+            tr("Could not get an address from the modem"),
+            tr(
+                "The modem did not give an address (DHCP). Reconnect; if that doesn't help, "
+                "restart the modem."
+            ),
+        ),
+        "no_route": (
+            tr("No way out to the internet"),
+            tr("The computer has an address but no route to the internet. Reconnect."),
+        ),
+        "subnet_conflict": (
+            tr("A virtual network uses the same addresses as your home network"),
+            tr(
+                "A Docker or virtual machine network ({name}) uses the same address range as "
+                "your modem, so traffic goes the wrong way. Ask the assistant how to move it."
+            ),
+        ),
+        "gateway_down": (
+            tr("The modem does not answer"),
+            tr(
+                "The computer is connected, but the modem doesn't respond. Restart the modem "
+                "and wait two minutes."
+            ),
+        ),
+        "weak_signal": (
+            tr("The Wi-Fi signal is too weak"),
+            tr("The modem is too far away or blocked by walls. Move closer or use a cable."),
+        ),
+        "portal": (
+            tr("This network needs you to sign in"),
+            tr("Hotel, café and school networks show a sign-in page first."),
+        ),
+        "dns_failed": (
+            tr("Connected, but web addresses are not found (DNS)"),
+            tr(
+                "Restarting the network service usually fixes it. You can also set DNS servers "
+                "in the Wi-Fi settings."
+            ),
+        ),
+        "internet_down": (
+            tr("The modem has no internet"),
+            tr(
+                "The modem answers but can't reach the internet. Restart the modem; if it "
+                "continues, your internet provider may have an outage."
+            ),
+        ),
+        "vpn_blocking": (
+            tr("A VPN is blocking the internet"),
+            tr("The VPN connection ({name}) is on, but nothing gets through. Disconnect it."),
+        ),
+        "proxy_down": (
+            tr("The proxy server does not answer"),
+            tr(
+                "A proxy is set, so browsers can't open pages. Turn off the proxy in the "
+                "network settings."
+            ),
+        ),
+    }
+
+
 def _clock_text(offset: float) -> str:
     """ "Saat 2 sa 52 dk ileri" gibi; offset saniye, ileri +."""
     minutes = round(abs(offset) / 60)
@@ -120,6 +246,7 @@ class TroubleshootPage(BasePage):
         self._plugin_cards_added = False
 
         scroll = QScrollArea(self)
+        self._scroll = scroll
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.Shape.NoFrame)
         content = QWidget()
@@ -133,6 +260,7 @@ class TroubleshootPage(BasePage):
 
         # Tarama
         scan_card = Card(content)
+        self._scan_card = scan_card
         row = QHBoxLayout()
         info = QLabel(
             tr(
@@ -232,7 +360,6 @@ class TroubleshootPage(BasePage):
             "sound": [(tr("Restart sound"), self._restart_sound)],
             "printing": [(tr("Restart printing service"), restart_cups)],
             "updates": [(tr("Show updates"), self._go("updates"))],
-            "dns": [(tr("Restart network service"), restart_net)],
             "clock": [(tr("Correct the clock"), fix_clock)]
             + self._link(tr("Date & time settings"), "datetime"),
             "readonly": [],
@@ -249,6 +376,127 @@ class TroubleshootPage(BasePage):
             "boot_time": [(tr("Startup programs"), self._go("taskmgr"))],
             "battery": [(tr("Battery details"), self._go("power"))],
         }
+
+    # --- Ağ teşhisi ---
+
+    def _net_fixes(self, cause: str, target: str) -> list[tuple[str, Callable]]:
+        restart_net = self._task(
+            tr("Restart network service"), "service.restart", {"name": "NetworkManager"}
+        )
+        wifi_page = (tr("Wi-Fi settings"), self._go("network"))
+        reconnect = (
+            tr("Reconnect"),
+            lambda: self._net_fix(
+                lambda: netdiag.reconnect(target), tr("Reconnected"), tr("Could not reconnect")
+            ),
+        )
+
+        def start_nm() -> None:
+            self.task_run_now.emit(
+                Task(
+                    label=tr("Start network service"),
+                    steps=[
+                        TaskStep(op_id="service.enable", params={"name": "NetworkManager"}),
+                        TaskStep(op_id="service.restart", params={"name": "NetworkManager"}),
+                    ],
+                )
+            )
+
+        drivers = [(tr("Drivers"), self._go("drivers")), (tr("Hardware"), self._go("hardware"))]
+        return {
+            "no_driver": drivers,
+            "no_adapter": drivers,
+            "nm_stopped": [(tr("Start network service"), start_nm)],
+            "networking_off": [
+                (
+                    tr("Turn networking on"),
+                    lambda: self._net_fix(
+                        netdiag.networking_on,
+                        tr("Networking is on"),
+                        tr("Networking could not be turned on"),
+                    ),
+                )
+            ],
+            "wifi_off": [
+                (
+                    tr("Turn Wi-Fi on"),
+                    lambda: self._net_fix(
+                        netdiag.wifi_on, tr("Wi-Fi is on"), tr("Wi-Fi could not be turned on")
+                    ),
+                )
+            ],
+            "wifi_not_connected": [(tr("Choose a network"), self._go("network"))],
+            "ethernet_not_connected": [reconnect],
+            "getting_address": [reconnect],
+            "no_address": [reconnect],
+            "no_route": [reconnect],
+            "gateway_down": [reconnect, wifi_page],
+            "weak_signal": [wifi_page],
+            "portal": [
+                (
+                    tr("Open sign-in page"),
+                    # Şifresiz (http) bir sayfa: ağ onu oturum açma sayfasına yönlendirir
+                    lambda: QDesktopServices.openUrl(QUrl("http://neverssl.com")),
+                )
+            ],
+            "dns_failed": [(tr("Restart network service"), restart_net), wifi_page],
+            "internet_down": [reconnect],
+            "vpn_blocking": [
+                (
+                    tr("Disconnect VPN"),
+                    lambda: self._net_fix(
+                        lambda: netdiag.vpn_down(target),
+                        tr("VPN disconnected"),
+                        tr("The VPN could not be disconnected"),
+                    ),
+                )
+            ],
+            "proxy_down": [(tr("Network settings"), self._go("network"))],
+        }.get(cause, [])
+
+    def _net_fix(self, fn: Callable[[], bool], ok_text: str, fail_text: str) -> None:
+        """Kullanıcı yetkisiyle düzeltir, sonra teşhisi yeniler (gerçekten düzeldi mi görünsün)."""
+        self._run(
+            fn,
+            lambda ok: self._diagnose_network((bool(ok), ok_text if ok else fail_text)),
+        )
+
+    def _diagnose_network(self, note: tuple[bool, str] | None = None) -> None:
+        self._clear_results()
+        if note is not None:
+            self._add_result(*note)
+        self._add_result(True, tr("Looking for the cause of the network problem…"))
+        # Sonuç sayfanın üstündeki kartta: aşağıdaki karttan basılınca görünür olsun
+        self._scroll.ensureWidgetVisible(self._scan_card)
+        self._run(netdiag.diagnose, lambda finding: self._on_net_diagnosed(finding, note))
+
+    def _on_net_diagnosed(self, finding: object, note: tuple[bool, str] | None) -> None:
+        self._clear_results()
+        heading = QLabel(tr("Network check"), self)
+        heading.setObjectName("H2")
+        self._results.addWidget(heading)
+        if note is not None:
+            self._add_result(*note)
+        if not isinstance(finding, netdiag.NetFinding):
+            self._add_result(False, tr("The network check could not be completed"))
+            return
+        if finding.cause == "ok":
+            self._add_result(True, tr("The internet connection works"))
+            return
+        self._add_net_problem(finding.cause, finding.detail, finding.target)
+
+    def _add_net_problem(self, cause: str, detail: str, target: str) -> None:
+        title, hint = _net_texts().get(cause, (tr("No internet connection"), ""))
+        row = self._add_result(False, title, detail, hint.format(name=target or detail))
+        for text, fn in self._net_fixes(cause, target):
+            btn = QPushButton(text.replace("&", "&&"), self)
+            btn.clicked.connect(fn)
+            row.addWidget(btn)
+        ask = QPushButton(tr("Ask the assistant"), self)
+        ask.clicked.connect(
+            lambda _c=False: self.ai_help_requested.emit(title, f"{cause}: {detail}")
+        )
+        row.addWidget(ask)
 
     def _right_click_actions(self) -> list[tuple[str, Callable]]:
         from linwas.backend import touchpad
@@ -270,7 +518,8 @@ class TroubleshootPage(BasePage):
             (
                 tr("No internet"),
                 tr("Web pages don't open or Wi-Fi keeps disconnecting."),
-                fixes["internet"],
+                # clicked(bool) argümanı note sanılmasın diye lambda
+                [(tr("Find the cause"), lambda: self._diagnose_network()), *fixes["internet"]],
             ),
             (tr("No sound"), tr("Videos and music play silently."), fixes["sound"]),
             (
@@ -367,7 +616,7 @@ class TroubleshootPage(BasePage):
         card.layout.addWidget(d)
         row = QHBoxLayout()
         for text, fn in actions:
-            btn = QPushButton(text, card)
+            btn = QPushButton(text.replace("&", "&&"), card)  # "&" kısayol işareti sayılmasın
             btn.clicked.connect(fn)
             row.addWidget(btn)
         row.addStretch(1)
@@ -436,7 +685,7 @@ class TroubleshootPage(BasePage):
             lambda: (troubleshoot.run_all(), self._run_plugin_checks(checks)), self._on_scanned
         )
 
-    def _add_result(self, ok: bool, text: str, detail: str = "") -> QHBoxLayout:
+    def _add_result(self, ok: bool, text: str, detail: str = "", note: str = "") -> QHBoxLayout:
         row_widget = QWidget(self)
         row_widget.setObjectName("CardRow")
         row = QHBoxLayout(row_widget)
@@ -448,7 +697,18 @@ class TroubleshootPage(BasePage):
         lbl = QLabel(text, row_widget)
         if detail:
             lbl.setToolTip(detail)
-        row.addWidget(lbl, 1)
+        if note:
+            # Başlığın altında ne yapılacağı (ağ teşhisi gibi nedeni bilinen sorunlar)
+            column = QVBoxLayout()
+            column.setSpacing(2)
+            column.addWidget(lbl)
+            hint = QLabel(note, row_widget)
+            hint.setObjectName("Secondary")
+            hint.setWordWrap(True)
+            column.addWidget(hint)
+            row.addLayout(column, 1)
+        else:
+            row.addWidget(lbl, 1)
         self._results.addWidget(row_widget)
         return row
 
@@ -461,13 +721,16 @@ class TroubleshootPage(BasePage):
         problems = [r for r in results if not r.ok]
         # Önce sorunlar, sonra sorunsuz kontroller
         for r in problems + [r for r in results if r.ok]:
+            if r.id == "internet" and not r.ok and r.cause:
+                self._add_net_problem(r.cause, r.detail, r.target)
+                continue
             ok_text, bad_text = texts.get(r.id, (r.id, r.id))
             if r.id == "clock" and not r.ok and r.detail.startswith("offset:"):
                 bad_text = _clock_text(float(r.detail.split(":", 1)[1]))
             row = self._add_result(r.ok, ok_text if r.ok else bad_text, r.detail)
             if not r.ok:
                 for text, fn in fixes.get(r.id, []):
-                    btn = QPushButton(text, self)
+                    btn = QPushButton(text.replace("&", "&&"), self)
                     btn.clicked.connect(fn)
                     row.addWidget(btn)
                 # Her sorunda: ayrıntıyla birlikte yardımcıya sor

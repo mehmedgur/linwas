@@ -1,4 +1,7 @@
 #!/bin/sh
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 # Linwas: uykudan / hazırda beklemeden uyanınca saati düzelt (systemd-suspend.service bu klasördeki
 # programları "pre|post <eylem>" ile çalıştırır). Windows ile çift açılışta anakart saati (RTC) yerel
 # saattedir; çekirdek uyanınca onu UTC sanar ve saat, saat dilimi farkı kadar kayar. Burada RTC doğru

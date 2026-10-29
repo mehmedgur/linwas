@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Sistem saatinin doğru kalması (Windows ile çift açılış).
 
 Windows anakart saatini (RTC) yerel saatte tutar. Linux uykudan uyanınca çekirdek RTC'yi UTC

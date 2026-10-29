@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 # Linwas .deb paketini gömülü Python + PySide6 ile derler.
 # Kullanım: packaging/build-deb.sh <paket-sürümü>     ör. 2.0.0~dev12
 # Gereken: internet erişimi, curl, sha256sum, dpkg-deb. Çeviriler önceden derlenmiş olmalı
@@ -63,8 +66,16 @@ find "$RUNTIME" -type d -name "__pycache__" -prune -exec rm -rf {} +
 echo "==> Başlatıcı, masaüstü girişi ve simge"
 install -D -m 0755 "$ROOT/packaging/linwas-launcher.sh" "$PKG/usr/bin/linwas"
 install -D -m 0644 "$ROOT/packaging/linwas.desktop" "$PKG/usr/share/applications/linwas.desktop"
+# Yazılım merkezleri .deb'e çift tıklanınca ad, açıklama ve simgeyi buradan okur
+install -D -m 0644 "$ROOT/packaging/io.github.mehmedgur.linwas.metainfo.xml" \
+    "$PKG/usr/share/metainfo/io.github.mehmedgur.linwas.metainfo.xml"
 install -D -m 0644 "$ROOT/linwas/resources/linwas.svg" \
     "$PKG/usr/share/icons/hicolor/scalable/apps/linwas.svg"
+
+# Lisans: GPL 3 + atıf şartları (NOTICE.md); telif dosyası atıf satırını taşır (NOTICE 1d)
+install -D -m 0644 "$ROOT/packaging/debian/copyright" "$PKG/usr/share/doc/linwas/copyright"
+install -D -m 0644 "$ROOT/NOTICE.md" "$PKG/usr/share/doc/linwas/NOTICE.md"
+install -D -m 0644 "$ROOT/TRADEMARKS.md" "$PKG/usr/share/doc/linwas/TRADEMARKS.md"
 
 # Figtree (eco düzeni) SIL OFL 1.1: telif satırı ve lisans metni pakete eşlik etmeli.
 install -D -m 0644 "$ROOT/linwas/resources/fonts/Figtree-OFL.txt" \

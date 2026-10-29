@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Ağ bağlantı testi ve arka plan kalite örnekleyicisi. Qt'ye bağımlı değildir.
 
 Bağlantı testi yalnızca kullanıcı "Bağlantıyı test et"e basınca çalışır: yerel ağ geçidine ping, bir
@@ -211,6 +214,161 @@ def run_connectivity_test(gateway: str) -> ConnectivityReport:
     return report
 
 
+# --- Hız testi ---
+
+# Cloudflare'in açık hız testi sunucusu (github.com/cloudflare/speedtest README: indirme
+# GET /__down, yükleme POST /__up; boyut `bytes` sorgusuyla, 27 Ekim 2026'da denendi)
+SPEED_DOWN_URL = "https://speed.cloudflare.com/__down"
+SPEED_UP_URL = "https://speed.cloudflare.com/__up"
+SPEED_PING_HOST = "1.1.1.1"  # Cloudflare'in herkese açık DNS'i: ping'e yanıt verir
+DOWNLOAD_SECONDS = 8.0
+UPLOAD_SECONDS = 6.0
+DOWNLOAD_STREAMS = 4  # tek bağlantı hızlı hatlarda gerçek hızın altında kalır
+UPLOAD_STREAMS = 2
+DOWNLOAD_MAX_BYTES = 150 * 1024 * 1024  # kotalı hatta harcanabilecek en çok veri
+UPLOAD_MAX_BYTES = 40 * 1024 * 1024
+_WARMUP = 1.0  # sn; bağlantı kurulup hızlanana kadarki kısım hesaba katılmaz
+_CHUNK = 64 * 1024
+_USER_AGENT = "Linwas"
+
+
+@dataclass
+class SpeedResult:
+    download_mbps: float | None = None
+    upload_mbps: float | None = None
+    ping_ms: float | None = None
+    jitter_ms: float | None = None
+    used_bytes: int = 0  # testte harcanan veri (indirme + yükleme)
+    error: str = ""
+
+
+def _jitter(rtts: list[float]) -> float | None:
+    """Ardışık gecikmeler arasındaki ortalama fark (hız testlerinin "jitter" tanımı)."""
+    if len(rtts) < 2:
+        return None
+    return sum(abs(b - a) for a, b in zip(rtts, rtts[1:], strict=False)) / (len(rtts) - 1)
+
+
+def measure_latency(count: int = 6) -> tuple[float | None, float | None]:
+    """(ortanca gecikme ms, jitter ms). Ping yoksa TCP bağlantı süresine düşer."""
+    result = ping(SPEED_PING_HOST, count=count)
+    rtts = result.rtts
+    if not result.available:
+        rtts = [
+            ms for _ in range(count) if (ms := tcp_connect(SPEED_PING_HOST, 443)[1]) is not None
+        ]
+    if not rtts:
+        return None, None
+    ordered = sorted(rtts)
+    return ordered[len(ordered) // 2], _jitter(rtts)
+
+
+class _Meter:
+    """İş parçacıkları arasında aktarılan baytı sayar; ısınmadan sonrasını ayrıca tutar."""
+
+    def __init__(self, seconds: float, max_bytes: int) -> None:
+        self.start = time.perf_counter()
+        self.deadline = self.start + seconds
+        self.max_bytes = max_bytes
+        self.total = 0
+        self.after_warmup = 0
+        self.last = self.start
+        self._lock = threading.Lock()
+
+    def add(self, n: int) -> None:
+        now = time.perf_counter()
+        with self._lock:
+            self.total += n
+            if now - self.start >= _WARMUP:
+                self.after_warmup += n
+            self.last = now
+
+    def done(self) -> bool:
+        return time.perf_counter() >= self.deadline or self.total >= self.max_bytes
+
+    def mbps(self) -> float | None:
+        span = self.last - (self.start + _WARMUP)
+        if span <= 0.5 or self.after_warmup <= 0:
+            # Çok yavaş hat ya da çok kısa test: ısınmayı da sayarak hesapla
+            span, count = self.last - self.start, self.total
+        else:
+            count = self.after_warmup
+        return count * 8 / span / 1e6 if span > 0 and count else None
+
+
+def _download_worker(meter: _Meter, errors: list[str]) -> None:
+    import urllib.request
+
+    while not meter.done():
+        url = f"{SPEED_DOWN_URL}?bytes={25 * 1024 * 1024}"
+        request = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
+        try:
+            with urllib.request.urlopen(request, timeout=10) as response:
+                while not meter.done():
+                    chunk = response.read(_CHUNK)
+                    if not chunk:
+                        break
+                    meter.add(len(chunk))
+        except OSError as exc:
+            errors.append(str(exc))
+            return
+
+
+def _upload_worker(meter: _Meter, errors: list[str]) -> None:
+    import urllib.request
+
+    size = 256 * 1024
+    while not meter.done():
+        body = bytes(size)
+        request = urllib.request.Request(
+            SPEED_UP_URL,
+            data=body,
+            method="POST",
+            headers={"User-Agent": _USER_AGENT, "Content-Type": "application/octet-stream"},
+        )
+        started = time.perf_counter()
+        try:
+            with urllib.request.urlopen(request, timeout=20) as response:
+                response.read()
+        except OSError as exc:
+            errors.append(str(exc))
+            return
+        meter.add(size)
+        # Hızlı hatta parçayı büyüt: her istek ~1 sn sürsün (istek başı gecikme ölçümü bozmasın)
+        if time.perf_counter() - started < 0.5 and size < 8 * 1024 * 1024:
+            size *= 2
+
+
+def _measure(
+    worker: Callable[[_Meter, list[str]], None], streams: int, seconds: float, max_bytes: int
+) -> tuple[float | None, int, str]:
+    meter = _Meter(seconds, max_bytes)
+    errors: list[str] = []
+    threads = [
+        threading.Thread(target=worker, args=(meter, errors), daemon=True) for _ in range(streams)
+    ]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(seconds + 25)
+    return meter.mbps(), meter.total, (errors[0] if errors and not meter.total else "")
+
+
+def run_speed_test() -> SpeedResult:
+    """Gecikme → indirme → yükleme. Toplam ~16 sn; harcanan veri hat hızına göre değişir."""
+    result = SpeedResult()
+    result.ping_ms, result.jitter_ms = measure_latency()
+    result.download_mbps, down_bytes, error = _measure(
+        _download_worker, DOWNLOAD_STREAMS, DOWNLOAD_SECONDS, DOWNLOAD_MAX_BYTES
+    )
+    result.upload_mbps, up_bytes, up_error = _measure(
+        _upload_worker, UPLOAD_STREAMS, UPLOAD_SECONDS, UPLOAD_MAX_BYTES
+    )
+    result.used_bytes = down_bytes + up_bytes
+    result.error = error or up_error
+    return result
+
+
 # --- Arka plan örnekleyici ---
 
 
@@ -372,7 +530,9 @@ class Sampler:
         self._stop.set()
 
     def _loop(self, stop: threading.Event) -> None:
-        last_prune = last_shadow = 0.0
+        # monotonic açılıştan beri sayar: 0 ile başlarsa açılıştan sonraki ilk saatlerde
+        # (makine yeni açıldıysa) temizlik ve gölge kipi hiç çalışmazdı
+        last_prune = last_shadow = float("-inf")
         while not stop.is_set():
             if time.monotonic() - last_prune > PRUNE_EVERY:
                 netlog.prune()

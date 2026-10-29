@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 # Linwas APT deposunu .deb dosyalarından kurar ve imzalar.
 # Kullanım: packaging/build-apt-repo.sh <imza-anahtarı-kimliği> <depo-klasörü> <paket.deb>...
 #   ör. packaging/build-apt-repo.sh 0123ABCD... build/apt-repo build/linwas_2.0.0_amd64.deb

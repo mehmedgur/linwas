@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Ayrıntılı günlük (Gelişmiş › Günlük): açıksa ~/.local/state/linwas/linwas.log dosyasına yazılır.
 
 Dosya 1 MB'ı geçince döndürülür (3 eski kopya). Kapalıyken yalnızca uyarılar konsola gider.

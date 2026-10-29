@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Linwas'ın kendi ayarları: solda kategoriler, üstte arama, sağda seçili bölüm.
 
 Değişiklikler anında kaydedilir ve uygulanır (kararlar.md › Ayarlar). Teknik ayarlar burada
@@ -578,7 +581,7 @@ class SettingsPage(BasePage):
         self._rollback_lbl = QLabel("", card)
         self._rollback_lbl.setWordWrap(True)
         rrow.addWidget(self._rollback_lbl, 1)
-        backups = QPushButton(tr("Backups & Rollback") + " ›", card)
+        backups = QPushButton(tr("Backups & Rollback").replace("&", "&&") + " ›", card)
         backups.clicked.connect(lambda: self.page_requested.emit("backups"))
         rrow.addWidget(backups)
         card.layout.addLayout(rrow)
@@ -881,7 +884,7 @@ class SettingsPage(BasePage):
         card.layout.addWidget(lic)
 
     def _build_developer(self, s: _Section) -> None:
-        from linwas import __author__, __email__, __homepage__, __license__
+        from linwas import ATTRIBUTION, __author__, __copyright__, __email__, __homepage__
 
         card = s.card(tr("Developer"))
         form = QFormLayout()
@@ -889,7 +892,7 @@ class SettingsPage(BasePage):
             (tr("Developer"), __author__),
             (tr("E-mail"), f'<a href="mailto:{__email__}">{__email__}</a>'),
             (tr("Project page"), f'<a href="{__homepage__}">{__homepage__}</a>'),
-            (tr("Licence"), __license__ or tr("Not decided yet")),
+            (tr("Licence"), tr("GNU GPL 3 or later, with attribution terms (NOTICE.md)")),
         ]
         for label, value in rows:
             v = QLabel(value, card)
@@ -901,6 +904,19 @@ class SettingsPage(BasePage):
             )
             form.addRow(label + ":", v)
         card.layout.addLayout(form)
+        # Atıf (GPL 3 bölüm 7(b)): değiştirilmiş sürümlerde de kalır, çevrilmez
+        legal = QLabel(
+            f"{ATTRIBUTION}<br>{__copyright__}<br>"
+            + tr(
+                "Linwas is free software: you can use, change and share it. "
+                "It comes with absolutely no warranty."
+            ),
+            card,
+        )
+        legal.setWordWrap(True)
+        legal.setObjectName("Secondary")
+        legal.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+        card.layout.addWidget(legal)
         note = QLabel(
             tr(
                 "Found a bug or have an idea? Report it on the project page; "

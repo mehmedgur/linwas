@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Yerleşik özellikler eklenti olarak: her biri bir sayfa kapısı sağlar.
 
 Sayfa modülü yalnızca create_page çağrılınca içe aktarılır; çekirdek ve bu
@@ -61,6 +64,12 @@ BUILTIN_PLUGINS: tuple[type[PluginBase], ...] = (
     HardwareInfoPlugin,  # sayfasız: donanım bilgisi (Donanım sayfası kullanır)
     _plugin("linwas.migrate", "Transfer", "migrate", "linwas.ui.pages.migrate:MigratePage"),
     _plugin("linwas.taskmgr", "Task Manager", "taskmgr", "linwas.ui.pages.taskmgr:TaskMgrPage"),
+    _plugin(
+        "linwas.resource_monitor",
+        "Resource Monitor",
+        "resource_monitor",
+        "linwas.ui.pages.resource_monitor:ResourceMonitorPage",
+    ),
     _plugin("linwas.cleanup", "Disk Cleanup", "cleanup", "linwas.ui.pages.cleanup:CleanupPage"),
     _plugin(
         "linwas.printers",

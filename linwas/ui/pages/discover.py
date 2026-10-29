@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Programlar › Keşfet: kategorilere ayrılmış öne çıkan programlar (kart ızgarası)."""
 
 from __future__ import annotations
@@ -75,7 +78,7 @@ class DiscoverView(QWidget):
         self._chip_group = QButtonGroup(self)
         self._chip_group.setExclusive(True)
         for cat_id in ("all", *featured.CATEGORIES):
-            chip = QPushButton(_category_name(cat_id), self)
+            chip = QPushButton(_category_name(cat_id).replace("&", "&&"), self)
             chip.setObjectName("Chip")
             chip.setCheckable(True)
             chip.setChecked(cat_id == "all")

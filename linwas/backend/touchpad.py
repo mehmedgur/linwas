@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Dokunmatik yüzeyde sağ tık yöntemi (Windows'tan gelenler için).
 
 GNOME'un varsayılanı `click-method = 'fingers'`: sağ tık için iki parmakla basılır, sağ alt köşeye

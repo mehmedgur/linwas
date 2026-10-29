@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """ChatGPT ve DeepSeek sağlayıcısı (OpenAI uyumlu API).
 
 Her iki sağlayıcı da aynı OpenAI uyumlu arayüzü kullandığından tek istemci yeterli.

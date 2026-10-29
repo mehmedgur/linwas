@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Ağ kalitesi kaydı (yerel, açık rızayla): örnekleri saklar ve özetler. Qt'ye bağımlı değildir.
 
 Dosya: ~/.local/share/linwas/net_quality.jsonl — her satır bir örnek (JSON). Örnekler

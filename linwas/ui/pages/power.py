@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Güç ve pil sayfası (masaüstü bilgisayarda "Güç"; pil bölümleri gizli).
 
 Üstte güç planı seçimi ve sık ayarlar, altta Windows'taki gibi "Gelişmiş güç seçenekleri"
@@ -49,6 +52,7 @@ from linwas.backend import hibernate_setup, power, power_support
 from linwas.core import hibernate, power_agent, power_apply, powerplan
 from linwas.core.powerplan import AUTO, SECTIONS, SETTINGS, SPECS, PowerConfig
 from linwas.core.tasks import Task, TaskStep
+from linwas.translations import percent
 from linwas.ui import icons
 from linwas.ui.pages import power_texts as texts
 from linwas.ui.pages.base import BasePage
@@ -850,7 +854,7 @@ class PowerPage(BasePage):
         level = bat.capacity or 0
         charging = bat.status == "Charging"
         self._gauge.set_level(level, charging)
-        self._level_pct.setText(f"{bat.capacity}%" if bat.capacity is not None else "")
+        self._level_pct.setText(percent(bat.capacity) if bat.capacity is not None else "")
         status = _status_text(bat.status)
         if bat.minutes_left:
             left = _duration_text(bat.minutes_left)
@@ -864,7 +868,7 @@ class PowerPage(BasePage):
         frame.setVisible(bat.health is not None)
         tip = ""
         if bat.health is not None:
-            value.setText(f"{bat.health}%")
+            value.setText(percent(bat.health))
             if bat.health >= 80:
                 note.setText(tr("Good"))
             elif bat.health >= 60:

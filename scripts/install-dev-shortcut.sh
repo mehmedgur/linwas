@@ -1,4 +1,7 @@
 #!/bin/sh
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 # Kaynak koddaki Linwas'ı açan geliştirici kısayolunu kurar (uygulama menüsü + masaüstü).
 # Kurulu .deb paketinin kısayolundan ayrıdır; adı "Linwas (Geliştirici)".
 # Kaldırmak için: ./scripts/install-dev-shortcut.sh --remove

@@ -37,6 +37,28 @@ Bu bilgisayar → 4) **dikkatli olunacaklar:** elle IP (yanlış IP bağlantıy�
   olduğu doğrulanmadı (Ubuntu 22.04: `gnome-bluetooth`, 24.04: `gnome-bluetooth-sendto`).
 - Öneri eşikleri (≥ 3 kopma, ≥ 30 ölçüm, ufuk 24 sa) sezgiseldir; gerçek veriyle ayarlanmalı. "Ayarlara bak" bağlantı adı = SSID
   varsayımına dayanır (profil yeniden adlandırılmışsa düğme gizlenir).
+**Kaynak izleyici (25 Ekim 2026, deneme bekliyor):** Sistem › Kaynak İzleyici; grafikler akıyor mu, NVIDIA uykudayken
+"Uykuda" mı, Intel GPU frekansı, ağ hızı (indirme yaparken), süreç tablosu. Bekleyen: kullanıcının istediği **ikinci
+eklenti** henüz söylenmedi. Fikir: her zaman üstte duran küçük izleme penceresi (Wayland'de "üstte tut" KWin/Mutter'a bağlı).
+**Açılış hızlandırma (25 Ekim 2026, deneme bekliyor):** ana pencere 1.98 sn → ~0.8 sn (offscreen ölçüm). Anahtar kasası
+okumaları bellekte (17 D-Bus çağrısı → sağlayıcı başına 1), AI model listesi ağdan arka planda (gelene dek son seçilen
+model), Görev Yöneticisi › Başlangıç sekmesi ilk açılışta okunur. Sıradaki büyük kazanç: sayfaları ilk açılışta kurmak
+(30'a yakın sayfa açılışta kuruluyor); `self._pages[...]` doğrudan kullanımları nedeniyle ayrı iş.
+**Ağ teşhisi (27 Ekim 2026, deneme bekliyor):** Sorun giderme › İnternet yok › "Nedenini bul". Denenecekler: Wi-Fi'ı
+kapat ("Wi-Fi kapalı" + "Wi-Fi'ı aç"), `nmcli networking off` ("Ağ kapalı"), kablolu ağda kabloyu çıkar, modemi kapat
+("Modem yanıt vermiyor"). Henüz yok: IPv6'ya özgü sorunlar, Wi-Fi şifresinin yanlış olduğunu ayrıca söylemek (NM
+"secrets required" nedeni), MAC rastgeleleştirmesi; gerçek kullanıcı sorunlarıyla genişletilecek.
+**Çeviri denetimi (27 Ekim 2026):** 2552 çeviri `.qm` ile çalışma anında doğrulandı; yazım (kâğıt, Yapay Zekâ), terim
+birliği (Yardımcı, Şifre, Vazgeç), eksik ekler, İngilizcede düğmelerdeki `&` (kısayol sanılıyordu) ve dile göre yüzde
+(`translations.percent`: "%24" / "24%") düzeltildi. **Karar bekliyor:** hitap karışık (~320 "sen", ~180 "siz";
+aynı sayfada ikisi). Seçilince bütün `.ts` tek dile çevrilir. Ayrıca kenar çubuğu başlık düzeni ("Genel Bakış") ile sayfa
+başlıkları ("Genel bakış") farklı; Wi-Fi eki (Wi-Fi'a / Wi-Fi'ye) karışık.
+**Kurulum dosyaları (27 Ekim 2026, deneme bekliyor):** `./scripts/build-setup.sh` → masaüstüne `Linwas-Kurulum.deb`
+(önerilen: çift tıklanınca sistemin grafik kurucusu açılır; AppStream bilgisi `io.github.mehmedgur.linwas` ile ad, Türkçe
+açıklama, simge ve "Aç" düğmesi) ve `Linwas-Kurulum.run` (zenity/kdialog pencereleri, pkexec şifre penceresi, ilerleme,
+hata kaydı, "Şimdi aç?"; sağlama toplamıyla bozuk indirme yakalanır; `--check`, `--extract`). GNOME'da `.run` çift
+tıklamayla çalışmaz (sağ tık › Program olarak çalıştır); bu yüzden kullanıcıya `.deb` verilir. Denenecek: Pardus'ta
+`.deb`'e çift tık; KDE'de `.run`'a çift tık; şifre penceresinde Vazgeç ("iptal edildi" demeli).
 **Bekleyen kararlar / açık işler:** (1) **QR ile paylaş** için `segno` bağımlılığı eklensin mi (aşağıda). (2) Ana dalda 2 yeni
 commit var ("eski sistem desteğini kaldır", PR #1); bu dalla birleştirilmedi. (3) Eco karar 22 (eco deposunda "Co-Authored-By
 yok") ile bu deponun commit eki alışkanlığı çelişir; hangisi geçerli olacak? (4) Eco'ya özgü özel başlık çubuğu/arama

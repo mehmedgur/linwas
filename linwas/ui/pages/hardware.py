@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Donanım ve yazıcılar sayfası: Genel bakış / Aygıtlar / Yazıcılar ve tarayıcılar.
 
 Donanım bilgisi `linwas.plugins.hardware_info` eklentisinden gelir (kararlar.md › Donanım ve
@@ -37,6 +40,7 @@ from linwas.plugins.hardware_info.widgets import (
     device_sections,
     device_status,
 )
+from linwas.translations import percent
 from linwas.ui import icons
 from linwas.ui.pages.base import BasePage
 from linwas.ui.widgets.card import Card
@@ -153,7 +157,7 @@ class HardwarePage(BasePage):
         copy.clicked.connect(self._overview.copy_summary)
 
         self._tabs.addTab(self._build_devices(), tr("Devices"))
-        self._tabs.addTab(self._build_printers(), tr("Printers & scanners"))
+        self._tabs.addTab(self._build_printers(), tr("Printers & scanners").replace("&", "&&"))
 
     # --- Aygıtlar ---
 
@@ -474,7 +478,7 @@ class HardwarePage(BasePage):
                 texts.addWidget(d)
             for s in info.supplies:
                 m = Meter(s.name, card)
-                m.set(s.level, f"%{s.level}")
+                m.set(s.level, percent(s.level))
                 texts.addWidget(m)
             jobs = (
                 tr("%1 document(s) waiting").replace("%1", str(info.jobs))

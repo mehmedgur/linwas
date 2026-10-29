@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Çeviri yükleme.
 
 Arayüz metinleri kodda İngilizce yazılır; Türkçe karşılıkları `linwas/i18n/linwas_tr.ts`
@@ -50,3 +53,10 @@ def install_translator(app, lang: str):  # noqa: ANN001 - Qt türleri burada iç
         app.installTranslator(translator)
         return translator
     return None
+
+
+def percent(value: object) -> str:
+    """Yüzde dile göre yazılır: Türkçede "%24", İngilizcede "24%"."""
+    from PySide6.QtCore import QCoreApplication
+
+    return QCoreApplication.translate("Format", "{n}%").format(n=value)

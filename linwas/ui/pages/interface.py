@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Arayüz sayfaları: Windows görünümü, tema ve duvar kâğıdı, yazı tipleri, ekran ve ölçekleme.
 
 Ayarlar kullanıcı yetkisiyle `gsettings` üzerinden yapılır (bkz. backend/appearance).
@@ -30,6 +33,7 @@ from linwas.backend.apt_search import is_installed
 from linwas.backend.desktop import detect_desktop
 from linwas.backend.settings_launcher import command_for, open_settings
 from linwas.core.tasks import Task, TaskStep
+from linwas.translations import percent
 from linwas.ui.pages.base import BasePage
 from linwas.ui.widgets.card import Card
 
@@ -323,7 +327,7 @@ class DisplayPage(_InterfacePage):
         self._preview(index)
 
     def _preview(self, index: int) -> None:
-        self._value.setText(f"%{round(_SCALES[index] * 100)}")
+        self._value.setText(percent(round(_SCALES[index] * 100)))
 
     def _on_value(self, index: int) -> None:
         self._preview(index)

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Bluetooth: cihaz ayarları (ad, otomatik bağlan, ses) ve bu bilgisayarın görünürlüğü.
 
 Süzülmüş görünüm: ham profil adları gösterilmez (iki sade ses modu), kopma özeti yalnızca anlamlıysa

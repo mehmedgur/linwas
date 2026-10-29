@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Görev Yöneticisi sayfası: süreçler ve başlangıç uygulamaları."""
 
 from __future__ import annotations
@@ -237,7 +240,14 @@ class _StartupTab(QWidget):
         layout.addWidget(scroll)
 
         self._apps: list[StartupApp] = []
-        self._load()
+        self._loaded = False
+
+    def showEvent(self, event: object) -> None:  # type: ignore[override]
+        # Liste sekme ilk açılınca okunur; Linwas açılışını bekletmesin
+        if not self._loaded:
+            self._loaded = True
+            self._load()
+        super().showEvent(event)  # type: ignore[misc]
 
     def _load(self) -> None:
         while self._list_layout.count():

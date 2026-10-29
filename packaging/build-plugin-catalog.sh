@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 # Linwas eklenti kataloğunu üretir ve APT deposuyla aynı Linwas anahtarıyla imzalar.
 # Kullanım: packaging/build-plugin-catalog.sh <imza-anahtarı-kimliği> <çıktı-klasörü>
 #   ör. packaging/build-plugin-catalog.sh 0123ABCD... build/apt-repo/plugins

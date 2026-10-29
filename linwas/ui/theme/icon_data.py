@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Linwas çizgi simgeleri (24×24, SVG). Qt'ye bağımlı değil.
 
 Simgeler masaüstünün simge temasına bağlı değildir (gömülü Qt'de tema bulunamayabilir);
@@ -42,6 +45,10 @@ PATHS: dict[str, str] = {
         '<path d="M6 14h12v7H6z"/>'
     ),
     "taskmgr": '<path d="M3 12h4l3-8 4 16 3-8h4"/>',
+    "resource_monitor": (
+        '<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M6 13l3-3 3 2 5-5"/>'
+        '<path d="M9 21h6M12 17v4"/>'
+    ),
     "cleanup": (
         '<path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/>'
         '<path d="M10 11v6M14 11v6"/>'
@@ -213,6 +220,7 @@ PATHS: dict[str, str] = {
     "refresh": '<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/>',
     "chevron_right": '<path d="M9 6l6 6-6 6"/>',
     "chevron_down": '<path d="M6 9l6 6 6-6"/>',
+    "chevron_up": '<path d="M6 15l6-6 6 6"/>',
     "check": '<path d="M5 12.5l4.5 4.5L19 7.5" stroke-width="3"/>',
     "close": '<path d="M6 6l12 12M18 6L6 18" stroke-width="3"/>',
     # Seçili radyo düğmesinin ortasındaki nokta

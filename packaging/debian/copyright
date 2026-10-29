@@ -1,0 +1,33 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Linwas
+Upstream-Contact: Mehmed Gürbüz <mehmedgrbz11@gmail.com>
+Source: https://github.com/mehmedgur/linwas2
+Comment:
+ Based on Linwas — Copyright (C) 2026 Mehmed Gürbüz — https://github.com/mehmedgur/linwas2
+ .
+ Linwas is licensed under the GNU GPL version 3 or later with additional terms
+ permitted by section 7 (attribution, marking of modified versions, no
+ trademark rights). See /usr/share/doc/linwas/NOTICE.md and
+ /usr/share/doc/linwas/TRADEMARKS.md.
+
+Files: *
+Copyright: 2026 Mehmed Gürbüz and Linwas contributors
+License: GPL-3.0-or-later
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version, with the additional terms listed in
+ /usr/share/doc/linwas/NOTICE.md.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ version 3 can be found in /usr/share/common-licenses/GPL-3.
+
+Files: linwas/resources/fonts/Figtree-*
+Copyright: 2022 The Figtree Project Authors (https://github.com/erikdkennedy/figtree)
+License: OFL-1.1
+ See /usr/share/doc/linwas/Figtree-OFL.txt.

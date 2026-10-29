@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Uygulama giriş noktası.
 
 Komut satırı seçenekleri:
@@ -53,7 +56,11 @@ def _self_check() -> int:
 def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv if argv is None else argv)
     if "--version" in argv[1:]:
+        from linwas import ATTRIBUTION, __license__
+
         print(__version__)
+        print(ATTRIBUTION)
+        print(f"License: {__license__} with additional terms (NOTICE.md). NO WARRANTY.")
         return 0
     if "--self-check" in argv[1:]:
         return _self_check()

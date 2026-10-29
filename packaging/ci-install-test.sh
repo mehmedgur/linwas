@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 # CI kurulum testi: .deb'i kapsayıcıya kurar ve Linwas'ın açılabildiğini denetler.
 # Başarısız olursa çıktının son satırlarını GitHub Actions hata notu (annotation) olarak yazar;
 # böylece günlük dosyasına erişmeden de sorun okunabilir.

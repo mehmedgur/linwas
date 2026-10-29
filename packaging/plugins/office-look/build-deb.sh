@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 # linwas-office-look .deb paketini derler.
 # Kullanım: packaging/plugins/office-look/build-deb.sh [paket-sürümü] [çıktı-klasörü]
 #   Sürüm verilmezse VERSION dosyasındaki kullanılır. ör. build-deb.sh "" build
@@ -29,7 +32,11 @@ install -m 644 "$HERE/linwas-office-look.desktop" "$PKG/usr/share/applications/"
 install -m 755 "$HERE/debian/postinst" "$HERE/debian/prerm" "$PKG/DEBIAN/"
 install -m 644 "$HERE/debian/triggers" "$PKG/DEBIAN/"
 cat > "$PKG/usr/share/doc/linwas-office-look/copyright" <<'COPY'
-linwas-office-look — Linwas projesinin parçası.
+linwas-office-look — part of Linwas.
+Based on Linwas — Copyright (C) 2026 Mehmed Gürbüz — https://github.com/mehmedgur/linwas2
+License: GPL-3.0-or-later with additional terms (see /usr/share/doc/linwas/NOTICE.md),
+full text in /usr/share/common-licenses/GPL-3.
+
 Kurulumda üretilen linwas_simple.ui dosyaları LibreOffice'in notebookbar.ui dosyalarından
 türetilir (Mozilla Public License 2.0, /usr/share/common-licenses/MPL-2.0).
 COPY

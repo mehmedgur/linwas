@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Linwas görev çubuğu eklentisi (GNOME): Dash to Panel üstüne görünüm, yerleşim ve medya widget'ı.
 
 - Ayar dosyası: ~/.local/share/linwas/taskbar.json — GNOME Shell eklentisi (`linwas-taskbar@linwas`)

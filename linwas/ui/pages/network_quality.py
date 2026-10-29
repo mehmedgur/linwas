@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Wi-Fi sekmesinin "Bağlantı kalitesi" kartı: son 24 saatin çizelgesi ve bağlantı testi.
 
 Ölçüm yalnızca açık rıza ile çalışır (varsayılan kapalı); kayıtlar bu bilgisayarda kalır
@@ -9,7 +12,15 @@ from __future__ import annotations
 import time
 
 from PySide6.QtCore import QCoreApplication, Qt, Signal
-from PySide6.QtWidgets import QCheckBox, QGridLayout, QHBoxLayout, QLabel, QPushButton, QWidget
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 
 from linwas.backend import netquality
 from linwas.core import app_settings, netlog
@@ -117,6 +128,12 @@ def report_rows(report: netquality.ConnectivityReport) -> list[tuple[bool | None
     return rows
 
 
+def speed_text(mbps: float | None) -> str:
+    if mbps is None:
+        return "—"
+    return f"{mbps:.1f}" if mbps < 10 else f"{mbps:.0f}"
+
+
 def diagnosis_text(code: str) -> str:
     return {
         "ok": tr("Everything looks fine: your connection works."),
@@ -163,6 +180,7 @@ class QualityCard(Card):
         self._loading = False
         self._testing = False
         self._report: netquality.ConnectivityReport | None = None
+        self._speed_pending: QLabel | None = None
 
         header = QHBoxLayout()
         heading = QLabel(tr("Connection quality"), self)
@@ -303,14 +321,80 @@ class QualityCard(Card):
         self._jobs.run(lambda: netquality.run_connectivity_test(gateway), self._on_report)
 
     def _on_report(self, result: object) -> None:
+        if not isinstance(result, netquality.ConnectivityReport):
+            self._testing = False
+            self._update_test_button()
+            return
+        self._report = result
+        self._show_report(result)
+        if not result.internet_ok:
+            self._testing = False
+            self._update_test_button()
+            return
+        # İnternet varsa hızı da ölç (düğme bitene dek "Test ediliyor…" kalır)
+        self._speed_pending = QLabel(tr("Measuring speed… (about 15 seconds)"), self._result)
+        self._speed_pending.setObjectName("Secondary")
+        self._result_layout.addWidget(self._speed_pending, self._result_layout.rowCount(), 0, 1, 2)
+        self._jobs.run(netquality.run_speed_test, self._on_speed)
+
+    def _on_speed(self, result: object) -> None:
         self._testing = False
         self._update_test_button()
-        if isinstance(result, netquality.ConnectivityReport):
-            self._report = result
-            self._show_report(result)
+        if self._speed_pending is not None:
+            self._speed_pending.deleteLater()
+            self._speed_pending = None
+        if self._report is None or not isinstance(result, netquality.SpeedResult):
+            return
+        row = self._result_layout.rowCount()
+        if result.download_mbps is None and result.upload_mbps is None:
+            failed = QLabel(tr("The speed could not be measured."), self._result)
+            failed.setObjectName("Secondary")
+            failed.setToolTip(result.error)
+            self._result_layout.addWidget(failed, row, 0, 1, 2)
+            return
+        tiles = QWidget(self._result)
+        tiles.setStyleSheet("background: transparent;")
+        line = QHBoxLayout(tiles)
+        line.setContentsMargins(0, 6, 0, 6)
+        line.setSpacing(24)
+        ping = f"{result.ping_ms:.0f}" if result.ping_ms is not None else "—"
+        for caption, value, unit, tip in (
+            (tr("Download"), speed_text(result.download_mbps), "Mbps", ""),
+            (tr("Upload"), speed_text(result.upload_mbps), "Mbps", ""),
+            (
+                tr("Ping"),
+                ping,
+                "ms",
+                tr("Jitter: {ms} ms").format(ms=round(result.jitter_ms))
+                if result.jitter_ms is not None
+                else "",
+            ),
+        ):
+            tile = QVBoxLayout()
+            tile.setSpacing(0)
+            name = QLabel(caption, tiles)
+            name.setObjectName("Secondary")
+            number = QLabel(f"{value} {unit}", tiles)
+            number.setObjectName("H2")
+            number.setToolTip(tip)
+            tile.addWidget(name)
+            tile.addWidget(number)
+            line.addLayout(tile)
+        line.addStretch(1)
+        self._result_layout.addWidget(tiles, row, 0, 1, 2)
+        note = QLabel(
+            tr("Measured with Cloudflare's speed test server; used {mb} MB of data.").format(
+                mb=round(result.used_bytes / 1024 / 1024)
+            ),
+            self._result,
+        )
+        note.setObjectName("Secondary")
+        note.setWordWrap(True)
+        self._result_layout.addWidget(note, row + 1, 0, 1, 2)
 
     def _clear_result(self) -> None:
         self._report = None
+        self._speed_pending = None  # bileşen aşağıda düzenle birlikte silinir
         clear_layout(self._result_layout)
         self._result.setVisible(False)
 

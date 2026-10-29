@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Sorun Giderme: tek tıkla tarama (salt okunur, root gerekmez).
 
 Her kontrol bir CheckResult döner; arayüz sorunlu olanları çözüm düğmeleriyle gösterir.
@@ -27,6 +30,8 @@ class CheckResult:
     id: str  # CHECKS içindeki kontrolün adı (check_ öneki olmadan), ör. "disk", "internet"
     ok: bool
     detail: str = ""  # teknik ayrıntı (İngilizce/ham); arayüz başlığı kendisi çevirir
+    cause: str = ""  # sorunun nedeni (ör. ağ teşhisi: "wifi_off"); başlık ve çözümler buna göre
+    target: str = ""  # çözümün uygulanacağı aygıt/bağlantı (ör. "wlp2s0")
 
 
 def _run(cmd: list[str], timeout: int = 15) -> tuple[int, str]:
@@ -50,11 +55,23 @@ def check_disk(path: str = "/", min_free_ratio: float = 0.1) -> CheckResult:
 
 
 def check_internet() -> CheckResult:
+    """İnternet yoksa nedenini de bulur (netdiag: kart, servis, Wi-Fi, adres, modem, DNS...)."""
     # nmcli networking connectivity: none / portal / limited / full / unknown
     code, out = _run(["nmcli", "networking", "connectivity", "check"])
     if code == 127:
         return CheckResult("internet", True, "nmcli not available")
-    return CheckResult("internet", out.strip() == "full", out.strip())
+    state = out.strip()
+    try:
+        from linwas.backend import netdiag
+
+        # Bağlantı tamsa yalnızca vekil sunucuya bakılır (tarayıcı açmaz ama denetim geçer)
+        finding = netdiag.proxy_problem() if state == "full" else netdiag.diagnose(_run)
+    except Exception:
+        return CheckResult("internet", state == "full", state)
+    if finding is None or finding.cause == "ok":
+        # NetworkManager'ın denetim adresi engelli olabilir; kendi testimiz geçtiyse sorun yok
+        return CheckResult("internet", True, state)
+    return CheckResult("internet", False, finding.detail or state, finding.cause, finding.target)
 
 
 def check_packages() -> CheckResult:
@@ -102,16 +119,6 @@ def _read(path: Path) -> str:
 def _mount_point(path: str) -> str:
     code, out = _run(["findmnt", "-no", "TARGET", "-T", path])
     return out.splitlines()[0].strip() if code == 0 and out else ""
-
-
-def check_dns() -> CheckResult:
-    """İnternet var ama alan adı çözülmüyorsa sayfalar açılmaz (DNS sorunu)."""
-    code, state = _run(["nmcli", "networking", "connectivity"])
-    if code == 127 or state.strip() == "none":
-        # Bağlantı hiç yoksa bunu "internet" kontrolü söyler; iki kez gösterilmez
-        return CheckResult("dns", True, state.strip() or "nmcli not available")
-    code, out = _run(["getent", "hosts", "deb.debian.org"], timeout=8)
-    return CheckResult("dns", code == 0, out.splitlines()[0] if out else "no answer")
 
 
 def check_boot_space() -> CheckResult:
@@ -256,7 +263,6 @@ def check_battery() -> CheckResult:
 
 CHECKS: tuple[Callable[[], CheckResult], ...] = (
     check_internet,
-    check_dns,
     check_clock,
     check_readonly,
     check_disk,

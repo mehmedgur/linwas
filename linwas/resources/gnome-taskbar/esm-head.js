@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 // Linwas görev çubuğu — GNOME Shell 45+ (ES modülü).
 // Bu dosyayı Linwas üretir; elle düzenlemeyin.
 import Clutter from 'gi://Clutter';

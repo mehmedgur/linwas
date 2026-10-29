@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Süreç listesi ve disk temizliği testleri."""
 
 from linwas.backend.disk_cleanup import CleanupItem, clean_user_item, scan_cleanup_items

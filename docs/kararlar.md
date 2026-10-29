@@ -42,6 +42,19 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - Tüm hedef dağıtımlarda sanal makine testleri.
 - Paketteki Maintainer bilgisinin gözden geçirilmesi.
 
+## Lisans (27 Ekim 2026, kullanıcı kararı)
+- Amaç: herkes kullanabilsin ve kaynak kodunu değiştirebilsin, ama Linwas'tan geldiği unutulmasın; geliştirici
+  bilgisinde her zaman Linwas yer alsın.
+- **GPL-3.0-or-later** (`LICENSE`, Debian'ın `common-licenses/GPL-3` kopyası) + GPL bölüm 7 ek şartları (`NOTICE.md`):
+  7(b) atıf korunur (dosya başlıkları, NOTICE, Hakkında › Geliştirici kartı ve `--version`'daki `linwas.ATTRIBUTION`
+  satırı, paket telif dosyası); 7(c) değiştirilmiş sürüm belirtilir; 7(e) "Linwas" adı/logosu başka ürünün adı olamaz
+  (`TRADEMARKS.md`). Her .py/.sh/.js dosyasında 3 satırlık SPDX başlığı (NOTICE'a işaret eder; GPL 7 bunu ister).
+- Katkılar `CLA.md` ile (taslak; hukukçu incelemesi bekliyor): telif katkıcıda kalır, projeye yeniden lisanslama hakkı
+  verilir (ileride ücretli kurumsal lisans için). GNOME eklentileri de GPL-3.0-or-later (GNOME'un "GPL-2.0-or-later ile
+  uyumlu" şartını karşılar). Office görünümünün kurulumda ürettiği `.ui` dosyaları MPL-2.0 (depoda değil).
+- Açık: "Linwas" marka tescili (TÜRKPATENT); yayından önce git geçmişi kararı (kişisel e-postalar) ve iç notların
+  (`docs/`, `CLAUDE.md`) temizliği.
+
 ## Eklenti mimarisi
 - Linwas = sabit çekirdek + eklentiler. Kullanıcı için tek uygulama; eklenti kurulunca menüye/sayfalara kendi parçasını ekler.
 - Eklenti kapıları:
@@ -222,6 +235,23 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
 - **Arayüz:** Windows görünümü, tema/duvar kağıdı, yazı tipleri, ekran/ölçekleme
 - **Program:** Üstte arama, altta "Windows'ta ne kullanıyordun?" bölümü; **Kurulu programlar** sekmesi; Oyun sekmesi
 - **Sorun Giderme:** Üstte tek tıkla tam tarama, altta belirti kartları
+  - **Hız testi (27 Ekim 2026, kullanıcı isteği):** Wi-Fi › Bağlantı kalitesi › "Bağlantıyı test et" internet
+    erişilebilirse indirme, yükleme (Mbps) ve ping (ms, ipucunda jitter) da ölçer (`netquality.run_speed_test`). Sunucu
+    Cloudflare'in açık hız testi: `GET speed.cloudflare.com/__down?bytes=N`, `POST /__up` (cloudflare/speedtest README,
+    `bytes` sorgusu 1 KB istekle denendi). Ping 1.1.1.1'e ICMP (yoksa TCP 443), ortanca. İndirme 4 bağlantı 8 sn, yükleme
+    2 bağlantı 6 sn; ilk 1 sn (ısınma) sayılmaz; en çok 150 MB + 40 MB veri (kotalı hat). Kartta harcanan veri ve
+    sunucunun Cloudflare olduğu yazar. Yalnızca düğmeye basınca çalışır.
+  - **Ağ teşhisi (27 Ekim 2026, kullanıcı isteği):** "İnternet yok" yalnızca servisi yeniden başlatmayı öneriyordu ve
+    kullanıcının sorununu çözmedi; artık nedeni katman katman bulunur (`backend/netdiag.py`, root yok): sürücüsüz/görünmeyen
+    ağ kartı → NetworkManager durmuş → ağ kapalı → Wi-Fi tuşla/BIOS'ta (rfkill hard) ya da ayardan (soft) kapalı →
+    kablo takılı değil / takılı ama bağlanmamış / Wi-Fi'a bağlı değil / kart `/etc/network/interfaces`'te (yönetilmiyor)
+    → adres alınamadı (DHCP, 169.254) → varsayılan yol yok → Docker/sanal makine ağı ev ağıyla çakışıyor → modem yanıt
+    vermiyor (Wi-Fi sinyali < 30 ise "sinyal zayıf") → oturum açma sayfası (portal) → DNS → modemin interneti yok ya da
+    VPN engelliyor (1.1.1.1/9.9.9.9:443 TCP) → vekil sunucu yanıt vermiyor (ortam, GNOME, KDE `kioslaverc`).
+    İlk bozuk katman tanıdır. Her nedenin kendi başlığı, ne yapılacağı ve düğmesi var; kullanıcı yetkisiyle yapılanlar
+    (`nmcli networking on`, `radio wifi on`, `device connect`, `connection down`) sonrası teşhis kendiliğinden yinelenir.
+    Servis başlatma root işlemleriyle (`service.enable` + `service.restart`). Ayrı DNS denetimi kalktı (teşhis kapsıyor).
+    Tarama ve "İnternet yok" kartındaki "Nedenini bul" aynı teşhisi kullanır.
 - **Ayarlar:** Linwas'ın kendi ayarları (işlem geçmişi ve eklenti listesi burada)
 - **Ayarlar (7 Ekim 2026 kararı):**
   - **Düzen:** sayfa içinde solda kategori listesi, sağda seçilen bölüm; üstte "Ayarlarda ara". Bölümler: Genel, Görünüm, Yapay zekâ, Bildirimler ve başlangıç, Gizlilik ve veriler, Yedekleme ve sıfırlama, Eklentiler, Hakkında.
@@ -386,6 +416,18 @@ Arayüz taslağı: claude.ai/artifact/GmBq4uSWwSsfwgJvW6u9BB (ana pencere + kuyr
        altında ev klasörü aranır; program listesi ve masaüstü/Wi-Fi bu yolla gelmez. Menü adı
        "Windows'tan taşı" → "Taşıma".
 2. **Görev Yöneticisi:** "Kapat" doğrudan zorla kapatır; masaüstü ve sistem süreçleri kapatılamaz. CPU/RAM, başlangıç programları.
+   - **Kaynak izleyici (25 Ekim 2026, kullanıcı isteği):** geliştirici ortamı için ayrı yerleşik eklenti
+     `linwas.resource_monitor` (menüde Sistem › Kaynak İzleyici). CPU (çekirdek, frekans, sıcaklık, yük), bellek (önbellek,
+     takas), disk (okuma/yazma hızı, meşguliyet, `/` ve ayrıysa ev doluluğu), ağ (indirme/yükleme hızı, açılıştan beri
+     toplam), her GPU için ayrı kart ve en çok CPU kullanan 8 süreç; saniyede bir, son 1 dakikanın grafiği. Sayfa
+     görünmezken ölçüm durur; "Duraklat" düğmesi. Hepsi `/proc` + `/sys` (root yok, `backend/resource_monitor.py`, Qt'siz).
+     Sanal aygıtlar (loop/zram/dm, docker/köprü/VPN) çift sayılmasın diye yalnızca `device` bağlantısı olan disk ve ağ
+     kartları sayılır. GPU: NVIDIA `nvidia-smi --query-gpu=…`, AMD `gpu_busy_percent` + `mem_info_vram_*`, Intel kullanım
+     oranı root ister → anlık frekans (i915 `gt_act_freq_mhz`, xe `tile0/gt0/freq0/act_freq`). Uyuyan (runtime suspend)
+     GPU sorgulanmaz, "Uykuda" yazar (sorgu hibrit dizüstüde kartı uyandırır). Süreç CPU %'si `ps`'in ömür boyu
+     ortalaması değil, iki örnek arası `/proc/<pid>/stat` farkı; çekirdek başına (Windows'tan farklı; sayfada yazar).
+     Neden Linwas sayfası: Qt sayfası GNOME, KDE ve Eco kabuğunda aynı çalışır; Eco oturumunda `plasmashell` çalışmadığı
+     için KDE panel eklentisi (plasmoid) görünmezdi.
 3. **Disk temizliği:** yalnızca elle; kazanılacak alan önceden gösterilir.
 4. **Yazıcı ve tarayıcı:** otomatik bulma; bulunamazsa AI çözüm üretir, görevleri kuyruğa hazır koyar, kullanıcı tek onayla uygular.
 5. **Oyun:** Steam + Proton, Lutris / Heroic, GameMode, uyumluluk kontrolü (AI değerlendirmesi + "tahmindir" uyarısı + ProtonDB linki; AI kapalıysa ProtonDB araması tarayıcıda açılır).

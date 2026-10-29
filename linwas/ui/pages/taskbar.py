@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Kişiselleştirme › Görev çubuğu.
 
 Hazır düzen, pencere düğmeleri, görünüm, yerleşim ve medya widget'ı.
@@ -28,6 +31,7 @@ from PySide6.QtWidgets import (
 
 from linwas.backend import appearance, taskbar, window_groups, workgroups
 from linwas.core.tasks import Task, TaskStep
+from linwas.translations import percent
 from linwas.ui.pages.base import BasePage
 from linwas.ui.widgets.card import Card
 
@@ -419,9 +423,9 @@ class TaskbarPage(BasePage):
         slider.setValue(self._cfg.transparency)
         slider.setFixedWidth(240)
         slider.setAccessibleName(tr("Transparency"))
-        value = QLabel(f"%{self._cfg.transparency}", slider_box)
+        value = QLabel(percent(self._cfg.transparency), slider_box)
         value.setMinimumWidth(44)
-        slider.valueChanged.connect(lambda v: value.setText(f"%{v}"))
+        slider.valueChanged.connect(lambda v: value.setText(percent(v)))
         slider.sliderReleased.connect(lambda: self._set("transparency", slider.value()))
         sl.addWidget(slider)
         sl.addWidget(value)

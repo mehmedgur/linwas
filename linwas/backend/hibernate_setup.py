@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Hazırda bekletme kurulabilir mi: ön koşul denetimi (kullanıcı yetkisiyle, yalnızca okur).
 
 Kurulumu root helper'ın `hibernate.setup` işlemi yapar (core/hibernate.py, core/helper.py).

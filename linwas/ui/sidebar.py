@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Sol gezinme menüsü.
 
 macOS Sistem Ayarları gibi: kategori başlıkları altında renkli simge kutulu
@@ -70,6 +73,7 @@ MENU: list[MenuItem] = [
             MenuItem("updates", "Update center", color="#ff453a"),
             MenuItem("software", "Software", color="#5e5ce6"),
             MenuItem("taskmgr", "Task Manager", color="#30b158"),
+            MenuItem("resource_monitor", "Resource Monitor", color="#64d2ff"),
             MenuItem("cleanup", "Disk Cleanup", color="#ff9f0a"),
             MenuItem("power", "Power & Battery", color="#34c759"),
         ],
@@ -145,7 +149,7 @@ class _NavButton(QPushButton):
         label = tr(item.label)
         if item.id == "power" and not _is_laptop():
             label = tr("Power")  # masaüstü bilgisayar: pil bölümleri yok
-        super().__init__(label, parent)
+        super().__init__(label.replace("&", "&&"), parent)  # "&" kısayol işareti sayılmasın
         self._item = item
         self._active = False
         self.setObjectName("SidebarItem")
@@ -369,6 +373,7 @@ def _translation_markers() -> None:
     tr("Backups & Rollback")
     tr("Hardware & Printers")
     tr("Task Manager")
+    tr("Resource Monitor")
     tr("Disk Cleanup")
     tr("Personal Backup")
     tr("Power & Battery")

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Dosya türleri için varsayılan uygulama: çift tıklanan .deb paketi Linwas'ta açılsın.
 
 Kullanıcıya özel (`xdg-mime`, ~/.config/mimeapps.list; root gerekmez). Önceki varsayılan uygulama

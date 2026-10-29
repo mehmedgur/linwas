@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Anahtar kasası testleri (oturum belleği modu)."""
 
 import linwas.ai.keystore as ks
@@ -5,6 +8,7 @@ import linwas.ai.keystore as ks
 
 def _reset():
     ks._session_keys.clear()
+    ks._cache.clear()
     ks._keyring_available = False  # keyring yok gibi davran
 
 

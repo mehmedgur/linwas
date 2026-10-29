@@ -142,7 +142,7 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     </message>
     <message>
         <source>AI Question</source>
-        <translation>Yapay Zeka Sorusu</translation>
+        <translation>Yapay Zekâ Sorusu</translation>
     </message>
     <message>
         <source>System</source>
@@ -169,6 +169,10 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
         <translation>Görev Yöneticisi</translation>
     </message>
     <message>
+        <source>Resource Monitor</source>
+        <translation>Kaynak İzleyici</translation>
+    </message>
+    <message>
         <source>Disk Cleanup</source>
         <translation>Disk Temizliği</translation>
     </message>
@@ -190,7 +194,7 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     </message>
     <message>
         <source>Theme &amp; Wallpaper</source>
-        <translation>Tema ve Duvar Kağıdı</translation>
+        <translation>Tema ve Duvar Kâğıdı</translation>
     </message>
     <message>
         <source>Fonts</source>
@@ -646,12 +650,16 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
 <context>
     <name>AIPanel</name>
     <message>
+        <source>Loading models…</source>
+        <translation>Modeller yükleniyor…</translation>
+    </message>
+    <message>
         <source>AI Assistant</source>
-        <translation>Yapay Zeka Yardımcısı</translation>
+        <translation>Yapay Zekâ Yardımcısı</translation>
     </message>
     <message>
         <source>AI Provider Settings</source>
-        <translation>Yapay Zeka Sağlayıcı Ayarları</translation>
+        <translation>Yapay Zekâ Sağlayıcı Ayarları</translation>
     </message>
     <message>
         <source>Ask a question…</source>
@@ -671,7 +679,7 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     </message>
     <message>
         <source>AI</source>
-        <translation>Yapay Zeka</translation>
+        <translation>Yapay Zekâ</translation>
     </message>
     <message>
         <source>Add to Queue</source>
@@ -853,7 +861,7 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     </message>
     <message>
         <source>Ask the assistant</source>
-        <translation>Asistana sor</translation>
+        <translation>Yardımcıya sor</translation>
     </message>
     <message>
         <source>At startup choose “Advanced options” in the boot menu and start an older kernel or recovery mode. When Linwas opens, press “Return to the previous driver”. You can also restore the Timeshift backup taken before the change.</source>
@@ -1193,7 +1201,7 @@ Ne ters gitti ve nasıl düzeltebilirim?</translation>
     </message>
     <message>
         <source>Update firmware</source>
-        <translation>Firmware güncelle</translation>
+        <translation>Firmware'i güncelle</translation>
     </message>
     <message>
         <source>Update firmware (fwupd)</source>
@@ -1774,7 +1782,7 @@ Timeshift şimdi kurulsun mu?</translation>
     </message>
     <message>
         <source>Install Timeshift</source>
-        <translation>Timeshift kur</translation>
+        <translation>Timeshift'i kur</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -1845,6 +1853,34 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
 </context>
 <context>
     <name>NetworkPage</name>
+    <message>
+        <source>Measuring speed… (about 15 seconds)</source>
+        <translation>Hız ölçülüyor… (yaklaşık 15 saniye)</translation>
+    </message>
+    <message>
+        <source>The speed could not be measured.</source>
+        <translation>Hız ölçülemedi.</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>İndirme</translation>
+    </message>
+    <message>
+        <source>Upload</source>
+        <translation>Yükleme</translation>
+    </message>
+    <message>
+        <source>Ping</source>
+        <translation>Ping</translation>
+    </message>
+    <message>
+        <source>Jitter: {ms} ms</source>
+        <translation>Dalgalanma (jitter): {ms} ms</translation>
+    </message>
+    <message>
+        <source>Measured with Cloudflare's speed test server; used {mb} MB of data.</source>
+        <translation>Cloudflare'in hız testi sunucusuyla ölçüldü; {mb} MB veri kullanıldı.</translation>
+    </message>
     <message>
         <source>Bluetooth is turned off by a switch</source>
         <translation>Bluetooth bir anahtarla kapatılmış</translation>
@@ -2055,7 +2091,7 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     </message>
     <message>
         <source>Password:</source>
-        <translation>Parola:</translation>
+        <translation>Şifre:</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -2235,7 +2271,7 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     </message>
     <message>
         <source>Ask the assistant</source>
-        <translation>Asistana sor</translation>
+        <translation>Yardımcıya sor</translation>
     </message>
     <message>
         <source>Connection test</source>
@@ -2636,7 +2672,7 @@ Sistem bu duruma döndürülecek. Yeniden başlatma gerektirir.</translation>
     <name>AIChatPage</name>
     <message>
         <source>AI Question</source>
-        <translation>Yapay Zeka Sorusu</translation>
+        <translation>Yapay Zekâ Sorusu</translation>
     </message>
     <message>
         <source>Ask anything about your computer. Suggested actions are only added to the queue; nothing runs until you press Apply.</source>
@@ -4464,7 +4500,7 @@ Devam edilsin mi?</translation>
     </message>
     <message>
         <source>Send error details to the assistant:</source>
-        <translation>Hata ayrıntılarını asistana gönder:</translation>
+        <translation>Hata ayrıntılarını yardımcıya gönder:</translation>
     </message>
     <message>
         <source>What the assistant can see</source>
@@ -4775,6 +4811,14 @@ Devam edilsin mi?</translation>
 <context>
     <name>SettingsPage</name>
     <message>
+        <source>GNU GPL 3 or later, with attribution terms (NOTICE.md)</source>
+        <translation>GNU GPL 3 ve sonrası, atıf şartlarıyla (NOTICE.md)</translation>
+    </message>
+    <message>
+        <source>Linwas is free software: you can use, change and share it. It comes with absolutely no warranty.</source>
+        <translation>Linwas özgür yazılımdır: kullanabilir, değiştirebilir ve paylaşabilirsin. Hiçbir garanti verilmez.</translation>
+    </message>
+    <message>
         <source>Opening files</source>
         <translation>Dosyaları açma</translation>
     </message>
@@ -5001,10 +5045,6 @@ Devam edilsin mi?</translation>
     <message>
         <source>Licence</source>
         <translation>Lisans</translation>
-    </message>
-    <message>
-        <source>Not decided yet</source>
-        <translation>Henüz karar verilmedi</translation>
     </message>
     <message>
         <source>Found a bug or have an idea? Report it on the project page; your system information is added and personal details are masked.</source>
@@ -5266,6 +5306,250 @@ Devam edilsin mi?</translation>
 <context>
     <name>TroubleshootPage</name>
     <message>
+        <source>A Docker or virtual machine network ({name}) uses the same address range as your modem, so traffic goes the wrong way. Ask the assistant how to move it.</source>
+        <translation>Bir Docker ya da sanal makine ağı ({name}) modeminle aynı adres aralığını kullanıyor, bu yüzden trafik yanlış yere gidiyor. Başka aralığa nasıl taşınacağını yardımcıya sor.</translation>
+    </message>
+    <message>
+        <source>A VPN is blocking the internet</source>
+        <translation>Bir VPN interneti engelliyor</translation>
+    </message>
+    <message>
+        <source>A proxy is set, so browsers can't open pages. Turn off the proxy in the network settings.</source>
+        <translation>Bir vekil sunucu (proxy) ayarlı, bu yüzden tarayıcılar sayfa açamıyor. Ağ ayarlarından vekil sunucuyu kapat.</translation>
+    </message>
+    <message>
+        <source>A virtual network uses the same addresses as your home network</source>
+        <translation>Bir sanal ağ ev ağınla aynı adresleri kullanıyor</translation>
+    </message>
+    <message>
+        <source>All network connections were switched off.</source>
+        <translation>Bütün ağ bağlantıları kapatılmış.</translation>
+    </message>
+    <message>
+        <source>Choose a network</source>
+        <translation>Ağ seç</translation>
+    </message>
+    <message>
+        <source>Could not get an address from the modem</source>
+        <translation>Modemden adres alınamadı</translation>
+    </message>
+    <message>
+        <source>Could not reconnect</source>
+        <translation>Yeniden bağlanılamadı</translation>
+    </message>
+    <message>
+        <source>Disconnect VPN</source>
+        <translation>VPN'i kes</translation>
+    </message>
+    <message>
+        <source>Find the cause</source>
+        <translation>Nedenini bul</translation>
+    </message>
+    <message>
+        <source>Hardware</source>
+        <translation>Donanım</translation>
+    </message>
+    <message>
+        <source>Hotel, café and school networks show a sign-in page first.</source>
+        <translation>Otel, kafe ve okul ağları önce bir giriş sayfası gösterir.</translation>
+    </message>
+    <message>
+        <source>Looking for the cause of the network problem…</source>
+        <translation>Ağ sorununun nedeni aranıyor…</translation>
+    </message>
+    <message>
+        <source>Network check</source>
+        <translation>Ağ denetimi</translation>
+    </message>
+    <message>
+        <source>Network settings</source>
+        <translation>Ağ ayarları</translation>
+    </message>
+    <message>
+        <source>NetworkManager, which connects you to networks, is stopped.</source>
+        <translation>Ağlara bağlanmanı sağlayan NetworkManager durmuş.</translation>
+    </message>
+    <message>
+        <source>Networking could not be turned on</source>
+        <translation>Ağ açılamadı</translation>
+    </message>
+    <message>
+        <source>Networking is on</source>
+        <translation>Ağ açıldı</translation>
+    </message>
+    <message>
+        <source>Networking is turned off</source>
+        <translation>Ağ kapalı</translation>
+    </message>
+    <message>
+        <source>No Wi-Fi or Ethernet card is visible. A USB Wi-Fi adapter may be unplugged, or the card may be turned off in the BIOS.</source>
+        <translation>Wi-Fi ya da Ethernet kartı görünmüyor. USB Wi-Fi adaptörü çıkmış olabilir ya da kart BIOS'ta kapatılmış olabilir.</translation>
+    </message>
+    <message>
+        <source>No cable is detected. Check both ends of the cable and that the modem is on.</source>
+        <translation>Kablo algılanmıyor. Kablonun iki ucunu ve modemin açık olduğunu denetle.</translation>
+    </message>
+    <message>
+        <source>No network card found</source>
+        <translation>Ağ kartı bulunamadı</translation>
+    </message>
+    <message>
+        <source>No way out to the internet</source>
+        <translation>İnternete çıkış yolu yok</translation>
+    </message>
+    <message>
+        <source>Not connected to a Wi-Fi network</source>
+        <translation>Bir Wi-Fi ağına bağlı değil</translation>
+    </message>
+    <message>
+        <source>Open sign-in page</source>
+        <translation>Giriş sayfasını aç</translation>
+    </message>
+    <message>
+        <source>Press the airplane-mode or Wi-Fi key (often Fn with F2 or F12) or check the switch on the side of the laptop. It may also be turned off in the BIOS.</source>
+        <translation>Uçak kipi ya da Wi-Fi tuşuna bas (çoğunlukla Fn ile F2 veya F12) ya da dizüstünün yanındaki anahtarı denetle. BIOS'ta da kapatılmış olabilir.</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Yeniden bağlan</translation>
+    </message>
+    <message>
+        <source>Reconnected</source>
+        <translation>Yeniden bağlanıldı</translation>
+    </message>
+    <message>
+        <source>Restarting the network service usually fixes it. You can also set DNS servers in the Wi-Fi settings.</source>
+        <translation>Ağ servisini yeniden başlatmak çoğunlukla çözer. DNS sunucularını Wi-Fi ayarlarından da belirleyebilirsin.</translation>
+    </message>
+    <message>
+        <source>Start network service</source>
+        <translation>Ağ servisini başlat</translation>
+    </message>
+    <message>
+        <source>The VPN connection ({name}) is on, but nothing gets through. Disconnect it.</source>
+        <translation>VPN bağlantısı ({name}) açık ama hiçbir şey geçmiyor. Bağlantıyı kes.</translation>
+    </message>
+    <message>
+        <source>The VPN could not be disconnected</source>
+        <translation>VPN kesilemedi</translation>
+    </message>
+    <message>
+        <source>The Wi-Fi signal is too weak</source>
+        <translation>Wi-Fi sinyali çok zayıf</translation>
+    </message>
+    <message>
+        <source>The cable is plugged in but not connected</source>
+        <translation>Kablo takılı ama bağlantı kurulmamış</translation>
+    </message>
+    <message>
+        <source>The card is set up in /etc/network/interfaces, so the network settings can't control it. Ask the assistant how to hand it over.</source>
+        <translation>Kart /etc/network/interfaces dosyasında tanımlı, bu yüzden ağ ayarları onu yönetemiyor. Nasıl devredileceğini yardımcıya sor.</translation>
+    </message>
+    <message>
+        <source>The computer has a network card, but no driver is loaded for it. Check Drivers; a firmware package may be missing.</source>
+        <translation>Bilgisayarda ağ kartı var ama sürücüsü yüklenmemiş. Sürücüler'e bak; bir aygıt yazılımı (firmware) paketi eksik olabilir.</translation>
+    </message>
+    <message>
+        <source>The computer has an address but no route to the internet. Reconnect.</source>
+        <translation>Bilgisayarın adresi var ama internete giden yolu yok. Yeniden bağlan.</translation>
+    </message>
+    <message>
+        <source>The computer is connected, but the modem doesn't respond. Restart the modem and wait two minutes.</source>
+        <translation>Bilgisayar bağlı ama modem yanıt vermiyor. Modemi yeniden başlatıp iki dakika bekle.</translation>
+    </message>
+    <message>
+        <source>The internet connection works</source>
+        <translation>İnternet bağlantısı çalışıyor</translation>
+    </message>
+    <message>
+        <source>The modem answers but can't reach the internet. Restart the modem; if it continues, your internet provider may have an outage.</source>
+        <translation>Modem yanıt veriyor ama internete ulaşamıyor. Modemi yeniden başlat; sürerse internet sağlayıcında arıza olabilir.</translation>
+    </message>
+    <message>
+        <source>The modem did not give an address (DHCP). Reconnect; if that doesn't help, restart the modem.</source>
+        <translation>Modem adres vermedi (DHCP). Yeniden bağlan; işe yaramazsa modemi yeniden başlat.</translation>
+    </message>
+    <message>
+        <source>The modem does not answer</source>
+        <translation>Modem yanıt vermiyor</translation>
+    </message>
+    <message>
+        <source>The modem has no internet</source>
+        <translation>Modemin interneti yok</translation>
+    </message>
+    <message>
+        <source>The modem is too far away or blocked by walls. Move closer or use a cable.</source>
+        <translation>Modem çok uzakta ya da duvarlar sinyali kesiyor. Yaklaş ya da kablo kullan.</translation>
+    </message>
+    <message>
+        <source>The network cable is plugged in, but the connection was not set up.</source>
+        <translation>Ağ kablosu takılı ama bağlantı kurulmamış.</translation>
+    </message>
+    <message>
+        <source>The network cable is unplugged</source>
+        <translation>Ağ kablosu takılı değil</translation>
+    </message>
+    <message>
+        <source>The network card has no driver</source>
+        <translation>Ağ kartının sürücüsü yok</translation>
+    </message>
+    <message>
+        <source>The network card is not managed</source>
+        <translation>Ağ kartı yönetilmiyor</translation>
+    </message>
+    <message>
+        <source>The network check could not be completed</source>
+        <translation>Ağ denetimi tamamlanamadı</translation>
+    </message>
+    <message>
+        <source>The network service is not running</source>
+        <translation>Ağ servisi çalışmıyor</translation>
+    </message>
+    <message>
+        <source>The proxy server does not answer</source>
+        <translation>Vekil sunucu (proxy) yanıt vermiyor</translation>
+    </message>
+    <message>
+        <source>This network needs you to sign in</source>
+        <translation>Bu ağ giriş yapmanı istiyor</translation>
+    </message>
+    <message>
+        <source>Turn Wi-Fi on</source>
+        <translation>Wi-Fi'ı aç</translation>
+    </message>
+    <message>
+        <source>Turn networking on</source>
+        <translation>Ağı aç</translation>
+    </message>
+    <message>
+        <source>VPN disconnected</source>
+        <translation>VPN kesildi</translation>
+    </message>
+    <message>
+        <source>Wi-Fi could not be turned on</source>
+        <translation>Wi-Fi açılamadı</translation>
+    </message>
+    <message>
+        <source>Wi-Fi is off (airplane mode)</source>
+        <translation>Wi-Fi kapalı (uçak kipi)</translation>
+    </message>
+    <message>
+        <source>Wi-Fi is on</source>
+        <translation>Wi-Fi açıldı</translation>
+    </message>
+    <message>
+        <source>Wi-Fi is on but not connected. Choose your network; if it doesn't connect, the password may be wrong.</source>
+        <translation>Wi-Fi açık ama bağlı değil. Ağını seç; bağlanmazsa şifre yanlış olabilir.</translation>
+    </message>
+    <message>
+        <source>Wi-Fi is switched off by a key or switch</source>
+        <translation>Wi-Fi bir tuş ya da anahtarla kapatılmış</translation>
+    </message>
+    <message>
+        <source>Wi-Fi is turned off in the settings.</source>
+        <translation>Wi-Fi ayarlardan kapatılmış.</translation>
+    </message>
+    <message>
         <source>Corner right-click, like Windows</source>
         <translation>Köşeyle sağ tık (Windows gibi)</translation>
     </message>
@@ -5484,10 +5768,6 @@ Devam edilsin mi?</translation>
     <message>
         <source>Updating stops with an error or the disk is full.</source>
         <translation>Güncelleme hatayla duruyor ya da disk dolu.</translation>
-    </message>
-    <message>
-        <source>Web addresses are found (DNS)</source>
-        <translation>Web adresleri bulunuyor (DNS)</translation>
     </message>
     <message>
         <source>Wrong date or time</source>
@@ -5780,7 +6060,7 @@ Changes are collected in a queue at the bottom. Nothing runs until you press App
 • Arayüz: masaüstünü Windows'a benzetin
 • Programlar: program kurun ve kaldırın
 • Sorun Giderme: sık görülen sorunları bulun ve düzeltin
-• Yapay Zeka Sorusu: her şeyi sorun (isteğe bağlı)
+• Yapay Zekâ Sorusu: her şeyi sorun (isteğe bağlı)
 
 Değişiklikler alttaki kuyrukta toplanır. Uygula'ya basıp şifrenizi bir kez girmeden hiçbir şey çalışmaz.</translation>
     </message>
@@ -5818,7 +6098,7 @@ Değişiklikler alttaki kuyrukta toplanır. Uygula'ya basıp şifrenizi bir kez 
     </message>
     <message>
         <source>With a free Gemini key (or ChatGPT / DeepSeek) you can ask questions and get help with errors. You can also do this later in AI Question › AI settings.</source>
-        <translation>Ücretsiz bir Gemini anahtarıyla (ya da ChatGPT / DeepSeek) soru sorabilir ve hatalarda yardım alabilirsiniz. Bunu daha sonra Yapay Zeka Sorusu › AI ayarları'ndan da yapabilirsiniz.</translation>
+        <translation>Ücretsiz bir Gemini anahtarıyla (ya da ChatGPT / DeepSeek) soru sorabilir ve hatalarda yardım alabilirsiniz. Bunu daha sonra Yapay Zekâ Sorusu › AI ayarları'ndan da yapabilirsiniz.</translation>
     </message>
     <message>
         <source>⚠ {n} problem(s) found. You'll find the fixes in Troubleshooting.</source>
@@ -6099,7 +6379,7 @@ Linux'ta:
     </message>
     <message>
         <source>Cancel</source>
-        <translation>İptal</translation>
+        <translation>Vazgeç</translation>
     </message>
     <message>
         <source>Check on VirusTotal</source>
@@ -6286,7 +6566,7 @@ Linux'ta:
     </message>
     <message>
         <source>Remove {name}</source>
-        <translation>{name} kaldır</translation>
+        <translation>{name} programını kaldır</translation>
     </message>
     <message>
         <source>Shared environment — {n} program(s)</source>
@@ -6501,7 +6781,7 @@ Linux'ta:
     <name>BottlesRunner</name>
     <message>
         <source>Ask the assistant</source>
-        <translation>Asistana sor</translation>
+        <translation>Yardımcıya sor</translation>
     </message>
     <message>
         <source>Bottles could not be started. Is Bottles installed?</source>
@@ -7851,7 +8131,7 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     </message>
     <message>
         <source>Desktop look (theme, wallpaper, fonts, shortcuts)</source>
-        <translation>Masaüstü görünümü (tema, duvar kağıdı, yazı tipleri, kısayollar)</translation>
+        <translation>Masaüstü görünümü (tema, duvar kâğıdı, yazı tipleri, kısayollar)</translation>
     </message>
     <message>
         <source>Desktop settings are not supported on this desktop.</source>
@@ -8083,7 +8363,7 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     </message>
     <message>
         <source>Set the wallpaper yourself: %1</source>
-        <translation>Duvar kağıdını kendiniz ayarlayın: %1</translation>
+        <translation>Duvar kâğıdını kendiniz ayarlayın: %1</translation>
     </message>
     <message>
         <source>Some files could not be copied.</source>
@@ -8781,7 +9061,7 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     </message>
     <message>
         <source>Blurred: the window and wallpaper behind show through softly.</source>
-        <translation>Bulanık: arkadaki pencere ve duvar kağıdı yumuşakça görünür.</translation>
+        <translation>Bulanık: arkadaki pencere ve duvar kâğıdı yumuşakça görünür.</translation>
     </message>
     <message>
         <source>Bottom</source>
@@ -10088,6 +10368,140 @@ Bu ekranı kaçırırsanız sürücü yüklenmez; anahtarı Sürücüler sayfas�
     <message>
         <source>Nothing is changed for you: “Review settings” only opens the settings, where you can undo anything.</source>
         <translation>Sizin yerinize hiçbir şey değiştirilmez: “Ayarlara bak” yalnızca ayarları açar, her değişikliği orada geri alabilirsiniz.</translation>
+    </message>
+</context>
+<context>
+    <name>ResourceMonitorPage</name>
+    <message>
+        <source>{value}/s</source>
+        <translation>{value}/sn</translation>
+    </message>
+    <message>
+        <source>Resource Monitor</source>
+        <translation>Kaynak İzleyici</translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translation>Duraklat</translation>
+    </message>
+    <message>
+        <source>Resume</source>
+        <translation>Devam et</translation>
+    </message>
+    <message>
+        <source>Live usage, updated every second. Graphs show the last minute.</source>
+        <translation>Canlı kullanım, saniyede bir yenilenir. Grafikler son bir dakikayı gösterir.</translation>
+    </message>
+    <message>
+        <source>Processor (CPU)</source>
+        <translation>İşlemci (CPU)</translation>
+    </message>
+    <message>
+        <source>Memory (RAM)</source>
+        <translation>Bellek (RAM)</translation>
+    </message>
+    <message>
+        <source>Disk</source>
+        <translation>Disk</translation>
+    </message>
+    <message>
+        <source>Network</source>
+        <translation>Ağ</translation>
+    </message>
+    <message>
+        <source>Top processes</source>
+        <translation>En çok kaynak kullanan süreçler</translation>
+    </message>
+    <message>
+        <source>CPU % is per core: a process using two full cores shows 200%.</source>
+        <translation>CPU % çekirdek başınadır: iki çekirdeği tam kullanan süreç %200 görünür.</translation>
+    </message>
+    <message>
+        <source>Share of time the disks were busy</source>
+        <translation>Disklerin meşgul olduğu zaman oranı</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Ad</translation>
+    </message>
+    <message>
+        <source>Memory</source>
+        <translation>Bellek</translation>
+    </message>
+    <message>
+        <source>No network adapter found</source>
+        <translation>Ağ bağdaştırıcısı bulunamadı</translation>
+    </message>
+    <message>
+        <source>Sleeping</source>
+        <translation>Uykuda</translation>
+    </message>
+    <message>
+        <source>Not queried so it can stay asleep and save power</source>
+        <translation>Uykuda kalıp güç tasarrufu yapsın diye sorgulanmıyor</translation>
+    </message>
+    <message>
+        <source>{n} cores</source>
+        <translation>{n} çekirdek</translation>
+    </message>
+    <message>
+        <source>Load: {a:.2f} {b:.2f} {c:.2f}</source>
+        <translation>Yük: {a:.2f} {b:.2f} {c:.2f}</translation>
+    </message>
+    <message>
+        <source>Busiest core: {pct:.0f}%</source>
+        <translation>En yoğun çekirdek: %{pct:.0f}</translation>
+    </message>
+    <message>
+        <source>{used} of {total}</source>
+        <translation>{used} / {total}</translation>
+    </message>
+    <message>
+        <source>Cache: {size}</source>
+        <translation>Önbellek: {size}</translation>
+    </message>
+    <message>
+        <source>Read {read} · Write {write}</source>
+        <translation>Okuma {read} · Yazma {write}</translation>
+    </message>
+    <message>
+        <source>Since startup: received {rx} · sent {tx}</source>
+        <translation>Açılıştan beri: alınan {rx} · gönderilen {tx}</translation>
+    </message>
+    <message>
+        <source>Graphics (GPU)</source>
+        <translation>Ekran kartı (GPU)</translation>
+    </message>
+    <message>
+        <source>{mhz} MHz</source>
+        <translation>{mhz} MHz</translation>
+    </message>
+    <message>
+        <source>Swap: {used} of {total}</source>
+        <translation>Takas: {used} / {total}</translation>
+    </message>
+    <message>
+        <source>{mount}: {used} of {total} used</source>
+        <translation>{mount}: {used} / {total} dolu</translation>
+    </message>
+    <message>
+        <source>Usage needs administrator rights; the graph shows clock speed</source>
+        <translation>Kullanım oranı yönetici yetkisi ister; grafik saat hızını gösterir</translation>
+    </message>
+    <message>
+        <source>Usage cannot be measured with this driver</source>
+        <translation>Bu sürücüyle kullanım ölçülemiyor</translation>
+    </message>
+    <message>
+        <source>Video memory: {used} of {total}</source>
+        <translation>Video belleği: {used} / {total}</translation>
+    </message>
+</context>
+<context>
+    <name>Format</name>
+    <message>
+        <source>{n}%</source>
+        <translation>%{n}</translation>
     </message>
 </context>
 </TS>

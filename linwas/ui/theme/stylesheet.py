@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """QSS stil sayfası üreteci.
 
 Tasarım değerlerinden (tokens.py) QSS stringi üretir.
@@ -88,6 +91,10 @@ def _qss(c: ColorSet, m: Metrics) -> str:
     check = asset_path("check", c.text_on_accent)
     radio_dot = asset_path("radio_dot", c.text_on_accent)
     chevron = asset_path("chevron_down", c.text_secondary)
+    chevron_up = asset_path("chevron_up", c.text_secondary)
+    # Sınırda (ör. 23:59) basılamayan ok soluk görünür
+    chevron_off = asset_path("chevron_down", c.text_disabled)
+    chevron_up_off = asset_path("chevron_up", c.text_disabled)
     r = m.radius
     rc = m.card_radius
     fs = m.font_px
@@ -493,7 +500,7 @@ QFrame#Card QFrame#OptionTile:disabled QLabel {{
 }}
 
 /* === Metin alanları, açılır listeler, sayı kutuları === */
-QTextEdit, QPlainTextEdit, QTextBrowser, QSpinBox, QDoubleSpinBox, QComboBox {{
+QTextEdit, QPlainTextEdit, QTextBrowser, QAbstractSpinBox, QComboBox {{
     background-color: {c.surface};
     border: 1px solid {c.border};
     border-radius: {r}px;
@@ -502,9 +509,52 @@ QTextEdit, QPlainTextEdit, QTextBrowser, QSpinBox, QDoubleSpinBox, QComboBox {{
     selection-background-color: {c.accent};
     selection-color: {c.text_on_accent};
 }}
-QTextEdit:focus, QPlainTextEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus,
+QTextEdit:focus, QPlainTextEdit:focus, QAbstractSpinBox:focus,
 QComboBox:focus {{
     border-color: {c.accent};
+}}
+/* Sayı, saat ve tarih kutuları (QSpinBox, QTimeEdit, QDateEdit): sistemin sıkışık oklarının
+   yerine açılır listelerle aynı boyda kutu, sağda çizgiyle ayrılmış iki düğme */
+QAbstractSpinBox {{
+    min-height: 26px;
+    padding-right: 30px;
+}}
+QAbstractSpinBox::up-button, QAbstractSpinBox::down-button {{
+    subcontrol-origin: border;
+    width: 26px;
+    border: none;
+    border-left: 1px solid {c.border};
+    background-color: transparent;
+}}
+QAbstractSpinBox::up-button {{
+    subcontrol-position: top right;
+    border-top-right-radius: {r}px;
+}}
+QAbstractSpinBox::down-button {{
+    subcontrol-position: bottom right;
+    border-bottom-right-radius: {r}px;
+}}
+QAbstractSpinBox::up-button:hover, QAbstractSpinBox::down-button:hover {{
+    background-color: {c.surface_hover};
+}}
+QAbstractSpinBox::up-button:pressed, QAbstractSpinBox::down-button:pressed {{
+    background-color: {c.border};
+}}
+QAbstractSpinBox::up-arrow {{
+    image: url("{chevron_up}");
+    width: 12px;
+    height: 12px;
+}}
+QAbstractSpinBox::down-arrow {{
+    image: url("{chevron}");
+    width: 12px;
+    height: 12px;
+}}
+QAbstractSpinBox::up-arrow:disabled, QAbstractSpinBox::up-arrow:off {{
+    image: url("{chevron_up_off}");
+}}
+QAbstractSpinBox::down-arrow:disabled, QAbstractSpinBox::down-arrow:off {{
+    image: url("{chevron_off}");
 }}
 QComboBox {{
     min-height: 26px;

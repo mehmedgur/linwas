@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 """Öneri kartı: tek cümlelik öneri, "Neden?" kanıtı ve "Şimdi değil" (süzülmüş görünüm).
 
 Kart yalnızca öneri varsa görünür, en çok iki öneri taşır. Öneri bir şey değiştirmez: "Ayarlara bak"

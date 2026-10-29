@@ -1,4 +1,7 @@
 #!/bin/sh
+# SPDX-FileCopyrightText: 2026 Mehmed Gürbüz and Linwas contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms (GPL-3.0 section 7): see NOTICE.md — keep this notice.
 # Geliştiricinin kendi makinesinde .deb paketi derler (CI'yı beklemeden başka bir makinede denemek için).
 # Çevirileri derler, packaging/build-deb.sh'ı çalıştırır, paketi masaüstüne linwasnew.deb adıyla kopyalar.
 # Sürüm: 2.0.0~local<tarih-saat> (her derleme bir öncekinden yeni sayılır, apt güncelleme olarak kurar).
