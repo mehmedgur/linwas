@@ -1,12 +1,11 @@
 # Güvenlik
 
-Linwas root yetkisiyle sistem ayarlarını değiştirebildiği için güvenlik açıklarını ciddiye alıyoruz.
+Linwas root yetkisiyle sistem ayarlarını değiştirebildiği için güvenlik açıkları ciddi bir konudur.
 
 ## Açık bildirme
-Lütfen herkese açık konu açma. GitHub'ın gizli bildirim formunu kullan:
+Lütfen herkese açık olarak bildirim açma. GitHub'ın gizli bildirim formunu kullan:
 **[Güvenlik açığı bildir](https://github.com/mehmedgur/linwas/security/advisories/new)**.
 
-Bildirimde etkilenen sürümü, adımları ve mümkünse etkiyi yaz. 7 gün içinde dönüş yapmaya çalışırız.
+Bildirimde etkilenen sürümü, adımları ve mümkünse etkiyi yazın . 7 gün içinde dönüş yapmaya çalışacağım.
 
-## Desteklenen sürümler
-Yalnızca [son sürüm](https://github.com/mehmedgur/linwas/releases/latest) güvenlik düzeltmesi alır.
+
