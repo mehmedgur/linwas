@@ -11,7 +11,7 @@ opening a terminal: install apps, set up drivers, fix Wi-Fi, tune power, back up
 up to date.
 
 > **Status:** preview release. The interface is Turkish by default; switch to English in
-> **Settings › Language**. New translations are welcome (see [Contributing](#contributing)).
+> **Settings › Language and window**. New translations are welcome (see [Contributing](#contributing)).
 
 ## Download and install
 1. Download `Linwas-Kurulum.deb` from the [latest release](https://github.com/mehmedgur/linwas/releases/latest).
