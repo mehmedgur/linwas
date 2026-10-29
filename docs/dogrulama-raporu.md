@@ -7,16 +7,13 @@ Kapsam: Python/PySide6 uyumu, dağıtım sürümleri, AI sağlayıcı API'leri, 
 > (glibc ≥ 2.34, libstdc++ ≥ 11) ve Ubuntu 20.04 / Debian 11'de açılamadığını gösterdi.
 > Karar: bu sistemler destekten çıkarıldı (bkz. `kararlar.md` › Dağıtımlar ve paketleme).
 
-## 1. Dağıtımlar ve Python sürümleri
+## 1. Çalıştırılabilir ve Test Edilen Ortamlar
 
 | Dağıtım | Taban | Python | Not |
-|---|---|---|---|
-| Ubuntu 20.04 / Mint 20 | — | 3.8 | Standart destek bitti — **Linwas desteklemiyor** |
-| Debian 11 | — | 3.9 | LTS 31 Ağustos 2026'da bitti — **Linwas desteklemiyor** |
-| Ubuntu 22.04 / Mint 21 | — | 3.10 | Kullanıcının sanal makinesi |
-| Debian 12 / **Pardus 23** | Debian 12 | 3.11 | Kullanıcının bilgisayarı |
+| Ubuntu 22.04 / Mint 21 | — | 3.10 | 
+| Debian 12 / Pardus 23 | Debian 12 | 3.11 
 | Ubuntu 24.04 / Mint 22 | — | 3.12 | |
-| **Pardus 25** | Debian 13 | 3.13 | Kasım 2025'te çıktı; GNOME ve XFCE |
+| Pardus 25| Debian 13 | 3.13 | Kasım 2025'te çıktı; GNOME ve XFCE |
 
 Linwas kendi Python 3.12'sini gömdüğü için sistemin Python sürümü uygulamayı etkilemez; yalnızca
 geliştirici kurulumunda (`scripts/dev-setup.sh`) sistem Python'u kullanılır (en az 3.10).
