@@ -31,8 +31,7 @@ Masaüstü: GNOME, Cinnamon, XFCE (diğerlerinde sınırlı destek).
 
 **Eski sistemler (Ubuntu 20.04, Debian 11, Linux Mint 20):** Linwas bu sistemlerde çalışmaz; güncel
 Qt daha yeni bir sistem kütüphanesi (glibc 2.34) gerektirir. Bu sürümlerin güvenlik güncellemeleri de
-sona erdi; dağıtımının **resmi yükseltme rehberiyle** yükseltmeni öneririz. Önce kişisel dosyalarını
-yedekle.
+sona erdi; dağıtımının **resmi yükseltme rehberiyle** yükseltmeni öneririm.
 
 ## Neler yapar
 - **Program kur ve kaldır:** uygulama mağazası, Flatpak, kurulu programlar; Windows programları (Bottles).
